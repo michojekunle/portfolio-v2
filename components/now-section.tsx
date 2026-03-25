@@ -1,15 +1,11 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-
-import { useState } from "react"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Book, Code, GraduationCap, Lightbulb } from "lucide-react"
 
 export function NowSection() {
-  const [activeTab, setActiveTab] = useState("learning")
-
   const learningProgress = [
     { name: "Rust", progress: 65, description: "Building CLI tools and exploring systems programming" },
     { name: "Cairo", progress: 40, description: "Learning StarkNet development and ZK applications" },
@@ -45,12 +41,12 @@ export function NowSection() {
   return (
     <section id="now" className="py-10">
       <h2 className="text-3xl font-bold mb-2">Now</h2>
-      <div className="h-1 w-20 bg-primary mb-8"></div>
+      <div className="section-rule" />
       <p className="text-muted-foreground mb-6">
-        What I'm currently focused on, learning, and exploring. Updated weekly.
+        What I&apos;m currently focused on, learning, and exploring. Updated weekly.
       </p>
 
-      <Tabs defaultValue="learning" value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs defaultValue="learning" className="w-full">
         <TabsList className="grid grid-cols-3 mb-8">
           <TabsTrigger value="learning" className="flex items-center gap-2">
             <GraduationCap className="h-4 w-4" />
@@ -67,14 +63,7 @@ export function NowSection() {
         </TabsList>
 
         <TabsContent value="learning" className="animate-fade-in">
-          <div className="terminal-card">
-            <div className="terminal-header">
-              <div className="terminal-dot bg-red-500"></div>
-              <div className="terminal-dot bg-yellow-500 ml-1"></div>
-              <div className="terminal-dot bg-green-500 ml-1"></div>
-              <div className="ml-2 text-xs text-muted-foreground">learning-dashboard.md</div>
-            </div>
-
+          <div className="content-card">
             <div className="space-y-6">
               {learningProgress.map((item) => (
                 <div key={item.name} className="space-y-2">
@@ -82,7 +71,7 @@ export function NowSection() {
                     <h4 className="font-medium">{item.name}</h4>
                     <span className="text-sm text-muted-foreground">{item.progress}%</span>
                   </div>
-                  <Progress value={item.progress} className="h-2" />
+                  <Progress value={item.progress} className="h-1.5" />
                   <p className="text-sm text-muted-foreground">{item.description}</p>
                 </div>
               ))}
@@ -90,7 +79,7 @@ export function NowSection() {
 
             <div className="mt-6 pt-6 border-t border-border">
               <h4 className="font-medium mb-2 flex items-center gap-2">
-                <Lightbulb className="h-4 w-4 text-primary" />
+                <Lightbulb className="h-4 w-4 text-muted-foreground" />
                 <span>Learning Focus</span>
               </h4>
               <p className="text-sm text-muted-foreground">
@@ -103,14 +92,7 @@ export function NowSection() {
         </TabsContent>
 
         <TabsContent value="reading" className="animate-fade-in">
-          <div className="terminal-card">
-            <div className="terminal-header">
-              <div className="terminal-dot bg-red-500"></div>
-              <div className="terminal-dot bg-yellow-500 ml-1"></div>
-              <div className="terminal-dot bg-green-500 ml-1"></div>
-              <div className="ml-2 text-xs text-muted-foreground">bookshelf.md</div>
-            </div>
-
+          <div className="content-card">
             <div className="space-y-6">
               {currentBooks.map((book) => (
                 <div key={book.title} className="space-y-2">
@@ -119,7 +101,7 @@ export function NowSection() {
                     <p className="text-sm text-muted-foreground">by {book.author}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Progress value={book.progress} className="h-2 flex-1" />
+                    <Progress value={book.progress} className="h-1.5 flex-1" />
                     <span className="text-sm text-muted-foreground whitespace-nowrap">{book.progress}%</span>
                   </div>
                 </div>
@@ -128,27 +110,20 @@ export function NowSection() {
 
             <div className="mt-6 pt-6 border-t border-border">
               <h4 className="font-medium mb-2 flex items-center gap-2">
-                <Book className="h-4 w-4 text-primary" />
+                <Book className="h-4 w-4 text-muted-foreground" />
                 <span>Reading Queue</span>
               </h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• "Designing Data-Intensive Applications" by Martin Kleppmann</li>
-                <li>• "The Soul of a New Machine" by Tracy Kidder</li>
-                <li>• "The Practice of the Presence of God" by Brother Lawrence</li>
+                <li>• &ldquo;Designing Data-Intensive Applications&rdquo; by Martin Kleppmann</li>
+                <li>• &ldquo;The Soul of a New Machine&rdquo; by Tracy Kidder</li>
+                <li>• &ldquo;The Practice of the Presence of God&rdquo; by Brother Lawrence</li>
               </ul>
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="building" className="animate-fade-in">
-          <div className="terminal-card">
-            <div className="terminal-header">
-              <div className="terminal-dot bg-red-500"></div>
-              <div className="terminal-dot bg-yellow-500 ml-1"></div>
-              <div className="terminal-dot bg-green-500 ml-1"></div>
-              <div className="ml-2 text-xs text-muted-foreground">projects.md</div>
-            </div>
-
+          <div className="content-card">
             <div className="space-y-6">
               {currentProjects.map((project) => (
                 <div key={project.name} className="space-y-2">
@@ -173,7 +148,7 @@ export function NowSection() {
 
             <div className="mt-6 pt-6 border-t border-border">
               <h4 className="font-medium mb-2 flex items-center gap-2">
-                <Code className="h-4 w-4 text-primary" />
+                <Code className="h-4 w-4 text-muted-foreground" />
                 <span>Latest Commit</span>
               </h4>
               <div className="code-block">
@@ -181,7 +156,7 @@ export function NowSection() {
                   <code>
                     {`feat(identity): implement basic ZK proof generation
 commit 8f7e21a9 • 2 days ago
-                    
+
 - Add circom circuits for identity verification
 - Implement proof generation in TypeScript
 - Update documentation with usage examples`}

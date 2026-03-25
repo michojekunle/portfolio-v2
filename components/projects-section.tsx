@@ -4,13 +4,29 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowUpRight, Github, ExternalLink } from "lucide-react"
+import { Github, ExternalLink } from "lucide-react"
 import Link from "next/link"
+
+interface Project {
+  title: string
+  description: string
+  image: string
+  tags: string[]
+  github: string
+  demo: string
+}
+
+interface Projects {
+  featured: Project[]
+  web3: Project[]
+  frontend: Project[]
+  experiments: Project[]
+}
 
 export function ProjectsSection() {
   const [activeTab, setActiveTab] = useState("featured")
 
-  const projects = {
+  const projects: Projects = {
     featured: [
       {
         title: "DeFi Dashboard",
@@ -103,7 +119,7 @@ export function ProjectsSection() {
   return (
     <section id="projects" className="py-20">
       <h2 className="text-3xl font-bold mb-2">Projects</h2>
-      <div className="h-1 w-20 bg-primary mb-8"></div>
+      <div className="section-rule" />
 
       <Tabs defaultValue="featured" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4 mb-8">
@@ -113,51 +129,61 @@ export function ProjectsSection() {
           <TabsTrigger value="experiments">Experiments</TabsTrigger>
         </TabsList>
 
-        {Object.entries(projects).map(([category, projectList]) => (
+        {(Object.entries(projects) as [string, Project[]][]).map(([category, projectList]) => (
           <TabsContent key={category} value={category} className="animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {projectList.map((project, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {projectList.map((project) => (
                 <div
                   key={project.title}
-                  className="group terminal-card overflow-hidden glow"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className="group content-card overflow-hidden"
                 >
-                  <div className="aspect-video overflow-hidden rounded-md mb-4 bg-muted">
+                  <div className="aspect-video overflow-hidden rounded-md mb-4 bg-muted -mx-6 -mt-6 mb-6">
                     <img
-                      src={project.image || "/placeholder.svg"}
+                      src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover grayscale opacity-60 transition-opacity duration-300 group-hover:opacity-80"
                     />
                   </div>
 
-                  <h3 className="text-xl font-bold mb-2 flex items-center">
-                    {project.title}
-                    <ArrowUpRight className="ml-2 h-4 w-4 opacity-0 -translate-y-1 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0" />
-                  </h3>
+                  <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
 
-                  <p className="text-muted-foreground mb-4">{project.description}</p>
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
+                      <Badge key={tag} variant="secondary" className="text-xs">
                         {tag}
                       </Badge>
                     ))}
                   </div>
 
                   <div className="flex gap-3">
-                    <Button variant="outline" size="sm" className="gap-2" asChild>
-                      <Link href={project.github} target="_blank" rel="noopener noreferrer">
+                    {project.github !== "#" ? (
+                      <Button variant="outline" size="sm" className="gap-2" asChild>
+                        <Link href={project.github} target="_blank" rel="noopener noreferrer">
+                          <Github className="h-4 w-4" />
+                          <span>Code</span>
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button variant="outline" size="sm" className="gap-2" disabled>
                         <Github className="h-4 w-4" />
                         <span>Code</span>
-                      </Link>
-                    </Button>
-                    <Button size="sm" className="gap-2" asChild>
-                      <Link href={project.demo} target="_blank" rel="noopener noreferrer">
+                      </Button>
+                    )}
+                    {project.demo !== "#" ? (
+                      <Button size="sm" className="gap-2" asChild>
+                        <Link href={project.demo} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4" />
+                          <span>Live Demo</span>
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button size="sm" className="gap-2" disabled>
                         <ExternalLink className="h-4 w-4" />
                         <span>Live Demo</span>
-                      </Link>
-                    </Button>
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

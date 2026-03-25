@@ -32,19 +32,19 @@ export function Navbar() {
     <nav
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-background/80 backdrop-blur-md py-3" : "py-6",
+        scrolled
+          ? "bg-background/80 backdrop-blur-md border-b border-border py-3"
+          : "py-6",
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Link
-              href="/"
-              className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
-            >
-              Michael.dev
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="text-xl font-semibold tracking-tight text-foreground"
+          >
+            Michael.dev
+          </Link>
 
           <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
@@ -83,7 +83,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border animate-fade-in">
           <div className="px-4 pt-2 pb-4 space-y-1">
@@ -91,7 +90,7 @@ export function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="block py-2 text-base text-foreground hover:text-primary"
+                className="block py-2 text-base text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {link.name}
@@ -104,7 +103,7 @@ export function Navbar() {
                   <span className="sr-only">GitHub</span>
                 </Button>
               </Link>
-              <Link href="https://twitter.com/devvmichael" target="_blank" rel="noopener noreferrer">
+              <Link href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="icon">
                   <Twitter className="h-5 w-5" />
                   <span className="sr-only">Twitter</span>

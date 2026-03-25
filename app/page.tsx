@@ -10,9 +10,8 @@ import { Footer } from "@/components/footer"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-background to-background/90 relative overflow-hidden">
-      <div className="celestial-gradient"></div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <main className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Navbar />
         <HeroSection />
         <AboutSection />

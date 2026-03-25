@@ -20,6 +20,7 @@ const config = {
     },
     extend: {
       colors: {
+        indigo: "hsl(var(--indigo))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -72,14 +73,6 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "gradient-x": {
-          "0%, 100%": {
-            "background-position": "0% 50%",
-          },
-          "50%": {
-            "background-position": "100% 50%",
-          },
-        },
         "fade-in": {
           "0%": {
             opacity: "0",
@@ -110,7 +103,6 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "gradient-x": "gradient-x 15s ease infinite",
         "fade-in": "fade-in 0.5s ease-out",
         "fade-up": "fade-up 0.5s ease-out",
         "cursor-blink": "cursor-blink 1s step-end infinite",

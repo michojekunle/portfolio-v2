@@ -12,16 +12,16 @@ export function Footer() {
 
         <div className="flex items-center text-sm text-muted-foreground">
           <span>Made with</span>
-          <Heart className="h-3 w-3 mx-1 text-accent" />
+          <Heart className="h-3 w-3 mx-1 text-muted-foreground" />
           <span>and</span>
-          <span className="ml-1 font-medium text-primary">Next.js</span>
+          <span className="ml-1 font-medium text-foreground">Next.js</span>
         </div>
       </div>
 
       <div className="mt-8 text-center">
         <p className="text-xs text-muted-foreground">
-          "And whatever you do, whether in word or deed, do it all in the name of the Lord Jesus, giving thanks to God
-          the Father through him." — Colossians 3:17
+          &ldquo;And whatever you do, whether in word or deed, do it all in the name of the Lord Jesus, giving thanks to God
+          the Father through him.&rdquo; — Colossians 3:17
         </p>
       </div>
     </footer>
