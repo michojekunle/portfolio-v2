@@ -25,7 +25,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' blob: data: https:",
               "font-src 'self'",
-              "connect-src 'self' https://bible-api.com",
+              "connect-src 'self' https://bible-api.com https://zrsjelyugckelirlyyff.supabase.co",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

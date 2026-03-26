@@ -1,95 +1,20 @@
-"use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { createClient } from "@/lib/supabase/server"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { ArrowRight, Calendar } from "lucide-react"
-import { toast } from "sonner"
+import Link from "next/link"
+import { format } from "date-fns"
+import { NewsletterForm } from "./newsletter-form"
 
-interface BlogPost {
-  title: string
-  excerpt: string
-  date: string
-  category: string
-  readTime: string
-  slug: string
-}
+export async function BlogSection(): Promise<React.ReactElement> {
+  const supabase = await createClient()
 
-const FALLBACK_VERSE = { text: "", reference: "" }
-void FALLBACK_VERSE
-
-export function BlogSection() {
-  const [subscribeEmail, setSubscribeEmail] = useState("")
-  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success">("idle")
-
-  const blogPosts: BlogPost[] = [
-    {
-      title: "Building Accessible Web3 Applications",
-      excerpt: "How to ensure your dApps are accessible to all users, regardless of ability or technical knowledge.",
-      date: "May 28, 2025",
-      category: "Web3",
-      readTime: "8 min read",
-      slug: "#",
-    },
-    {
-      title: "The Intersection of Faith and Technology",
-      excerpt:
-        "Exploring how spiritual principles can guide ethical technology development in the age of AI and blockchain.",
-      date: "April 15, 2025",
-      category: "Reflection",
-      readTime: "12 min read",
-      slug: "#",
-    },
-    {
-      title: "Zero-Knowledge Proofs: A Practical Introduction",
-      excerpt: "Breaking down complex ZK concepts with practical examples and code snippets for developers.",
-      date: "March 3, 2025",
-      category: "Technical",
-      readTime: "15 min read",
-      slug: "#",
-    },
-    {
-      title: "Functional Programming Patterns in TypeScript",
-      excerpt: "Applying functional programming principles to write more maintainable TypeScript code.",
-      date: "February 10, 2025",
-      category: "Technical",
-      readTime: "10 min read",
-      slug: "#",
-    },
-  ]
-
-  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
-    setSubscribeStatus("loading")
-
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error("Supabase configuration missing")
-      }
-
-      const { createClient } = await import("@supabase/supabase-js")
-      const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-      const { error } = await supabase
-        .from("email_subscribers")
-        .insert([{ email: subscribeEmail.trim().toLowerCase() }])
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      setSubscribeStatus("success")
-      toast.success("You&apos;re subscribed! I&apos;ll send new posts your way.")
-    } catch (error: unknown) {
-      console.error("[subscribe] Error:", error)
-      toast.error("Subscription failed. Please try again.")
-      setSubscribeStatus("idle")
-    }
-  }
+  const { data: posts } = await supabase
+    .from("blog_posts")
+    .select("id, title, slug, excerpt, category, read_time, published_at")
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .limit(4)
 
   return (
     <section id="blog" className="py-20">
@@ -98,63 +23,58 @@ export function BlogSection() {
           <h2 className="text-3xl font-bold mb-2">Blog &amp; Writing</h2>
           <div className="section-rule" />
         </div>
-        <Button variant="ghost" size="sm" className="group text-muted-foreground" disabled>
-          View All
-          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+        <Button variant="ghost" size="sm" className="group text-muted-foreground" asChild>
+          <Link href="/blog">
+            View All
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {blogPosts.map((post) => (
-          <article
-            key={post.title}
-            className="group content-card hover:border-foreground/20 transition-colors"
-          >
-            <Badge
-              variant={post.category === "Technical" ? "default" : post.category === "Web3" ? "secondary" : "outline"}
-              className="mb-4 text-xs"
+      {!posts?.length ? (
+        <p className="text-sm text-muted-foreground">No posts yet. Check back soon.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {posts.map((post) => (
+            <Link
+              key={post.id}
+              href={`/blog/${post.slug}`}
+              className="group content-card hover:border-foreground/20 transition-colors no-underline"
             >
-              {post.category}
-            </Badge>
+              <Badge
+                variant={post.category === "Technical" ? "default" : post.category === "Web3" ? "secondary" : "outline"}
+                className="mb-4 text-xs"
+              >
+                {post.category}
+              </Badge>
 
-            <h3 className="text-lg font-semibold mb-2 group-hover:text-foreground transition-colors leading-snug">
-              {post.title}
-            </h3>
+              <h3 className="text-lg font-semibold mb-2 group-hover:text-foreground transition-colors leading-snug">
+                {post.title}
+              </h3>
 
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.excerpt}</p>
+              {post.excerpt && (
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.excerpt}</p>
+              )}
 
-            <div className="flex items-center text-xs text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5 mr-1.5" />
-              <span>{post.date}</span>
-              <span className="mx-2">·</span>
-              <span>{post.readTime}</span>
-            </div>
-          </article>
-        ))}
-      </div>
+              <div className="flex items-center text-xs text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5 mr-1.5" />
+                <span>
+                  {post.published_at ? format(new Date(post.published_at), "MMM d, yyyy") : ""}
+                </span>
+                {post.read_time && (
+                  <>
+                    <span className="mx-2">·</span>
+                    <span>{post.read_time}</span>
+                  </>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
       <div className="mt-12 flex justify-center">
-        <form onSubmit={handleSubscribe} className="flex gap-2 w-full max-w-sm">
-          <Input
-            type="email"
-            placeholder="your@email.com"
-            value={subscribeEmail}
-            onChange={(e) => setSubscribeEmail(e.target.value)}
-            required
-            disabled={subscribeStatus === "loading" || subscribeStatus === "success"}
-            className="flex-1"
-          />
-          <Button
-            type="submit"
-            disabled={subscribeStatus === "loading" || subscribeStatus === "success"}
-          >
-            {subscribeStatus === "loading"
-              ? "..."
-              : subscribeStatus === "success"
-                ? "Subscribed"
-                : "Subscribe"}
-          </Button>
-        </form>
+        <NewsletterForm />
       </div>
     </section>
   )

@@ -45,7 +45,7 @@ export default async function Image(): Promise<ImageResponse> {
           }}
         />
 
-        {/* Top row */}
+        {/* Top row — logo mark + location */}
         <div
           style={{
             display: "flex",
@@ -54,16 +54,55 @@ export default async function Image(): Promise<ImageResponse> {
             position: "relative",
           }}
         >
-          <span
+          {/* MO logo mark */}
+          <div
             style={{
-              fontSize: 12,
-              color: "#3a3a3a",
-              letterSpacing: "3px",
-              textTransform: "uppercase",
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
             }}
           >
-            michael.dev
-          </span>
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                background: "#111",
+                borderRadius: 8,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1px solid rgba(255,255,255,0.08)",
+                position: "relative",
+              }}
+            >
+              <svg
+                width="44"
+                height="44"
+                viewBox="0 0 44 44"
+                style={{ position: "absolute" }}
+              >
+                <polyline
+                  points="10,34 10,10 22,22 34,10 34,34"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <span
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#3a3a3a",
+                letterSpacing: "0.3px",
+              }}
+            >
+              Michael Ojekunle
+            </span>
+          </div>
+
           <span
             style={{
               fontSize: 12,

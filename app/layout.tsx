@@ -60,11 +60,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
+  // icon.tsx + apple-icon.tsx in app/ are auto-detected by Next.js
+  // and injected into <head> automatically — no manual paths needed.
   alternates: {
     canonical: "https://michaelojekunle.dev",
   },
