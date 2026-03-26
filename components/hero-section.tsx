@@ -56,10 +56,12 @@ export function HeroSection() {
         </h1>
 
         <div className="h-16 md:h-24">
-          <h2 className="text-2xl md:text-4xl font-medium text-muted-foreground mb-2">
+          <h2 aria-hidden="true" className="text-2xl md:text-4xl font-medium text-muted-foreground mb-2">
             {displayText}
             <span className="inline-block w-0.5 h-6 md:h-8 bg-foreground animate-cursor-blink ml-1 align-middle" />
           </h2>
+          {/* Static phrase announced by screen readers; visual typewriter is aria-hidden */}
+          <span className="sr-only">{phrases[currentPhraseIndex]}</span>
         </div>
 
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mt-6 mb-8 leading-relaxed">

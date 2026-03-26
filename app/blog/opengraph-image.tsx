@@ -1,35 +1,11 @@
 import { ImageResponse } from "next/og";
-import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "edge";
+export const alt = "Blog — Michael Ojekunle";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-interface Props {
-  params: Promise<{ slug: string }>;
-}
-
-export default async function BlogPostOGImage({ params }: Props): Promise<ImageResponse> {
-  const { slug } = await params;
-
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  const { data: post } = await supabase
-    .from("blog_posts")
-    .select("title, excerpt, category, published_at")
-    .eq("slug", slug)
-    .single();
-
-  const title = post?.title ?? "Blog Post";
-  const excerpt = post?.excerpt ?? "";
-  const category = post?.category ?? "Article";
-
-  const truncatedExcerpt =
-    excerpt.length > 140 ? excerpt.slice(0, 137) + "…" : excerpt;
-
+export default function BlogIndexOGImage(): ImageResponse {
   return new ImageResponse(
     (
       <div
@@ -45,16 +21,16 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
           fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
         }}
       >
-        {/* Radial glow — top-left origin for asymmetric depth */}
+        {/* Glow — centred, soft */}
         <div
           style={{
             position: "absolute",
-            top: -160,
-            left: -100,
+            bottom: -120,
+            right: -60,
             width: 700,
             height: 500,
             background:
-              "radial-gradient(ellipse, rgba(255,255,255,0.035) 0%, transparent 65%)",
+              "radial-gradient(ellipse, rgba(255,255,255,0.03) 0%, transparent 65%)",
             borderRadius: "50%",
           }}
         />
@@ -70,7 +46,7 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
           }}
         />
 
-        {/* Top row — logomark + domain */}
+        {/* Top row — logomark + label */}
         <div
           style={{
             display: "flex",
@@ -80,7 +56,6 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            {/* M geometric mark */}
             <div
               style={{
                 width: 40,
@@ -122,35 +97,24 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
             </span>
           </div>
 
-          {/* Category pill */}
           <span
             style={{
-              background: "rgba(255,255,255,0.06)",
-              color: "rgba(255,255,255,0.35)",
               fontSize: 12,
-              fontWeight: 500,
-              padding: "6px 16px",
-              borderRadius: 100,
-              letterSpacing: "1.5px",
+              color: "#333",
+              letterSpacing: "2px",
               textTransform: "uppercase",
-              border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            {category}
+            Writing
           </span>
         </div>
 
-        {/* Main content */}
+        {/* Main — large "Blog" wordmark + description */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "0px",
             position: "relative",
-            flex: 1,
-            justifyContent: "center",
-            paddingTop: "20px",
-            paddingBottom: "20px",
           }}
         >
           {/* Accent line */}
@@ -158,41 +122,37 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
             style={{
               width: 40,
               height: 2,
-              background: "rgba(255,255,255,0.15)",
+              background: "rgba(255,255,255,0.12)",
               marginBottom: "32px",
             }}
           />
 
-          {/* Post title */}
           <div
             style={{
-              fontSize: title.length > 70 ? 44 : title.length > 50 ? 52 : 60,
+              fontSize: 112,
               fontWeight: 800,
-              color: "#f2f2f2",
-              lineHeight: 1.1,
-              letterSpacing: "-2px",
-              maxWidth: 960,
-              marginBottom: truncatedExcerpt ? "24px" : "0px",
+              color: "#f4f4f4",
+              lineHeight: 0.9,
+              letterSpacing: "-6px",
+              marginBottom: "28px",
             }}
           >
-            {title}
+            Blog
           </div>
 
-          {/* Excerpt */}
-          {truncatedExcerpt && (
-            <div
-              style={{
-                fontSize: 22,
-                fontWeight: 400,
-                color: "rgba(255,255,255,0.3)",
-                lineHeight: 1.55,
-                maxWidth: 840,
-                letterSpacing: "-0.2px",
-              }}
-            >
-              {truncatedExcerpt}
-            </div>
-          )}
+          <div
+            style={{
+              fontSize: 24,
+              fontWeight: 400,
+              color: "rgba(255,255,255,0.25)",
+              letterSpacing: "-0.3px",
+              maxWidth: 680,
+              lineHeight: 1.5,
+            }}
+          >
+            Technical deep-dives, Web3 insights, and reflections on faith,
+            code, and building for the decentralized future.
+          </div>
         </div>
 
         {/* Bottom row */}
@@ -220,28 +180,26 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: "16px",
             }}
           >
-            <div
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: "50%",
-                background: "#222",
-                display: "flex",
-              }}
-            />
-            <span
-              style={{
-                fontSize: 12,
-                color: "#272727",
-                letterSpacing: "2px",
-                textTransform: "uppercase",
-              }}
-            >
-              Faith-driven developer
-            </span>
+            {["Technical", "Web3", "Reflection"].map((tag, i) => (
+              <span
+                key={i}
+                style={{
+                  fontSize: 11,
+                  color: "#252525",
+                  letterSpacing: "1.5px",
+                  textTransform: "uppercase",
+                  padding: "4px 10px",
+                  border: "1px solid rgba(255,255,255,0.05)",
+                  borderRadius: 4,
+                  display: "flex",
+                }}
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </div>

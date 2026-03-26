@@ -2,6 +2,10 @@ import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  contactNotificationEmail,
+  contactConfirmationEmail,
+} from "@/lib/email/templates";
 
 class ContactError extends Error {
   constructor(
@@ -133,20 +137,24 @@ export async function POST(request: Request): Promise<Response> {
           "Michael Ojekunle <info@michaelojekunle.dev>";
 
         await resend.batch.send([
-          // Notification to Michael
+          // Notification to Michael — full design template
           {
             from: infoFrom,
             to: toEmail,
-            cc: 'michojekunle1@gmail.com',
-            subject: `New contact: ${input.subject}`,
-            html: `<p><strong>Name:</strong> ${input.name}</p><p><strong>Email:</strong> ${input.email}</p><p><strong>Subject:</strong> ${input.subject}</p><p><strong>Message:</strong> ${input.message}</p>`,
+            subject: `New message: ${input.subject}`,
+            html: contactNotificationEmail({
+              name: input.name,
+              email: input.email,
+              subject: input.subject,
+              message: input.message,
+            }),
           },
-          // Confirmation to sender
+          // Confirmation to the sender — branded template
           {
             from: notifyFrom,
             to: input.email,
             subject: "Got your message — I'll be in touch",
-            html: `<p>Hi ${input.name},</p><p>Thanks for reaching out. I've received your message and will get back to you soon.</p><p>— Michael</p>`,
+            html: contactConfirmationEmail(input.name),
           },
         ]);
       } catch (emailError: unknown) {
