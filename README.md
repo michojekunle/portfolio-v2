@@ -261,13 +261,20 @@ SUPABASE_KEY=your-service-role-key
 GITHUB_USERNAME=michojekunle
 GITHUB_TOKEN=github_pat_...    # Fine-grained PAT, read-only public repos
 
-# Contact form
-SENDGRID_API_KEY=SG....
-CONTACT_TO_EMAIL=your@email.com
-CONTACT_FROM_EMAIL=noreply@michaelojekunle.dev
+# Resend (transactional email + newsletter)
+RESEND_API_KEY=re_...
+CONTACT_TO_EMAIL=info@michaelojekunle.dev
+CONTACT_FROM_EMAIL=Michael Ojekunle <no-reply@michaelojekunle.dev>
+CONTACT_INFO_EMAIL=Michael Ojekunle <info@michaelojekunle.dev>
+NEWSLETTER_FROM_EMAIL=Michael Ojekunle <newsletter@michaelojekunle.dev>
+
+# Public site URL (used in email links)
+NEXT_PUBLIC_SITE_URL=https://michaelojekunle.dev
 ```
 
 `GITHUB_TOKEN` is required — GitHub's GraphQL API doesn't accept unauthenticated requests. Create a fine-grained PAT at **github.com/settings/tokens** with read-only access to public repositories.
+
+`RESEND_API_KEY` — get yours at [resend.com](https://resend.com). The free tier (3,000 emails/month) is plenty for a personal newsletter. After creating an account, verify your domain (`michaelojekunle.dev`) under **Domains** to unlock sending from `@michaelojekunle.dev` addresses.
 
 ### 4. Create your admin account
 

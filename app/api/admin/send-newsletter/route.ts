@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import sgMail from "@sendgrid/mail";
+import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import {
   blogPostEmail,
@@ -30,24 +30,17 @@ const payloadSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
-// Send to all subscribers in parallel chunks of 25 to stay within rate limits.
+// Resend batch API accepts up to 100 emails per call.
 async function sendBatch(
+  resend: Resend,
   emails: Array<{ email: string; subject: string; html: string }>,
-  fromEmail: string,
-  fromName: string
+  from: string
 ): Promise<void> {
-  const CHUNK = 25;
+  const CHUNK = 100;
   for (let i = 0; i < emails.length; i += CHUNK) {
     const chunk = emails.slice(i, i + CHUNK);
-    await Promise.all(
-      chunk.map(({ email, subject, html }) =>
-        sgMail.send({
-          to: email,
-          from: { email: fromEmail, name: fromName },
-          subject,
-          html,
-        })
-      )
+    await resend.batch.send(
+      chunk.map(({ email, subject, html }) => ({ from, to: email, subject, html }))
     );
   }
 }
@@ -63,16 +56,18 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const sendgridKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.CONTACT_FROM_EMAIL;
-  const fromName = "Michael Ojekunle";
-
-  if (!sendgridKey || !fromEmail) {
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) {
     return NextResponse.json(
-      { error: "Email not configured — set SENDGRID_API_KEY and CONTACT_FROM_EMAIL" },
+      { error: "Email not configured — set RESEND_API_KEY" },
       { status: 500 }
     );
   }
+
+  const resend = new Resend(resendKey);
+  const newsletterFrom =
+    process.env.NEWSLETTER_FROM_EMAIL ??
+    "Michael Ojekunle <newsletter@michaelojekunle.dev>";
 
   let body: unknown;
   try {
@@ -104,8 +99,6 @@ export async function POST(request: Request): Promise<Response> {
   if (!subscribers?.length) {
     return NextResponse.json({ error: "No subscribers to send to" }, { status: 400 });
   }
-
-  sgMail.setApiKey(sendgridKey);
 
   const payload = parsed.data;
 
@@ -202,7 +195,7 @@ export async function POST(request: Request): Promise<Response> {
       });
     }
 
-    await sendBatch(recipientEmails, fromEmail, fromName);
+    await sendBatch(resend, recipientEmails, newsletterFrom);
 
     // Log the send
     await supabase.from("newsletter_sends").insert({

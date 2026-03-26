@@ -1,4 +1,4 @@
-import sgMail from "@sendgrid/mail";
+import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -117,37 +117,44 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    // Email notifications are best-effort — a SendGrid misconfiguration
-    // must not surface as a 500 to the user after the message is saved.
-    const sendgridKey = process.env.SENDGRID_API_KEY;
+    // Email notifications are best-effort — a missing/invalid key must not
+    // surface as a 500 to the user after the message is already saved to DB.
+    const resendKey = process.env.RESEND_API_KEY;
     const toEmail = process.env.CONTACT_TO_EMAIL;
-    const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
-    if (sendgridKey && toEmail && fromEmail) {
+    if (resendKey && toEmail) {
       try {
-        sgMail.setApiKey(sendgridKey);
+        const resend = new Resend(resendKey);
+        const notifyFrom =
+          process.env.CONTACT_FROM_EMAIL ??
+          "Michael Ojekunle <no-reply@michaelojekunle.dev>";
+        const infoFrom =
+          process.env.CONTACT_INFO_EMAIL ??
+          "Michael Ojekunle <info@michaelojekunle.dev>";
 
-        await sgMail.send({
-          to: toEmail,
-          from: fromEmail,
-          subject: `New contact: ${input.subject}`,
-          text: `Name: ${input.name}\nEmail: ${input.email}\nSubject: ${input.subject}\nMessage: ${input.message}`,
-          html: `<p><strong>Name:</strong> ${input.name}</p><p><strong>Email:</strong> ${input.email}</p><p><strong>Subject:</strong> ${input.subject}</p><p><strong>Message:</strong> ${input.message}</p>`,
-        });
-
-        await sgMail.send({
-          to: input.email,
-          from: fromEmail,
-          subject: "Thank you for reaching out",
-          text: "Thank you for your message. I have received it and will get back to you soon.",
-          html: "<p>Thank you for your message. I have received it and will get back to you soon.</p>",
-        });
+        await resend.batch.send([
+          // Notification to Michael
+          {
+            from: infoFrom,
+            to: toEmail,
+            cc: 'michojekunle1@gmail.com',
+            subject: `New contact: ${input.subject}`,
+            html: `<p><strong>Name:</strong> ${input.name}</p><p><strong>Email:</strong> ${input.email}</p><p><strong>Subject:</strong> ${input.subject}</p><p><strong>Message:</strong> ${input.message}</p>`,
+          },
+          // Confirmation to sender
+          {
+            from: notifyFrom,
+            to: input.email,
+            subject: "Got your message — I'll be in touch",
+            html: `<p>Hi ${input.name},</p><p>Thanks for reaching out. I've received your message and will get back to you soon.</p><p>— Michael</p>`,
+          },
+        ]);
       } catch (emailError: unknown) {
         // Log but do not rethrow — message is already in the DB and visible in /admin/messages.
         console.error("[contact] Email delivery failed (message saved to DB):", emailError);
       }
     } else {
-      console.warn("[contact] Email env vars not configured — skipping email notifications.");
+      console.warn("[contact] RESEND_API_KEY or CONTACT_TO_EMAIL not set — skipping email notifications.");
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
