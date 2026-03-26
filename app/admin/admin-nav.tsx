@@ -12,6 +12,8 @@ const navLinks = [
   { name: "Blog", href: "/admin/blog" },
   { name: "Projects", href: "/admin/projects" },
   { name: "Now", href: "/admin/now" },
+  { name: "Messages", href: "/admin/messages" },
+  { name: "Newsletter", href: "/admin/newsletter" },
 ];
 
 export function AdminNav({ userEmail }: { userEmail: string }) {

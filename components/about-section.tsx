@@ -31,7 +31,7 @@ export function AboutSection() {
               <div className="prose dark:prose-invert max-w-none">
                 <p className="text-lg">
                   I craft digital experiences at the intersection of frontend elegance and blockchain innovation. With
-                  over 3 years of experience in web development, I&apos;ve specialized in building performant, accessible,
+                  over 4 years of experience in web development, I&apos;ve specialized in building performant, accessible,
                   and beautiful interfaces that bridge the gap between users and complex systems.
                 </p>
 
@@ -87,7 +87,7 @@ export function AboutSection() {
                 </p>
 
                 <p className="mt-4">
-                  Music plays an important role in my life — whether it&apos;s playing piano, attending worship services, or
+                  Music plays an important role in my life — whether it&apos;s playing guiter, attending worship services, or
                   discovering new artists. I find that music, like code, is a language that speaks to both logic and
                   emotion.
                 </p>

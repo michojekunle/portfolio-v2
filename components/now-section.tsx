@@ -5,10 +5,16 @@ import { NowTabs } from "./now-tabs"
 export async function NowSection(): Promise<React.ReactElement> {
   const supabase = await createClient()
 
-  const [{ data: books }, { data: learning }, { data: building }] = await Promise.all([
+  const [
+    { data: books },
+    { data: learning },
+    { data: building },
+    { data: bookNotes },
+  ] = await Promise.all([
     supabase.from("books").select("*").order("sort_order"),
     supabase.from("learning_items").select("*").order("sort_order"),
     supabase.from("building_projects").select("*").order("sort_order"),
+    supabase.from("book_notes").select("*").order("created_at"),
   ])
 
   const allUpdates = [
@@ -37,6 +43,7 @@ export async function NowSection(): Promise<React.ReactElement> {
         books={books ?? []}
         learning={learning ?? []}
         building={building ?? []}
+        bookNotes={bookNotes ?? []}
       />
     </section>
   )

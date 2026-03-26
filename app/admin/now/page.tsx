@@ -6,12 +6,17 @@ import { BuildingManager } from "./building-manager";
 export default async function AdminNowPage(): Promise<React.ReactElement> {
   const supabase = await createClient();
 
-  const [{ data: books }, { data: learning }, { data: building }] =
-    await Promise.all([
-      supabase.from("books").select("*").order("sort_order"),
-      supabase.from("learning_items").select("*").order("sort_order"),
-      supabase.from("building_projects").select("*").order("sort_order"),
-    ]);
+  const [
+    { data: books },
+    { data: learning },
+    { data: building },
+    { data: bookNotes },
+  ] = await Promise.all([
+    supabase.from("books").select("*").order("sort_order"),
+    supabase.from("learning_items").select("*").order("sort_order"),
+    supabase.from("building_projects").select("*").order("sort_order"),
+    supabase.from("book_notes").select("*").order("created_at"),
+  ]);
 
   return (
     <div className="space-y-12">
@@ -24,7 +29,7 @@ export default async function AdminNowPage(): Promise<React.ReactElement> {
 
       <section>
         <h2 className="text-sm font-medium mb-4">Books</h2>
-        <BooksManager initialBooks={books ?? []} />
+        <BooksManager initialBooks={books ?? []} initialNotes={bookNotes ?? []} />
       </section>
 
       <section>

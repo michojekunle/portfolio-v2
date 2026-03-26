@@ -95,12 +95,10 @@ export async function POST(request: Request): Promise<Response> {
 
     const supabaseUrl = getEnvVar("SUPABASE_URL");
     const supabaseKey = getEnvVar("SUPABASE_KEY");
-    const toEmail = getEnvVar("CONTACT_TO_EMAIL");
-    const fromEmail = getEnvVar("CONTACT_FROM_EMAIL");
-    const sendgridKey = getEnvVar("SENDGRID_API_KEY");
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Save to DB first — this is the source of truth.
     const { error: dbError } = await supabase.from("messages").insert([
       {
         name: input.name,
@@ -119,23 +117,38 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    sgMail.setApiKey(sendgridKey);
+    // Email notifications are best-effort — a SendGrid misconfiguration
+    // must not surface as a 500 to the user after the message is saved.
+    const sendgridKey = process.env.SENDGRID_API_KEY;
+    const toEmail = process.env.CONTACT_TO_EMAIL;
+    const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
-    await sgMail.send({
-      to: toEmail,
-      from: fromEmail,
-      subject: `New contact: ${input.subject}`,
-      text: `Name: ${input.name}\nEmail: ${input.email}\nSubject: ${input.subject}\nMessage: ${input.message}`,
-      html: `<p><strong>Name:</strong> ${input.name}</p><p><strong>Email:</strong> ${input.email}</p><p><strong>Subject:</strong> ${input.subject}</p><p><strong>Message:</strong> ${input.message}</p>`,
-    });
+    if (sendgridKey && toEmail && fromEmail) {
+      try {
+        sgMail.setApiKey(sendgridKey);
 
-    await sgMail.send({
-      to: input.email,
-      from: fromEmail,
-      subject: "Thank you for reaching out",
-      text: "Thank you for your message. I have received it and will get back to you soon.",
-      html: "<p>Thank you for your message. I have received it and will get back to you soon.</p>",
-    });
+        await sgMail.send({
+          to: toEmail,
+          from: fromEmail,
+          subject: `New contact: ${input.subject}`,
+          text: `Name: ${input.name}\nEmail: ${input.email}\nSubject: ${input.subject}\nMessage: ${input.message}`,
+          html: `<p><strong>Name:</strong> ${input.name}</p><p><strong>Email:</strong> ${input.email}</p><p><strong>Subject:</strong> ${input.subject}</p><p><strong>Message:</strong> ${input.message}</p>`,
+        });
+
+        await sgMail.send({
+          to: input.email,
+          from: fromEmail,
+          subject: "Thank you for reaching out",
+          text: "Thank you for your message. I have received it and will get back to you soon.",
+          html: "<p>Thank you for your message. I have received it and will get back to you soon.</p>",
+        });
+      } catch (emailError: unknown) {
+        // Log but do not rethrow — message is already in the DB and visible in /admin/messages.
+        console.error("[contact] Email delivery failed (message saved to DB):", emailError);
+      }
+    } else {
+      console.warn("[contact] Email env vars not configured — skipping email notifications.");
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: unknown) {

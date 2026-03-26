@@ -143,11 +143,20 @@ create table books (
   author text not null,
   progress int default 0,
   status text default 'reading',
-  notes text,
   cover_url text,
   sort_order int default 0,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
+);
+
+-- Book notes (notes, quotes, takeaways — multiple per book)
+create table book_notes (
+  id uuid primary key default gen_random_uuid(),
+  book_id uuid not null references books(id) on delete cascade,
+  type text not null check (type in ('note', 'quote', 'takeaway')),
+  content text not null,
+  page_ref text,
+  created_at timestamptz default now()
 );
 
 -- Learning items
@@ -174,6 +183,26 @@ create table building_projects (
   updated_at timestamptz default now()
 );
 
+-- Contact form messages (visible in admin, private)
+create table messages (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text not null,
+  subject text not null,
+  message text not null,
+  read boolean default false,
+  created_at timestamptz default now()
+);
+
+-- Newsletter send history
+create table newsletter_sends (
+  id uuid primary key default gen_random_uuid(),
+  subject text not null,
+  type text not null check (type in ('blog_post', 'digest', 'custom')),
+  recipient_count int not null default 0,
+  sent_at timestamptz default now()
+);
+
 -- Email subscribers
 create table email_subscribers (
   id uuid primary key default gen_random_uuid(),
@@ -185,20 +214,31 @@ create table email_subscribers (
 alter table blog_posts enable row level security;
 alter table projects enable row level security;
 alter table books enable row level security;
+alter table book_notes enable row level security;
 alter table learning_items enable row level security;
 alter table building_projects enable row level security;
+alter table messages enable row level security;
+alter table newsletter_sends enable row level security;
 alter table email_subscribers enable row level security;
 
 create policy "public read" on blog_posts for select using (true);
 create policy "public read" on projects for select using (true);
 create policy "public read" on books for select using (true);
+create policy "public read" on book_notes for select using (true);
 create policy "public read" on learning_items for select using (true);
 create policy "public read" on building_projects for select using (true);
 create policy "auth write" on blog_posts for all using (auth.role() = 'authenticated');
 create policy "auth write" on projects for all using (auth.role() = 'authenticated');
 create policy "auth write" on books for all using (auth.role() = 'authenticated');
+create policy "auth write" on book_notes for all using (auth.role() = 'authenticated');
 create policy "auth write" on learning_items for all using (auth.role() = 'authenticated');
 create policy "auth write" on building_projects for all using (auth.role() = 'authenticated');
+-- Messages: only authenticated users can read/update/delete; anyone can insert via contact form
+create policy "auth read" on messages for select using (auth.role() = 'authenticated');
+create policy "auth update" on messages for update using (auth.role() = 'authenticated');
+create policy "auth delete" on messages for delete using (auth.role() = 'authenticated');
+create policy "anon insert" on messages for insert with check (true);
+create policy "auth read write" on newsletter_sends for all using (auth.role() = 'authenticated');
 create policy "anon insert" on email_subscribers for insert with check (true);
 ```
 
