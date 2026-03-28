@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { formatDistanceToNow } from "date-fns"
+import { fetchCommitsForProjects } from "@/lib/github"
 import { NowTabs } from "./now-tabs"
 
 export async function NowSection(): Promise<React.ReactElement> {
@@ -16,6 +17,13 @@ export async function NowSection(): Promise<React.ReactElement> {
     supabase.from("building_projects").select("*").order("sort_order"),
     supabase.from("book_notes").select("*").order("created_at"),
   ])
+
+  // Fetch latest commits for building projects that have GitHub URLs
+  const githubUrls = (building ?? [])
+    .map((p) => p.github_url as string)
+    .filter(Boolean)
+  const commitsMap = await fetchCommitsForProjects(githubUrls, 3)
+  const commitsByUrl = Object.fromEntries(commitsMap)
 
   const allUpdates = [
     ...(books ?? []).map((b) => new Date(b.updated_at as string)),
@@ -44,6 +52,7 @@ export async function NowSection(): Promise<React.ReactElement> {
         learning={learning ?? []}
         building={building ?? []}
         bookNotes={bookNotes ?? []}
+        commitsByUrl={commitsByUrl}
       />
     </section>
   )

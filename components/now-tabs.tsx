@@ -13,8 +13,10 @@ import {
   Quote,
   FileText,
   Lightbulb,
+  GitCommit,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { formatDistanceToNow } from "date-fns"
 
 type NoteType = "note" | "quote" | "takeaway"
 
@@ -32,6 +34,7 @@ interface BookItem {
   author: string
   progress: number
   status: string
+  cover_url: string | null
 }
 
 interface LearningItem {
@@ -50,11 +53,19 @@ interface BuildingProject {
   github_url: string | null
 }
 
+interface CommitItem {
+  sha: string
+  message: string
+  date: string
+  url: string
+}
+
 interface NowTabsProps {
   books: BookItem[]
   learning: LearningItem[]
   building: BuildingProject[]
   bookNotes: BookNote[]
+  commitsByUrl: Record<string, CommitItem[]>
 }
 
 const noteTypeConfig: Record<NoteType, { label: string; icon: React.ReactNode }> = {
@@ -144,30 +155,41 @@ function BookCard({ book, notes }: BookCardProps): React.ReactElement {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <h4 className="font-medium">{book.title}</h4>
-          <p className="text-sm text-muted-foreground">by {book.author}</p>
-        </div>
-        <Badge
-          variant={
-            book.status === "reading"
-              ? "default"
-              : book.status === "completed"
-                ? "secondary"
-                : "outline"
-          }
-          className="shrink-0 capitalize"
-        >
-          {book.status}
-        </Badge>
-      </div>
+      <div className="flex gap-4">
+        {book.cover_url && (
+          <img
+            src={book.cover_url}
+            alt={`Cover of ${book.title}`}
+            className="w-12 h-[72px] rounded object-cover shrink-0 bg-muted"
+          />
+        )}
+        <div className="flex-1 min-w-0 space-y-2">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <h4 className="font-medium">{book.title}</h4>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+            </div>
+            <Badge
+              variant={
+                book.status === "reading"
+                  ? "default"
+                  : book.status === "completed"
+                    ? "secondary"
+                    : "outline"
+              }
+              className="shrink-0 capitalize"
+            >
+              {book.status}
+            </Badge>
+          </div>
 
-      <div className="flex items-center gap-2">
-        <Progress value={book.progress} className="h-1.5 flex-1" />
-        <span className="text-sm text-muted-foreground whitespace-nowrap">
-          {book.progress}%
-        </span>
+          <div className="flex items-center gap-2">
+            <Progress value={book.progress} className="h-1.5 flex-1" />
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              {book.progress}%
+            </span>
+          </div>
+        </div>
       </div>
 
       {hasNotes && (
@@ -197,6 +219,7 @@ export function NowTabs({
   learning,
   building,
   bookNotes,
+  commitsByUrl,
 }: NowTabsProps): React.ReactElement {
   // Group notes by book for O(1) lookup
   const notesByBook = new Map<string, BookNote[]>()
@@ -273,45 +296,83 @@ export function NowTabs({
             <p className="text-sm text-muted-foreground">Nothing here yet.</p>
           ) : (
             <div className="space-y-8">
-              {building.map((project) => (
-                <div key={project.id} className="space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="font-medium">{project.name}</h4>
-                    <Badge
-                      variant={
-                        project.status === "In Progress"
-                          ? "default"
-                          : project.status === "Shipped"
-                            ? "secondary"
-                            : "outline"
-                      }
-                      className="shrink-0"
-                    >
-                      {project.status}
-                    </Badge>
+              {building.map((project) => {
+                const commits = project.github_url
+                  ? commitsByUrl[project.github_url] ?? []
+                  : []
+
+                return (
+                  <div key={project.id} className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-medium">{project.name}</h4>
+                      <Badge
+                        variant={
+                          project.status === "In Progress"
+                            ? "default"
+                            : project.status === "Shipped"
+                              ? "secondary"
+                              : "outline"
+                        }
+                        className="shrink-0"
+                      >
+                        {project.status}
+                      </Badge>
+                    </div>
+                    {project.description && (
+                      <p className="text-sm text-muted-foreground">
+                        {project.description}
+                      </p>
+                    )}
+                    {project.notes && (
+                      <p className="text-sm text-muted-foreground leading-relaxed mt-2 pt-2 border-t border-border/60 whitespace-pre-wrap">
+                        {project.notes}
+                      </p>
+                    )}
+
+                    {/* Latest commits */}
+                    {commits.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border/60">
+                        <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+                          <GitCommit className="h-3 w-3" />
+                          Recent commits
+                        </p>
+                        <div className="space-y-1.5">
+                          {commits.map((commit) => (
+                            <a
+                              key={commit.sha}
+                              href={commit.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-baseline gap-2 group text-xs"
+                            >
+                              <code className="text-[10px] font-mono text-muted-foreground/60 shrink-0">
+                                {commit.sha}
+                              </code>
+                              <span className="text-muted-foreground group-hover:text-foreground transition-colors truncate">
+                                {commit.message}
+                              </span>
+                              <span className="text-muted-foreground/40 shrink-0 text-[10px]">
+                                {formatDistanceToNow(new Date(commit.date), { addSuffix: true })}
+                              </span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {project.github_url && (
+                      <a
+                        href={project.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground underline underline-offset-4 mt-1"
+                      >
+                        View on GitHub
+                      </a>
+                    )}
                   </div>
-                  {project.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {project.description}
-                    </p>
-                  )}
-                  {project.notes && (
-                    <p className="text-sm text-muted-foreground leading-relaxed mt-2 pt-2 border-t border-border/60 whitespace-pre-wrap">
-                      {project.notes}
-                    </p>
-                  )}
-                  {project.github_url && (
-                    <a
-                      href={project.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground underline underline-offset-4 mt-1"
-                    >
-                      View on GitHub
-                    </a>
-                  )}
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

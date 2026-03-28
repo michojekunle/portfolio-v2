@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { fetchReadmeImage } from "@/lib/github";
 import type { PinnedRepo } from "@/app/api/github/route";
 
 // Build at call-time so the env var is always resolved at runtime, not module-load.
@@ -47,6 +48,7 @@ interface GitHubGraphQLResponse {
 interface ExistingProject {
   id: string;
   github_url: string | null;
+  image_url: string | null;
 }
 
 export async function POST(): Promise<Response> {
@@ -106,7 +108,7 @@ export async function POST(): Promise<Response> {
     // UNIQUE constraint (error 42P10 if constraint doesn't exist).
     const { data: existing, error: fetchError } = await supabase
       .from("projects")
-      .select("id, github_url")
+      .select("id, github_url, image_url")
       .not("github_url", "is", null);
 
     if (fetchError) {
@@ -115,18 +117,26 @@ export async function POST(): Promise<Response> {
       );
     }
 
-    const existingByUrl = new Map<string, string>(
+    const existingByUrl = new Map<string, ExistingProject>(
       (existing as ExistingProject[]).map((p) => [
         p.github_url as string,
-        p.id,
+        p,
       ])
+    );
+
+    // Fetch README images for all repos in parallel
+    const readmeImages = await Promise.all(
+      repos.map((repo) => fetchReadmeImage(repo.url))
     );
 
     let inserted = 0;
     let updated = 0;
 
     for (const [index, repo] of repos.entries()) {
-      const row = {
+      const existingProject = existingByUrl.get(repo.url);
+      const readmeImage = readmeImages[index];
+
+      const row: Record<string, unknown> = {
         title: repo.name,
         description: repo.description ?? "",
         github_url: repo.url,
@@ -145,13 +155,16 @@ export async function POST(): Promise<Response> {
         updated_at: new Date().toISOString(),
       };
 
-      const existingId = existingByUrl.get(repo.url);
+      // Set image_url from README if the project doesn't already have a custom one
+      if (readmeImage && (!existingProject || !existingProject.image_url)) {
+        row.image_url = readmeImage;
+      }
 
-      if (existingId) {
+      if (existingProject) {
         const { error } = await supabase
           .from("projects")
           .update(row)
-          .eq("id", existingId);
+          .eq("id", existingProject.id);
         if (error) {
           throw new Error(`Update failed for ${repo.name}: ${error.message}`);
         }
