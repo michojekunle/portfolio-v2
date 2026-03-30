@@ -4,6 +4,7 @@ import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { CommandPalette } from "@/components/command-palette";
 import { Analytics } from "@vercel/analytics/next"
 
 const spaceGrotesk = Space_Grotesk({
@@ -85,6 +86,9 @@ export const metadata: Metadata = {
   // icon.tsx + apple-icon.tsx in app/ are auto-detected — no manual paths needed.
   alternates: {
     canonical: "https://michaelojekunle.dev",
+    types: {
+      "application/rss+xml": "https://michaelojekunle.dev/feed.xml",
+    },
   },
 };
 
@@ -180,6 +184,7 @@ export default function RootLayout({
           enableSystem={false}
         >
           {children}
+          <CommandPalette />
           <Toaster />
         </ThemeProvider>
         <Analytics />

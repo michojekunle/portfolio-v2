@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
+import { CommandPaletteTrigger } from "@/components/command-palette"
 import { Menu, X, Github, Twitter } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -87,6 +88,7 @@ export function Navbar(): React.ReactElement {
             ))}
 
             <div className="flex items-center space-x-3 ml-6">
+              <CommandPaletteTrigger />
               <Link
                 href="https://github.com/michojekunle"
                 target="_blank"

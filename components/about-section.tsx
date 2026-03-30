@@ -36,7 +36,7 @@ export function AboutSection() {
                 </p>
 
                 <p className="mt-4">
-                  My technical journey began with JavaScript and React, evolving into a deep expertise in TypeScript,
+                  My technical journey began with Java into JavaScript and React, evolving into a deep expertise in TypeScript,
                   Next.js, and the modern web ecosystem. As Web3 emerged, I embraced Solidity and smart contract
                   development, fascinated by the potential of decentralized systems to transform our digital landscape.
                 </p>

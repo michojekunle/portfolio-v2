@@ -4,10 +4,10 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
 import type { Metadata } from "next";
+import { ViewCounter } from "@/components/view-counter";
+import { TableOfContents } from "@/components/table-of-contents";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 
 export const revalidate = 60;
 
@@ -83,6 +83,7 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
   if (!post) notFound();
 
   const postUrl = `${SITE}/blog/${slug}`;
+  const content = (post.content as string) ?? "";
 
   // Article structured data
   const jsonLd = {
@@ -131,7 +132,7 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
 
       <article>
         <header className="mb-10">
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
             {post.category && (
               <Badge variant="secondary">
                 <span className="sr-only">Category: </span>
@@ -143,6 +144,8 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
                 {post.read_time}
               </span>
             )}
+            <span className="text-xs text-muted-foreground/40">·</span>
+            <ViewCounter slug={slug} increment />
           </div>
           <h1 className="text-3xl font-semibold tracking-tight mb-3">{post.title}</h1>
           {post.excerpt && (
@@ -158,14 +161,9 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
           )}
         </header>
 
-        <div className="prose dark:prose-invert max-w-none prose-sm prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-foreground prose-a:underline-offset-4 prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:border prose-pre:border-border">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
-          >
-            {post.content ?? ""}
-          </ReactMarkdown>
-        </div>
+        <TableOfContents content={content} />
+
+        <MarkdownRenderer content={content} />
       </article>
     </main>
   );

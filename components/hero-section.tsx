@@ -66,7 +66,7 @@ export function HeroSection() {
 
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mt-6 mb-8 leading-relaxed">
           A passionate Frontend &amp; Web3 Developer deeply rooted in Solidity, JavaScript/TypeScript, React.js, Next.js,
-          Rust, Cairo, and exploring the depths of Haskell, Erlang, and Python.
+          Rust, Cairo, and exploring the depths of Python and ZKML.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -85,7 +85,7 @@ export function HeroSection() {
         </div>
 
         <div className="mt-16 grid grid-cols-4 md:grid-cols-8 gap-3">
-          {["Solidity", "React", "Next.js", "TypeScript", "Rust", "Cairo", "Haskell", "Erlang"].map((tech) => (
+          {["React", "Next.js", "TypeScript", "Solidity", "Rust", "Cairo"].map((tech) => (
             <div
               key={tech}
               className="border border-border rounded-md flex items-center justify-center py-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"

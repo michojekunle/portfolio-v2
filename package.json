@@ -58,6 +58,7 @@
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",
     "rehype-highlight": "^7.0.2",
+    "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.9.4",
     "sonner": "^1.7.1",

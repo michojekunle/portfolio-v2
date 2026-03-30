@@ -30,6 +30,12 @@ function slugify(text: string): string {
     .trim();
 }
 
+function computeReadTime(content: string): string {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 230));
+  return `${minutes} min`;
+}
+
 export function BlogEditor({ post }: { post?: BlogPost }) {
   const isNew = !post?.id;
   const [form, setForm] = useState<BlogPost>({
@@ -185,7 +191,14 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
         ) : (
           <textarea
             value={form.content}
-            onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+            onChange={(e) => {
+              const content = e.target.value;
+              setForm((f) => ({
+                ...f,
+                content,
+                read_time: computeReadTime(content),
+              }));
+            }}
             className="w-full min-h-[400px] bg-muted/60 border border-border rounded-md p-4 text-sm font-mono resize-y focus:outline-none focus:ring-1 focus:ring-ring"
             placeholder="Write your post in Markdown..."
           />

@@ -39,7 +39,7 @@ export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElemen
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid grid-cols-4 mb-8">
+      <TabsList className="grid grid-cols-4 mb-8 overflow-x-auto scrollbar-none">
         {TABS.map((tab) => (
           <TabsTrigger key={tab} value={tab} className="capitalize">
             {tab}
