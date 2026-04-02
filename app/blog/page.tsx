@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Blog — Michael Ojekunle",
+  title: "Blog | Michael Ojekunle",
   description: "Thoughts on Web3, frontend engineering, and the craft of building software.",
 };
 

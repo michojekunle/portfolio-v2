@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://michaelojekunle.dev"),
   title: {
-    default: "Michael Ojekunle — Full-Stack & Web3 Developer",
+    default: "Michael Ojekunle | Full-Stack & Web3 Developer",
     template: "%s | Michael Ojekunle",
   },
   description:
