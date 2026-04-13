@@ -28,6 +28,7 @@ import {
   Activity,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { createClient } from "@/lib/supabase/client";
 
 interface CommandAction {
   label: string;
@@ -39,8 +40,33 @@ interface CommandAction {
 
 export function CommandPalette(): React.ReactElement {
   const [open, setOpen] = useState(false);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const router = useRouter();
   const { setTheme, theme } = useTheme();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const supabase = createClient();
+      
+      const { data: blogData } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, category")
+        .eq("published", true)
+        .order("published_at", { ascending: false });
+
+      const { data: projectData } = await supabase
+        .from("projects")
+        .select("id, title, category, tags, description")
+        .eq("is_hidden", false)
+        .order("sort_order", { ascending: true });
+
+      if (blogData) setBlogs(blogData);
+      if (projectData) setProjects(projectData);
+    };
+
+    fetchData();
+  }, []);
 
   const navigate = useCallback(
     (path: string): void => {
@@ -50,7 +76,38 @@ export function CommandPalette(): React.ReactElement {
         if (window.location.pathname !== "/") {
           router.push(`/${path}`);
         } else {
-          document.querySelector(path)?.scrollIntoView({ behavior: "smooth" });
+          const id = path.substring(1);
+          const element = document.getElementById(id);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+      } else if (path.startsWith("project-")) {
+        setOpen(false);
+        const projectId = path.replace("project-", "");
+        if (window.location.pathname !== "/") {
+          router.push(`/?project=${projectId}#projects`);
+        } else {
+          // If we're on the home page, just scroll to the project card
+          const element = document.getElementById(path);
+          if (element) {
+            // Check if we need to switch tabs
+            const project = projects.find(p => p.id === projectId);
+            if (project) {
+              // Dispatch custom event to switch ProjectsTabs tab if needed
+              window.dispatchEvent(new CustomEvent("switch-project-tab", { 
+                detail: { category: project.category } 
+              }));
+              
+              // Small delay to let the tab transition
+              setTimeout(() => {
+                element.scrollIntoView({ behavior: "smooth", block: "center" });
+                // Optional: add a temporary highlight
+                element.classList.add("ring-2", "ring-primary", "ring-offset-4");
+                setTimeout(() => element.classList.remove("ring-2", "ring-primary", "ring-offset-4"), 2000);
+              }, 100);
+            }
+          }
         }
       } else if (path.startsWith("http")) {
         window.open(path, "_blank", "noopener,noreferrer");
@@ -58,7 +115,7 @@ export function CommandPalette(): React.ReactElement {
         router.push(path);
       }
     },
-    [router]
+    [router, projects]
   );
 
   const actions: CommandAction[] = [
@@ -69,6 +126,45 @@ export function CommandPalette(): React.ReactElement {
     { label: "Blog", icon: <FileText className="h-4 w-4" />, action: () => navigate("/blog"), group: "Navigation" },
     { label: "Now", icon: <Activity className="h-4 w-4" />, action: () => navigate("#now"), group: "Navigation" },
     { label: "Contact", icon: <Mail className="h-4 w-4" />, action: () => navigate("#contact"), group: "Navigation" },
+
+    // Dynamic Projects
+    ...projects.map(p => ({
+      label: p.title,
+      icon: <FolderOpen className="h-4 w-4 text-primary/60" />,
+      action: () => navigate(`project-${p.id}`),
+      group: "Projects",
+      keywords: `${p.category} ${p.tags?.join(" ") || ""} ${p.description || ""}`
+    })),
+
+    // Dynamic Blogs
+    ...blogs.map(b => ({
+      label: b.title,
+      icon: <FileText className="h-4 w-4 text-primary/60" />,
+      action: () => navigate(`/blog/${b.slug}`),
+      group: "Blog Posts",
+      keywords: b.category
+    })),
+
+    // Static Uses (Tools & Gear)
+    ...[
+      { name: "VS Code", desc: "Primary editor. Vim keybindings, minimal extensions." },
+      { name: "Antigravity", desc: "AI-augmented editor for rapid prototyping." },
+      { name: "Claude Code", desc: "AI coding assistant from Anthropic." },
+      { name: "TypeScript + Next.js", desc: "Default stack for production web apps." },
+      { name: "Solidity", desc: "Smart contracts for EVM-compatible chains." },
+      { name: "Cairo", desc: "StarkNet smart contracts. Provable computation." },
+      { name: "Rust", desc: "Systems programming and blockchain infra." },
+      { name: "Vercel", desc: "Deployment platform for web apps." },
+      { name: "Supabase", desc: "Postgres database and backend-as-a-service." },
+      { name: "Figma", desc: "UI/UX design and prototyping." },
+      { name: "MacBook Pro", desc: "Primary development machine." },
+    ].map(u => ({
+      label: u.name,
+      icon: <Wrench className="h-4 w-4 text-primary/60" />,
+      action: () => navigate("/uses"),
+      group: "Uses & Gear",
+      keywords: u.desc
+    })),
 
     // Pages
     { label: "Uses", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/uses"), group: "Pages", keywords: "tools setup hardware software" },
@@ -119,7 +215,7 @@ export function CommandPalette(): React.ReactElement {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Search pages, actions, and more..." />
+      <CommandInput placeholder="Search everything (blogs, projects, pages)..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         {groups.map((group, i) => (
@@ -128,9 +224,9 @@ export function CommandPalette(): React.ReactElement {
             <CommandGroup heading={group}>
               {filteredActions
                 .filter((a) => a.group === group)
-                .map((action) => (
+                .map((action, idx) => (
                   <CommandItem
-                    key={action.label}
+                    key={`${action.group}-${action.label}-${idx}`}
                     onSelect={action.action}
                     keywords={action.keywords ? [action.keywords] : undefined}
                   >

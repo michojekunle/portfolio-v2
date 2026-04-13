@@ -11,7 +11,7 @@ export function HeroSection() {
   const [typingSpeed, setTypingSpeed] = useState(100)
 
   const phrases = [
-    "Frontend. Web3. Solidity. Seeker of Truth.",
+    "Frontend. Web3. Seeker of Truth.",
     "Exploring ZKML & First Principles.",
     "Building for the decentralized future.",
     "Connecting faith and technology.",
@@ -49,9 +49,6 @@ export function HeroSection() {
   return (
     <section className="min-h-[90vh] flex flex-col justify-center pt-20 pb-16">
       <div className="max-w-4xl">
-        <div className="inline-flex items-center px-3 py-1 mb-6 text-xs text-muted-foreground border border-border rounded-full">
-          Faith-driven developer crafting digital experiences
-        </div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
           Michael Ojekunle

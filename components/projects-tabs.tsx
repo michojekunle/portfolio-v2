@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -28,6 +29,42 @@ const TABS = ["featured", "web3", "frontend", "experiments"] as const
 
 export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElement {
   const [activeTab, setActiveTab] = useState("featured")
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const projectId = searchParams.get("project");
+    if (projectId) {
+      const p = projects.find(proj => proj.id === projectId);
+      if (p && TABS.includes(p.category as any)) {
+        setActiveTab(p.category);
+        setTimeout(() => {
+          const element = document.getElementById(`project-${projectId}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            element.classList.add("ring-2", "ring-primary", "ring-offset-4");
+            setTimeout(() => element.classList.remove("ring-2", "ring-primary", "ring-offset-4"), 2000);
+          }
+        }, 300);
+      }
+    }
+  }, [searchParams, projects]);
+
+  useEffect(() => {
+    const handleSwitch = (e: any) => {
+      const { category } = e.detail;
+      // If the category is featured, we handle it specially if needed, 
+      // but usually the category from DB matches the tab value
+      if (TABS.includes(category as any)) {
+        setActiveTab(category);
+      } else {
+        // Default to featured if not found in TABS
+        setActiveTab("featured");
+      }
+    };
+
+    window.addEventListener("switch-project-tab", handleSwitch);
+    return () => window.removeEventListener("switch-project-tab", handleSwitch);
+  }, []);
 
   const grouped = TABS.reduce<Record<string, Project[]>>(
     (acc, cat) => {
@@ -54,7 +91,11 @@ export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElemen
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {grouped[tab].map((project) => (
-                <div key={project.id} className="group content-card overflow-hidden">
+                <div 
+                  key={project.id} 
+                  id={`project-${project.id}`}
+                  className="group content-card overflow-hidden scroll-mt-24"
+                >
                   {project.image_url && (
                     <div className="aspect-video overflow-hidden rounded-md bg-muted -mx-6 -mt-6 mb-6">
                       <img
