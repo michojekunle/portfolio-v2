@@ -87,7 +87,7 @@ export function AboutSection() {
                 </p>
 
                 <p className="mt-4">
-                  Music plays an important role in my life — whether it&apos;s playing guiter, attending worship services, or
+                  Music plays an important role in my life — whether it&apos;s playing guitar, attending worship services, or
                   discovering new artists. I find that music, like code, is a language that speaks to both logic and
                   emotion.
                 </p>

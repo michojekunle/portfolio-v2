@@ -56,7 +56,7 @@ export default async function AdminProjectsPage() {
                 <p className="text-xs text-muted-foreground mb-2">
                   {format(new Date(project.updated_at), "MMM d")}
                 </p>
-                <ProjectActions projectId={project.id} isHidden={project.is_hidden} category={project.category} />
+                <ProjectActions project={project} />
               </div>
             </div>
           ))

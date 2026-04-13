@@ -5,24 +5,25 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Loader2, EyeOff, Eye, Trash2 } from "lucide-react";
+import { EditProjectDialog } from "./edit-project-dialog";
 
 const CATEGORIES = ["featured", "web3", "frontend", "experiments"] as const;
 type Category = (typeof CATEGORIES)[number];
 
 interface ProjectActionsProps {
-  projectId: string;
-  isHidden: boolean;
-  category: string;
+  project: any; // We'll use any for now to avoid duplicate type definitions, or import it if shared
 }
 
 export function ProjectActions({
-  projectId,
-  isHidden,
-  category,
+  project,
 }: ProjectActionsProps): React.ReactElement {
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  const projectId = project.id;
+  const isHidden = project.is_hidden;
+  const category = project.category;
 
   const toggleHidden = async (): Promise<void> => {
     setLoading("hide");
@@ -68,6 +69,8 @@ export function ProjectActions({
         ))}
       </select>
 
+      <EditProjectDialog project={project} />
+
       <Button
         variant="ghost"
         size="icon"
@@ -101,3 +104,4 @@ export function ProjectActions({
     </div>
   );
 }
+
