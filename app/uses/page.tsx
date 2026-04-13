@@ -31,11 +31,13 @@ const categories: ToolCategory[] = [
       },
       {
         name: "Antigravity",
-        description: "An AI-augmented layer for rapid prototyping. It helps bridge the gap between abstract ideas and executable code.",
+        description:
+          "An AI-augmented layer for rapid prototyping. It helps bridge the gap between abstract ideas and executable code.",
       },
       {
         name: "Claude Code",
-        description: "A terminal-native assistant for deep engineering sessions. It's like having a senior pair programmer available as a first-class citizen in the CLI.",
+        description:
+          "A terminal-native assistant for deep engineering sessions. It's like having a senior pair programmer available as a first-class citizen in the CLI.",
       },
     ],
   },
@@ -44,23 +46,28 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "TypeScript + Next.js",
-        description: "My default stack for building orderly, type-safe systems that scale. I'm a strong advocate for the App Router and Server Components.",
+        description:
+          "My default stack for building orderly, type-safe systems that scale.",
       },
       {
         name: "Solidity",
-        description: "The language of decentralized truth. For building robust, provable smart contracts on EVM-compatible networks.",
+        description:
+          "The language of decentralized truth. For building robust smart contracts on EVM-compatible networks.",
       },
       {
         name: "Cairo",
-        description: "Computation that can be proven. Exploring the first principles of STARKs and scaling Ethereum via Starknet.",
+        description:
+          "Computation that can be proven. Exploring the first principles of STARKs and scaling Ethereum via Starknet.",
       },
       {
         name: "Rust",
-        description: "Systems engineering from the ground up. I use it for CLI tools and whenever I need to strip away abstractions for maximum performance.",
+        description:
+          "Systems engineering from the ground up. I use it for CLI tools and whenever I need to strip away abstractions for maximum performance.",
       },
       {
         name: "Flutter / Dart",
-        description: "Architecting cross-platform interfaces. I'm studying it to understand how to build consistent experiences across different OS abstractions.",
+        description:
+          "Architecting cross-platform interfaces. I'm studying it to understand how to build consistent experiences across different OS abstractions.",
       },
     ],
   },
@@ -69,7 +76,8 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "Vercel",
-        description: "The foundation for deploying performant, accessible frontends with minimal friction.",
+        description:
+          "The foundation for deploying performant, accessible frontends with minimal friction.",
       },
       {
         name: "Supabase",
@@ -78,7 +86,8 @@ const categories: ToolCategory[] = [
       },
       {
         name: "Resend",
-        description: "Transactional and newsletter emails with custom domain support.",
+        description:
+          "Transactional and newsletter emails with custom domain support.",
       },
       {
         name: "GitHub",
@@ -91,7 +100,8 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "Figma",
-        description: "Where ideas take visual shape before they find their way into the DOM.",
+        description:
+          "Where ideas take visual shape before they find their way into the DOM.",
       },
       {
         name: "Notion",
@@ -100,7 +110,8 @@ const categories: ToolCategory[] = [
       },
       {
         name: "Arc Browser",
-        description: "Implicit context management. I use Spaces to keep my development work, faith-based projects, and personal research isolated yet accessible.",
+        description:
+          "Implicit context management. I use Spaces to keep my development work, faith-based projects, and personal research isolated yet accessible.",
       },
     ],
   },
@@ -109,7 +120,8 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "MacBook Pro",
-        description: "The workhorse. A reliable, high-performance machine that allows me to build without technical friction in my daily workflow.",
+        description:
+          "The workhorse. A reliable, high-performance machine that allows me to build without technical friction in my daily workflow.",
       },
     ],
   },
@@ -130,7 +142,7 @@ export default function UsesPage(): React.ReactElement {
         <div className="mb-12">
           <h1 className="text-3xl font-semibold tracking-tight mb-2">Uses</h1>
           <p className="text-muted-foreground leading-relaxed">
-            A collection of tools and systems I&apos;ve curated to build with intentionality. From the abstractions I choose to the hardware I rely on, these are the instruments that help me study and build systems from first principles.
+            Hardware, software, and tools I use daily for building things.
           </p>
         </div>
 
