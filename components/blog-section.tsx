@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Calendar } from "lucide-react"
+import { ArrowRight, Calendar, Eye, Heart, MessageSquare } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { NewsletterForm } from "./newsletter-form"
@@ -9,12 +9,22 @@ import { NewsletterForm } from "./newsletter-form"
 export async function BlogSection(): Promise<React.ReactElement> {
   const supabase = await createClient()
 
-  const { data: posts } = await supabase
+  const { data: rawPosts } = await supabase
     .from("blog_posts")
-    .select("id, title, slug, excerpt, category, read_time, published_at")
+    .select(`
+      id, title, slug, excerpt, category, read_time, published_at, views,
+      reactions:blog_reactions(count),
+      comments:blog_comments(count)
+    `)
     .eq("published", true)
     .order("published_at", { ascending: false })
     .limit(4)
+
+  const posts = (rawPosts || []).map(post => ({
+    ...post,
+    reactionCount: (post.reactions as any)?.[0]?.count ?? 0,
+    commentCount: (post.comments as any)?.[0]?.count ?? 0
+  }))
 
   return (
     <section id="blog" className="py-20">
@@ -39,34 +49,47 @@ export async function BlogSection(): Promise<React.ReactElement> {
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="group content-card hover:border-foreground/20 transition-colors no-underline"
+              className="group content-card hover:border-foreground/20 transition-all no-underline flex flex-col h-full"
             >
-              <Badge
-                variant={post.category === "Technical" ? "default" : post.category === "Web3" ? "secondary" : "outline"}
-                className="mb-4 text-xs"
-              >
-                {post.category}
-              </Badge>
+              <div className="flex-1">
+                <Badge
+                  variant={post.category === "Technical" ? "default" : post.category === "Web3" ? "secondary" : "outline"}
+                  className="mb-4 text-[10px] uppercase tracking-wider h-5 font-bold bg-muted/50 border-border/40 transition-colors group-hover:bg-primary/10 group-hover:text-primary"
+                >
+                  {post.category}
+                </Badge>
 
-              <h3 className="text-lg font-semibold mb-2 group-hover:text-foreground transition-colors leading-snug">
-                {post.title}
-              </h3>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-foreground transition-colors leading-snug">
+                  {post.title}
+                </h3>
 
-              {post.excerpt && (
-                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.excerpt}</p>
-              )}
-
-              <div className="flex items-center text-xs text-muted-foreground">
-                <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                <span>
-                  {post.published_at ? format(new Date(post.published_at), "MMM d, yyyy") : ""}
-                </span>
-                {post.read_time && (
-                  <>
-                    <span className="mx-2">·</span>
-                    <span>{post.read_time}</span>
-                  </>
+                {post.excerpt && (
+                  <p className="text-sm text-muted-foreground mb-6 leading-relaxed line-clamp-3">{post.excerpt}</p>
                 )}
+              </div>
+
+              <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/20">
+                <div className="flex items-center text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                  <Calendar className="h-3 w-3 mr-1.5" />
+                  <span>
+                    {post.published_at ? format(new Date(post.published_at), "MMM d, yyyy") : ""}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1 text-muted-foreground opacity-60 group-hover:opacity-100 group-hover:text-foreground transition-all">
+                    <Eye className="h-3 w-3" />
+                    <span className="text-[10px] font-mono font-bold">{post.views || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground opacity-60 group-hover:opacity-100 group-hover:text-primary transition-all">
+                    <Heart className="h-3 w-3 group-hover:fill-primary/20" />
+                    <span className="text-[10px] font-mono font-bold">{post.reactionCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground opacity-60 group-hover:opacity-100 group-hover:text-primary transition-all">
+                    <MessageSquare className="h-3 w-3" />
+                    <span className="text-[10px] font-mono font-bold">{post.commentCount}</span>
+                  </div>
+                </div>
               </div>
             </Link>
           ))}

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LogOut } from "lucide-react";
+import { LogOut, ExternalLink } from "lucide-react";
 
 const navLinks = [
   { name: "Dashboard", href: "/admin" },
@@ -53,7 +53,14 @@ export function AdminNav({ userEmail }: { userEmail: string }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground hidden sm:block">{userEmail}</span>
+          <Link 
+            href="/" 
+            className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">View Site</span>
+          </Link>
+          <span className="text-xs text-muted-foreground hidden lg:block mx-2">{userEmail}</span>
           <Button variant="ghost" size="icon" onClick={handleSignOut} className="h-8 w-8">
             <LogOut className="h-4 w-4" />
             <span className="sr-only">Sign out</span>

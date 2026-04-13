@@ -14,12 +14,26 @@ interface TableOfContentsProps {
   content: string;
 }
 
-function extractHeadings(markdown: string): TocItem[] {
+function extractHeadings(content: string): TocItem[] {
   const headings: TocItem[] = [];
-  const lines = markdown.split("\n");
 
+  if (content.includes("<h2") || content.includes("<h3") || content.includes("<h4")) {
+    const regex = /<h([2-4])[^>]*>(.*?)<\/h\1>/gi;
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      const level = parseInt(match[1]);
+      const text = match[2].replace(/<[^>]+>/g, "").trim();
+      const id = text
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-");
+      headings.push({ id, text, level });
+    }
+    return headings;
+  }
+
+  const lines = content.split("\n");
   for (const line of lines) {
-    // Skip headings inside code blocks
     const match = line.match(/^(#{2,4})\s+(.+)$/);
     if (match) {
       const level = match[1].length;
@@ -62,6 +76,24 @@ export function TableOfContents({
     return () => observer.disconnect();
   }, [headings]);
 
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100; // Account for fixed header
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+      
+      // Update URL hash without jumping
+      window.history.pushState(null, "", `#${id}`);
+    }
+  };
+
   if (headings.length < 3) return null;
 
   return (
@@ -81,7 +113,10 @@ export function TableOfContents({
               <a
                 key={h.id}
                 href={`#${h.id}`}
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  setIsOpen(false);
+                  handleScroll(e, h.id);
+                }}
                 className={cn(
                   "block text-xs transition-colors leading-relaxed",
                   h.level === 3 && "pl-3",
@@ -109,6 +144,7 @@ export function TableOfContents({
             <a
               key={h.id}
               href={`#${h.id}`}
+              onClick={(e) => handleScroll(e, h.id)}
               className={cn(
                 "block text-xs transition-colors leading-relaxed py-0.5",
                 h.level === 3 && "pl-3",

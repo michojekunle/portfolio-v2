@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Save, Eye } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { TiptapEditor } from "@/components/admin/tiptap-editor";
 
 interface BlogPost {
   id?: string;
@@ -48,7 +47,6 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
     read_time: post?.read_time ?? "",
     published: post?.published ?? false,
   });
-  const [preview, setPreview] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -98,14 +96,6 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
           {isNew ? "New post" : "Edit post"}
         </h1>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPreview((p) => !p)}
-          >
-            <Eye className="h-4 w-4 mr-1" />
-            {preview ? "Edit" : "Preview"}
-          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -179,30 +169,19 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
         />
       </div>
 
-      {/* Content editor / preview */}
+      {/* Content editor (Tiptap) */}
       <div className="space-y-2">
-        <label className="text-sm font-medium">Content (Markdown)</label>
-        {preview ? (
-          <div className="content-card prose dark:prose-invert max-w-none min-h-[400px]">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {form.content || "*Nothing to preview yet.*"}
-            </ReactMarkdown>
-          </div>
-        ) : (
-          <textarea
-            value={form.content}
-            onChange={(e) => {
-              const content = e.target.value;
-              setForm((f) => ({
-                ...f,
-                content,
-                read_time: computeReadTime(content),
-              }));
-            }}
-            className="w-full min-h-[400px] bg-muted/60 border border-border rounded-md p-4 text-sm font-mono resize-y focus:outline-none focus:ring-1 focus:ring-ring"
-            placeholder="Write your post in Markdown..."
-          />
-        )}
+        <label className="text-sm font-medium">Content</label>
+        <TiptapEditor 
+          content={form.content} 
+          onChange={(html, text) => {
+            setForm((f) => ({
+              ...f,
+              content: html,
+              read_time: computeReadTime(text),
+            }));
+          }} 
+        />
       </div>
     </div>
   );

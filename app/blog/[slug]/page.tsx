@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageSquare, Heart } from "lucide-react";
 import type { Metadata } from "next";
 import { ViewCounter } from "@/components/view-counter";
 import { TableOfContents } from "@/components/table-of-contents";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
+import { BlogReactions } from "@/components/blog-reactions";
+import { BlogComments } from "@/components/blog-comments";
 
 export const revalidate = 60;
 
@@ -75,12 +77,19 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
 
   const { data: post } = await supabase
     .from("blog_posts")
-    .select("*")
+    .select(`
+      *,
+      reactions:blog_reactions(count),
+      comments:blog_comments(count)
+    `)
     .eq("slug", slug)
     .eq("published", true)
     .single();
 
   if (!post) notFound();
+
+  const reactionCount = (post.reactions as any)?.[0]?.count ?? 0;
+  const commentCount = (post.comments as any)?.[0]?.count ?? 0;
 
   const postUrl = `${SITE}/blog/${slug}`;
   const content = (post.content as string) ?? "";
@@ -146,6 +155,16 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
             )}
             <span className="text-xs text-muted-foreground/40">·</span>
             <ViewCounter slug={slug} increment />
+            <span className="text-xs text-muted-foreground/40">·</span>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Heart className="h-3 w-3" />
+              <span>{reactionCount}</span>
+            </div>
+            <span className="text-xs text-muted-foreground/40">·</span>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MessageSquare className="h-3 w-3" />
+              <span>{commentCount}</span>
+            </div>
           </div>
           <h1 className="text-3xl font-semibold tracking-tight mb-3">{post.title}</h1>
           {post.excerpt && (
@@ -164,6 +183,10 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
         <TableOfContents content={content} />
 
         <MarkdownRenderer content={content} />
+
+        <BlogReactions postId={post.id} />
+        
+        <BlogComments postId={post.id} />
       </article>
     </main>
   );

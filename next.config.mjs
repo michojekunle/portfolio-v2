@@ -6,6 +6,8 @@ const nextConfig = {
   // Strict mode catches double-invocation bugs early.
   reactStrictMode: true,
 
+
+
   async headers() {
     return [
       {

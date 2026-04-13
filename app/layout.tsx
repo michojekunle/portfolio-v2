@@ -164,6 +164,9 @@ export default function RootLayout({
 }>): React.ReactElement {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+      </head>
       <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
         {/* Skip navigation — visible on focus for keyboard/screen-reader users */}
         <a
