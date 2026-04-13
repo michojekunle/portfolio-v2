@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/navbar"
 import { HeroSection } from "@/components/hero-section"
 import { AboutSection } from "@/components/about-section"
 import { ProjectsSection } from "@/components/projects-section"
@@ -12,7 +11,6 @@ export default function Home() {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-background outline-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Navbar />
         <HeroSection />
         <AboutSection />
         <ProjectsSection />

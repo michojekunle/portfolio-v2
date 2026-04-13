@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { GuestbookEntries } from "./guestbook-entries";
 import Link from "next/link";
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
 export default function GuestbookPage(): React.ReactElement {
   return (
     <>
-      <Navbar />
       <main className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto">
         <Link
           href="/"

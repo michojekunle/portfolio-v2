@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -28,15 +27,15 @@ const categories: ToolCategory[] = [
       {
         name: "VS Code",
         description:
-          "Primary editor. Vim keybindings, minimal extensions, Gruvian theme.",
+          "My primary environment. I keep it minimal with Vim keybindings and a curated set of extensions to stay focused on the home row.",
       },
       {
         name: "Antigravity",
-        description: "AI-augmented editor for rapid prototyping and pair coding.",
+        description: "An AI-augmented layer for rapid prototyping. It helps bridge the gap between abstract ideas and executable code.",
       },
       {
         name: "Claude Code",
-        description: "AI coding assistant from Anthropic — terminal-native pair programmer.",
+        description: "A terminal-native assistant for deep engineering sessions. It's like having a senior pair programmer available as a first-class citizen in the CLI.",
       },
     ],
   },
@@ -45,23 +44,23 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "TypeScript + Next.js",
-        description: "Default stack for production web apps. App Router, RSC, Turbopack.",
+        description: "My default stack for building orderly, type-safe systems that scale. I'm a strong advocate for the App Router and Server Components.",
       },
       {
         name: "Solidity",
-        description: "Smart contracts for EVM-compatible chains. Foundry for testing.",
+        description: "The language of decentralized truth. For building robust, provable smart contracts on EVM-compatible networks.",
       },
       {
         name: "Cairo",
-        description: "StarkNet smart contracts. Provable computation on L2.",
+        description: "Computation that can be proven. Exploring the first principles of STARKs and scaling Ethereum via Starknet.",
       },
       {
         name: "Rust",
-        description: "Systems programming, CLI tools, and blockchain infrastructure.",
+        description: "Systems engineering from the ground up. I use it for CLI tools and whenever I need to strip away abstractions for maximum performance.",
       },
       {
         name: "Flutter / Dart",
-        description: "Cross-platform mobile development for iOS and Android.",
+        description: "Architecting cross-platform interfaces. I'm studying it to understand how to build consistent experiences across different OS abstractions.",
       },
     ],
   },
@@ -70,12 +69,12 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "Vercel",
-        description: "Deployment platform. Automatic previews, edge functions, analytics.",
+        description: "The foundation for deploying performant, accessible frontends with minimal friction.",
       },
       {
         name: "Supabase",
         description:
-          "Postgres database, auth, row-level security, real-time subscriptions.",
+          "A complete backend system that respects the power of Postgres. It's where I manage relational order and state.",
       },
       {
         name: "Resend",
@@ -92,16 +91,16 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "Figma",
-        description: "UI/UX design, component systems, prototyping.",
+        description: "Where ideas take visual shape before they find their way into the DOM.",
       },
       {
         name: "Notion",
         description:
-          "Documentation, project notes, personal knowledge base.",
+          "My personal knowledge base. A structured container for everything from architectural notes to cross-disciplinary research.",
       },
       {
         name: "Arc Browser",
-        description: "Primary browser. Spaces for context-switching between projects.",
+        description: "Implicit context management. I use Spaces to keep my development work, faith-based projects, and personal research isolated yet accessible.",
       },
     ],
   },
@@ -110,7 +109,7 @@ const categories: ToolCategory[] = [
     items: [
       {
         name: "MacBook Pro",
-        description: "Primary development machine. Fast builds, great battery.",
+        description: "The workhorse. A reliable, high-performance machine that allows me to build without technical friction in my daily workflow.",
       },
     ],
   },
@@ -119,7 +118,6 @@ const categories: ToolCategory[] = [
 export default function UsesPage(): React.ReactElement {
   return (
     <>
-      <Navbar />
       <main className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto">
         <Link
           href="/"
@@ -131,8 +129,8 @@ export default function UsesPage(): React.ReactElement {
 
         <div className="mb-12">
           <h1 className="text-3xl font-semibold tracking-tight mb-2">Uses</h1>
-          <p className="text-muted-foreground">
-            Hardware, software, and tools I use daily for building things.
+          <p className="text-muted-foreground leading-relaxed">
+            A collection of tools and systems I&apos;ve curated to build with intentionality. From the abstractions I choose to the hardware I rely on, these are the instruments that help me study and build systems from first principles.
           </p>
         </div>
 

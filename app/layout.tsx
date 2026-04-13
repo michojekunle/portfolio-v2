@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CommandPalette } from "@/components/command-palette";
+import { Navbar } from "@/components/navbar";
 import { Analytics } from "@vercel/analytics/next"
 
 const spaceGrotesk = Space_Grotesk({
@@ -186,6 +187,7 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem={false}
         >
+          <Navbar />
           {children}
           <CommandPalette />
           <Toaster />

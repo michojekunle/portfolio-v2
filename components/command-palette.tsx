@@ -71,49 +71,61 @@ export function CommandPalette(): React.ReactElement {
   const navigate = useCallback(
     (path: string): void => {
       setOpen(false);
-      if (path.startsWith("#")) {
-        // Hash navigation — scroll on home page
-        if (window.location.pathname !== "/") {
-          router.push(`/${path}`);
-        } else {
+
+      // Handle external links immediately
+      if (path.startsWith("http")) {
+        window.open(path, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // Small delay to allow the CommandDialog to close and release scroll-lock
+      setTimeout(() => {
+        if (path.startsWith("#")) {
           const id = path.substring(1);
-          const element = document.getElementById(id);
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-          }
-        }
-      } else if (path.startsWith("project-")) {
-        setOpen(false);
-        const projectId = path.replace("project-", "");
-        if (window.location.pathname !== "/") {
-          router.push(`/?project=${projectId}#projects`);
-        } else {
-          // If we're on the home page, just scroll to the project card
-          const element = document.getElementById(path);
-          if (element) {
-            // Check if we need to switch tabs
-            const project = projects.find(p => p.id === projectId);
-            if (project) {
-              // Dispatch custom event to switch ProjectsTabs tab if needed
-              window.dispatchEvent(new CustomEvent("switch-project-tab", { 
-                detail: { category: project.category } 
-              }));
-              
-              // Small delay to let the tab transition
-              setTimeout(() => {
-                element.scrollIntoView({ behavior: "smooth", block: "center" });
-                // Optional: add a temporary highlight
-                element.classList.add("ring-2", "ring-primary", "ring-offset-4");
-                setTimeout(() => element.classList.remove("ring-2", "ring-primary", "ring-offset-4"), 2000);
-              }, 100);
+          if (window.location.pathname !== "/") {
+            router.push(`/${path}`);
+          } else {
+            const element = document.getElementById(id);
+            if (element) {
+              element.scrollIntoView({ behavior: "smooth" });
             }
           }
+        } else if (path.startsWith("project-")) {
+          const projectId = path.replace("project-", "");
+          const project = projects.find((p) => p.id === projectId);
+
+          if (window.location.pathname !== "/") {
+            router.push(`/?project=${projectId}#projects`);
+          } else if (project) {
+            // 1. Switch the tab first
+            window.dispatchEvent(
+              new CustomEvent("switch-project-tab", {
+                detail: { category: project.category },
+              })
+            );
+
+            // 2. Wait for the tab to mount and animation to allow IDs to be found
+            setTimeout(() => {
+              const element = document.getElementById(path);
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "center" });
+                element.classList.add("ring-2", "ring-primary", "ring-offset-4");
+                setTimeout(
+                  () =>
+                    element.classList.remove(
+                      "ring-2",
+                      "ring-primary",
+                      "ring-offset-4"
+                    ),
+                  2000
+                );
+              }
+            }, 300); // 300ms matches the delay in ProjectsTabs for query param handling
+          }
+        } else {
+          router.push(path);
         }
-      } else if (path.startsWith("http")) {
-        window.open(path, "_blank", "noopener,noreferrer");
-      } else {
-        router.push(path);
-      }
+      }, 150); // 150ms allows the dialog closing animation to finish
     },
     [router, projects]
   );
