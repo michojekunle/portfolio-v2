@@ -1,4 +1,4 @@
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 
 interface MarkdownRendererProps {
   content: string;
@@ -29,7 +29,21 @@ export function MarkdownRenderer({
     }
   );
 
-  const cleanHtml = DOMPurify.sanitize(htmlWithIds);
+  const cleanHtml = sanitizeHtml(htmlWithIds, {
+    allowedTags: [
+      ...sanitizeHtml.defaults.allowedTags,
+      "h1", "h2", "h3", "h4", "img", "table", "thead", "tbody", "tr", "th", "td", "input"
+    ],
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      "*": ["class", "id"],
+      "img": ["src", "alt", "width", "height"],
+      "input": ["type", "checked", "disabled"]
+    },
+    allowedClasses: {
+      "*": ["*"] // Allow all classes for syntax highlighting and typography
+    }
+  });
 
   return (
     <div className="relative">
