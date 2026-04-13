@@ -41,27 +41,27 @@ export function ImageUpload({
 
     try {
       setUploading(true);
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
-      const filePath = `images/${fileName}`;
+      
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("bucket", bucket);
 
-      const { error: uploadError, data } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-      if (uploadError) {
-        throw uploadError;
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to upload image");
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(filePath);
-
-      onChange(publicUrl);
+      onChange(data.url);
       toast.success("Image uploaded successfully");
     } catch (error: any) {
       console.error("Upload error:", error);
-      toast.error(error.message || "Failed to upload image. Make sure the storage bucket exists and is public.");
+      toast.error(error.message || "Failed to upload image.");
     } finally {
       setUploading(false);
     }
