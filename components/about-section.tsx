@@ -1,108 +1,102 @@
-"use client"
+"use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Code, Lightbulb, User } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Code, Lightbulb, User } from "lucide-react";
+import { PlayfulAvatar } from "./playful-avatar";
 
 export function AboutSection() {
   return (
     <section id="about" className="py-20">
-      <div className="max-w-4xl">
+      <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl font-bold mb-2">About Me</h2>
-        <div className="section-rule" />
+        <div className="section-rule mb-10" />
 
-        <Tabs defaultValue="developer" className="w-full">
-          <TabsList className="grid grid-cols-3 mb-8">
-            <TabsTrigger value="developer" className="flex items-center gap-2">
-              <Code className="h-4 w-4" />
-              <span>Developer</span>
-            </TabsTrigger>
-            <TabsTrigger value="seeker" className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4" />
-              <span>Seeker</span>
-            </TabsTrigger>
-            <TabsTrigger value="person" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span>Person</span>
-            </TabsTrigger>
-          </TabsList>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10 lg:gap-16">
+          <div className="md:col-span-2 flex justify-center md:sticky md:top-24 h-max">
+            <PlayfulAvatar />
+          </div>
 
-          <TabsContent value="developer" className="animate-fade-in">
-            <div className="content-card">
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="text-lg">
-                  I craft digital experiences at the intersection of frontend elegance and blockchain innovation. With
-                  over 4 years of experience in web development, I&apos;ve specialized in building performant, accessible,
-                  and beautiful interfaces that bridge the gap between users and complex systems.
-                </p>
+          <div className="md:col-span-3">
+            <Tabs defaultValue="developer" className="w-full">
+              <TabsList className="grid grid-cols-3 mb-8">
+                <TabsTrigger value="developer" className="flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  <span>Developer</span>
+                </TabsTrigger>
+                <TabsTrigger value="seeker" className="flex items-center gap-2">
+                  <Lightbulb className="h-4 w-4" />
+                  <span>Seeker</span>
+                </TabsTrigger>
+                <TabsTrigger value="person" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span>Person</span>
+                </TabsTrigger>
+              </TabsList>
 
-                <p className="mt-4">
-                  My technical journey began with Java into JavaScript and React, evolving into a deep expertise in TypeScript,
-                  Next.js, and the modern web ecosystem. As Web3 emerged, I embraced Solidity and smart contract
-                  development, fascinated by the potential of decentralized systems to transform our digital landscape.
-                </p>
+              <TabsContent value="developer" className="animate-fade-in">
+                <div className="content-card">
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-lg">
+                      I build digital products that bridge the gap between complex backend systems and everyday users. With over 4 years of experience, my focus is on engineering performant, accessible, and intuitive frontends.
+                    </p>
 
-                <p className="mt-4">
-                  Currently, I&apos;m expanding my horizons with Rust, Cairo for StarkNet development, and exploring
-                  functional programming paradigms through Haskell and Erlang. I believe in continuous learning and
-                  pushing the boundaries of what&apos;s possible in both frontend and blockchain technologies.
-                </p>
-              </div>
-            </div>
-          </TabsContent>
+                    <p className="mt-4">
+                      My technical journey started with Java before transitioning into JavaScript and React. Today, I work extensively with TypeScript and Next.js. As Web3 matured, I expanded into Solidity and smart contract development to build robust decentralized architectures.
+                    </p>
 
-          <TabsContent value="seeker" className="animate-fade-in">
-            <div className="content-card">
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="text-lg">
-                  My journey as a developer is inseparable from my spiritual path. I see coding not merely as a
-                  profession, but as a creative expression of divine order and purpose. The elegant patterns in
-                  well-crafted code reflect the same mathematical beauty found throughout creation.
-                </p>
+                    <p className="mt-4">
+                      My current professional goal is to build practical, real-world solutions while expanding my frontend engineering skills. I am actively studying <strong>Zero-Knowledge proofs</strong> and <strong>Machine Learning (ZKML)</strong>, with a focus on networks like, <strong>Starknet</strong>, <strong>Rootstock</strong>, <strong>Stacks</strong>, and <strong>Ethereum</strong>.
+                    </p>
+                  </div>
+                </div>
+              </TabsContent>
 
-                <p className="mt-4">
-                  Faith guides my approach to technology. I believe in building systems that empower rather than
-                  exploit, that connect rather than isolate, and that serve humanity&apos;s highest good. This perspective
-                  shapes how I select projects and the values I bring to my work.
-                </p>
+              <TabsContent value="seeker" className="animate-fade-in">
+                <div className="content-card">
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-lg">
+                      My work as a developer is tied closely to my faith. I view software engineering not just as a career, but as an opportunity to build systems that are orderly, purposeful, and genuinely helpful to others. My core philosophy for mastering these systems is learning them from first principles.
+                    </p>
 
-                <p className="mt-4">
-                  <em>
-                    &ldquo;For we are God&apos;s handiwork, created in Christ Jesus to do good works, which God prepared in advance
-                    for us to do.&rdquo;
-                  </em>
-                  {" "}— This verse reminds me that my technical abilities are gifts to be used purposefully, creating
-                  technology that uplifts and serves.
-                </p>
-              </div>
-            </div>
-          </TabsContent>
+                    <p className="mt-4">
+                      This approach dictates what I build. I am currently developing <strong>Zamir</strong>, 
+                      an AI-driven orchestration application, and <strong>FirstCode Forge</strong>. 
+                      To strengthen my underlying architectural knowledge, I am also learning <em>Flutter</em>. By stripping away abstractions, I aim to understand exactly how tools work under the hood rather than just knowing how to use them.
+                    </p>
 
-          <TabsContent value="person" className="animate-fade-in">
-            <div className="content-card">
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="text-lg">
-                  Beyond code and faith, I&apos;m a lifelong learner with diverse interests. I enjoy philosophical
-                  discussions, reading across disciplines, and exploring the connections between technology, theology,
-                  and human experience.
-                </p>
+                    <p className="mt-4">
+                      <em>
+                        &ldquo;For we are God&apos;s handiwork, created in Christ
+                        Jesus to do good works, which God prepared in advance for us
+                        to do.&rdquo;
+                      </em>{" "}
+                      — This verse serves as a personal reminder to approach my technical work with intention, ensuring that what I build has a positive and useful impact.
+                    </p>
+                  </div>
+                </div>
+              </TabsContent>
 
-                <p className="mt-4">
-                  Music plays an important role in my life — whether it&apos;s playing guitar, attending worship services, or
-                  discovering new artists. I find that music, like code, is a language that speaks to both logic and
-                  emotion.
-                </p>
+              <TabsContent value="person" className="animate-fade-in">
+                <div className="content-card">
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-lg">
+                      Outside of software development, I strive to maintain a broad set of interests to stay well-rounded. 
+                      Currently, I am learning to play the <strong>guitar</strong>, 
+                      studying <strong>chess</strong> strategy, and practicing new languages: 
+                      <strong> French, Spanish, and Chinese</strong>.
+                    </p>
 
-                <p className="mt-4">
-                  I value community and collaboration, believing that our greatest innovations emerge when we combine
-                  diverse perspectives. Whether mentoring junior developers, contributing to open source, or
-                  participating in faith communities, I seek to both give and receive wisdom through meaningful
-                  connections.
-                </p>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+                    <p className="mt-4">
+                      I also read extensively across different fields—particularly <em>Economics, Arts, Business, Finance, 
+                      Agriculture, Psychology, Communication, and Leadership</em>. I find that concepts from one discipline often solve problems in another, and I value the unique perspectives that come from connecting with people across different industries.
+                    </p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
       </div>
     </section>
-  )
+  );
 }

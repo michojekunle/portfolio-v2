@@ -147,8 +147,8 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Category</label>
-          <div className="flex gap-2">
-            {["Technical", "Web3", "Reflection"].map((cat) => (
+          <div className="flex flex-wrap gap-2">
+            {["Technical", "Web3", "Reflection", "ZKML", "First Principles", "Life & Learning"].map((cat) => (
               <Badge
                 key={cat}
                 variant={form.category === cat ? "default" : "outline"}

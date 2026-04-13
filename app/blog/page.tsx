@@ -8,7 +8,7 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Blog | Michael Ojekunle",
-  description: "Thoughts on Web3, frontend engineering, and the craft of building software.",
+  description: "Thoughts on Web3, frontend engineering, ZKML, First Principles, faith, personal growth, and the craft of building.",
 };
 
 export default async function BlogPage(): Promise<React.ReactElement> {
@@ -25,7 +25,7 @@ export default async function BlogPage(): Promise<React.ReactElement> {
       <div className="mb-12">
         <h1 className="text-3xl font-semibold tracking-tight mb-2">Blog</h1>
         <p className="text-muted-foreground">
-          Thoughts on Web3, frontend engineering, and the craft of building.
+          Thoughts on Web3, frontend engineering, ZKML, First Principles, faith, personal growth, and the craft of building.
         </p>
       </div>
 

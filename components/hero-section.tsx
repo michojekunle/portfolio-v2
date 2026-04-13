@@ -12,7 +12,9 @@ export function HeroSection() {
 
   const phrases = [
     "Frontend. Web3. Solidity. Seeker of Truth.",
+    "Exploring ZKML & First Principles.",
     "Building for the decentralized future.",
+    "Connecting faith and technology.",
     "Rooted in divine purpose.",
   ]
 
@@ -65,8 +67,7 @@ export function HeroSection() {
         </div>
 
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mt-6 mb-8 leading-relaxed">
-          A passionate Frontend &amp; Web3 Developer deeply rooted in Solidity, JavaScript/TypeScript, React.js, Next.js,
-          Rust, Cairo, and exploring the depths of Python and ZKML.
+          A Frontend and Web3 Developer building practical, high-performance applications. With a foundation in Next.js, Solidity, Rust, and Cairo, my current focus is on Zero-Knowledge Machine Learning (ZKML), and understanding software architecture from first principles.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -85,7 +86,7 @@ export function HeroSection() {
         </div>
 
         <div className="mt-16 grid grid-cols-4 md:grid-cols-8 gap-3">
-          {["React", "Next.js", "TypeScript", "Solidity", "Rust", "Cairo"].map((tech) => (
+          {["Next.js", "TypeScript", "Solidity", "Rust", "Cairo", "ZKML", "Flutter"].map((tech) => (
             <div
               key={tech}
               className="border border-border rounded-md flex items-center justify-center py-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"

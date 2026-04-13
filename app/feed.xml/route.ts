@@ -47,7 +47,7 @@ export async function GET(): Promise<Response> {
   <channel>
     <title>Michael Ojekunle — Blog</title>
     <link>${SITE}/blog</link>
-    <description>Thoughts on Web3, frontend engineering, and the craft of building software.</description>
+    <description>Thoughts on Web3, frontend engineering, ZKML, First Principles, faith, personal growth, and the craft of building.</description>
     <language>en</language>
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />
