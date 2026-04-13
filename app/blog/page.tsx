@@ -56,7 +56,7 @@ export default async function BlogPage(): Promise<React.ReactElement> {
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="group flex flex-col gap-2 py-6 hover:bg-muted/30 transition-all no-underline border-b border-border/40 last:border-0"
+              className="group flex flex-col gap-2 py-6 hover:bg-muted/30 transition-all no-underline border-b border-border/40 last:border-0 p-3"
             >
               <div className="flex items-center gap-2 mb-1">
                 <Badge variant="secondary" className="text-[10px] uppercase tracking-wider h-5 font-bold bg-muted/50 border-border/40 transition-colors group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20">
