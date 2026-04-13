@@ -2,19 +2,12 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Code, Lightbulb, User } from "lucide-react";
-// import { PlayfulAvatar } from "./playful-avatar";
 
 export function AboutSection() {
   return (
     <section id="about" className="py-20">
-      {/* <div className="max-w-5xl mx-auto"> */}
       <h2 className="text-3xl font-bold mb-2">About Me</h2>
       <div className="section-rule mb-10" />
-
-      {/* <div className="grid grid-cols-1 md:grid-cols-5 gap-10 lg:gap-16">
-          <div className="md:col-span-2 flex justify-center md:sticky md:top-24 h-max">
-            <PlayfulAvatar />
-          </div> */}
 
       <div className="md:col-span-3">
         <Tabs defaultValue="developer" className="w-full">
@@ -124,8 +117,6 @@ export function AboutSection() {
             </div>
           </TabsContent>
         </Tabs>
-        {/* </div> */}
-        {/* </div> */}
       </div>
     </section>
   );

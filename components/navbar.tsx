@@ -64,9 +64,9 @@ export function Navbar(): React.ReactElement {
           <Link
             href="/"
             aria-label="Michael Ojekunle — home"
-            className="flex items-center gap-2.5 text-xl font-semibold tracking-tight text-foreground transition-all hover:opacity-80 group"
+            className="text-xl font-semibold tracking-tight text-foreground"
           >
-            <span>Michael.dev</span>
+            Michael.dev
           </Link>
 
           {/* Desktop */}
