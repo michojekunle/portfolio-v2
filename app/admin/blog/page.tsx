@@ -11,7 +11,7 @@ export default async function AdminBlogPage() {
 
   const { data: posts } = await supabase
     .from("blog_posts")
-    .select("id, title, slug, category, published, published_at, updated_at")
+    .select("id, title, slug, category, published, published_at, updated_at, clicks, external_url")
     .order("created_at", { ascending: false });
 
   return (
@@ -54,9 +54,13 @@ export default async function AdminBlogPage() {
                   <p className="text-sm font-medium truncate">{post.title}</p>
                   <p className="text-xs text-muted-foreground">
                     {post.category} ·{" "}
-                    {post.published_at
-                      ? format(new Date(post.published_at), "MMM d, yyyy")
-                      : `Updated ${format(new Date(post.updated_at), "MMM d, yyyy")}`}
+                    {post.external_url ? (
+                      <span className="text-amber-500 font-medium">External ({post.clicks || 0} clicks)</span>
+                    ) : (
+                      post.published_at
+                        ? format(new Date(post.published_at), "MMM d, yyyy")
+                        : `Updated ${format(new Date(post.updated_at), "MMM d, yyyy")}`
+                    )}
                   </p>
                 </div>
               </div>

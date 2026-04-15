@@ -18,6 +18,7 @@ interface BlogPost {
   category: string;
   read_time: string;
   published: boolean;
+  external_url?: string;
 }
 
 function slugify(text: string): string {
@@ -46,6 +47,7 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
     category: post?.category ?? "Technical",
     read_time: post?.read_time ?? "",
     published: post?.published ?? false,
+    external_url: post?.external_url ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,9 +75,10 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
       }),
     };
 
+    const { id, ...postData } = data;
     const { error: dbError } = isNew
-      ? await supabase.from("blog_posts").insert([data])
-      : await supabase.from("blog_posts").update(data).eq("id", form.id!);
+      ? await supabase.from("blog_posts").insert([postData])
+      : await supabase.from("blog_posts").update(data).eq("id", id!);
 
     if (dbError) {
       setError(dbError.message);
@@ -157,6 +160,15 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
             onChange={(e) => setForm((f) => ({ ...f, read_time: e.target.value }))}
             placeholder="5 min read"
           />
+        </div>
+        <div className="space-y-2 sm:col-span-2">
+          <label className="text-sm font-medium">External URL (Optional)</label>
+          <Input
+            value={form.external_url}
+            onChange={(e) => setForm((f) => ({ ...f, external_url: e.target.value }))}
+            placeholder="https://medium.com/@username/post-slug"
+          />
+          <p className="text-[10px] text-muted-foreground">If provided, this post will link directly to the external platform.</p>
         </div>
       </div>
 

@@ -10,14 +10,14 @@ import { Menu, X, Github, Twitter } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { name: "About", href: "#about" },
-  { name: "Projects", href: "#projects" },
+  { name: "About", href: "/#about" },
+  { name: "Projects", href: "/#projects" },
   { name: "Blog", href: "/blog" },
-  { name: "Now", href: "#now" },
-  { name: "Contact", href: "#contact" },
+  { name: "Now", href: "/#now" },
+  { name: "Contact", href: "/#contact" },
 ]
 
-export function Navbar(): React.ReactElement {
+export function Navbar(): React.ReactNode {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -48,6 +48,8 @@ export function Navbar(): React.ReactElement {
 
   const isActive = (href: string): boolean =>
     href.startsWith("/") ? pathname === href : false
+
+  if (pathname?.startsWith("/admin")) return null
 
   return (
     <nav
