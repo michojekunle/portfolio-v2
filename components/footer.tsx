@@ -1,55 +1,66 @@
 import Link from "next/link"
-import { Heart, Rss } from "lucide-react"
-
-const footerLinks = [
-  { name: "Blog", href: "/blog" },
-  { name: "Uses", href: "/uses" },
-  { name: "Guestbook", href: "/guestbook" },
-  { name: "Changelog", href: "/changelog" },
-] as const
+import { ThemeSelector } from "@/components/theme-selector"
 
 export function Footer(): React.ReactElement {
-  const currentYear = new Date().getFullYear()
+  const year = new Date().getFullYear()
 
   return (
-    <footer className="py-12 border-t border-border">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground">© {currentYear} Michael Ojekunle. All rights reserved.</p>
+    <footer className="v3-foot">
+      {/* v3-foot-top has its own max-width/centering */}
+      <div className="v3-foot-top">
+        <h2 className="v3-foot-mark">
+          Michael<br />
+          <em>Ojekunle.</em>
+        </h2>
+        <ThemeSelector />
+      </div>
+
+      <div className="v3-container">
+        <p className="v3-foot-tagline">
+          Engineer &amp; writer. Building toward zero-knowledge ML — from Lagos.
+        </p>
+
+        <div className="v3-foot-grid">
+          <div className="v3-foot-col">
+            <h5>Work</h5>
+            <ul>
+              <li><Link href="/work">Selected projects</Link></li>
+              <li><Link href="/work">Open source</Link></li>
+              <li><Link href="/about">Resume / CV</Link></li>
+            </ul>
+          </div>
+          <div className="v3-foot-col">
+            <h5>Writing</h5>
+            <ul>
+              <li><Link href="/blog">Field Notes</Link></li>
+              <li><Link href="/blog">Newsletter</Link></li>
+              <li><Link href="/feed.xml">RSS</Link></li>
+            </ul>
+          </div>
+          <div className="v3-foot-col">
+            <h5>Site</h5>
+            <ul>
+              <li><Link href="/uses">/uses</Link></li>
+              <li><Link href="/guestbook">/guestbook</Link></li>
+              <li><Link href="/changelog">/changelog</Link></li>
+            </ul>
+          </div>
+          <div className="v3-foot-col">
+            <h5>Elsewhere</h5>
+            <ul>
+              <li><a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
+              <li><a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer">Twitter ↗</a></li>
+              <li><a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></li>
+            </ul>
+          </div>
         </div>
 
-        <nav aria-label="Footer navigation" className="flex items-center gap-4">
-          {footerLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <Link
-            href="/feed.xml"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="RSS feed"
-          >
-            <Rss className="h-3.5 w-3.5" />
-          </Link>
-        </nav>
-      </div>
-
-      <div className="flex items-center justify-center text-sm text-muted-foreground mt-6">
-        <span>Made with</span>
-        <Heart className="h-3 w-3 mx-1 text-muted-foreground" />
-        <span>and</span>
-        <span className="ml-1 font-medium text-foreground">Next.js</span>
-      </div>
-
-      <div className="mt-6 text-center">
-        <p className="text-xs text-muted-foreground">
-          &ldquo;And whatever you do, whether in word or deed, do it all in the name of the Lord Jesus, giving thanks to God
-          the Father through him.&rdquo; — Colossians 3:17
-        </p>
+        <div className="v3-foot-bottom">
+          <div>© {year} · Built with intent in Lagos, NG</div>
+          <div className="verse">
+            &ldquo;Whatever you do, do it all to the glory of God.&rdquo; — Col&nbsp;3:17
+          </div>
+        </div>
       </div>
     </footer>
   )
