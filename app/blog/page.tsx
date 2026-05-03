@@ -1,18 +1,17 @@
-import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import type { Metadata } from "next";
-import { BlogListing } from "@/components/blog-listing";
+import { createClient } from "@/lib/supabase/server"
+import type { Metadata } from "next"
+import { BlogListing } from "@/components/blog-listing"
 
-export const revalidate = 60;
+export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: "Blog | Michael Ojekunle",
-  description: "Thoughts on Web3, frontend engineering, ZKML, faith, personal growth, and the craft of building.",
-};
+  title: "Field Notes",
+  description:
+    "Essays on engineering, ZK, Rust, faith, and learning things in public. Roughly one piece every three weeks.",
+}
 
 export default async function BlogPage(): Promise<React.ReactElement> {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { data: rawPosts } = await supabase
     .from("blog_posts")
@@ -22,32 +21,34 @@ export default async function BlogPage(): Promise<React.ReactElement> {
       comments:blog_comments(count)
     `)
     .eq("published", true)
-    .order("published_at", { ascending: false });
+    .order("published_at", { ascending: false })
 
-  const posts = (rawPosts || []).map(post => ({
+  const posts = (rawPosts ?? []).map((post) => ({
     ...post,
-    reactionCount: (post.reactions as any)?.[0]?.count ?? 0,
-    commentCount: (post.comments as any)?.[0]?.count ?? 0
-  }));
+    reactionCount: (post.reactions as unknown as { count: number }[])?.[0]?.count ?? 0,
+    commentCount: (post.comments as unknown as { count: number }[])?.[0]?.count ?? 0,
+  }))
 
   return (
-    <main className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-10 no-underline"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-        Home
-      </Link>
+    <main id="main-content" tabIndex={-1} className="outline-none">
+        <section className="v3-blog-hero v3-container">
+          <div className="v3-eyebrow" style={{ marginBottom: 24 }}>
+            <b>Field notes</b> · {posts.length} essays
+          </div>
+          <h1>
+            Notes from the <em>field.</em>
+          </h1>
+          <p className="desc">
+            Essays on engineering, ZK, Rust, faith, and learning things in public. Roughly one
+            piece every three weeks. Always written longhand first.
+          </p>
+        </section>
 
-      <div className="mb-12">
-        <h1 className="text-3xl font-semibold tracking-tight mb-2">Blog</h1>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          Thoughts on Web3, frontend engineering, ZKML, faith, personal growth, and the craft of building.
-        </p>
-      </div>
-
-      <BlogListing initialPosts={posts as any} />
+        <section className="v3-container">
+          <div className="v3-blog-list">
+            <BlogListing initialPosts={posts as Parameters<typeof BlogListing>[0]["initialPosts"]} />
+          </div>
+        </section>
     </main>
-  );
+  )
 }

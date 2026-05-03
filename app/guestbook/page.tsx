@@ -1,42 +1,30 @@
-import type { Metadata } from "next";
-import { Footer } from "@/components/footer";
-import { GuestbookEntries } from "./guestbook-entries";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next"
+import { GuestbookEntries } from "./guestbook-entries"
 
 export const metadata: Metadata = {
   title: "Guestbook",
-  description:
-    "Leave a message, say hi, or share something kind. A digital guestbook by Michael Ojekunle.",
-};
+  description: "Leave a message, say hi, or share something kind. A digital guestbook by Michael Ojekunle.",
+}
 
 export default function GuestbookPage(): React.ReactElement {
   return (
-    <>
-      <main className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-10 no-underline"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-          Home
-        </Link>
-
-        <div className="mb-12">
-          <h1 className="text-3xl font-semibold tracking-tight mb-2">
-            Guestbook
+    <main id="main-content" tabIndex={-1} className="outline-none">
+        <section className="v3-util-hero v3-container">
+          <div className="v3-eyebrow" style={{ marginBottom: 24 }}>
+            <b>/guestbook</b> · leave a note
+          </div>
+          <h1>
+            Sign the <em>guestbook.</em>
           </h1>
-          <p className="text-muted-foreground">
-            Leave a message, say hello, or share a thought. I&apos;d love to
-            hear from you.
+          <p>
+            Drop a note. Tell me what you&apos;re building, what made you think, or just say hi.
+            Persists forever (or until I migrate the database again).
           </p>
-        </div>
+        </section>
 
-        <GuestbookEntries />
+        <section className="v3-container-narrow">
+          <GuestbookEntries />
+        </section>
       </main>
-      <div className="max-w-2xl mx-auto px-6">
-        <Footer />
-      </div>
-    </>
-  );
+  )
 }

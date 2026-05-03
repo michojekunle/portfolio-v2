@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Loader2, Send } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
@@ -39,9 +37,7 @@ export function GuestbookEntries(): React.ReactElement {
     void fetchEntries();
   }, [fetchEntries]);
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!name.trim() || !message.trim()) return;
 
@@ -72,66 +68,63 @@ export function GuestbookEntries(): React.ReactElement {
   };
 
   return (
-    <div className="space-y-8">
+    <div style={{ paddingBottom: 80 }}>
       {/* Sign form */}
-      <form onSubmit={handleSubmit} className="content-card space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Input
+      <form onSubmit={handleSubmit} className="v3-guest-form">
+        <div className="form-row">
+          <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             maxLength={80}
             required
-            className="sm:col-span-1"
           />
-          <div className="sm:col-span-2 flex gap-2">
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Leave a message..."
-              maxLength={500}
-              required
-              className="flex-1"
-            />
-            <Button type="submit" size="icon" disabled={submitting}>
-              {submitting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Leave a message…"
+            maxLength={500}
+            required
+          />
         </div>
-        {error && <p className="text-xs text-destructive">{error}</p>}
+        {error && (
+          <p style={{ fontSize: 13, color: "var(--v3-accent)", marginBottom: 12 }}>{error}</p>
+        )}
+        <button
+          type="submit"
+          className="v3-btn v3-btn-accent v3-btn-sm"
+          disabled={submitting}
+        >
+          {submitting ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <><Send size={13} style={{ marginRight: 6 }} />Sign guestbook</>
+          )}
+        </button>
       </form>
 
       {/* Entries */}
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        <div style={{ display: "flex", justifyContent: "center", padding: "48px 0" }}>
+          <Loader2 size={20} className="animate-spin" style={{ color: "var(--ink-3)" }} />
         </div>
       ) : entries.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">
+        <p style={{ fontSize: 15, color: "var(--ink-3)", textAlign: "center", padding: "48px 0" }}>
           No entries yet. Be the first to sign the guestbook!
         </p>
       ) : (
-        <div className="space-y-1">
+        <div className="v3-guest-list">
           {entries.map((entry) => (
-            <div
-              key={entry.id}
-              className="flex items-baseline gap-3 py-3 border-b border-border/60 last:border-0"
-            >
-              <span className="text-sm font-medium shrink-0">
-                {entry.name}
-              </span>
-              <span className="text-sm text-muted-foreground flex-1 min-w-0">
-                {entry.message}
-              </span>
-              <span className="text-xs text-muted-foreground/50 shrink-0">
-                {formatDistanceToNow(new Date(entry.created_at), {
-                  addSuffix: true,
-                })}
-              </span>
+            <div key={entry.id} className="v3-guest-msg">
+              <div className="who">
+                <span>
+                  <b>{entry.name}</b>
+                </span>
+                <span className="dt">
+                  {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true })}
+                </span>
+              </div>
+              <p className="msg">{entry.message}</p>
             </div>
           ))}
         </div>

@@ -1,9 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, Heart } from "lucide-react";
 import type { Metadata } from "next";
 import { ViewCounter } from "@/components/view-counter";
 import { TableOfContents } from "@/components/table-of-contents";
@@ -125,69 +123,72 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
   };
 
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto outline-none">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <>
+      <main id="main-content" tabIndex={-1} className="outline-none">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
 
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-10 no-underline"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-        All posts
-      </Link>
-
-      <article>
-        <header className="mb-10">
-          <div className="flex items-center gap-2 mb-3 flex-wrap">
-            {post.category && (
-              <Badge variant="secondary">
-                <span className="sr-only">Category: </span>
-                {post.category}
-              </Badge>
-            )}
-            {post.read_time && (
-              <span className="text-xs text-muted-foreground" aria-label={`${post.read_time} read`}>
-                {post.read_time}
+        {/* Post hero */}
+        <section className="v3-post-hero v3-container-narrow">
+          <div className="crumbs" aria-label="Breadcrumb">
+            <Link href="/">Home</Link>
+            {" / "}
+            <Link href="/blog">Notes</Link>
+            {" / "}
+            <span>{post.category}</span>
+          </div>
+          <div className="meta-line">
+            {post.category && <span className="tag">{post.category}</span>}
+            {post.published_at && (
+              <span>
+                <time dateTime={post.published_at}>
+                  {format(new Date(post.published_at as string), "MMMM d, yyyy")}
+                </time>
               </span>
             )}
-            <span className="text-xs text-muted-foreground/40">·</span>
+            {post.read_time && <span>{post.read_time}</span>}
             <ViewCounter slug={slug} increment />
-            <span className="text-xs text-muted-foreground/40">·</span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Heart className="h-3 w-3" />
-              <span>{reactionCount}</span>
-            </div>
-            <span className="text-xs text-muted-foreground/40">·</span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MessageSquare className="h-3 w-3" />
-              <span>{commentCount}</span>
-            </div>
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight mb-3">{post.title}</h1>
-          {post.excerpt && (
-            <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
-          )}
-          {post.published_at && (
-            <time
-              dateTime={post.published_at}
-              className="block text-xs text-muted-foreground mt-3"
-            >
-              {format(new Date(post.published_at as string), "MMMM d, yyyy")}
-            </time>
-          )}
-        </header>
+          <h1>{post.title}</h1>
+          {post.excerpt && <p className="lede">{post.excerpt}</p>}
+        </section>
 
-        <TableOfContents content={content} />
+        {/* Post body */}
+        <article className="v3-post-body v3-container-narrow">
+          <TableOfContents content={content} />
+          <MarkdownRenderer content={content} />
+        </article>
 
-        <MarkdownRenderer content={content} />
+        {/* CTA */}
+        <section className="v3-container-narrow" style={{ padding: "80px 0", borderTop: "1px solid var(--rule)", marginTop: 80 }}>
+          <div style={{ textAlign: "center" }}>
+            <p style={{ fontFamily: "var(--display-font)", fontStyle: "italic", fontSize: 22, color: "var(--ink-2)", maxWidth: "40ch", margin: "0 auto 32px", fontVariationSettings: '"opsz" 96, "SOFT" 100' }}>
+              Liked this? Drop me a note — I read every one.
+            </p>
+            <Link href="/contact" className="v3-btn v3-btn-primary">
+              Get in touch <span className="arr" aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
 
-        <BlogReactions postId={post.id} />
-        
-        <BlogComments postId={post.id} />
-      </article>
-    </main>
+        {/* Reactions and comments */}
+        <section className="v3-container-narrow" style={{ paddingBottom: 80 }}>
+          <BlogReactions postId={post.id} />
+          <BlogComments postId={post.id} />
+        </section>
+
+        {/* Prev/next nav */}
+        <section className="v3-container">
+          <div className="v3-case-next">
+            <Link href="/blog">
+              <div className="lbl">← All notes</div>
+              <div className="nm">Index</div>
+            </Link>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
