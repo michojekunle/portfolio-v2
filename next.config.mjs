@@ -52,13 +52,7 @@ const nextConfig = {
           },
         ],
       },
-      // Long-lived cache for immutable static assets (Next.js content-hashes these)
-      {
-        source: "/_next/static/(.*)",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-        ],
-      },
+
       // Cache OG images for 1 hour
       {
         source: "/(opengraph-image|twitter-image|icon|apple-icon)(.*)",

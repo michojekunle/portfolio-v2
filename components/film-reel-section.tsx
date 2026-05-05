@@ -12,46 +12,35 @@ const PROJECT_COLORS: Record<string, string> = {
 export function FilmReelSection(): React.ReactElement {
   return (
     <section
-      className="v3-section v3-film-reel-section"
+      className="py-[120px] max-[720px]:py-[72px] relative overflow-hidden"
       id="all-work"
       aria-labelledby="reel-heading"
     >
-      <div className="v3-film-reel-head">
-        <div>
-          <div className="v3-eyebrow" style={{ marginBottom: 8 }}>02 — ALL WORK</div>
-          <h2
-            id="reel-heading"
-            style={{
-              fontFamily: "var(--display-font)",
-              fontVariationSettings: '"opsz" 96',
-              fontSize: "clamp(28px, 3.5vw, 42px)",
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-              color: "var(--ink)",
-              margin: 0,
-            }}
-          >
-            Everything I&apos;ve <em style={{ color: "var(--v3-accent)" }}>shipped.</em>
+      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">02 — ALL WORK</div>
+        <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-[24px]">
+          <h2 id="reel-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
+            Everything I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">shipped.</em>
           </h2>
+          <Link href="/work" className="group inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)] shrink-0 mb-[12px]">
+            Full index <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
+          </Link>
         </div>
-        <Link href="/work" className="v3-btn v3-btn-ghost" style={{ flexShrink: 0 }}>
-          Full index <span className="arr" aria-hidden="true">→</span>
-        </Link>
       </div>
 
-      <div className="v3-film-reel" role="list" aria-label="All case studies">
-        <div className="v3-reel-track">
+      <div className="w-full overflow-x-auto snap-x snap-mandatory [scroll-padding:var(--gutter)] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="list" aria-label="All case studies">
+        <div className="flex gap-[24px] px-[var(--gutter)] w-max pb-[32px]">
           {CASE_STUDIES.map((p) => (
             <Link
               key={p.slug}
               href={`/work/${p.slug}`}
-              className="v3-reel-card"
+              className="snap-start w-[340px] flex flex-col no-underline text-inherit group"
               role="listitem"
               aria-label={`View ${p.name} case study`}
             >
-              <div className="v3-reel-card-img">
+              <div className="aspect-[16/10] rounded-[12px] overflow-hidden bg-[var(--bg-2)] relative border border-[var(--rule)] transition-colors duration-200 group-hover:border-[var(--ink-3)]">
                 <div
-                  className="accent-bar"
+                  className="absolute top-0 left-0 right-0 h-[4px] z-[1]"
                   style={{ background: PROJECT_COLORS[p.slug] ?? "var(--v3-accent)" }}
                 />
                 {p.image ? (
@@ -87,10 +76,10 @@ export function FilmReelSection(): React.ReactElement {
                   </div>
                 )}
               </div>
-              <div className="v3-reel-card-body">
-                <div className="name">{p.name}</div>
-                <div className="desc">{p.desc}</div>
-                <div className="meta">
+              <div className="py-[20px] flex flex-col gap-[8px]">
+                <div className="font-[family:var(--display-font)] font-normal text-[22px] text-[var(--ink)] leading-[1.1] [font-variation-settings:'opsz'_96]">{p.name}</div>
+                <div className="text-[14px] text-[var(--ink-2)] leading-[1.5] line-clamp-2 overflow-hidden">{p.desc}</div>
+                <div className="flex gap-[12px] mt-[4px] font-mono text-[10px] text-[var(--ink-3)] uppercase tracking-[0.1em]">
                   <span>{p.year}</span>
                   <span>{p.cat.toUpperCase()}</span>
                 </div>

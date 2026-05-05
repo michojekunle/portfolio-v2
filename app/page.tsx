@@ -10,23 +10,23 @@ export default function Home(): React.ReactElement {
     <main id="main-content" tabIndex={-1} className="outline-none">
       <HeroSection />
 
-      <div className="v3-section-divider-band" aria-hidden="true" />
+      <div className="h-[4px] bg-[linear-gradient(90deg,transparent_0%,var(--v3-accent-soft)_20%,var(--v3-accent)_50%,var(--v3-accent-soft)_80%,transparent_100%)] opacity-60" aria-hidden="true" />
 
       <ProjectsSection />
 
-      <div className="v3-section-divider-band" aria-hidden="true" />
+      <div className="h-[4px] bg-[linear-gradient(90deg,transparent_0%,var(--v3-accent-soft)_20%,var(--v3-accent)_50%,var(--v3-accent-soft)_80%,transparent_100%)] opacity-60" aria-hidden="true" />
 
       <FilmReelSection />
 
-      <div className="v3-section-divider" aria-hidden="true" />
+      <div className="h-[1px] bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
 
       <GitHubBentoSection />
 
-      <div className="v3-section-divider" aria-hidden="true" />
+      <div className="h-[1px] bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
 
       <NowSection />
 
-      <div className="v3-section-divider" aria-hidden="true" />
+      <div className="h-[1px] bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
 
       <BlogSection />
     </main>

@@ -145,26 +145,26 @@ export function ThemeSelector(): React.ReactElement {
   }, [])
 
   return (
-    <div className="v3-tweaks">
+    <div className="flex flex-col gap-[32px]">
 
       {/* Color themes */}
-      <div className="v3-tweak-group">
-        <div className="v3-tweak-label">Color theme</div>
+      <div className="flex flex-col gap-[12px]">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Color theme</div>
         <div className="v3-theme-selector">
-          <div className="themes">
+          <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-3 gap-[8px]">
             {Object.entries(THEMES).map(([key, t]) => {
               const palette = isDark ? t.dark : t.light
               return (
                 <button
                   key={key}
-                  className={`v3-theme-btn${activeTheme === key ? " active" : ""}`}
+                  className={`flex items-center gap-[8px] px-[12px] py-[10px] rounded-[6px] border bg-transparent cursor-pointer transition-all duration-150 font-inherit text-[13px] hover:border-[var(--v3-accent)] hover:bg-[var(--paper)] hover:text-[var(--ink)] ${activeTheme === key ? " border-[var(--v3-accent)] bg-[color-mix(in_oklab,var(--v3-accent)_8%,transparent)] text-[var(--ink)]" : " border-[var(--rule)] text-[var(--ink-2)]"}`}
                   onClick={() => applyTheme(key, isDark)}
                   title={t.name}
                   aria-label={`Apply ${t.name} theme`}
                   aria-pressed={activeTheme === key}
                 >
                   <span
-                    className="swatch"
+                    className="inline-block w-[12px] h-[12px] rounded-full shrink-0"
                     style={{ background: palette["--accent"] }}
                     aria-hidden="true"
                   />
@@ -177,17 +177,17 @@ export function ThemeSelector(): React.ReactElement {
       </div>
 
       {/* Display font */}
-      <div className="v3-tweak-group">
-        <div className="v3-tweak-label">Display font</div>
-        <div className="v3-font-selector">
+      <div className="flex flex-col gap-[12px]">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Display font</div>
+        <div className="flex gap-[8px] flex-wrap">
           {Object.entries(FONTS).map(([key, f]) => (
             <button
               key={key}
-              className={`v3-font-btn${activeFont === key ? " active" : ""}`}
+              className={`flex flex-col items-center gap-[4px] px-[16px] py-[12px] rounded-[6px] border bg-transparent cursor-pointer transition-all duration-150 font-inherit text-[13px] flex-1 hover:border-[var(--v3-accent)] hover:bg-[var(--paper)] hover:text-[var(--ink)] ${activeFont === key ? " border-[var(--v3-accent)] bg-[color-mix(in_oklab,var(--v3-accent)_8%,transparent)] text-[var(--ink)]" : " border-[var(--rule)] text-[var(--ink-2)]"}`}
               onClick={() => handleFont(key)}
               aria-pressed={activeFont === key}
             >
-              <span className="preview" style={{ fontFamily: f.value, fontVariationSettings: key === "fraunces" ? '"opsz" 96, "SOFT" 100' : undefined }}>Ag</span>
+              <span className="text-[20px] leading-[1] text-[var(--ink)]" style={{ fontFamily: f.value, fontVariationSettings: key === "fraunces" ? '"opsz" 96, "SOFT" 100' : undefined }}>Ag</span>
               {f.name}
             </button>
           ))}
@@ -195,20 +195,20 @@ export function ThemeSelector(): React.ReactElement {
       </div>
 
       {/* Marginalia toggle */}
-      <div className="v3-tweak-group">
-        <div className="v3-tweak-label">Marginalia</div>
-        <div className="v3-toggle-row">
+      <div className="flex flex-col gap-[12px]">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Marginalia</div>
+        <div className="flex items-center justify-between gap-[16px]">
           <button
-            className={`v3-toggle${showMarginalia ? " active" : ""}`}
+            className={`group flex items-center gap-[10px] bg-transparent border-none cursor-pointer font-inherit text-[13px] p-0 transition-colors duration-150 hover:text-[var(--ink)] ${showMarginalia ? "text-[var(--ink)]" : "text-[var(--ink-2)]"}`}
             onClick={() => handleMarginalia(!showMarginalia)}
             aria-pressed={showMarginalia}
           >
-            <span className="track">
-              <span className="thumb" />
+            <span className={`w-[36px] h-[20px] rounded-full relative transition-colors duration-150 ${showMarginalia ? "bg-[var(--v3-accent)]" : "bg-[var(--rule)]"}`}>
+              <span className={`absolute top-[2px] left-[2px] w-[16px] h-[16px] rounded-full bg-[var(--bg)] transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${showMarginalia ? "translate-x-[16px]" : "translate-x-0"}`} />
             </span>
             <span>{showMarginalia ? "Visible" : "Hidden"}</span>
           </button>
-          <span className="v3-toggle-desc">Side notes in essays</span>
+          <span className="text-[13px] text-[var(--ink-3)]">Side notes in essays</span>
         </div>
       </div>
 

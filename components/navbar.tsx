@@ -47,31 +47,39 @@ export function Navbar(): React.ReactNode {
   const isDark = resolvedTheme === "dark"
 
   return (
-    <nav className="v3-nav" aria-label="Main navigation">
-      <div className="inner">
-        <Link href="/" aria-label="Michael Ojekunle — home" className="mark">
-          <span className="dot" aria-hidden="true" />
+    <nav 
+      className="sticky top-0 z-[100] bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-[14px] border-b border-[var(--rule)]" 
+      aria-label="Main navigation"
+    >
+      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[18px] grid grid-cols-[auto_1fr_auto] items-center gap-[32px]">
+        <Link 
+          href="/" 
+          aria-label="Michael Ojekunle — home" 
+          className="flex items-center gap-[10px] font-[family:var(--display-font)] italic text-[22px] font-normal cursor-pointer text-[var(--ink)] no-underline [font-variation-settings:'opsz'_144,'SOFT'_100]"
+        >
+          <span className="w-[8px] h-[8px] rounded-full bg-[var(--v3-accent)] shrink-0" aria-hidden="true" />
           <span>Michael<em>.</em></span>
         </Link>
 
-        <div className="v3-nav-links">
+        <div className="max-[920px]:hidden flex gap-[4px] justify-center">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               aria-current={isActive(link.href) ? "page" : undefined}
-              className={isActive(link.href) ? "active" : ""}
+              data-active={isActive(link.href)}
+              className="px-[14px] py-[8px] rounded-full text-[13px] font-medium text-[var(--ink-2)] transition-all duration-150 no-underline hover:text-[var(--ink)] hover:bg-[var(--paper)] data-[active=true]:text-[var(--ink)] data-[active=true]:bg-[var(--paper)]"
             >
               {link.name}
             </Link>
           ))}
         </div>
 
-        <div className="v3-nav-right">
+        <div className="flex gap-[8px] items-center">
           <CommandPaletteTrigger />
 
           <button
-            className="v3-theme-toggle"
+            className="w-[38px] h-[38px] rounded-full border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
             onClick={() => setTheme(isDark ? "light" : "dark")}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             suppressHydrationWarning
@@ -81,14 +89,14 @@ export function Navbar(): React.ReactNode {
 
           <Link
             href="/contact"
-            className="v3-btn v3-btn-accent v3-btn-sm v3-book-cta"
+            className="group max-[600px]:hidden inline-flex items-center gap-[10px] px-[16px] py-[9px] rounded-full font-sans text-[13px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-[var(--v3-accent)] text-[var(--bg)] hover:bg-[var(--v3-accent-2)]"
             aria-label="Book a call"
           >
-            Book a call <span className="arr" aria-hidden="true">→</span>
+            Book a call <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
           </Link>
 
           <button
-            className="v3-hamburger"
+            className="hidden max-[920px]:flex items-center justify-center w-[38px] h-[38px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer transition-all duration-150 hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
             onClick={() => setIsOpen((v) => !v)}
             aria-expanded={isOpen}
             aria-controls="v3-mobile-menu"
@@ -101,7 +109,7 @@ export function Navbar(): React.ReactNode {
 
       <div
         id="v3-mobile-menu"
-        className={`v3-mobile-menu${isOpen ? " open" : ""}`}
+        className={`${isOpen ? 'flex' : 'hidden'} flex-col pt-[16px] px-[var(--gutter)] pb-[24px] border-t border-[var(--rule)] bg-[var(--bg)] gap-[2px]`}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
@@ -111,15 +119,16 @@ export function Navbar(): React.ReactNode {
             key={link.name}
             href={link.href}
             aria-current={isActive(link.href) ? "page" : undefined}
-            className={isActive(link.href) ? "active" : ""}
+            data-active={isActive(link.href)}
+            className="py-[12px] text-[16px] font-medium text-[var(--ink-2)] no-underline border-b border-[var(--rule-2)] transition-colors duration-150 hover:text-[var(--ink)] data-[active=true]:text-[var(--ink)] last-of-type:border-b-0"
             onClick={() => setIsOpen(false)}
           >
             {link.name}
           </Link>
         ))}
-        <div className="v3-mobile-bottom">
+        <div className="flex items-center gap-[12px] pt-[16px] mt-[8px]">
           <button
-            className="v3-theme-toggle"
+            className="w-[38px] h-[38px] rounded-full border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
             onClick={() => {
               setTheme(isDark ? "light" : "dark")
               setIsOpen(false)
@@ -131,13 +140,14 @@ export function Navbar(): React.ReactNode {
           </button>
           <Link
             href="/contact"
-            className="v3-btn v3-btn-accent v3-btn-sm"
+            className="group inline-flex items-center gap-[10px] px-[16px] py-[9px] rounded-full font-sans text-[13px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-[var(--v3-accent)] text-[var(--bg)] hover:bg-[var(--v3-accent-2)]"
             onClick={() => setIsOpen(false)}
           >
-            Book a call <span className="arr" aria-hidden="true">→</span>
+            Book a call <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
     </nav>
   )
 }
+
