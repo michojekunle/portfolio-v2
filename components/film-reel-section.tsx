@@ -17,13 +17,13 @@ export function FilmReelSection(): React.ReactElement {
       aria-labelledby="reel-heading"
     >
       <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">02 — ALL WORK</div>
+        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">03 — ARCHIVE</div>
         <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-[24px]">
           <h2 id="reel-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
             Everything I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">shipped.</em>
           </h2>
-          <Link href="/work" className="group inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)] shrink-0 mb-[12px]">
-            Full index <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
+          <Link href="/work" className="group inline-flex items-center gap-[12px] px-[28px] py-[14px] rounded-full font-mono text-[11px] uppercase tracking-[0.12em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-[12px]">
+            View full index <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

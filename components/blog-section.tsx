@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { format } from "date-fns"
+import { NewsletterCTA } from "./newsletter-cta"
 
 export async function BlogSection(): Promise<React.ReactElement> {
   const supabase = await createClient()
@@ -15,14 +16,15 @@ export async function BlogSection(): Promise<React.ReactElement> {
   const items = posts ?? []
 
   return (
-    <section className="v3-section v3-container" id="blog" aria-labelledby="blog-heading">
-      <div className="v3-section-head">
-        <div className="num">05 — WRITING</div>
+    <section className="py-[120px] max-[720px]:py-[72px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)]" id="blog" aria-labelledby="blog-heading">
+      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">04 — WRITING</div>
         <div>
-          <h2 id="blog-heading">Field <em>notes.</em></h2>
-          <div className="sub">
-            Short essays on engineering, ZK, and learning things in public. New piece every few
-            weeks.
+          <h2 id="blog-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
+            Field <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">notes.</em>
+          </h2>
+          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
+            Short essays on engineering, ZK, and learning in public.
           </div>
         </div>
       </div>
@@ -50,11 +52,13 @@ export async function BlogSection(): Promise<React.ReactElement> {
         </p>
       )}
 
-      <div style={{ textAlign: "center", marginTop: "56px" }}>
-        <Link href="/blog" className="v3-btn v3-btn-ghost">
-          All notes <span className="arr" aria-hidden="true">→</span>
+      <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)] mb-[80px]">
+        <Link href="/blog" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+          Read all notes <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px]" aria-hidden="true">→</span>
         </Link>
       </div>
+
+      <NewsletterCTA />
     </section>
   )
 }

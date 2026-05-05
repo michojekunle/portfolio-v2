@@ -22,9 +22,11 @@ export function ProjectsSection(): React.ReactElement {
       aria-labelledby="projects-heading"
     >
       <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">01 — WORK</div>
+        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">02 — FEATURED</div>
         <div>
-          <h2 id="projects-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">Selected <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">work.</em></h2>
+          <h2 id="projects-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
+            Masterpieces, I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">shipped.</em>
+          </h2>
           <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
             Three I&apos;d most want to talk about. Full case studies inside — process,
             wrong turns, what shipped.
@@ -121,8 +123,8 @@ export function ProjectsSection(): React.ReactElement {
       </div>
 
       <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)]">
-        <Link href="/work" className="group inline-flex items-center justify-center px-[32px] h-[56px] rounded-full font-mono text-[13px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-[var(--v3-accent)] text-[var(--bg)] hover:-translate-y-[2px] hover:shadow-[0_16px_40px_-10px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
-          See all 6 projects <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[8px]" aria-hidden="true">↗</span>
+        <Link href="/work" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+          Explore complete archive <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px]" aria-hidden="true">→</span>
         </Link>
       </div>
     </section>

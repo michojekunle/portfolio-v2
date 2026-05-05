@@ -64,7 +64,7 @@ export async function NowSection(): Promise<React.ReactElement> {
     <section className="relative py-[120px] max-[720px]:py-[72px] bg-[var(--bg-2)] border-y border-[var(--rule)]" id="now" aria-labelledby="now-heading">
       <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
         <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">04 — NOW</div>
+          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">03 — NOW</div>
           <div>
             <h2 id="now-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
               Currently <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">working on.</em>
@@ -161,19 +161,26 @@ export async function NowSection(): Promise<React.ReactElement> {
             <h4 className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] m-[0_0_28px] font-medium flex items-center gap-[8px] before:content-[''] before:w-[8px] before:h-[8px] before:bg-[var(--v3-accent)] before:rounded-full">Off-screen</h4>
             <ul className="list-none p-0 m-0">
               {books.length > 0 ? (
-                books.slice(0, 6).map((b, i) => (
-                  <li key={i} className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                    <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">
-                      {b.title}
-                      {b.status === "reading" && (
-                        <span className={statusClass("in-progress")}>reading</span>
+                <>
+                  {books.slice(0, 4).map((b, i) => (
+                    <li key={i} className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
+                      <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">
+                        {b.title}
+                        {b.status === "reading" && (
+                          <span className={statusClass("in-progress")}>reading</span>
+                        )}
+                      </b>
+                      {b.author && (
+                        <span className="font-mono text-[11px] text-[var(--ink-3)] tracking-[0.04em]">by {b.author}</span>
                       )}
-                    </b>
-                    {b.author && (
-                      <span className="font-mono text-[11px] text-[var(--ink-3)] tracking-[0.04em]">by {b.author}</span>
-                    )}
+                    </li>
+                  ))}
+                  <li className="pt-[24px]">
+                    <Link href="/reading" className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--v3-accent)] hover:text-[var(--v3-accent-2)] transition-colors no-underline font-semibold flex items-center gap-[8px] group/read">
+                      Full reading log <span className="inline-block transition-transform duration-200 group-hover/read:translate-x-[4px]">→</span>
+                    </Link>
                   </li>
-                ))
+                </>
               ) : (
                 <li className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
                   <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">Reading &amp; walking</b>
@@ -185,9 +192,9 @@ export async function NowSection(): Promise<React.ReactElement> {
 
         </div>
 
-        <div style={{ marginTop: 48, textAlign: "center" }}>
-          <Link href="/about" className="inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)] group">
-            More about me <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
+        <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)]">
+          <Link href="/about" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+            More about my journey <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px]" aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
