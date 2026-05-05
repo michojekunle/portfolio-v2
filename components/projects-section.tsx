@@ -99,20 +99,20 @@ export function ProjectsSection(): React.ReactElement {
           <Link
             key={p.slug}
             href={`/work/${p.slug}`}
-            className="flex flex-col border border-[var(--rule)] rounded-[12px] overflow-hidden bg-[var(--bg-2)] no-underline text-inherit transition-colors duration-200 active:border-[var(--ink-3)]"
+            className="group flex flex-col border border-[var(--rule)] rounded-[16px] overflow-hidden bg-[var(--paper)] no-underline text-inherit transition-all duration-300 hover:border-[var(--v3-accent-soft)] hover:shadow-[0_16px_40px_-10px_color-mix(in_oklab,var(--ink)_5%,transparent)]"
             aria-label={`View case study: ${p.name}`}
           >
             <div
-              className="h-[8px] w-full"
+              className="h-[6px] w-full"
               style={{ background: PROJECT_COLORS[p.slug] ?? "var(--v3-accent)" }}
             />
-            <div className="p-[24px] flex flex-col gap-[12px]">
+            <div className="p-[32px] max-[480px]:p-[24px] flex flex-col gap-[12px]">
               <div className="font-mono text-[10px] uppercase text-[var(--ink-3)] tracking-[0.1em]">{p.idx} · {p.year} · {p.tag}</div>
-              <div className="font-[family:var(--display-font)] text-[28px] leading-[1.1] text-[var(--ink)]">{p.name}</div>
-              <div className="text-[15px] text-[var(--ink-2)] leading-[1.6]">{p.desc}</div>
-              <div className="flex flex-wrap gap-[6px] mt-[8px]">
+              <div className="font-[family:var(--display-font)] text-[32px] leading-[1.1] text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--v3-accent)]">{p.name}</div>
+              <div className="text-[16px] text-[var(--ink-2)] leading-[1.6]">{p.desc}</div>
+              <div className="flex flex-wrap gap-[6px] mt-[12px]">
                 {p.stack.slice(0, 4).map((s) => (
-                  <span key={s} className="font-mono text-[9px] px-[8px] py-[4px] border border-[var(--rule)] rounded-[4px] text-[var(--ink-3)] uppercase">{s}</span>
+                  <span key={s} className="font-mono text-[10px] px-[10px] py-[4px] border border-[var(--rule)] rounded-[4px] text-[var(--ink-3)] uppercase bg-[var(--bg)]">{s}</span>
                 ))}
               </div>
             </div>
@@ -120,9 +120,9 @@ export function ProjectsSection(): React.ReactElement {
         ))}
       </div>
 
-      <div style={{ textAlign: "center", marginTop: "64px" }}>
-        <Link href="/work" className="inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)] group">
-          See all 6 projects <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
+      <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)]">
+        <Link href="/work" className="group inline-flex items-center justify-center px-[32px] h-[56px] rounded-full font-mono text-[13px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-[var(--v3-accent)] text-[var(--bg)] hover:-translate-y-[2px] hover:shadow-[0_16px_40px_-10px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
+          See all 6 projects <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[8px]" aria-hidden="true">↗</span>
         </Link>
       </div>
     </section>

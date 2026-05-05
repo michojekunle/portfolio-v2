@@ -211,7 +211,7 @@ export default async function Image(): Promise<ImageResponse> {
           <span
             style={{
               fontSize: 13,
-              color: "#2c2c2c",
+              color: "#888",
               letterSpacing: "0.5px",
             }}
           >
@@ -229,14 +229,14 @@ export default async function Image(): Promise<ImageResponse> {
                 width: "6px",
                 height: "6px",
                 borderRadius: "50%",
-                background: "#1e1e1e",
+                background: "#555",
                 display: "flex",
               }}
             />
             <span
               style={{
                 fontSize: 12,
-                color: "#2c2c2c",
+                color: "#666",
                 letterSpacing: "2px",
                 textTransform: "uppercase",
               }}

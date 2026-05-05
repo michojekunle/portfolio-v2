@@ -95,31 +95,43 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
   // Article structured data
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.excerpt ?? undefined,
-    url: postUrl,
-    datePublished: post.published_at ?? undefined,
-    dateModified: post.updated_at ?? undefined,
-    author: {
-      "@type": "Person",
-      "@id": `${SITE}/#person`,
-      name: "Michael Ojekunle",
-      url: SITE,
-    },
-    publisher: {
-      "@type": "Person",
-      "@id": `${SITE}/#person`,
-      name: "Michael Ojekunle",
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
-    articleSection: post.category ?? undefined,
-    image: {
-      "@type": "ImageObject",
-      url: `${SITE}/blog/${slug}/opengraph-image`,
-      width: 1200,
-      height: 630,
-    },
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt ?? undefined,
+        url: postUrl,
+        datePublished: post.published_at ?? undefined,
+        dateModified: post.updated_at ?? undefined,
+        author: {
+          "@type": "Person",
+          "@id": `${SITE}/#person`,
+          name: "Michael Ojekunle",
+          url: SITE,
+        },
+        publisher: {
+          "@type": "Person",
+          "@id": `${SITE}/#person`,
+          name: "Michael Ojekunle",
+        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        articleSection: post.category ?? undefined,
+        image: {
+          "@type": "ImageObject",
+          url: `${SITE}/blog/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+          { "@type": "ListItem", position: 2, name: "Notes", item: `${SITE}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title },
+        ],
+      },
+    ],
   };
 
   return (

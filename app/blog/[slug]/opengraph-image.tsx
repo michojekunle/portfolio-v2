@@ -21,6 +21,7 @@ export default async function BlogPostOGImage({ params }: Props): Promise<ImageR
     .from("blog_posts")
     .select("title, excerpt, category, published_at")
     .eq("slug", slug)
+    .eq("published", true)
     .single();
 
   const title = post?.title ?? "Blog Post";

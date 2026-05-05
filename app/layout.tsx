@@ -167,14 +167,6 @@ const jsonLd = {
       name: "Michael Ojekunle",
       description: "Portfolio and blog of Michael Ojekunle — Full-Stack & Web3 Developer",
       author: { "@id": "https://michaelojekunle.dev/#person" },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: "https://michaelojekunle.dev/blog?q={search_term_string}",
-        },
-        "query-input": "required name=search_term_string",
-      },
     },
   ],
 };
