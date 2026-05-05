@@ -47,27 +47,25 @@ export function ContactPage(): React.ReactElement {
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="v3-util-hero v3-container">
-          <div className="v3-eyebrow" style={{ marginBottom: 24 }}>
-            <span className="dot" aria-hidden="true" /> Available · response within 24h
-          </div>
-          <h1>
-            Let&apos;s <em>build.</em>
+        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[120px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">05 — CONTACT · BOOKING</div>
+          <h1 className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance [font-variation-settings:'opsz'_144]">
+            Let&apos;s <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">build.</em>
           </h1>
-          <p>
+          <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
             Pick a slot below or send a note. Open to contract work, full-time roles in
             protocol-adjacent teams, and conversations that aren&apos;t either.
           </p>
         </section>
 
-        <section className="v3-container" style={{ paddingBottom: 80 }}>
+        <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
           <div className="v3-booking-section">
             {/* Calendar card */}
             <div className="v3-calendar-card">
               <div className="v3-calendar-head">
-                <h4>
+                <h4 className="flex items-center gap-3">
                   Pick a time
-                  <span className="v3-calendar-tz">WAT (UTC+1)</span>
+                  <span className="v3-calendar-tz">Lagos (GMT+1)</span>
                 </h4>
                 <div className="v3-calendar-nav">
                   <button onClick={() => setMonthOffset(Math.max(0, monthOffset - 1))} disabled={monthOffset === 0} aria-label="Previous month">‹</button>
@@ -97,10 +95,12 @@ export function ContactPage(): React.ReactElement {
                 ))}
                 {days.map((day, i) => {
                   if (day.empty) return <div key={`empty-${i}`} className="day empty" />
+                  
+                  const isWeekend = day.date.getDay() === 0 || day.date.getDay() === 6;
                   const classes = ["day"]
                   if (day.past) classes.push("past")
                   if (day.isToday) classes.push("today")
-                  if (!day.hasSlots || day.past) classes.push("unavail")
+                  if (isWeekend || day.past) classes.push("unavail")
                   if (isSelected(day.date)) classes.push("selected")
 
                   return (
@@ -148,14 +148,21 @@ export function ContactPage(): React.ReactElement {
                   Open Cal.com ↗
                 </a>
                 {selectedDate && selectedSlot ? (
-                  <a
-                    href={`https://cal.com/devvmichael/${meetingType}min`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => {
+                      const [hh, mm] = selectedSlot.split(":").map(Number);
+                      // Michael is in Lagos (UTC+1). We treat the selection as Lagos time
+                      // and convert to UTC by subtracting 1 hour. Lagos does not use DST.
+                      const y = selectedDate.getFullYear();
+                      const m = selectedDate.getMonth();
+                      const day = selectedDate.getDate();
+                      const utcDate = new Date(Date.UTC(y, m, day, hh - 1, mm));
+                      window.open(`https://cal.com/devvmichael/${meetingType}min?slot=${utcDate.toISOString()}`, "_blank");
+                    }}
                     className="v3-btn v3-btn-accent v3-btn-sm"
                   >
                     Confirm {selectedSlot} · {meetingType}m <span className="arr" aria-hidden="true">→</span>
-                  </a>
+                  </button>
                 ) : (
                   <button className="v3-btn v3-btn-accent v3-btn-sm" disabled>
                     Select a slot
@@ -166,37 +173,31 @@ export function ContactPage(): React.ReactElement {
 
             {/* Info column */}
             <div className="v3-booking-info">
-              <p
-                style={{
-                  fontFamily: "var(--display-font)",
-                  fontStyle: "italic",
-                  fontSize: "clamp(22px, 2.4vw, 30px)",
-                  lineHeight: 1.25,
-                  color: "var(--ink)",
-                  margin: "0 0 40px",
-                  fontVariationSettings: '"opsz" 96, "SOFT" 100',
-                }}
-              >
+              <p className="font-[family:var(--display-font)] italic text-[clamp(24px,3vw,34px)] leading-[1.2] text-[var(--ink)] mb-[48px] [font-variation-settings:'opsz'_96,'SOFT'_100]">
                 Good conversations start with a clear problem. Tell me what you&apos;re building.
               </p>
 
               <div className="body">
-                <div style={{ marginBottom: 32 }}>
-                  <div style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: 16 }}>
-                    Contact
+                <div className="mb-[48px]">
+                  <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--ink-3)] mb-[16px] font-bold">
+                    Email
                   </div>
-                  <p style={{ fontSize: 15, color: "var(--ink-2)", margin: "0 0 8px" }}>
-                    <a href="mailto:michojekunle1@gmail.com" style={{ color: "var(--v3-accent)" }}>
-                      michojekunle1@gmail.com
-                    </a>
-                  </p>
-                  <p style={{ fontSize: 15, color: "var(--ink-2)", margin: 0 }}>Lagos, Nigeria · WAT (UTC+1)</p>
+                  <a href="mailto:michojekunle1@gmail.com" className="text-[22px] font-[family:var(--display-font)] text-[var(--v3-accent)] no-underline hover:underline [font-variation-settings:'opsz'_96]">
+                    michojekunle1@gmail.com
+                  </a>
+                  <p className="text-[14px] font-mono tracking-tight text-[var(--ink-3)] mt-[10px]">Lagos, Nigeria · WAT (UTC+1)</p>
                 </div>
 
-                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                  <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="v3-btn v3-btn-ghost v3-btn-sm">GitHub</a>
-                  <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="v3-btn v3-btn-ghost v3-btn-sm">Twitter</a>
-                  <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer" className="v3-btn v3-btn-ghost v3-btn-sm">LinkedIn</a>
+                <div className="flex flex-wrap gap-4 mt-8">
+                  <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip">
+                    GitHub <span className="arr" style={{ fontSize: '9px' }}>↗</span>
+                  </a>
+                  <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="v3-social-chip">
+                    Twitter <span className="arr" style={{ fontSize: '9px' }}>↗</span>
+                  </a>
+                  <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip">
+                    LinkedIn <span className="arr" style={{ fontSize: '9px' }}>↗</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -204,19 +205,24 @@ export function ContactPage(): React.ReactElement {
         </section>
 
         {/* FAQs */}
-        <section className="v3-accent-section" style={{ padding: "80px 0" }}>
-          <div className="v3-container">
-            <div className="v3-section-head" style={{ marginBottom: 48 }}>
-              <div className="num">FAQ</div>
-              <h2>Common <em>questions.</em></h2>
+        <section className="py-[120px] max-[720px]:py-[72px] bg-[var(--bg-2)] border-y border-[var(--rule)]">
+          <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
+            <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+              <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">06 — FAQS</div>
+              <div>
+                <h2 className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
+                  Common <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">questions.</em>
+                </h2>
+              </div>
             </div>
-            <div className="v3-faq-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }}>
+            
+            <div className="grid grid-cols-2 max-[920px]:grid-cols-1 gap-x-[80px] gap-y-[48px]">
               {FAQS.map((faq, i) => (
-                <div key={i} style={{ padding: "28px", borderLeft: "2px solid var(--v3-accent-soft)" }}>
-                  <h4 style={{ fontFamily: "var(--display-font)", fontVariationSettings: '"opsz" 96', fontSize: "20px", fontWeight: 400, color: "var(--ink)", margin: "0 0 12px" }}>
+                <div key={i} className="group">
+                  <h4 className="font-[family:var(--display-font)] font-normal text-[22px] leading-[1.3] text-[var(--ink)] mb-[16px] [font-variation-settings:'opsz'_96] group-hover:text-[var(--v3-accent)] transition-colors">
                     {faq.q}
                   </h4>
-                  <p style={{ fontSize: "15px", color: "var(--ink-2)", lineHeight: 1.6, margin: 0 }}>
+                  <p className="text-[15px] text-[var(--ink-2)] leading-[1.65] m-0 max-w-[48ch]">
                     {faq.a}
                   </p>
                 </div>
