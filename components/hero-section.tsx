@@ -30,17 +30,17 @@ export function HeroSection(): React.ReactElement {
         </div>
       </div>
 
-      <h1 className="relative z-[1] font-[family:var(--display-font)] font-normal text-[clamp(72px,18vw,200px)] leading-[0.85] tracking-[-0.05em] text-[var(--ink)] mb-[80px] max-[720px]:mb-[32px] text-balance [font-variation-settings:'opsz'_144]">
+      <h1 className="relative z-[1] font-normal text-[clamp(72px,18vw,200px)] leading-[0.85] tracking-[-0.05em] text-[var(--ink)] mb-[80px] max-[720px]:mb-[32px] text-balance">
         Engineer.<br />
-        <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">Writer.</em><br />
+        <em>Writer.</em><br />
         <span className="block text-transparent [-webkit-text-stroke:2px_var(--ink)]">Builder.</span>
       </h1>
 
       <div className="relative z-[1] grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-[80px] max-[920px]:gap-[40px] mt-[80px] pt-[40px] border-t border-[var(--rule)] items-start">
         <div>
-          <p className="font-[family:var(--display-font)] font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.25] text-[var(--ink)] m-0 max-w-[24ch] text-pretty [font-variation-settings:'opsz'_96]">
+          <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.25] text-[var(--ink)] m-0 max-w-[24ch] text-pretty">
             I build web3 frontends that hold up under pressure. Quietly going deep on{" "}
-            <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">ZK proofs</em> and Rust — because I want to understand the stack all the way down.
+            <em>ZK proofs</em> and Rust — because I want to understand the stack all the way down.
           </p>
 
           {/* Tech stack pills */}
