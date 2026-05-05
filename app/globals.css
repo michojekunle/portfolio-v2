@@ -54,27 +54,27 @@
 
 /* ── Tailwind v4 theme — maps CSS vars to utility classes ────────────────── */
 @theme inline {
-  /* Colors — shadcn/ui HSL token bridge */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-indigo: hsl(var(--indigo));
+  /* Colors — Mapped to dynamic project variables */
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-card: var(--paper);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--paper);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--ink);
+  --color-primary-foreground: var(--bg);
+  --color-secondary: var(--bg-2);
+  --color-secondary-foreground: var(--ink-2);
+  --color-muted: var(--bg-2);
+  --color-muted-foreground: var(--ink-3);
+  --color-accent: var(--v3-accent);
+  --color-accent-foreground: var(--bg);
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--rule);
+  --color-input: var(--rule);
+  --color-ring: var(--v3-accent);
+  --color-indigo: #4f46e5;
 
   /* Border radius */
   --radius-lg: var(--radius);
@@ -227,6 +227,16 @@ body {
   font-family: var(--display-font);
   font-style: italic;
   font-variation-settings: "opsz" 144, "SOFT" 100;
+}
+
+h1 em, h2 em, h3 em, h4 em {
+  font-style: italic;
+  color: var(--v3-accent);
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--display-font);
 }
 
 .v3-mono {
@@ -1394,11 +1404,16 @@ body {
 
 .v3-calendar-grid .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--ink-2); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; transition: all .15s; position: relative; }
 
-.v3-calendar-grid .day:hover { background: var(--bg-2); }
+.v3-calendar-grid .day:hover:not(.unavail):not(.past):not(.empty) { background: var(--bg-2); }
 .v3-calendar-grid .day.empty { cursor: default; }
 .v3-calendar-grid .day.empty:hover { background: transparent; }
-.v3-calendar-grid .day.past { color: var(--ink-4); cursor: not-allowed; }
-.v3-calendar-grid .day.past:hover { background: transparent; }
+.v3-calendar-grid .day.past { color: var(--ink-4); cursor: not-allowed; opacity: 0.4; }
+.v3-calendar-grid .day.unavail { 
+  color: var(--ink-4); 
+  cursor: not-allowed; 
+  opacity: 0.25; 
+  background: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--rule) 4px, var(--rule) 5px); 
+}
 .v3-calendar-grid .day.today { color: var(--v3-accent); font-weight: 600; }
 .v3-calendar-grid .day.today::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--v3-accent); border-radius: 50%; }
 .v3-calendar-grid .day.selected { background: var(--ink); color: var(--bg); }
@@ -1424,9 +1439,18 @@ body {
 .v3-info-rows .row .k { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
 .v3-info-rows .row .v { color: var(--ink); }
 
-.v3-socials-row { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
-.v3-socials-row a { padding: 10px 16px; border: 1px solid var(--rule); border-radius: 999px; font-size: 13px; color: var(--ink-2); transition: all .15s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
-.v3-socials-row a:hover { color: var(--ink); border-color: var(--ink-3); }
+.v3-socials-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.v3-social-chip { 
+  padding: 10px 20px; border: 1px solid var(--rule); border-radius: 999px; 
+  font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--ink-2); transition: all .3s cubic-bezier(.2,.8,.2,1); 
+  display: inline-flex; align-items: center; gap: 6px; text-decoration: none; 
+  background: transparent;
+}
+.v3-social-chip .arr { transition: transform 0.3s cubic-bezier(.2,.8,.2,1); font-size: 11px; color: var(--ink-4); }
+.v3-social-chip:hover { color: var(--v3-accent); border-color: var(--v3-accent); background: color-mix(in_oklab, var(--v3-accent) 5%, transparent); }
+.v3-social-chip:hover .arr { transform: translate(1px, -1px); color: var(--v3-accent); }
 
 /* ── Footer ───────────────────────────────────────────────────────────────── */
 
