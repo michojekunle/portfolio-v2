@@ -8,6 +8,7 @@ import { TableOfContents } from "@/components/table-of-contents";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { BlogReactions } from "@/components/blog-reactions";
 import { BlogComments } from "@/components/blog-comments";
+import { NewsletterCTA } from "@/components/newsletter-cta";
 
 export const revalidate = 60;
 
@@ -173,17 +174,11 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
           <MarkdownRenderer content={content} />
         </article>
 
-        {/* CTA */}
-        <section className="v3-container-narrow" style={{ padding: "80px 0", borderTop: "1px solid var(--rule)", marginTop: 80 }}>
-          <div style={{ textAlign: "center" }}>
-            <p style={{ fontFamily: "var(--display-font)", fontStyle: "italic", fontSize: 22, color: "var(--ink-2)", maxWidth: "40ch", margin: "0 auto 32px", fontVariationSettings: '"opsz" 96, "SOFT" 100' }}>
-              Liked this? Drop me a note — I read every one.
-            </p>
-            <Link href="/contact" className="v3-btn v3-btn-primary">
-              Get in touch <span className="arr" aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </section>
+        {/* Newsletter CTA */}
+        <NewsletterCTA 
+          title="Liked this? Join the loop." 
+          description="Get more engineering field notes and technical deep dives delivered straight to your inbox."
+        />
 
         {/* Reactions and comments */}
         <section className="v3-container-narrow" style={{ paddingBottom: 80 }}>
