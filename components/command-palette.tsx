@@ -262,11 +262,11 @@ export function CommandPaletteTrigger(): React.ReactElement {
           new KeyboardEvent("keydown", { key: "k", metaKey: true })
         )
       }
-      className="hidden md:flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 border border-border rounded-md"
+      className="hidden md:flex items-center gap-3 text-[11px] uppercase tracking-[0.12em] font-medium text-[var(--ink-3)] hover:text-[var(--v3-accent)] transition-all duration-200 px-[12px] py-[6px] border border-[var(--rule)] rounded-[6px] bg-transparent hover:bg-[var(--bg-2)] hover:border-[var(--v3-accent-soft)] group"
       aria-label="Open command palette"
     >
-      <span>Search</span>
-      <kbd className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-mono">
+      <span className="font-mono">Search</span>
+      <kbd className="text-[10px] bg-[var(--bg-2)] px-1.5 py-0.5 rounded font-mono text-[var(--ink-4)] border border-[var(--rule)] transition-colors group-hover:border-[var(--v3-accent-soft)] group-hover:text-[var(--v3-accent)]">
         ⌘K
       </kbd>
     </button>
