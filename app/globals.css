@@ -2248,3 +2248,4 @@ body {
   border-left: 2px solid var(--v3-accent-soft);
   line-height: 1.5;
 }
+[data-display-font="grotesk"] * { font-variation-settings: normal !important; }

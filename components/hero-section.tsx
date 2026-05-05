@@ -61,12 +61,12 @@ export function HeroSection(): React.ReactElement {
             because I want to understand the stack all the way to the metal.
           </p>
 
-          <div className="flex gap-[12px] flex-wrap mt-[28px] max-[720px]:mb-[40px]">
-            <Link href="/contact" className="group inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-[var(--ink)] text-[var(--bg)] hover:-translate-y-[1px] hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.3)]">
-              Book a call <span className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
+          <div className="flex gap-[16px] flex-wrap mt-[32px] max-[720px]:mb-[40px]">
+            <Link href="/contact" className="group inline-flex items-center justify-center px-[28px] h-[52px] rounded-full font-mono text-[12px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-[var(--v3-accent)] text-[var(--bg)] hover:-translate-y-[2px] hover:shadow-[0_12px_32px_-8px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
+              Book a call <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[8px]" aria-hidden="true">↗</span>
             </Link>
-            <Link href="/work" className="inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)]">
-              Selected work
+            <Link href="/work" className="group inline-flex items-center justify-center px-[28px] h-[52px] rounded-full font-mono text-[12px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+              Portfolio <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[8px]" aria-hidden="true">→</span>
             </Link>
           </div>
 
