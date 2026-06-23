@@ -35,8 +35,8 @@ export async function getPublicBooks(): Promise<PublicBook[]> {
     title: b.title as string,
     author: b.author as string,
     cover_url: b.cover_url as string | null,
-    progress: b.progress as number,
+    progress: (b.progress as number | null) ?? 0,
     status: b.status as "reading" | "completed" | "queued",
-    notes: ((b.book_notes ?? []) as BookNote[]),
+    notes: (Array.isArray(b.book_notes) ? b.book_notes : []) as BookNote[],
   }))
 }

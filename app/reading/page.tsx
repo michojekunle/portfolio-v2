@@ -48,7 +48,7 @@ function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
       </span>
       <div>
         {isQuote ? (
-          <blockquote className="m-0 p-0 font-[family:var(--display-font)] text-[18px] italic text-[var(--ink)] leading-[1.6] [font-variation-settings:'opsz'_96]">
+          <blockquote className="m-0 p-0 font-display text-[18px] italic text-[var(--ink)] leading-[1.6] fvs-text">
             {note.content}
           </blockquote>
         ) : (
@@ -86,7 +86,7 @@ function BookCard({ book }: { book: PublicBook }): React.ReactElement {
             />
           ) : (
             <div
-              className="absolute inset-0 flex items-center justify-center font-[family:var(--display-font)] text-[32px] font-normal text-[var(--v3-accent)] tracking-[-0.03em] bg-[color-mix(in_oklab,var(--v3-accent)_10%,var(--bg-2))]"
+              className="absolute inset-0 flex items-center justify-center font-display text-[32px] font-normal text-[var(--v3-accent)] tracking-[-0.03em] bg-[color-mix(in_oklab,var(--v3-accent)_10%,var(--bg-2))]"
             >
               <span>{book.title.slice(0, 2).toUpperCase()}</span>
             </div>
@@ -107,7 +107,7 @@ function BookCard({ book }: { book: PublicBook }): React.ReactElement {
         <div className="max-w-[640px]">
           {/* Meta */}
           <div className="mb-[32px]">
-            <h3 className="m-0 font-[family:var(--display-font)] font-normal text-[36px] max-[720px]:text-[28px] leading-[1.1] tracking-[-0.03em] text-[var(--ink)] mb-[10px] [font-variation-settings:'opsz'_96]">
+            <h3 className="m-0 font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.1] tracking-[-0.03em] text-[var(--ink)] mb-[10px] fvs-text">
               {book.title}
             </h3>
             <div className="text-[15px] text-[var(--ink-3)] font-mono tracking-[0.06em] uppercase">
@@ -151,7 +151,7 @@ function BookCard({ book }: { book: PublicBook }): React.ReactElement {
                 )}
               </div>
             ) : (
-              <p className="m-0 font-[family:var(--display-font)] italic text-[18px] text-[var(--ink-3)] leading-[1.6] [font-variation-settings:'opsz'_96]">
+              <p className="m-0 font-display italic text-[18px] text-[var(--ink-3)] leading-[1.6] fvs-text">
                 Notes and takeaways for this title are currently being synthesized. Check back soon for the core insights.
               </p>
             )}

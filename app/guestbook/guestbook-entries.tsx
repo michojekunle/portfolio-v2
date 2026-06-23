@@ -59,6 +59,7 @@ export function GuestbookEntries(): React.ReactElement {
 
       const entry = (await res.json()) as GuestbookEntry;
       setEntries((prev) => [entry, ...prev]);
+      setName("");
       setMessage("");
     } catch {
       setError("Something went wrong. Please try again.");

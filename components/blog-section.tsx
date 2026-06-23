@@ -20,8 +20,8 @@ export async function BlogSection(): Promise<React.ReactElement> {
       <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">04 — WRITING</div>
         <div>
-          <h2 id="blog-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
-            Field <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">notes.</em>
+          <h2 id="blog-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
+            Field <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">notes.</em>
           </h2>
           <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
             Short essays on engineering, ZK, and learning in public.
@@ -47,7 +47,7 @@ export async function BlogSection(): Promise<React.ReactElement> {
           ))}
         </div>
       ) : (
-        <p style={{ color: "var(--ink-3)", fontFamily: "var(--font-jetbrains-mono)", fontSize: "13px" }}>
+        <p className="font-mono text-[13px] text-[var(--ink-3)]">
           No posts yet. Check back soon.
         </p>
       )}

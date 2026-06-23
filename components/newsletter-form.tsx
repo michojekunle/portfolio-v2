@@ -56,15 +56,15 @@ export function NewsletterForm(): React.ReactElement {
       } else {
         setStatus("success");
         toast.success("You're subscribed! I'll send new posts your way.");
-        setEmail(""); // Clear input on success
+        setEmail("");
+        // Reset to idle after 4 s so the user can re-submit if needed
+        setTimeout(() => setStatus("idle"), 4000);
       }
     } catch (err: unknown) {
       setStatus("idle");
 
       if (err instanceof z.ZodError) {
-        // Show the first validation error
-        const errorMessage = (err as any).errors[0]?.message || "Invalid email";
-        toast.error(errorMessage);
+        toast.error(err.errors[0]?.message ?? "Invalid email");
       } else {
         console.error("[subscribe]", err);
         toast.error("Subscription failed. Please try again.");

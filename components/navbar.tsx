@@ -64,9 +64,9 @@ export function Navbar(): React.ReactNode {
         <Link
           href="/"
           aria-label="Michael Ojekunle — home"
-          className="flex items-center gap-[16px] font-[family:var(--display-font)] italic text-[22px] font-normal cursor-pointer text-[var(--ink)] no-underline [font-variation-settings:'opsz'_144,'SOFT'_100] group"
+          className="flex items-center gap-[16px] font-display italic text-[22px] font-normal cursor-pointer text-[var(--ink)] no-underline fvs-soft group"
         >
-          <div className="flex items-center justify-center w-[32px] h-[32px] bg-[var(--ink)] text-[var(--bg)] font-[family:var(--display-font)] not-italic text-[16px] font-medium leading-[0.9] tracking-[0.1em] uppercase transition-transform duration-300 group-hover:scale-105">
+          <div className="flex items-center justify-center w-[32px] h-[32px] bg-[var(--ink)] text-[var(--bg)] font-display not-italic text-[16px] font-medium leading-[0.9] tracking-[0.1em] uppercase transition-transform duration-300 group-hover:scale-105">
             <span>m</span>
             <span>i</span>
           </div>

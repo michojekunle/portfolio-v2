@@ -85,6 +85,7 @@
   --font-sans: var(--font-space-grotesk), system-ui, sans-serif;
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-mono: var(--font-jetbrains-mono), Menlo, Monaco, Consolas, monospace;
+  --font-display: var(--font-fraunces), Georgia, serif;
 
   /* Animations */
   --animate-accordion-down: accordion-down 0.2s ease-out;
@@ -198,7 +199,7 @@ body {
   --good: #6e8c2e;
   --maxw: 1320px;
   --gutter: 48px;
-  --display-font: "Fraunces", Georgia, serif;
+  --display-font: var(--font-fraunces), Georgia, serif;
 }
 
 .dark {
@@ -238,6 +239,11 @@ h1 em, h2 em, h3 em, h4 em {
 h1, h2, h3, h4, h5 {
   font-family: var(--display-font);
 }
+
+.fvs-display { font-variation-settings: "opsz" 144; }
+.fvs-soft { font-variation-settings: "opsz" 144, "SOFT" 100; }
+.fvs-text { font-variation-settings: "opsz" 96; }
+.fvs-text-soft { font-variation-settings: "opsz" 96, "SOFT" 100; }
 
 .v3-mono {
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;

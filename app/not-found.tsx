@@ -16,33 +16,11 @@ export default function NotFound(): React.ReactElement {
         padding: "80px var(--gutter)",
       }}
     >
-      <div
-        style={{
-          fontFamily: "var(--display-font)",
-          fontVariationSettings: '"opsz" 144',
-          fontSize: "clamp(120px, 25vw, 240px)",
-          fontWeight: 400,
-          lineHeight: 0.9,
-          letterSpacing: "-0.04em",
-          color: "var(--rule)",
-          userSelect: "none",
-          marginBottom: 32,
-        }}
-      >
+      <div className="v3-serif text-[clamp(120px,25vw,240px)] font-normal leading-[0.9] tracking-[-0.04em] text-[var(--rule)] select-none mb-8">
         404
       </div>
 
-      <h1
-        style={{
-          fontFamily: "var(--display-font)",
-          fontVariationSettings: '"opsz" 96',
-          fontSize: "clamp(28px, 4vw, 48px)",
-          fontWeight: 400,
-          letterSpacing: "-0.02em",
-          color: "var(--ink)",
-          margin: "0 0 16px",
-        }}
-      >
+      <h1 className="font-display fvs-text text-[clamp(28px,4vw,48px)] font-normal tracking-[-0.02em] text-[var(--ink)] m-0 mb-4">
         Off the grid.
       </h1>
 

@@ -95,7 +95,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
       {/* Post rows */}
       {!filteredPosts.length ? (
         <div className="py-[80px] text-center border-t border-[var(--rule)]">
-          <p className="font-[family:var(--display-font)] italic text-[18px] text-[var(--ink-3)]">
+          <p className="font-display italic text-[18px] text-[var(--ink-3)]">
             No notes found{searchQuery ? ` matching "${searchQuery}"` : ""}{activeCategory !== "All" ? ` in ${activeCategory}` : ""}.
           </p>
         </div>
@@ -122,7 +122,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                 </span>
                 
                 <div className="flex flex-col gap-[6px]">
-                  <div className="font-[family:var(--display-font)] text-[22px] leading-[1.2] text-[var(--ink)] group-hover:text-[var(--v3-accent)] transition-colors duration-200 [font-variation-settings:'opsz'_96]">
+                  <div className="font-display text-[22px] leading-[1.2] text-[var(--ink)] group-hover:text-[var(--v3-accent)] transition-colors duration-200 fvs-text">
                     {post.title}
                     <span className="inline-flex items-center ml-[12px] font-mono text-[10px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded bg-[var(--bg-2)] border border-[var(--rule)] text-[var(--ink-3)] align-middle">
                       {isExternal && <ExternalLink size={10} className="mr-[4px]" />}

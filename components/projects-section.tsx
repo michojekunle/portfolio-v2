@@ -24,8 +24,8 @@ export function ProjectsSection(): React.ReactElement {
       <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">02 — FEATURED</div>
         <div>
-          <h2 id="projects-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
-            Masterpieces, I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">shipped.</em>
+          <h2 id="projects-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
+            Masterpieces, I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">shipped.</em>
           </h2>
           <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
             Three I&apos;d most want to talk about. Full case studies inside — process,
@@ -49,7 +49,7 @@ export function ProjectsSection(): React.ReactElement {
             >
               <span className="font-mono text-[10px] text-[var(--ink-3)]">{p.idx}</span>
               <div className="flex flex-col gap-[4px]">
-                <span className="font-[family:var(--display-font)] font-normal text-[24px] leading-[1.1] [font-variation-settings:'opsz'_96]">{p.name}</span>
+                <span className="font-display font-normal text-[24px] leading-[1.1] fvs-text">{p.name}</span>
                 <span className="text-[13px] text-[var(--ink-2)]">{p.stack.slice(0, 3).join(" · ")}</span>
               </div>
               <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-3)]">{p.tag} · {p.year}</span>
@@ -75,11 +75,12 @@ export function ProjectsSection(): React.ReactElement {
                   />
                 ) : (
                   <div
+                    className="v3-serif"
                     style={{
                       width: "100%", height: "100%",
                       background: `linear-gradient(135deg, ${PROJECT_COLORS[p.slug] ?? "var(--v3-accent)"} 0%, color-mix(in oklab, ${PROJECT_COLORS[p.slug] ?? "var(--v3-accent)"} 30%, var(--bg)) 100%)`,
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontFamily: "var(--display-font)", fontSize: "32px", color: "white", opacity: 0.8,
+                      fontSize: "32px", color: "white", opacity: 0.8,
                     }}
                   >
                     {p.name}
@@ -87,7 +88,7 @@ export function ProjectsSection(): React.ReactElement {
                 )}
               </div>
               <div className="p-[16px_20px] flex justify-between items-center bg-[var(--bg)] border-t border-[var(--rule)]">
-                <span className="font-[family:var(--display-font)] text-[18px] text-[var(--ink)]">{p.name}</span>
+                <span className="font-display text-[18px] text-[var(--ink)]">{p.name}</span>
                 <span className="font-mono text-[10px] uppercase text-[var(--ink-3)]">{p.tag} · {p.year}</span>
               </div>
             </div>
@@ -110,7 +111,7 @@ export function ProjectsSection(): React.ReactElement {
             />
             <div className="p-[32px] max-[480px]:p-[24px] flex flex-col gap-[12px]">
               <div className="font-mono text-[10px] uppercase text-[var(--ink-3)] tracking-[0.1em]">{p.idx} · {p.year} · {p.tag}</div>
-              <div className="font-[family:var(--display-font)] text-[32px] leading-[1.1] text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--v3-accent)]">{p.name}</div>
+              <div className="font-display text-[32px] leading-[1.1] text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--v3-accent)]">{p.name}</div>
               <div className="text-[16px] text-[var(--ink-2)] leading-[1.6]">{p.desc}</div>
               <div className="flex flex-wrap gap-[6px] mt-[12px]">
                 {p.stack.slice(0, 4).map((s) => (

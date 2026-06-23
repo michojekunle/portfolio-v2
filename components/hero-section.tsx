@@ -72,15 +72,15 @@ export function HeroSection(): React.ReactElement {
 
           <div className="flex gap-0 mt-[48px] border border-[var(--rule)] rounded-[8px] overflow-hidden" role="list" aria-label="Career highlights">
             <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-[var(--rule)] bg-[var(--paper)] last:border-r-0 max-[720px]:pr-[14px] max-[720px]:mr-[14px]" role="listitem">
-              <span className="font-[family:var(--display-font)] text-[40px] font-normal leading-[1] tracking-[-0.03em] text-[var(--v3-accent)] [font-variation-settings:'opsz'_144]">4+</span>
+              <span className="font-display text-[40px] font-normal leading-[1] tracking-[-0.03em] text-[var(--v3-accent)] fvs-display">4+</span>
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mt-[6px]">Years building</span>
             </div>
             <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-[var(--rule)] bg-[var(--paper)] last:border-r-0 max-[720px]:pr-[14px] max-[720px]:mr-[14px]" role="listitem">
-              <span className="font-[family:var(--display-font)] text-[40px] font-normal leading-[1] tracking-[-0.03em] text-[var(--v3-accent)] [font-variation-settings:'opsz'_144]">3</span>
+              <span className="font-display text-[40px] font-normal leading-[1] tracking-[-0.03em] text-[var(--v3-accent)] fvs-display">3</span>
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mt-[6px]">Chains shipped</span>
             </div>
             <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-[var(--rule)] bg-[var(--paper)] last:border-r-0 max-[720px]:pr-[14px] max-[720px]:mr-[14px]" role="listitem">
-              <span className="font-[family:var(--display-font)] text-[40px] font-normal leading-[1] tracking-[-0.03em] text-[var(--v3-accent)] [font-variation-settings:'opsz'_144]">12+</span>
+              <span className="font-display text-[40px] font-normal leading-[1] tracking-[-0.03em] text-[var(--v3-accent)] fvs-display">12+</span>
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mt-[6px]">Projects live</span>
             </div>
           </div>

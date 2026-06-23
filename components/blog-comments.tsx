@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,7 +26,9 @@ export function BlogComments({ postId }: BlogCommentsProps): React.ReactElement 
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const supabase = createClient();
+  // Stable client ref — never changes between renders, safe as a useEffect dep
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
 
   useEffect(() => {
     const loadComments = async (): Promise<void> => {
@@ -127,7 +129,7 @@ export function BlogComments({ postId }: BlogCommentsProps): React.ReactElement 
                 className="v3-comment"
               >
                 <div className="v3-comment-avatar">
-                  <span style={{ fontFamily: "var(--display-font)", fontVariationSettings: '"opsz" 96', fontSize: 18, color: "var(--v3-accent)" }}>
+                  <span className="font-display fvs-text text-[18px] text-[var(--v3-accent)]">
                     {getInitial(comment.name)}
                   </span>
                 </div>

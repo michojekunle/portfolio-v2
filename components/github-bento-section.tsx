@@ -116,8 +116,8 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
       <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">03 — OSS</div>
         <div>
-          <h2 id="bento-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
-            Other notable <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">work.</em>
+          <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
+            Other notable <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">work.</em>
           </h2>
           <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
             Open source projects on GitHub — tools, experiments, and things I built
@@ -141,7 +141,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
               aria-label={`${repo.name} on GitHub`}
             >
               <div className="flex justify-between items-start mb-[12px]">
-                <div className="font-[family:var(--display-font)] font-normal text-[24px] text-[var(--ink)] leading-[1.1] [font-variation-settings:'opsz'_96]">{repo.name}</div>
+                <div className="font-display font-normal text-[24px] text-[var(--ink)] leading-[1.1] fvs-text">{repo.name}</div>
                 <span className="font-mono text-[11px] text-[var(--ink-3)] border border-[var(--rule)] px-[6px] py-[2px] rounded-[4px]" aria-label={`${repo.stars} stars`}>
                   ★ {repo.stars}
                 </span>

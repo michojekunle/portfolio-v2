@@ -41,20 +41,19 @@ function statusClass(status: string | null | undefined): string {
 export async function NowSection(): Promise<React.ReactElement> {
   const supabase = await createClient()
 
-  const [{ data: booksRaw }, { data: learningRaw }, { data: buildingRaw }] = await Promise.all([
-    supabase
-      .from("books")
-      .select("title, author, status, cover_url")
-      .order("sort_order"),
-    supabase
-      .from("learning_items")
-      .select("name, description, progress")
-      .order("sort_order"),
-    supabase
-      .from("building_projects")
-      .select("name, description, status, notes, github_url")
-      .order("sort_order"),
+  const [
+    { data: booksRaw, error: booksErr },
+    { data: learningRaw, error: learningErr },
+    { data: buildingRaw, error: buildingErr },
+  ] = await Promise.all([
+    supabase.from("books").select("title, author, status, cover_url").order("sort_order"),
+    supabase.from("learning_items").select("name, description, progress").order("sort_order"),
+    supabase.from("building_projects").select("name, description, status, notes, github_url").order("sort_order"),
   ])
+
+  if (booksErr) console.error("[NowSection] books:", booksErr.message)
+  if (learningErr) console.error("[NowSection] learning:", learningErr.message)
+  if (buildingErr) console.error("[NowSection] building:", buildingErr.message)
 
   const building = (buildingRaw ?? []) as BuildingItem[]
   const learning = (learningRaw ?? []) as LearningItem[]
@@ -66,8 +65,8 @@ export async function NowSection(): Promise<React.ReactElement> {
         <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
           <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">03 — NOW</div>
           <div>
-            <h2 id="now-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
-              Currently <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">working on.</em>
+            <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
+              Currently <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">working on.</em>
             </h2>
             <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
               A snapshot. Updated when something meaningful changes — not on a schedule.
@@ -84,7 +83,7 @@ export async function NowSection(): Promise<React.ReactElement> {
               {building.length > 0 ? (
                 building.map((item, i) => (
                   <li key={i} className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                    <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">
+                    <b className="block font-display text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] fvs-text">
                       {item.name}
                       {item.status && (
                         <span className={statusClass(item.status)}>
@@ -113,7 +112,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                 ))
               ) : (
                 <li className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                  <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">
+                  <b className="block font-display text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] fvs-text">
                     Something new <span className={statusClass("in-progress")}>In Progress</span>
                   </b>
                   <span className="font-mono text-[11px] text-[var(--ink-3)] tracking-[0.04em]">always</span>
@@ -129,7 +128,7 @@ export async function NowSection(): Promise<React.ReactElement> {
               {learning.length > 0 ? (
                 learning.map((item, i) => (
                   <li key={i} className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                    <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">{item.name}</b>
+                    <b className="block font-display text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] fvs-text">{item.name}</b>
                     {item.description && (
                       <span className="font-mono text-[11px] text-[var(--ink-3)] tracking-[0.04em]">{item.description}</span>
                     )}
@@ -149,7 +148,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                 ))
               ) : (
                 <li className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                  <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">ZK proofs</b>
+                  <b className="block font-display text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] fvs-text">ZK proofs</b>
                   <span className="font-mono text-[11px] text-[var(--ink-3)] tracking-[0.04em]">slowly, carefully</span>
                 </li>
               )}
@@ -164,7 +163,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                 <>
                   {books.slice(0, 4).map((b, i) => (
                     <li key={i} className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                      <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">
+                      <b className="block font-display text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] fvs-text">
                         {b.title}
                         {b.status === "reading" && (
                           <span className={statusClass("in-progress")}>reading</span>
@@ -183,7 +182,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                 </>
               ) : (
                 <li className="py-[16px] border-b border-dashed border-[var(--rule)] last:border-b-0">
-                  <b className="block font-[family:var(--display-font)] text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] [font-variation-settings:'opsz'_96]">Reading &amp; walking</b>
+                  <b className="block font-display text-[20px] font-normal tracking-[-0.012em] text-[var(--ink)] mb-[4px] fvs-text">Reading &amp; walking</b>
                   <span className="font-mono text-[11px] text-[var(--ink-3)] tracking-[0.04em]">Lagos evenings</span>
                 </li>
               )}

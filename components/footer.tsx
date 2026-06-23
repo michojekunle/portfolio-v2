@@ -18,7 +18,7 @@ export function Footer(): React.ReactElement {
       </div>
 
       <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
-        <p className="font-[family:var(--display-font)] italic text-[22px] text-[var(--ink-2)] max-w-[32ch] mb-[80px]">
+        <p className="font-display italic text-[22px] text-[var(--ink-2)] max-w-[32ch] mb-[80px]">
           Engineer &amp; writer. Building toward zero-knowledge ML — from Lagos.
         </p>
 
@@ -173,7 +173,7 @@ export function Footer(): React.ReactElement {
 
         <div className="flex justify-between items-center max-[480px]:flex-col max-[480px]:items-start mt-[56px] pt-[28px] border-t border-[var(--rule)] font-mono text-[11px] text-[var(--ink-3)] flex-wrap gap-[12px] max-[480px]:gap-[8px]">
           <div>© {year} · Built with intent in Lagos, NG</div>
-          <div className="font-[family:var(--display-font)] italic text-[13px] text-[var(--ink-2)]">
+          <div className="font-display italic text-[13px] text-[var(--ink-2)]">
             &ldquo;Whatever you do, do it all to the glory of God.&rdquo; —
             Col&nbsp;3:17
           </div>

@@ -82,8 +82,8 @@ export default async function CaseStudyPage({ params }: Props): Promise<React.Re
                   <h5>Live</h5>
                   <ul>
                     <li>
-                      <a href={`https://${p.live}`} target="_blank" rel="noopener noreferrer" style={{ color: "var(--v3-accent)" }}>
-                        {p.live} ↗
+                      <a href={`https://${p.live.replace(/^https?:\/\//, "")}`} target="_blank" rel="noopener noreferrer" style={{ color: "var(--v3-accent)" }}>
+                        {p.live.replace(/^https?:\/\//, "")} ↗
                       </a>
                     </li>
                   </ul>

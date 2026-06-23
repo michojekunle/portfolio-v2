@@ -76,19 +76,12 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
 
   const { data: post } = await supabase
     .from("blog_posts")
-    .select(`
-      *,
-      reactions:blog_reactions(count),
-      comments:blog_comments(count)
-    `)
+    .select("*")
     .eq("slug", slug)
     .eq("published", true)
     .single();
 
   if (!post) notFound();
-
-  const reactionCount = (post.reactions as any)?.[0]?.count ?? 0;
-  const commentCount = (post.comments as any)?.[0]?.count ?? 0;
 
   const postUrl = `${SITE}/blog/${slug}`;
   const content = (post.content as string) ?? "";
@@ -149,8 +142,7 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
             <Link href="/">Home</Link>
             {" / "}
             <Link href="/blog">Notes</Link>
-            {" / "}
-            <span>{post.category}</span>
+            {post.category && <>{" / "}<span>{post.category}</span></>}
           </div>
           <div className="meta-line">
             {post.category && <span className="tag">{post.category}</span>}

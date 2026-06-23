@@ -24,8 +24,8 @@ export function AboutPreviewSection(): React.ReactElement {
       <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">01 — IDENTITY</div>
         <div>
-          <h2 id="about-preview-heading" className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
-            Engineering with <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">precision.</em>
+          <h2 id="about-preview-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
+            Engineering with <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">precision.</em>
           </h2>
           <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
             I don&apos;t just build features; I architect systems. My approach is rooted in understanding the metal while obsessing over the interface.
@@ -37,7 +37,7 @@ export function AboutPreviewSection(): React.ReactElement {
         {ROLES.map((role) => (
           <div key={role.title} className="flex flex-col gap-[20px]">
             <div className="font-mono text-[10px] tracking-[0.2em] text-[var(--v3-accent)] font-bold uppercase">{role.tag}</div>
-            <h3 className="m-0 font-[family:var(--display-font)] font-normal text-[28px] leading-[1.1] text-[var(--ink)] [font-variation-settings:'opsz'_96]">
+            <h3 className="m-0 font-display font-normal text-[28px] leading-[1.1] text-[var(--ink)] fvs-text">
               {role.title}
             </h3>
             <p className="m-0 text-[16px] leading-[1.7] text-[var(--ink-2)]">

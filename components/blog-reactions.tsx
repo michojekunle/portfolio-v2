@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,7 +18,9 @@ const EMOJIS = ["❤️", "🔥", "🚀", "💡", "🙌"];
 export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElement {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [userReacted, setUserReacted] = useState<string[]>([]);
-  const supabase = createClient();
+  // Stable client ref — never changes between renders, so it's safe as a useEffect dep
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
 
   useEffect(() => {
     const loadReactions = async (): Promise<void> => {
@@ -30,7 +32,16 @@ export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElemen
     };
 
     const saved = localStorage.getItem(`reactions_${postId}`);
-    if (saved) setUserReacted(JSON.parse(saved) as string[]);
+    if (saved) {
+      try {
+        const parsed: unknown = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.every((v) => typeof v === "string")) {
+          setUserReacted(parsed);
+        }
+      } catch {
+        // Corrupted localStorage value — ignore and start fresh
+      }
+    }
 
     void loadReactions();
 
@@ -47,6 +58,7 @@ export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElemen
   const handleReact = async (emoji: string): Promise<void> => {
     if (userReacted.includes(emoji)) return;
 
+    // Optimistic UI update
     setReactions((prev) => {
       const existing = prev.find((r) => r.emoji === emoji);
       if (existing) return prev.map((r) => r.emoji === emoji ? { ...r, count: r.count + 1 } : r);
@@ -57,11 +69,24 @@ export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElemen
     setUserReacted(newUserReacted);
     localStorage.setItem(`reactions_${postId}`, JSON.stringify(newUserReacted));
 
-    const existing = reactions.find((r) => r.emoji === emoji);
-    if (existing) {
-      await supabase.from("blog_reactions").update({ count: existing.count + 1 }).eq("post_id", postId).eq("emoji", emoji);
+    // Re-fetch current count from DB before writing to avoid stale-closure race
+    const { data: current } = await supabase
+      .from("blog_reactions")
+      .select("count")
+      .eq("post_id", postId)
+      .eq("emoji", emoji)
+      .maybeSingle();
+
+    if (current) {
+      await supabase
+        .from("blog_reactions")
+        .update({ count: (current.count as number) + 1 })
+        .eq("post_id", postId)
+        .eq("emoji", emoji);
     } else {
-      await supabase.from("blog_reactions").insert([{ post_id: postId, emoji, count: 1 }]);
+      await supabase
+        .from("blog_reactions")
+        .insert([{ post_id: postId, emoji, count: 1 }]);
     }
   };
 

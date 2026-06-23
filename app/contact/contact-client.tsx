@@ -9,7 +9,7 @@ const MEETING_TYPES = [
 ] as const
 
 const SLOTS = ["09:00", "09:30", "10:00", "11:00", "14:00", "14:30", "15:30", "16:00", "17:00"]
-const DAY_NAMES = ["M", "T", "W", "T", "F", "S", "S"]
+const DAY_NAMES = ["M", "Tu", "W", "Th", "F", "Sa", "Su"]
 
 const FAQS = [
   { q: "Are you open to full-time roles?", a: "Yes — specifically protocol-adjacent teams, infrastructure, or zkML research. DM or email first." },
@@ -49,8 +49,8 @@ export function ContactPage(): React.ReactElement {
     <main id="main-content" tabIndex={-1} className="outline-none">
         <section className="pt-[160px] pb-[80px] max-[720px]:pt-[120px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
           <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">05 — CONTACT · BOOKING</div>
-          <h1 className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance [font-variation-settings:'opsz'_144]">
-            Let&apos;s <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">build.</em>
+          <h1 className="m-0 font-display font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
+            Let&apos;s <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">build.</em>
           </h1>
           <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
             Pick a slot below or send a note. Open to contract work, full-time roles in
@@ -173,7 +173,7 @@ export function ContactPage(): React.ReactElement {
 
             {/* Info column */}
             <div className="v3-booking-info">
-              <p className="font-[family:var(--display-font)] italic text-[clamp(24px,3vw,34px)] leading-[1.2] text-[var(--ink)] mb-[48px] [font-variation-settings:'opsz'_96,'SOFT'_100]">
+              <p className="font-display italic text-[clamp(24px,3vw,34px)] leading-[1.2] text-[var(--ink)] mb-[48px] fvs-text-soft">
                 Good conversations start with a clear problem. Tell me what you&apos;re building.
               </p>
 
@@ -182,7 +182,7 @@ export function ContactPage(): React.ReactElement {
                   <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--ink-3)] mb-[16px] font-bold">
                     Email
                   </div>
-                  <a href="mailto:michojekunle1@gmail.com" className="text-[22px] font-[family:var(--display-font)] text-[var(--v3-accent)] no-underline hover:underline [font-variation-settings:'opsz'_96]">
+                  <a href="mailto:michojekunle1@gmail.com" className="text-[22px] font-display text-[var(--v3-accent)] no-underline hover:underline fvs-text">
                     michojekunle1@gmail.com
                   </a>
                   <p className="text-[14px] font-mono tracking-tight text-[var(--ink-3)] mt-[10px]">Lagos, Nigeria · WAT (UTC+1)</p>
@@ -210,8 +210,8 @@ export function ContactPage(): React.ReactElement {
             <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
               <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">06 — FAQS</div>
               <div>
-                <h2 className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance [font-variation-settings:'opsz'_144]">
-                  Common <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">questions.</em>
+                <h2 className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
+                  Common <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">questions.</em>
                 </h2>
               </div>
             </div>
@@ -219,7 +219,7 @@ export function ContactPage(): React.ReactElement {
             <div className="grid grid-cols-2 max-[920px]:grid-cols-1 gap-x-[80px] gap-y-[48px]">
               {FAQS.map((faq, i) => (
                 <div key={i} className="group">
-                  <h4 className="font-[family:var(--display-font)] font-normal text-[22px] leading-[1.3] text-[var(--ink)] mb-[16px] [font-variation-settings:'opsz'_96] group-hover:text-[var(--v3-accent)] transition-colors">
+                  <h4 className="font-display font-normal text-[22px] leading-[1.3] text-[var(--ink)] mb-[16px] fvs-text group-hover:text-[var(--v3-accent)] transition-colors">
                     {faq.q}
                   </h4>
                   <p className="text-[15px] text-[var(--ink-2)] leading-[1.65] m-0 max-w-[48ch]">

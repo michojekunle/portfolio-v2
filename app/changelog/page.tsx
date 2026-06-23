@@ -45,8 +45,8 @@ async function fetchChangelog(): Promise<ChangelogEntry[]> {
   const username = process.env.GITHUB_USERNAME ?? "michojekunle"
   if (!token) return []
 
-  const query = `query {
-    user(login: "${username}") {
+  const query = `query ($login: String!) {
+    user(login: $login) {
       repositories(first: 10, orderBy: {field: PUSHED_AT, direction: DESC}, privacy: PUBLIC) {
         nodes {
           name url
@@ -60,7 +60,7 @@ async function fetchChangelog(): Promise<ChangelogEntry[]> {
     const res = await fetch("https://api.github.com/graphql", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables: { login: username } }),
       next: { revalidate: 1800 },
     })
     if (!res.ok) return []
@@ -83,7 +83,8 @@ async function fetchChangelog(): Promise<ChangelogEntry[]> {
 function groupByDate(entries: ChangelogEntry[]): Map<string, ChangelogEntry[]> {
   const groups = new Map<string, ChangelogEntry[]>()
   for (const entry of entries) {
-    const key = format(new Date(entry.date), "yyyy-MM-dd")
+    // Slice the UTC ISO string directly — avoids local-timezone date shift
+    const key = entry.date.slice(0, 10)
     const group = groups.get(key) ?? []
     group.push(entry)
     groups.set(key, group)
@@ -99,8 +100,8 @@ export default async function ChangelogPage(): Promise<React.ReactElement> {
     <main id="main-content" tabIndex={-1} className="outline-none">
         <section className="pt-[160px] pb-[80px] max-[720px]:pt-[120px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
           <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">/CHANGELOG · ACTIVITY</div>
-          <h1 className="m-0 font-[family:var(--display-font)] font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance [font-variation-settings:'opsz'_144]">
-            Site <em className="not-italic italic text-[var(--v3-accent)] [font-variation-settings:'opsz'_144,'SOFT'_100]">changelog.</em>
+          <h1 className="m-0 font-display font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
+            Site <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">changelog.</em>
           </h1>
           <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
             The portfolio is a product. Here&apos;s what&apos;s changed and when. Built in public.
@@ -109,7 +110,7 @@ export default async function ChangelogPage(): Promise<React.ReactElement> {
 
         <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
           {entries.length === 0 ? (
-            <p style={{ color: "var(--ink-3)", fontFamily: "var(--font-jetbrains-mono)", fontSize: "13px" }}>
+            <p className="font-mono text-[13px] text-[var(--ink-3)]">
               No activity to show — check back soon.
             </p>
           ) : (
@@ -129,7 +130,7 @@ export default async function ChangelogPage(): Promise<React.ReactElement> {
                             rel="noopener noreferrer"
                             style={{ color: "var(--v3-accent)", textDecoration: "none" }}
                           >
-                            <span style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "11px" }}>
+                            <span className="font-mono text-[11px]">
                               {entry.repo}#{entry.sha}
                             </span>
                             <ExternalLink
@@ -137,7 +138,7 @@ export default async function ChangelogPage(): Promise<React.ReactElement> {
                               aria-hidden="true"
                             />
                           </a>
-                          <span style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "10px", color: "var(--ink-3)", marginLeft: "8px" }}>
+                          <span className="font-mono text-[10px] text-[var(--ink-3)] ml-2">
                             {formatDistanceToNow(new Date(entry.date), { addSuffix: true })}
                           </span>
                         </li>
