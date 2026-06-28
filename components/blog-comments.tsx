@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send } from "lucide-react";
+import { MagneticWrapper } from "./magnetic-wrapper";
 
 interface Comment {
   id: string;
@@ -105,14 +106,16 @@ export function BlogComments({ postId }: BlogCommentsProps): React.ReactElement 
           required
           maxLength={2000}
         />
-        <button
-          type="submit"
-          className="v3-btn v3-btn-accent v3-btn-sm"
-          disabled={submitting}
-        >
-          <Send size={13} style={{ marginRight: 6 }} />
-          {submitting ? "Posting…" : "Post Comment"}
-        </button>
+        <MagneticWrapper strength={15}>
+          <button
+            type="submit"
+            className="v3-btn v3-btn-accent v3-btn-sm"
+            disabled={submitting}
+          >
+            <Send size={13} style={{ marginRight: 6 }} />
+            {submitting ? "Posting…" : "Post Comment"}
+          </button>
+        </MagneticWrapper>
       </form>
 
       {/* List */}

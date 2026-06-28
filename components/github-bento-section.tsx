@@ -1,4 +1,7 @@
 import { CASE_STUDIES } from "@/lib/case-studies"
+import { MagneticWrapper } from "./magnetic-wrapper"
+import { TiltCard } from "./tilt-card"
+import { ArrowUpRight } from "lucide-react"
 
 interface PinnedRepo {
   name: string
@@ -113,7 +116,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
       id="open-source"
       aria-labelledby="bento-heading"
     >
-      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">03 — OSS</div>
         <div>
           <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
@@ -132,56 +135,59 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
           const isWide = i === 0 || i === 4
 
           return (
-            <a
-              key={repo.name}
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`group flex flex-col bg-[var(--paper)] border border-[var(--rule)] rounded-[12px] p-[24px] no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-[var(--v3-accent)] hover:-translate-y-[2px] hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)] ${isWide ? "col-span-2 max-[920px]:col-span-1" : ""}`}
-              aria-label={`${repo.name} on GitHub`}
-            >
-              <div className="flex justify-between items-start mb-[12px]">
-                <div className="font-display font-normal text-[24px] text-[var(--ink)] leading-[1.1] fvs-text">{repo.name}</div>
-                <span className="font-mono text-[11px] text-[var(--ink-3)] border border-[var(--rule)] px-[6px] py-[2px] rounded-[4px]" aria-label={`${repo.stars} stars`}>
-                  ★ {repo.stars}
-                </span>
-              </div>
-
-              {repo.description && (
-                <p className="text-[14px] leading-[1.6] text-[var(--ink-2)] m-[0_0_24px] flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
-              )}
-
-              <div className="flex flex-wrap gap-[8px] items-center mt-auto">
-                {repo.language && (
-                  <span className="flex items-center gap-[6px] font-mono text-[10px] text-[var(--ink-3)]">
-                    <span
-                      className="w-[8px] h-[8px] rounded-full"
-                      style={{ background: langColor }}
-                      aria-hidden="true"
-                    />
-                    {repo.language}
+            <TiltCard key={repo.name} className={`${isWide ? "col-span-2 max-[920px]:col-span-1" : ""}`}>
+              <a
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group flex flex-col bg-[var(--paper)] border border-[var(--rule)] rounded-[12px] p-[24px] h-full no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-[var(--v3-accent)] hover:-translate-y-[2px] hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)]`}
+                aria-label={`${repo.name} on GitHub`}
+              >
+                <div className="flex justify-between items-start mb-[12px]">
+                  <div className="font-display font-normal text-[24px] text-[var(--ink)] leading-[1.1] fvs-text">{repo.name}</div>
+                  <span className="font-mono text-[11px] text-[var(--ink-3)] border border-[var(--rule)] px-[6px] py-[2px] rounded-[4px]" aria-label={`${repo.stars} stars`}>
+                    ★ {repo.stars}
                   </span>
-                )}
-                {repo.topics.slice(0, 2).map((t) => (
-                  <span key={t} className="font-mono text-[10px] text-[var(--ink-3)] bg-[var(--bg)] border border-[var(--rule)] px-[8px] py-[2px] rounded-full">{t}</span>
-                ))}
-              </div>
+                </div>
 
-              <div className="absolute top-[24px] right-[24px] text-[var(--v3-accent)] opacity-0 -translate-x-[4px] translate-y-[4px] transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true">↗</div>
-            </a>
+                {repo.description && (
+                  <p className="text-[14px] leading-[1.6] text-[var(--ink-2)] m-[0_0_24px] flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
+                )}
+
+                <div className="flex flex-wrap gap-[8px] items-center mt-auto">
+                  {repo.language && (
+                    <span className="flex items-center gap-[6px] font-mono text-[10px] text-[var(--ink-3)]">
+                      <span
+                        className="w-[8px] h-[8px] rounded-full"
+                        style={{ background: langColor }}
+                        aria-hidden="true"
+                      />
+                      {repo.language}
+                    </span>
+                  )}
+                  {repo.topics.slice(0, 2).map((t) => (
+                    <span key={t} className="font-mono text-[10px] text-[var(--ink-3)] bg-[var(--bg)] border border-[var(--rule)] px-[8px] py-[2px] rounded-full">{t}</span>
+                  ))}
+                </div>
+
+                <div className="absolute top-[24px] right-[24px] text-[var(--v3-accent)] opacity-0 -translate-x-[4px] translate-y-[4px] transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true"><ArrowUpRight className="w-5 h-5" /></div>
+              </a>
+            </TiltCard>
           )
         })}
       </div>
 
       <div style={{ textAlign: "center", marginTop: 48 }}>
-        <a
-          href={`https://github.com/${process.env.GITHUB_USERNAME ?? "michojekunle"}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)]"
-        >
-          All repos on GitHub <span className="inline-block transition-transform duration-250 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]" aria-hidden="true">↗</span>
-        </a>
+        <MagneticWrapper strength={20}>
+          <a
+            href={`https://github.com/${process.env.GITHUB_USERNAME ?? "michojekunle"}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)]"
+          >
+            All repos on GitHub <ArrowUpRight className="inline-block transition-transform duration-250 group-hover:-translate-y-[2px] group-hover:translate-x-[2px] w-4 h-4" aria-hidden="true" />
+          </a>
+        </MagneticWrapper>
       </div>
     </section>
   )

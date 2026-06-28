@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
+import { MagneticWrapper } from "@/components/magnetic-wrapper"
+import { ChevronLeft, ChevronRight, ArrowUpRight, ArrowRight } from "lucide-react"
 
 const MEETING_TYPES = [
   { id: "15", label: "15 min", desc: "Quick chat" },
@@ -47,15 +50,41 @@ export function ContactPage(): React.ReactElement {
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[120px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">05 — CONTACT · BOOKING</div>
-          <h1 className="m-0 font-display font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
-            Let&apos;s <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">build.</em>
+        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+          >
+            05 — CONTACT · BOOKING
+          </motion.div>
+          <h1 className="m-0 font-display font-light text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px]">
+            <motion.span
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            >
+              Let&apos;s
+            </motion.span>
+            <motion.span
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              className="italic text-[var(--v3-accent)] fvs-soft"
+            >
+              build.
+            </motion.span>
           </h1>
-          <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0"
+          >
             Pick a slot below or send a note. Open to contract work, full-time roles in
             protocol-adjacent teams, and conversations that aren&apos;t either.
-          </p>
+          </motion.p>
         </section>
 
         <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
@@ -68,9 +97,9 @@ export function ContactPage(): React.ReactElement {
                   <span className="v3-calendar-tz">Lagos (GMT+1)</span>
                 </h4>
                 <div className="v3-calendar-nav">
-                  <button onClick={() => setMonthOffset(Math.max(0, monthOffset - 1))} disabled={monthOffset === 0} aria-label="Previous month">‹</button>
+                  <button onClick={() => setMonthOffset(Math.max(0, monthOffset - 1))} disabled={monthOffset === 0} aria-label="Previous month"><ChevronLeft className="w-4 h-4" /></button>
                   <span className="month">{monthName}</span>
-                  <button onClick={() => setMonthOffset(monthOffset + 1)} aria-label="Next month">›</button>
+                  <button onClick={() => setMonthOffset(monthOffset + 1)} aria-label="Next month"><ChevronRight className="w-4 h-4" /></button>
                 </div>
               </div>
 
@@ -145,7 +174,7 @@ export function ContactPage(): React.ReactElement {
                   rel="noopener noreferrer"
                   className="v3-btn v3-btn-ghost v3-btn-sm"
                 >
-                  Open Cal.com ↗
+                  Open Cal.com <ArrowUpRight className="inline w-3 h-3 ml-1" />
                 </a>
                 {selectedDate && selectedSlot ? (
                   <button
@@ -161,7 +190,7 @@ export function ContactPage(): React.ReactElement {
                     }}
                     className="v3-btn v3-btn-accent v3-btn-sm"
                   >
-                    Confirm {selectedSlot} · {meetingType}m <span className="arr" aria-hidden="true">→</span>
+                    Confirm {selectedSlot} · {meetingType}m <ArrowRight className="inline w-4 h-4 ml-2" aria-hidden="true" />
                   </button>
                 ) : (
                   <button className="v3-btn v3-btn-accent v3-btn-sm" disabled>
@@ -189,15 +218,21 @@ export function ContactPage(): React.ReactElement {
                 </div>
 
                 <div className="flex flex-wrap gap-4 mt-8">
-                  <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip">
-                    GitHub <span className="arr" style={{ fontSize: '9px' }}>↗</span>
-                  </a>
-                  <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="v3-social-chip">
-                    Twitter <span className="arr" style={{ fontSize: '9px' }}>↗</span>
-                  </a>
-                  <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip">
-                    LinkedIn <span className="arr" style={{ fontSize: '9px' }}>↗</span>
-                  </a>
+                  <MagneticWrapper>
+                    <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-[var(--rule)] rounded-full hover:bg-[var(--paper)] transition-colors no-underline text-[14px]">
+                      GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                    </a>
+                  </MagneticWrapper>
+                  <MagneticWrapper>
+                    <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-[var(--rule)] rounded-full hover:bg-[var(--paper)] transition-colors no-underline text-[14px]">
+                      Twitter <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                    </a>
+                  </MagneticWrapper>
+                  <MagneticWrapper>
+                    <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-[var(--rule)] rounded-full hover:bg-[var(--paper)] transition-colors no-underline text-[14px]">
+                      LinkedIn <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                    </a>
+                  </MagneticWrapper>
                 </div>
               </div>
             </div>

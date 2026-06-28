@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Search, ExternalLink, X } from "lucide-react";
+import { Search, ExternalLink, X, ArrowRight } from "lucide-react";
 
 interface Post {
   id: string;
@@ -141,7 +141,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                 </span>
                 
                 <span className="hidden sm:flex justify-end text-[var(--ink-3)] transition-transform duration-300 group-hover:translate-x-[4px] group-hover:text-[var(--v3-accent)]" aria-hidden="true">
-                  →
+                  <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
             );

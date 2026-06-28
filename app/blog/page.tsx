@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     "Essays on engineering, ZK, Rust, faith, and learning things in public. Roughly one piece every three weeks.",
 }
 
+import { BlogHeroClient } from "@/components/blog-hero-client"
 import { NewsletterCTA } from "@/components/newsletter-cta"
 
 export default async function BlogPage(): Promise<React.ReactElement> {
@@ -35,15 +36,7 @@ export default async function BlogPage(): Promise<React.ReactElement> {
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[120px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">FIELD NOTES · ESSAYS</div>
-          <h1 className="m-0 font-display font-normal text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
-            Notes from the <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">field.</em>
-          </h1>
-          <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
-            Deep dives on engineering, ZK, Rust, and the philosophy of building. Distilled insights from the front lines of technology and learning.
-          </p>
-        </section>
+        <BlogHeroClient />
 
         <section className="px-[var(--gutter)] py-[80px]">
           <div className="v3-blog-list">

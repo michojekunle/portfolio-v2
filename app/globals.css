@@ -82,7 +82,7 @@
   --radius-sm: calc(var(--radius) - 4px);
 
   /* Font families */
-  --font-sans: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-mono: var(--font-jetbrains-mono), Menlo, Monaco, Consolas, monospace;
   --font-display: var(--font-fraunces), Georgia, serif;
@@ -336,9 +336,9 @@ h1, h2, h3, h4, h5 {
   margin: 0;
   font-family: var(--display-font);
   font-variation-settings: "opsz" 144;
-  font-weight: 400;
-  font-size: clamp(44px, 7vw, 88px);
-  line-height: 0.95; letter-spacing: -0.025em;
+  font-weight: 300;
+  font-size: clamp(48px, 8vw, 104px);
+  line-height: 0.95; letter-spacing: -0.035em;
   text-wrap: balance;
   color: var(--ink);
 }
@@ -546,7 +546,7 @@ h1, h2, h3, h4, h5 {
   position: relative; z-index: 1;
   font-family: var(--display-font);
   font-variation-settings: "opsz" 144;
-  font-weight: 400;
+  font-weight: 300;
   font-size: clamp(72px, 18vw, 200px);
   line-height: 0.85; letter-spacing: -0.05em;
   color: var(--ink); margin: 0 0 80px;
@@ -1217,7 +1217,7 @@ h1, h2, h3, h4, h5 {
 .v3-comment-form .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 @media (max-width: 600px) { .v3-comment-form .field-row { grid-template-columns: 1fr; } }
 .v3-comment-form input, .v3-comment-form textarea {
-  width: 100%; padding: 10px 14px; font-family: var(--font-space-grotesk), sans-serif; font-size: 14px;
+  width: 100%; padding: 10px 14px; font-family: var(--font-space-grotesk), sans-serif; font-size: 16px;
   color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px;
   outline: none; transition: border-color .2s; box-sizing: border-box;
 }
@@ -1338,7 +1338,7 @@ h1, h2, h3, h4, h5 {
   width: 100%; padding: 14px 16px;
   background: var(--bg); border: 1px solid var(--rule);
   border-radius: 6px; color: var(--ink);
-  font-family: var(--font-space-grotesk), sans-serif; font-size: 15px;
+  font-family: var(--font-space-grotesk), sans-serif; font-size: 16px;
   transition: border-color .15s; outline: none;
 }
 
@@ -1663,7 +1663,7 @@ h1, h2, h3, h4, h5 {
   border-radius: 6px;
   padding: 10px 14px;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 14px; color: var(--ink);
+  font-size: 16px; color: var(--ink);
   outline: none; transition: border-color .15s; resize: none; width: 100%;
 }
 
@@ -2279,3 +2279,18 @@ h1, h2, h3, h4, h5 {
   line-height: 1.5;
 }
 [data-display-font="grotesk"] * { font-variation-settings: normal !important; }
+
+/* Sleek scrollbar for cards */
+.v3-sleek-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.v3-sleek-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.v3-sleek-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--rule);
+  border-radius: 20px;
+}
+.v3-sleek-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--ink-3);
+}

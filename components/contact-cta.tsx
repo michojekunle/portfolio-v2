@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { ArrowRight, ArrowUpRight } from "lucide-react"
+import { MagneticWrapper } from "./magnetic-wrapper"
 
 type FormState = "idle" | "loading" | "success" | "error"
 
@@ -52,25 +54,29 @@ export function ContactCTA(): React.ReactElement {
               conversations that are neither.
             </p>
             <div className="v3-cta-actions">
-              <a
-                href="/contact"
-                className="v3-btn v3-btn-accent"
-              >
-                Book a call <span className="arr" aria-hidden="true">→</span>
-              </a>
-              <a href="mailto:michojekunle1@gmail.com" className="v3-btn v3-btn-ghost">
-                Email directly
-              </a>
+              <MagneticWrapper strength={20}>
+                <a
+                  href="/contact"
+                  className="v3-btn v3-btn-accent"
+                >
+                  Book a call <ArrowRight className="inline w-4 h-4 ml-2" aria-hidden="true" />
+                </a>
+              </MagneticWrapper>
+              <MagneticWrapper strength={15}>
+                <a href="mailto:michojekunle1@gmail.com" className="v3-btn v3-btn-ghost">
+                  Email directly
+                </a>
+              </MagneticWrapper>
             </div>
             <div className="v3-cta-links">
               <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer">
-                GitHub ↗
+                GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
               </a>
               <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer">
-                Twitter ↗
+                Twitter <ArrowUpRight className="inline w-3 h-3 ml-1" />
               </a>
               <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer">
-                LinkedIn ↗
+                LinkedIn <ArrowUpRight className="inline w-3 h-3 ml-1" />
               </a>
             </div>
           </div>
@@ -143,13 +149,15 @@ export function ContactCTA(): React.ReactElement {
                 {state === "error" && (
                   <div className="v3-cta-error">{errorMsg}</div>
                 )}
-                <button
-                  type="submit"
-                  className="v3-btn v3-btn-primary"
-                  disabled={state === "loading"}
-                >
-                  {state === "loading" ? "Sending…" : "Send message →"}
-                </button>
+                <MagneticWrapper strength={20}>
+                  <button
+                    type="submit"
+                    className="v3-btn v3-btn-primary w-full"
+                    disabled={state === "loading"}
+                  >
+                    {state === "loading" ? "Sending…" : <><span className="mr-1">Send message</span> <ArrowRight className="inline w-4 h-4" /></>}
+                  </button>
+                </MagneticWrapper>
               </>
             )}
           </form>

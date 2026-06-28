@@ -1,9 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { FEATURED_PROJECTS } from "@/lib/case-studies"
+import { MagneticWrapper } from "./magnetic-wrapper"
+import { TiltCard } from "./tilt-card"
+import { ArrowRight } from "lucide-react"
 
 const PROJECT_COLORS: Record<string, string> = {
   coinsafe: "#8b5cf6",
@@ -14,14 +18,29 @@ const PROJECT_COLORS: Record<string, string> = {
 export function ProjectsSection(): React.ReactElement {
   // Default to first project so the panel is never empty
   const [hoveredIdx, setHoveredIdx] = useState<number>(0)
+  const containerRef = useRef<HTMLElement>(null)
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  })
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"])
 
   return (
     <section
+      ref={containerRef}
       className="py-[120px] max-[720px]:py-[72px] relative max-w-[var(--maxw)] mx-auto px-[var(--gutter)]"
       id="projects"
       aria-labelledby="projects-heading"
     >
-      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]"
+      >
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">02 — FEATURED</div>
         <div>
           <h2 id="projects-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
@@ -32,7 +51,7 @@ export function ProjectsSection(): React.ReactElement {
             wrong turns, what shipped.
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Desktop: split-panel (hidden on mobile via CSS) */}
       <div className="grid grid-cols-2 gap-[40px] items-start max-[920px]:hidden">
@@ -40,39 +59,55 @@ export function ProjectsSection(): React.ReactElement {
         {/* Left: numbered text list */}
         <nav className="flex flex-col gap-[12px]" aria-label="Featured projects">
           {FEATURED_PROJECTS.map((p, i) => (
-            <Link
+            <motion.div
               key={p.slug}
-              href={`/work/${p.slug}`}
-              className={`group grid grid-cols-[24px_1fr_auto_auto_24px] gap-[16px] items-center p-[24px_20px] rounded-[12px] border border-transparent no-underline transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] cursor-pointer bg-transparent text-[var(--ink)] ${hoveredIdx === i ? "bg-[var(--bg-2)] border-[var(--rule)] opacity-100" : "opacity-40"}`}
-              onMouseEnter={() => setHoveredIdx(i)}
-              aria-label={`View case study: ${p.name}`}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
             >
-              <span className="font-mono text-[10px] text-[var(--ink-3)]">{p.idx}</span>
-              <div className="flex flex-col gap-[4px]">
-                <span className="font-display font-normal text-[24px] leading-[1.1] fvs-text">{p.name}</span>
-                <span className="text-[13px] text-[var(--ink-2)]">{p.stack.slice(0, 3).join(" · ")}</span>
-              </div>
-              <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-3)]">{p.tag} · {p.year}</span>
-              <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-3)]">{p.role.split(" · ")[0]}</span>
-              <span className={`text-[var(--ink-3)] transition-all duration-300 ${hoveredIdx === i ? "opacity-100 translate-x-0 text-[var(--ink)]" : "opacity-0 -translate-x-[8px]"}`} aria-hidden="true">→</span>
-            </Link>
+              <Link
+                href={`/work/${p.slug}`}
+                className={`group grid grid-cols-[24px_1fr_auto_auto_24px] gap-[16px] items-center p-[24px_20px] rounded-[12px] border border-transparent no-underline transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] cursor-pointer bg-transparent text-[var(--ink)] ${hoveredIdx === i ? "bg-[var(--bg-2)] border-[var(--rule)] opacity-100" : "opacity-40"}`}
+                onMouseEnter={() => setHoveredIdx(i)}
+                aria-label={`View case study: ${p.name}`}
+              >
+                <span className="font-mono text-[10px] text-[var(--ink-3)]">{p.idx}</span>
+                <div className="flex flex-col gap-[4px]">
+                  <span className="font-display font-normal text-[24px] leading-[1.1] fvs-text">{p.name}</span>
+                  <span className="text-[13px] text-[var(--ink-2)]">{p.stack.slice(0, 3).join(" · ")}</span>
+                </div>
+                <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-3)]">{p.tag} · {p.year}</span>
+                <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-3)]">{p.role.split(" · ")[0]}</span>
+                <ArrowRight className={`w-4 h-4 text-[var(--ink-3)] transition-all duration-300 ${hoveredIdx === i ? "opacity-100 translate-x-0 text-[var(--ink)]" : "opacity-0 -translate-x-[8px]"}`} aria-hidden="true" />
+              </Link>
+            </motion.div>
           ))}
         </nav>
 
         {/* Right: sticky cross-fading image panel */}
-        <div className="sticky top-[120px] aspect-[4/3] rounded-[16px] overflow-hidden bg-[var(--bg-2)] border border-[var(--rule)]" aria-hidden="true">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="sticky top-[120px] aspect-[4/3] rounded-[16px] overflow-hidden bg-[var(--bg-2)] border border-[var(--rule)]" 
+          aria-hidden="true"
+        >
           {FEATURED_PROJECTS.map((p, i) => (
             <div key={p.slug} className={`absolute inset-0 transition-opacity duration-400 ease-in flex flex-col ${hoveredIdx === i ? "opacity-100 pointer-events-auto z-[2]" : "opacity-0 pointer-events-none"}`}>
               <div className="flex-1 relative overflow-hidden bg-[var(--bg-2)] group">
                 {p.image ? (
-                  <Image
-                    src={p.image}
-                    alt={p.name}
-                    fill
-                    className={`object-cover transition-transform duration-[6000ms] ease-out ${hoveredIdx === i ? "scale-[1.05]" : "scale-100"}`}
-                    sizes="360px"
-                    priority={i === 0}
-                  />
+                  <motion.div style={{ y, width: "100%", height: "120%", top: "-10%", position: "absolute" }}>
+                    <Image
+                      src={p.image}
+                      alt={p.name}
+                      fill
+                      className={`object-cover transition-transform duration-[6000ms] ease-out ${hoveredIdx === i ? "scale-[1.05]" : "scale-100"}`}
+                      sizes="360px"
+                      priority={i === 0}
+                    />
+                  </motion.div>
                 ) : (
                   <div
                     className="v3-serif"
@@ -87,47 +122,64 @@ export function ProjectsSection(): React.ReactElement {
                   </div>
                 )}
               </div>
-              <div className="p-[16px_20px] flex justify-between items-center bg-[var(--bg)] border-t border-[var(--rule)]">
+              <div className="p-[16px_20px] flex justify-between items-center bg-[var(--bg)] border-t border-[var(--rule)] relative z-10">
                 <span className="font-display text-[18px] text-[var(--ink)]">{p.name}</span>
                 <span className="font-mono text-[10px] uppercase text-[var(--ink-3)]">{p.tag} · {p.year}</span>
               </div>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* Mobile: project cards (shown only on mobile via CSS) */}
       <div className="hidden max-[920px]:flex flex-col gap-[24px]">
-        {FEATURED_PROJECTS.map((p) => (
-          <Link
+        {FEATURED_PROJECTS.map((p, i) => (
+          <motion.div
             key={p.slug}
-            href={`/work/${p.slug}`}
-            className="group flex flex-col border border-[var(--rule)] rounded-[16px] overflow-hidden bg-[var(--paper)] no-underline text-inherit transition-all duration-300 hover:border-[var(--v3-accent-soft)] hover:shadow-[0_16px_40px_-10px_color-mix(in_oklab,var(--ink)_5%,transparent)]"
-            aria-label={`View case study: ${p.name}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
           >
-            <div
-              className="h-[6px] w-full"
-              style={{ background: PROJECT_COLORS[p.slug] ?? "var(--v3-accent)" }}
-            />
-            <div className="p-[32px] max-[480px]:p-[24px] flex flex-col gap-[12px]">
-              <div className="font-mono text-[10px] uppercase text-[var(--ink-3)] tracking-[0.1em]">{p.idx} · {p.year} · {p.tag}</div>
-              <div className="font-display text-[32px] leading-[1.1] text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--v3-accent)]">{p.name}</div>
-              <div className="text-[16px] text-[var(--ink-2)] leading-[1.6]">{p.desc}</div>
-              <div className="flex flex-wrap gap-[6px] mt-[12px]">
-                {p.stack.slice(0, 4).map((s) => (
-                  <span key={s} className="font-mono text-[10px] px-[10px] py-[4px] border border-[var(--rule)] rounded-[4px] text-[var(--ink-3)] uppercase bg-[var(--bg)]">{s}</span>
-                ))}
-              </div>
-            </div>
-          </Link>
+            <TiltCard>
+              <Link
+                href={`/work/${p.slug}`}
+                className="group flex flex-col border border-[var(--rule)] rounded-[16px] overflow-hidden bg-[var(--paper)] h-full no-underline text-inherit transition-all duration-300 hover:border-[var(--v3-accent-soft)] hover:shadow-[0_16px_40px_-10px_color-mix(in_oklab,var(--ink)_5%,transparent)]"
+                aria-label={`View case study: ${p.name}`}
+              >
+                <div
+                  className="h-[6px] w-full"
+                  style={{ background: PROJECT_COLORS[p.slug] ?? "var(--v3-accent)" }}
+                />
+                <div className="p-[32px] max-[480px]:p-[24px] flex flex-col gap-[12px] flex-1">
+                  <div className="font-mono text-[10px] uppercase text-[var(--ink-3)] tracking-[0.1em]">{p.idx} · {p.year} · {p.tag}</div>
+                  <div className="font-display text-[32px] leading-[1.1] text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--v3-accent)]">{p.name}</div>
+                  <div className="text-[16px] text-[var(--ink-2)] leading-[1.6]">{p.desc}</div>
+                  <div className="flex flex-wrap gap-[6px] mt-[12px]">
+                    {p.stack.slice(0, 4).map((s) => (
+                      <span key={s} className="font-mono text-[10px] px-[10px] py-[4px] border border-[var(--rule)] rounded-[4px] text-[var(--ink-3)] uppercase bg-[var(--bg)]">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              </Link>
+            </TiltCard>
+          </motion.div>
         ))}
       </div>
 
-      <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)]">
-        <Link href="/work" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
-          Explore complete archive <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px]" aria-hidden="true">→</span>
-        </Link>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)]"
+      >
+        <MagneticWrapper strength={20}>
+          <Link href="/work" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+            Explore complete archive <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px] w-4 h-4" aria-hidden="true" />
+          </Link>
+        </MagneticWrapper>
+      </motion.div>
     </section>
   )
 }

@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Fraunces, JetBrains_Mono } from "next/font/google";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,18 +8,23 @@ import { CommandPalette } from "@/components/command-palette";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { GlobalContactCTA } from "@/components/global-contact-cta";
+import { CustomCursor } from "@/components/custom-cursor";
+import { SmoothScroll } from "@/components/smooth-scroll";
+import { NoiseOverlay } from "@/components/noise-overlay";
+import { Preloader } from "@/components/preloader";
 import { Analytics } from "@vercel/analytics/next"
 
-const spaceGrotesk = Space_Grotesk({
+
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
 });
 
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
+  weight: "variable",
   axes: ["opsz", "SOFT", "WONK"],
   display: "swap",
 });
@@ -180,7 +185,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${spaceGrotesk.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         {/* Skip navigation — visible on focus for keyboard/screen-reader users */}
         <a
           href="#main-content"
@@ -194,12 +199,17 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem={true}
         >
-          <Navbar />
-          {children}
-          <GlobalContactCTA />
-          <Footer />
-          <CommandPalette />
-          <Toaster />
+          <SmoothScroll>
+            <Preloader />
+            <NoiseOverlay />
+            <CustomCursor />
+            <Navbar />
+            {children}
+            <GlobalContactCTA />
+            <Footer />
+            <CommandPalette />
+            <Toaster />
+          </SmoothScroll>
         </ThemeProvider>
         <Analytics />
       </body>

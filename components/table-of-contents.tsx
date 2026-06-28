@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { List } from "lucide-react";
+import { List, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TocItem {
   id: string;
@@ -99,38 +100,50 @@ export function TableOfContents({
   return (
     <>
       {/* Mobile toggle */}
-      <div className="xl:hidden mb-6">
+      {/* Mobile sticky drawer */}
+      <div className="xl:hidden fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setIsOpen((v) => !v)}
-          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="bg-[var(--ink)] text-[var(--bg)] p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
+          aria-label="Table of Contents"
         >
-          <List className="h-3.5 w-3.5" />
-          Table of contents
+          {isOpen ? <X className="h-5 w-5" /> : <List className="h-5 w-5" />}
         </button>
-        {isOpen && (
-          <nav className="mt-3 pl-4 border-l border-border/60 space-y-1.5">
-            {headings.map((h) => (
-              <a
-                key={h.id}
-                href={`#${h.id}`}
-                onClick={(e) => {
-                  setIsOpen(false);
-                  handleScroll(e, h.id);
-                }}
-                className={cn(
-                  "block text-xs transition-colors leading-relaxed",
-                  h.level === 3 && "pl-3",
-                  h.level === 4 && "pl-6",
-                  activeId === h.id
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {h.text}
-              </a>
-            ))}
-          </nav>
-        )}
+        
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="absolute bottom-14 right-0 w-64 bg-[var(--paper)] border border-[var(--rule)] rounded-[16px] shadow-2xl p-4 origin-bottom-right"
+            >
+              <h4 className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mb-3 border-b border-[var(--rule)] pb-2">Contents</h4>
+              <nav className="max-h-[50vh] overflow-y-auto pr-2 flex flex-col gap-2">
+                {headings.map((h) => (
+                  <a
+                    key={h.id}
+                    href={`#${h.id}`}
+                    onClick={(e) => {
+                      setIsOpen(false);
+                      handleScroll(e, h.id);
+                    }}
+                    className={cn(
+                      "block text-[13px] transition-colors leading-snug",
+                      h.level === 3 && "pl-3",
+                      h.level === 4 && "pl-6",
+                      activeId === h.id
+                        ? "text-[var(--v3-accent)] font-medium"
+                        : "text-[var(--ink-2)] hover:text-[var(--ink)]"
+                    )}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Desktop sticky sidebar */}

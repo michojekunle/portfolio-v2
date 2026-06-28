@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function NotFound(): React.ReactElement {
   return (
@@ -38,7 +39,7 @@ export default function NotFound(): React.ReactElement {
       </p>
 
       <Link href="/" className="v3-btn v3-btn-primary">
-        ← Return to Basecamp
+        <ArrowLeft className="inline w-4 h-4 mr-2" /> Return to Basecamp
       </Link>
     </main>
   );

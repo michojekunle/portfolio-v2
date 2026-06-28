@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { CommandPaletteTrigger } from "@/components/command-palette";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
+import { MagneticWrapper } from "./magnetic-wrapper";
 
 const navLinks = [
   { name: "Work", href: "/work" },
@@ -60,46 +61,47 @@ export function Navbar(): React.ReactNode {
       className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-[14px] border-b border-[var(--rule)]"
       aria-label="Main navigation"
     >
-      <div className="max-w-(--maxw) mx-auto px-(--gutter) py-[18px] flex justify-between items-center gap-[32px]">
-        <Link
-          href="/"
-          aria-label="Michael Ojekunle — home"
-          className="flex items-center gap-[16px] font-display italic text-[22px] font-normal cursor-pointer text-[var(--ink)] no-underline fvs-soft group"
-        >
-          <div className="flex items-center justify-center w-[32px] h-[32px] bg-[var(--ink)] text-[var(--bg)] font-display not-italic text-[16px] font-medium leading-[0.9] tracking-[0.1em] uppercase transition-transform duration-300 group-hover:scale-105">
-            <span>m</span>
-            <span>i</span>
-          </div>
-          <span className="max-[480px]:hidden">
-            A M D<em>.</em>
-          </span>
-        </Link>
+      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[18px] flex justify-between items-center gap-[32px]">
+        <MagneticWrapper strength={10}>
+          <Link
+            href="/"
+            aria-label="Michael Ojekunle — home"
+            className="flex items-center gap-[16px] font-display italic text-[22px] font-normal cursor-pointer text-[var(--ink)] no-underline fvs-soft group"
+          >
+            <div className="flex items-center justify-center w-[32px] h-[32px] bg-[var(--ink)] text-[var(--bg)] font-display not-italic text-[16px] font-medium leading-[0.9] tracking-[0.1em] uppercase transition-transform duration-300 group-hover:scale-105">
+              <span>m</span>
+              <span>i</span>
+            </div>
+            <span className="max-[480px]:hidden">
+              A M D<em>.</em>
+            </span>
+          </Link>
+        </MagneticWrapper>
 
         <div className="flex gap-[12px] items-center">
           <CommandPaletteTrigger />
 
-          <button
-            className="w-[38px] h-[38px] rounded-full border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
-            onClick={() => setTheme(isDark ? "light" : "dark")}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            suppressHydrationWarning
-          >
-            {mounted ? (isDark ? "☾" : "☀") : "☀"}
-          </button>
-
-          <Link
-            href="/contact"
-            className="group max-[600px]:hidden inline-flex items-center justify-center px-[20px] h-[38px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-[var(--rule)] transition-all duration-200 no-underline bg-[var(--ink)] text-[var(--bg)] hover:-translate-y-[1px] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
-            aria-label="Book a call"
-          >
-            Book a call{" "}
-            <span
-              className="inline-block transition-transform duration-250 group-hover:translate-x-[4px] ml-[6px]"
-              aria-hidden="true"
+          <MagneticWrapper strength={15}>
+            <button
+              className="w-[38px] h-[38px] rounded-full border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              suppressHydrationWarning
             >
-              →
-            </span>
-          </Link>
+              {mounted ? (isDark ? "☾" : "☀") : "☀"}
+            </button>
+          </MagneticWrapper>
+
+          <MagneticWrapper strength={20}>
+            <Link
+              href="/contact"
+              className="group max-[600px]:hidden inline-flex items-center justify-center px-[20px] h-[38px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-[var(--rule)] transition-all duration-200 no-underline bg-[var(--ink)] text-[var(--bg)] hover:-translate-y-[1px] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              aria-label="Book a call"
+            >
+              Book a call{" "}
+              <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-[4px] ml-[6px] w-4 h-4" aria-hidden="true" />
+            </Link>
+          </MagneticWrapper>
 
           <button
             className="hidden max-[600px]:flex items-center justify-center w-[38px] h-[38px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer transition-all duration-150 hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
@@ -145,12 +147,7 @@ export function Navbar(): React.ReactNode {
             onClick={() => setIsOpen(false)}
           >
             Book a call{" "}
-            <span
-              className="inline-block transition-transform duration-250 group-hover:translate-x-[4px]"
-              aria-hidden="true"
-            >
-              →
-            </span>
+            <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-[4px] w-4 h-4 ml-1" aria-hidden="true" />
           </Link>
         </div>
       </div>

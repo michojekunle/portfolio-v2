@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { redirect } from "next/navigation";
 
 interface TableStat {
@@ -141,7 +141,7 @@ export default async function AdminDashboard() {
             target="_blank"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            View site ↗
+            View site <ArrowUpRight className="inline w-3 h-3 ml-1" />
           </Link>
           <span className="text-muted-foreground/30">·</span>
           <Link
@@ -149,7 +149,7 @@ export default async function AdminDashboard() {
             target="_blank"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            View blog ↗
+            View blog <ArrowUpRight className="inline w-3 h-3 ml-1" />
           </Link>
         </div>
       </div>

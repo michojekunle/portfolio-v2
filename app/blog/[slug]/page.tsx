@@ -9,7 +9,9 @@ import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { BlogReactions } from "@/components/blog-reactions";
 import { BlogComments } from "@/components/blog-comments";
 import { NewsletterCTA } from "@/components/newsletter-cta";
-
+import { BlogPostClient } from "@/components/blog-post-client";
+import { MagneticWrapper } from "@/components/magnetic-wrapper";
+import { ArrowLeft } from "lucide-react";
 export const revalidate = 60;
 
 const SITE = "https://michaelojekunle.dev";
@@ -136,29 +138,8 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        {/* Post hero */}
-        <section className="v3-post-hero v3-container-narrow">
-          <div className="crumbs" aria-label="Breadcrumb">
-            <Link href="/">Home</Link>
-            {" / "}
-            <Link href="/blog">Notes</Link>
-            {post.category && <>{" / "}<span>{post.category}</span></>}
-          </div>
-          <div className="meta-line">
-            {post.category && <span className="tag">{post.category}</span>}
-            {post.published_at && (
-              <span>
-                <time dateTime={post.published_at}>
-                  {format(new Date(post.published_at as string), "MMMM d, yyyy")}
-                </time>
-              </span>
-            )}
-            {post.read_time && <span>{post.read_time}</span>}
-            <ViewCounter slug={slug} increment />
-          </div>
-          <h1>{post.title}</h1>
-          {post.excerpt && <p className="lede">{post.excerpt}</p>}
-        </section>
+        {/* Post hero with progress bar & animations */}
+        <BlogPostClient post={post} slug={slug} />
 
         {/* Post body */}
         <article className="v3-post-body v3-container-narrow">
@@ -179,13 +160,13 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
         </section>
 
         {/* Prev/next nav */}
-        <section className="v3-container">
-          <div className="v3-case-next">
-            <Link href="/blog">
-              <div className="lbl">← All notes</div>
+        <section className="v3-container flex justify-center py-[80px]">
+          <MagneticWrapper>
+            <Link href="/blog" className="v3-case-next inline-block text-center decoration-none text-inherit">
+              <div className="lbl flex items-center justify-center gap-2"><ArrowLeft className="w-3 h-3" /> All notes</div>
               <div className="nm">Index</div>
             </Link>
-          </div>
+          </MagneticWrapper>
         </section>
       </main>
     </>

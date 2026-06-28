@@ -1,5 +1,7 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
+import { MagneticWrapper } from "./magnetic-wrapper"
+import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 // DB column is `name` for building_projects and learning_items
 interface BuildingItem {
@@ -62,7 +64,7 @@ export async function NowSection(): Promise<React.ReactElement> {
   return (
     <section className="relative py-[120px] max-[720px]:py-[72px] bg-[var(--bg-2)] border-y border-[var(--rule)]" id="now" aria-labelledby="now-heading">
       <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
-        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
           <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">03 — NOW</div>
           <div>
             <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
@@ -105,7 +107,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                         className="github-link"
                         aria-label={`${item.name} repository`}
                       >
-                        GitHub ↗
+                        GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
                       </a>
                     )}
                   </li>
@@ -176,7 +178,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                   ))}
                   <li className="pt-[24px]">
                     <Link href="/reading" className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--v3-accent)] hover:text-[var(--v3-accent-2)] transition-colors no-underline font-semibold flex items-center gap-[8px] group/read">
-                      Full reading log <span className="inline-block transition-transform duration-200 group-hover/read:translate-x-[4px]">→</span>
+                      Full reading log <ArrowRight className="inline-block transition-transform duration-200 group-hover/read:translate-x-[4px] w-3 h-3 ml-1" />
                     </Link>
                   </li>
                 </>
@@ -192,9 +194,11 @@ export async function NowSection(): Promise<React.ReactElement> {
         </div>
 
         <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)]">
-          <Link href="/about" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
-            More about my journey <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px]" aria-hidden="true">→</span>
-          </Link>
+          <MagneticWrapper strength={20}>
+            <Link href="/about" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+              More about my journey <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px] w-4 h-4" aria-hidden="true" />
+            </Link>
+          </MagneticWrapper>
         </div>
       </div>
     </section>

@@ -1,6 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { CASE_STUDIES } from "@/lib/case-studies"
+import { MagneticWrapper } from "./magnetic-wrapper"
+import { ArrowRight } from "lucide-react"
 
 const PROJECT_COLORS: Record<string, string> = {
   coinsafe: "#8b5cf6",
@@ -16,15 +18,17 @@ export function FilmReelSection(): React.ReactElement {
       id="all-work"
       aria-labelledby="reel-heading"
     >
-      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
+      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
         <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">03 — ARCHIVE</div>
         <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-[24px]">
           <h2 id="reel-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
             Everything I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">shipped.</em>
           </h2>
-          <Link href="/work" className="group inline-flex items-center gap-[12px] px-[28px] py-[14px] rounded-full font-mono text-[11px] uppercase tracking-[0.12em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-[12px]">
-            View full index <span className="inline-block transition-transform duration-300 group-hover:translate-x-[4px]" aria-hidden="true">→</span>
-          </Link>
+          <MagneticWrapper strength={20}>
+            <Link href="/work" className="group inline-flex items-center gap-[12px] px-[28px] py-[14px] rounded-full font-mono text-[11px] uppercase tracking-[0.12em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-[12px]">
+              View full index <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] w-3 h-3" aria-hidden="true" />
+            </Link>
+          </MagneticWrapper>
         </div>
       </div>
 

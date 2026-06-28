@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { CASE_STUDIES } from "@/lib/case-studies"
+import { ArrowUpRight } from "lucide-react"
 import { getProjects, type Project } from "@/lib/projects"
 
 const CATS = ["all", "web3", "product", "oss"] as const
@@ -106,7 +107,7 @@ export function WorkClient(): React.ReactElement {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3 mb-1">
                     <div className="name">{p.title}</div>
-                    {p.github_url && <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-[var(--ink-4)] hover:text-[var(--v3-accent)] transition-colors">GH ↗</a>}
+                    {p.github_url && <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-[var(--ink-4)] hover:text-[var(--v3-accent)] transition-colors">GH <ArrowUpRight className="inline w-3 h-3 ml-1" /></a>}
                   </div>
                   <div className="desc">{p.description}</div>
                 </div>
@@ -120,7 +121,7 @@ export function WorkClient(): React.ReactElement {
                   {p.category}
                 </div>
                 {p.live_url && (
-                  <a href={p.live_url} target="_blank" rel="noopener noreferrer" className="v3-work-arrow" aria-label="Visit live site">↗</a>
+                  <a href={p.live_url} target="_blank" rel="noopener noreferrer" className="v3-work-arrow flex items-center justify-center" aria-label="Visit live site"><ArrowUpRight className="w-5 h-5" /></a>
                 )}
               </div>
             ))}

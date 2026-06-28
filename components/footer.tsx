@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ThemeSelector } from "@/components/theme-selector";
+import { MagneticWrapper } from "./magnetic-wrapper";
+import { ArrowUpRight } from "lucide-react";
 
 export function Footer(): React.ReactElement {
   const year = new Date().getFullYear();
@@ -18,7 +20,7 @@ export function Footer(): React.ReactElement {
       </div>
 
       <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
-        <p className="font-display italic text-[22px] text-[var(--ink-2)] max-w-[32ch] mb-[80px]">
+        <p className="font-sans font-normal text-[20px] text-[var(--ink-2)] max-w-[32ch] mb-[80px]">
           Engineer &amp; writer. Building toward zero-knowledge ML — from Lagos.
         </p>
 
@@ -29,28 +31,34 @@ export function Footer(): React.ReactElement {
             </h5>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
-                <Link
-                  href="/work"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Portfolio
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/work"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Portfolio
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/about"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Resume &amp; CV
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/about"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Resume &amp; CV
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/contact"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Get in touch
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/contact"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Get in touch
+                  </Link>
+                </MagneticWrapper>
               </li>
             </ul>
           </div>
@@ -60,28 +68,34 @@ export function Footer(): React.ReactElement {
             </h5>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
-                <Link
-                  href="/blog"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Field Notes
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/blog"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Field Notes
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/reading"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Reading Log
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/reading"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Reading Log
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/feed.xml"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  RSS Feed
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/feed.xml"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    RSS Feed
+                  </Link>
+                </MagneticWrapper>
               </li>
             </ul>
           </div>
@@ -91,44 +105,54 @@ export function Footer(): React.ReactElement {
             </h5>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
-                <Link
-                  href="/about"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  About Me
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/about"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    About Me
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/#now"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Activity
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/#now"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Activity
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/uses"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  /uses
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/uses"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    /uses
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/guestbook"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  /guestbook
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/guestbook"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    /guestbook
+                  </Link>
+                </MagneticWrapper>
               </li>
               <li>
-                <Link
-                  href="/changelog"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  /changelog
-                </Link>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/changelog"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    /changelog
+                  </Link>
+                </MagneticWrapper>
               </li>
             </ul>
           </div>
@@ -138,34 +162,40 @@ export function Footer(): React.ReactElement {
             </h5>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
-                <a
-                  href="https://github.com/michojekunle"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  GitHub ↗
-                </a>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <a
+                    href="https://github.com/michojekunle"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                  </a>
+                </MagneticWrapper>
               </li>
               <li>
-                <a
-                  href="https://x.com/devvmichael"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  Twitter ↗
-                </a>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <a
+                    href="https://x.com/devvmichael"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Twitter <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                  </a>
+                </MagneticWrapper>
               </li>
               <li>
-                <a
-                  href="https://linkedin.com/in/michael-ojekunle"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors"
-                >
-                  LinkedIn ↗
-                </a>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <a
+                    href="https://linkedin.com/in/michael-ojekunle"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    LinkedIn <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                  </a>
+                </MagneticWrapper>
               </li>
             </ul>
           </div>
