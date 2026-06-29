@@ -6,5 +6,6 @@ import { ContactCTA } from "@/components/contact-cta"
 export function GlobalContactCTA(): React.ReactElement | null {
   const pathname = usePathname()
   if (pathname === "/contact") return null
+  if (pathname?.startsWith("/tools/bookbreaks")) return null
   return <ContactCTA />
 }

@@ -11,6 +11,7 @@ import { MagneticWrapper } from "./magnetic-wrapper";
 const navLinks = [
   { name: "Work", href: "/work" },
   { name: "Notes", href: "/blog" },
+  { name: "Tools", href: "/tools" },
   { name: "About", href: "/about" },
   { name: "Uses", href: "/uses" },
   { name: "Guestbook", href: "/guestbook" },
@@ -53,6 +54,7 @@ export function Navbar(): React.ReactNode {
     pathname === href || (href !== "/" && pathname.startsWith(href));
 
   if (pathname?.startsWith("/admin")) return null;
+  if (pathname?.startsWith("/tools/bookbreaks")) return null;
 
   const isDark = resolvedTheme === "dark";
 

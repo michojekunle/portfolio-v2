@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CommandPalette } from "@/components/command-palette";
 import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
+import { PortfolioFooter } from "@/components/portfolio-footer";
 import { GlobalContactCTA } from "@/components/global-contact-cta";
 import { CustomCursor } from "@/components/custom-cursor";
 import { SmoothScroll } from "@/components/smooth-scroll";
@@ -206,7 +206,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <GlobalContactCTA />
-            <Footer />
+            <PortfolioFooter />
             <CommandPalette />
             <Toaster />
           </SmoothScroll>
