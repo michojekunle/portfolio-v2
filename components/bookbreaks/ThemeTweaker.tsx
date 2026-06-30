@@ -42,14 +42,14 @@ export function ThemeTweaker() {
         onClick={() => setOpen((o) => !o)}
         aria-label="Open theme tweaker"
         style={{ zIndex: 200 }}
-        className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--v3-accent)] text-white shadow-xl ring-4 ring-[color-mix(in_oklab,var(--v3-accent)_40%,transparent)] transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95"
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--v3-accent)] text-white shadow-xl ring-4 ring-[color-mix(in_oklab,var(--v3-accent)_40%,transparent)] transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95"
       >
         <Palette size={20} />
       </button>
 
       {/* Overlay sheet */}
       {open && (
-        <div className="fixed inset-0 z-[190] flex items-end justify-end sm:items-start sm:justify-end p-4 sm:p-6">
+        <div className="fixed inset-0 z-[190] flex items-end justify-end sm:items-end sm:justify-end p-3 sm:p-6">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"

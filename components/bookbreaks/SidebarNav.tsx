@@ -163,12 +163,12 @@ export function BBSidebarNav({ userEmail }: Props): React.ReactElement {
       {mobileOpen && (
         <>
           <div
-            className="hidden max-[1024px]:block fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
           <aside
-            className="hidden max-[1024px]:block fixed top-0 left-0 h-screen w-[260px] z-50 bg-[var(--bg-2)] border-r border-[var(--rule)]"
+            className="fixed top-0 left-0 h-screen w-[280px] max-[360px]:w-full z-50 bg-[var(--bg-2)] border-r border-[var(--rule)] shadow-2xl"
           >
             <SidebarContent />
           </aside>
