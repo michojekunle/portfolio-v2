@@ -1,3 +1,4 @@
+import { MagneticWrapper } from "@/components/magnetic-wrapper";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -75,9 +76,7 @@ export default function CreatorSuitePage(): React.ReactElement {
         className="pt-[160px] pb-[100px] max-[720px]:pt-[120px] max-[720px]:pb-[64px] border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div
-          className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]"
-        >
+        <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
           <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-[48px] items-end">
             <div>
               <div className="v3-eyebrow mb-[28px]">CREATOR SUITE · TOOLS</div>
@@ -104,19 +103,23 @@ export default function CreatorSuitePage(): React.ReactElement {
                 className="text-[18px] leading-[1.65] m-0"
                 style={{ color: "var(--ink-2)" }}
               >
-                A suite of creator tools for people learning in public.
-                Read more, build better, ship consistently — and let your
-                community grow alongside you.
+                A suite of creator tools for people learning in public. Read
+                more, build better, ship consistently — and let your community
+                grow alongside you.
               </p>
               <div className="mt-[32px] flex items-center gap-[16px] flex-wrap">
-                <Link
-                  href="/tools/bookbreaks"
-                  className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                  style={{ background: "var(--v3-accent)" }}
-                >
-                  Launch BookBreaks{" "}
-                  <span className="text-[14px]" aria-hidden="true">→</span>
-                </Link>
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/bookbreaks"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    style={{ background: "var(--v3-accent)" }}
+                  >
+                    Launch BookBreaks{" "}
+                    <span className="text-[14px]" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                </MagneticWrapper>
                 <span
                   className="font-mono text-[11px] tracking-[0.12em] uppercase"
                   style={{ color: "var(--ink-4)" }}
@@ -223,7 +226,10 @@ function ToolCard({
         <div className="flex items-start justify-between mb-[32px]">
           <div
             className="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[24px] font-mono select-none"
-            style={{ background: tool.accentSoft, border: `1px solid ${tool.accent}22` }}
+            style={{
+              background: tool.accentSoft,
+              border: `1px solid ${tool.accent}22`,
+            }}
             aria-hidden="true"
           >
             {tool.icon}

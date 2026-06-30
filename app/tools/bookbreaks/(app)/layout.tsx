@@ -16,8 +16,7 @@ export default async function BookBreaksLayout({
 
   return (
     <div
-      className="min-h-screen flex"
-      style={{ background: "#F5E6D3", color: "#2C2C2C" }}
+      className="min-h-screen flex bg-[var(--bg)] text-[var(--ink)]"
     >
       <BBSidebarNav userEmail={user.email ?? ""} />
       <div className="flex-1 min-w-0 ml-[260px] max-[1024px]:ml-0">

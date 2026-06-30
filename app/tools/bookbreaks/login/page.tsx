@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -12,10 +12,36 @@ export default function BookBreaksLoginPage(): React.ReactElement {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
+
+  // Surface OAuth callback errors (e.g. user denied Google access)
+  useEffect(() => {
+    const oauthError = searchParams.get("error");
+    if (oauthError) setError(decodeURIComponent(oauthError));
+  }, [searchParams]);
+
+  const handleGoogleSignIn = async (): Promise<void> => {
+    setGoogleLoading(true);
+    setError(null);
+
+    const { error: authError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/tools/bookbreaks`,
+      },
+    });
+
+    if (authError) {
+      setError(authError.message);
+      setGoogleLoading(false);
+    }
+    // On success Supabase redirects the browser — no further action needed
+  };
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
@@ -44,7 +70,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/tools/bookbreaks`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/tools/bookbreaks`,
         },
       });
 
@@ -60,6 +86,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
       setLoading(false);
     }
   };
+
+  const isDisabled = loading || googleLoading;
 
   return (
     <div
@@ -120,7 +148,48 @@ export default function BookBreaksLoginPage(): React.ReactElement {
           </p>
         </div>
 
-        {/* Form */}
+        {/* Google OAuth button */}
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={isDisabled}
+          className="w-full h-[52px] rounded-[8px] flex items-center justify-center gap-[12px] text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
+          style={{
+            background: "#FFFFFF",
+            color: "#2C2C2C",
+            border: "1.5px solid #D4B896",
+            fontFamily: "inherit",
+          }}
+        >
+          {googleLoading ? (
+            <span
+              className="w-[18px] h-[18px] rounded-full border-[2px] border-t-transparent animate-spin"
+              style={{ borderColor: "#D4B896", borderTopColor: "transparent" }}
+              aria-hidden="true"
+            />
+          ) : (
+            <GoogleIcon />
+          )}
+          {googleLoading
+            ? "Redirecting to Google…"
+            : mode === "signin"
+            ? "Continue with Google"
+            : "Sign up with Google"}
+        </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-[12px] my-[24px]">
+          <div className="flex-1 h-[1px]" style={{ background: "#D4B896" }} />
+          <span
+            className="font-mono text-[10px] tracking-[0.12em] uppercase shrink-0"
+            style={{ color: "#B3A08A" }}
+          >
+            or
+          </span>
+          <div className="flex-1 h-[1px]" style={{ background: "#D4B896" }} />
+        </div>
+
+        {/* Email / password form */}
         <form onSubmit={handleSubmit} className="space-y-[16px]">
           <div>
             <label
@@ -137,7 +206,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              disabled={loading}
+              disabled={isDisabled}
               autoComplete="email"
               className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200"
               style={{
@@ -146,12 +215,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
                 color: "#2C2C2C",
                 fontFamily: "inherit",
               }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "#C85A2C";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "#D4B896";
-              }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#C85A2C"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#D4B896"; }}
             />
           </div>
 
@@ -170,10 +235,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              disabled={loading}
-              autoComplete={
-                mode === "signin" ? "current-password" : "new-password"
-              }
+              disabled={isDisabled}
+              autoComplete={mode === "signin" ? "current-password" : "new-password"}
               minLength={6}
               className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200"
               style={{
@@ -182,12 +245,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
                 color: "#2C2C2C",
                 fontFamily: "inherit",
               }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "#C85A2C";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "#D4B896";
-              }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#C85A2C"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#D4B896"; }}
             />
           </div>
 
@@ -220,7 +279,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isDisabled}
             className="w-full h-[52px] rounded-[8px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 hover:scale-[1.01]"
             style={{ background: "#C85A2C" }}
           >
@@ -274,5 +333,28 @@ export default function BookBreaksLoginPage(): React.ReactElement {
         </div>
       </div>
     </div>
+  );
+}
+
+function GoogleIcon(): React.ReactElement {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+        fill="#4285F4"
+      />
+      <path
+        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"
+        fill="#34A853"
+      />
+      <path
+        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
+        fill="#EA4335"
+      />
+    </svg>
   );
 }

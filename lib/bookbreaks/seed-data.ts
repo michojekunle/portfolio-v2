@@ -704,4 +704,279 @@ Are you selling your ideas with full conviction or holding back? Be honest 👇
 #SellOrBeSold #GrantCardone #Sales #BusinessMindset #LearningInPublic #BookReview #Entrepreneurship`,
     metadata: {},
   },
+
+  // ── CAROUSEL SLIDES ────────────────────────────────────────────────────────
+
+  {
+    book_index: 0,
+    content_type: "carousel",
+    platform: "instagram",
+    title: "The Diary of a CEO — Instagram Carousel",
+    content: `SLIDE 1
+Headline: "I'm waiting until I'm ready."
+Subtext: That mindset just cost you 6 months.
+
+SLIDE 2
+Headline: 1. The Urgency Myth
+Bullet 1: Urgency isn't a feeling — it's decision velocity
+Bullet 2: Commit publicly and your brain has no choice but to execute
+Bullet 3: Dreamers stay in the option space. Builders commit and iterate.
+
+SLIDE 3
+Headline: 2. The Permission Trap
+Bullet 1: You'll never feel 100% ready — start at 70%
+Bullet 2: The market doesn't care about your credentials, only results
+Bullet 3: Real feedback only comes from shipping, not planning
+
+SLIDE 4
+Headline: 3. Radical Ownership
+Bullet 1: Your failure? Your responsibility.
+Bullet 2: Your success? Your responsibility.
+Bullet 3: Ownership = control. Blame = powerlessness.
+
+SLIDE 5
+Headline: 4. Small Decisions Compound
+Bullet 1: One piece of content daily
+Bullet 2: Five customer conversations weekly
+Bullet 3: Over 12 months: the difference between 0 and everything
+
+SLIDE 6
+Headline: Read the full breakdown
+Subtext: michaelojekunle.dev`,
+    metadata: { slide_count: 6 },
+  },
+
+  {
+    book_index: 1,
+    content_type: "carousel",
+    platform: "instagram",
+    title: "Thinking Sideways — Instagram Carousel",
+    content: `SLIDE 1
+Headline: Your biggest problem isn't hard.
+Subtext: It's boring. You've been solving it in the wrong direction.
+
+SLIDE 2
+Headline: Vertical vs Lateral Thinking
+Bullet 1: Vertical = drill deeper into the same approach
+Bullet 2: Lateral = move sideways to a completely different solution
+Bullet 3: Everyone you compete with is drilling vertically
+
+SLIDE 3
+Headline: Your Invisible Assumptions
+Bullet 1: Most constraints aren't real — they're stories
+Bullet 2: Ask "why?" until you reach the original assumption
+Bullet 3: Then question it. That's where breakthroughs live.
+
+SLIDE 4
+Headline: The PO Technique
+Bullet 1: State an absurd, impossible idea about your problem
+Bullet 2: Follow the logic of that absurd idea to its conclusion
+Bullet 3: You're not implementing it — you're using it to see differently
+
+SLIDE 5
+Headline: My Sideways Shift
+Bullet 1: Building FirstCodeForge competing with Codecademy
+Bullet 2: New frame: stop competing. Serve kids learning real programming.
+Bullet 3: Different market. No competition.
+
+SLIDE 6
+Headline: Read the full breakdown
+Subtext: michaelojekunle.dev`,
+    metadata: { slide_count: 6 },
+  },
+
+  {
+    book_index: 2,
+    content_type: "carousel",
+    platform: "instagram",
+    title: "Sell Like Crazy — Instagram Carousel",
+    content: `SLIDE 1
+Headline: Your sales suck. Not because your product is bad.
+Subtext: Because you're asking strangers for $500 with no warm-up.
+
+SLIDE 2
+Headline: The Value Ladder
+Bullet 1: Step 1 — Free value (content, audit, consultation)
+Bullet 2: Step 2 — Low-ticket ($10–50 to prove value)
+Bullet 3: Step 3 — High-ticket ($5,000+) for warm, trusting customers
+
+SLIDE 3
+Headline: The Awareness Gap
+Bullet 1: 80% of the problem is awareness, not conversion
+Bullet 2: Spend 80% of energy making them know you exist first
+Bullet 3: Then your pitch becomes effortless
+
+SLIDE 4
+Headline: Conversion Sequences Win
+Bullet 1: Email 1: introduce value. Email 2: social proof.
+Bullet 2: Email 3: handle objections. Email 4: irresistible offer.
+Bullet 3: Most businesses quit at email 1. That's why they lose.
+
+SLIDE 5
+Headline: Irresistible Offer = 5 Elements
+Bullet 1: Clear value + specific benefit
+Bullet 2: Social proof + urgency (why NOW)
+Bullet 3: Low friction entry (free trial, no credit card)
+
+SLIDE 6
+Headline: Read the full framework
+Subtext: michaelojekunle.dev`,
+    metadata: { slide_count: 6 },
+  },
+
+  {
+    book_index: 3,
+    content_type: "carousel",
+    platform: "instagram",
+    title: "Sell or Be Sold — Instagram Carousel",
+    content: `SLIDE 1
+Headline: You think you don't sell.
+Subtext: You do. Every single conversation is a sale.
+
+SLIDE 2
+Headline: You're Always Selling
+Bullet 1: Pitching your idea to your team — selling
+Bullet 2: Negotiating your salary — selling
+Bullet 3: Building your personal brand — selling
+
+SLIDE 3
+Headline: Belief Precedes Everything
+Bullet 1: Your disbelief shows in your tone and hesitation
+Bullet 2: Customers sense it before you say a word
+Bullet 3: Get your conviction straight before any conversation
+
+SLIDE 4
+Headline: Objections = Interest
+Bullet 1: An objection means they're thinking about it
+Bullet 2: 50% of sales close after the first objection — if you don't quit
+Bullet 3: Dismissing objections loses sales. Answering them wins.
+
+SLIDE 5
+Headline: Language Shifts That Convert
+Bullet 1: "If you decide to buy" → "When we get you set up"
+Bullet 2: "Would you be interested?" → "The best plan for you is…"
+Bullet 3: Small language. Massive behavioral difference.
+
+SLIDE 6
+Headline: Read the full mindset shift
+Subtext: michaelojekunle.dev`,
+    metadata: { slide_count: 6 },
+  },
+
+  // ── TIKTOK SCRIPTS ─────────────────────────────────────────────────────────
+
+  {
+    book_index: 0,
+    content_type: "tiktok",
+    platform: "tiktok",
+    title: "The Diary of a CEO — TikTok Script",
+    content: `[0–5s] HOOK
+Script: I just finished The Diary of a CEO and it's making me rethink everything. Here's the one insight that hit different:
+Text overlay: The Diary of a CEO changed my thinking.
+
+[5–40s] MAIN INSIGHT
+Script: Most people think urgency is a feeling. Like you need to feel motivated to move fast. But Steve Bartlett says urgency is actually decision velocity plus accountability. Meaning: you move fast not because you're energized, but because you made a decision and told someone about it. The moment you commit publicly, your brain has no choice but to execute.
+Text overlay: Urgency = Decision Velocity + Accountability
+B-roll: You working at a desk, then switching to you on a call
+
+[40–55s] APPLICATION
+Script: I built my automation platform using this principle. Announced it before it was ready. That public commitment forced me to ship. That's the real shortcut.
+Text overlay: Public commitment → forces execution
+B-roll: Screen recording of a product launch announcement
+
+[55–60s] CTA
+Script: If you're building something, read this book. More breakdowns like this at:
+Text overlay: michaelojekunle.dev
+
+Hashtags (in comments): #BookReview #EntrepreneurTok #PersonalGrowth #SteveBartlett #BuildInPublic #FYP`,
+    metadata: {},
+  },
+
+  {
+    book_index: 1,
+    content_type: "tiktok",
+    platform: "tiktok",
+    title: "Thinking Sideways — TikTok Script",
+    content: `[0–5s] HOOK
+Script: Why do most people's problems feel unsolvable? Because they're thinking about them wrong.
+Text overlay: Your problems aren't hard. You're thinking wrong.
+
+[5–35s] MAIN CONCEPT
+Script: There's vertical thinking and lateral thinking. Vertical means drill deeper into the same approach. Lateral means move sideways to a completely different approach. Most people only know vertical. Example: your app has churn. Vertical thinking says improve the product. Lateral thinking says what if we stopped targeting enterprises and only sold to individuals? Same problem. Completely different solution.
+Text overlay: Vertical → deeper. Lateral → sideways.
+B-roll: Split screen showing two different problem-solving paths
+
+[35–50s] REAL EXAMPLE
+Script: I was building my coding platform competing against the big players. Vertical approach — build better features, better pricing. Lateral approach — stop competing. Build for kids aged 8 to 13 learning real programming. Different market. No competition.
+Text overlay: Stop competing → find a new market
+B-roll: You gesturing sideways
+
+[50–60s] CTA
+Script: This is in Thinking Sideways. When you're stuck, think sideways. Full breakdown at:
+Text overlay: michaelojekunle.dev
+
+Hashtags (in comments): #Creativity #ProblemSolving #ThinkingDifferently #Innovation #BuildInPublic #FYP #EntrepreneurTok`,
+    metadata: {},
+  },
+
+  {
+    book_index: 2,
+    content_type: "tiktok",
+    platform: "tiktok",
+    title: "Sell Like Crazy — TikTok Script",
+    content: `[0–5s] HOOK
+Script: You have a great product. But your sales suck. Here's why:
+Text overlay: Great product. Terrible sales. Here's the fix.
+
+[5–20s] THE PROBLEM
+Script: Most people jump straight to the sale. "I built something. Here's the link. Buy it." But the person has never heard of you. Doesn't know you. Doesn't trust you. So you get 0.2% conversion.
+Text overlay: Cold audience → 0.2% conversion
+
+[20–50s] THE SOLUTION
+Script: There's a value ladder. Step one — free value: content, consultation. Step two — low-ticket offer: ten to fifty dollars. Step three — mid-ticket: five hundred to five thousand. Step four — high-ticket: ten thousand plus. People climb the ladder. They don't jump. Build awareness and trust first. Then sales becomes easy.
+Text overlay: Value Ladder: Free → $50 → $5k → $10k+
+B-roll: Animated ladder graphic building up step by step
+
+[50–58s] PROOF
+Script: Went from 0.3% conversion to 2.8% just by building the ladder first.
+Text overlay: 0.3% → 2.8% conversion
+
+[58–60s] CTA
+Script: Read Sell Like Crazy for the full framework. michaelojekunle.dev
+Text overlay: michaelojekunle.dev
+
+Hashtags (in comments): #Sales #SalesStrategy #Entrepreneurship #BusinessTips #FYP #EntrepreneurTok #MakeMoney`,
+    metadata: {},
+  },
+
+  {
+    book_index: 3,
+    content_type: "tiktok",
+    platform: "tiktok",
+    title: "Sell or Be Sold — TikTok Script",
+    content: `[0–5s] HOOK
+Script: You think you don't sell. But you do. Every single day.
+Text overlay: You're selling right now. You just don't know it.
+
+[5–30s] CONCEPT
+Script: Whether you're a programmer, artist, or founder — you're selling. Pitching ideas to your boss: selling. Negotiating salary: selling. Building your personal brand: selling. Asking for investment: selling. There's no third option. You're either selling or being sold to. The person who sells better wins. Always.
+Text overlay: Selling = pitching + persuading + communicating value
+B-roll: Quick cuts showing different professional scenarios
+
+[30–50s] KEY INSIGHT
+Script: Most people quit after the first no. But 50% of sales happen after the first objection. People aren't rejecting you. They're testing whether you believe in what you're doing. Do you believe enough to handle a no? That's the real question.
+Text overlay: 50% of sales close after objection #1
+B-roll: You saying no and then reconsidering
+
+[50–58s] MINDSET
+Script: Selling isn't sleazy. It's survival. You need money. You need value. You need to exchange them. That's selling.
+Text overlay: Selling = survival. Not sleazy.
+
+[58–60s] CTA
+Script: Read Sell or Be Sold for the full mindset shift. michaelojekunle.dev
+Text overlay: michaelojekunle.dev
+
+Hashtags (in comments): #Sales #Entrepreneurship #MindsetShift #SalesSkills #FYP #EntrepreneurTok #MakeMoney`,
+    metadata: {},
+  },
 ];

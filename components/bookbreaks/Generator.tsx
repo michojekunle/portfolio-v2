@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { BOOK_THEMES, CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS, TONE_OPTIONS } from "@/lib/bookbreaks/constants";
 import type { BBBookWithContent, ContentType } from "@/lib/bookbreaks/types";
+import { CarouselPreview } from "@/components/bookbreaks/CarouselPreview";
 
 const CONTENT_TYPES: ContentType[] = ["article", "thread", "carousel", "tiktok", "caption"];
 
@@ -447,27 +448,53 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
             </div>
 
             {/* Content body */}
-            <div
-              className="p-[28px] max-[720px]:p-[20px]"
-              style={{ background: "#FAF5EC" }}
-            >
-              <pre
-                className="whitespace-pre-wrap text-[14px] leading-[1.75] font-[inherit] m-0"
-                style={{ color: "#2C2C2C", fontFamily: "inherit" }}
+            {contentType === "carousel" && generated && !generating ? (
+              <div className="p-[28px] max-[720px]:p-[20px]" style={{ background: "#FAF5EC" }}>
+                {/* Visual preview */}
+                <CarouselPreview
+                  content={generated}
+                  bookTheme={selectedTheme}
+                  bookTitle={selectedBook?.title ?? ""}
+                />
+                {/* Raw text toggle */}
+                <details className="mt-[20px]">
+                  <summary
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase cursor-pointer"
+                    style={{ color: "#8B6F47" }}
+                  >
+                    View raw slide text ▾
+                  </summary>
+                  <pre
+                    className="whitespace-pre-wrap text-[12px] leading-[1.7] font-mono mt-[12px] p-[16px] rounded-[8px]"
+                    style={{ background: "#F5E6D3", color: "#4A3728", border: "1px solid #D4B896" }}
+                  >
+                    {generated}
+                  </pre>
+                </details>
+              </div>
+            ) : (
+              <div
+                className="p-[28px] max-[720px]:p-[20px]"
+                style={{ background: "#FAF5EC" }}
               >
-                {generated}
-                {generating && (
-                  <span
-                    className="inline-block w-[2px] h-[18px] ml-[2px] align-middle"
-                    style={{
-                      background: "#C85A2C",
-                      animation: "cursor-blink 1s step-end infinite",
-                    }}
-                    aria-hidden="true"
-                  />
-                )}
-              </pre>
-            </div>
+                <pre
+                  className="whitespace-pre-wrap text-[14px] leading-[1.75] font-[inherit] m-0"
+                  style={{ color: "#2C2C2C", fontFamily: "inherit" }}
+                >
+                  {generated}
+                  {generating && (
+                    <span
+                      className="inline-block w-[2px] h-[18px] ml-[2px] align-middle"
+                      style={{
+                        background: "#C85A2C",
+                        animation: "cursor-blink 1s step-end infinite",
+                      }}
+                      aria-hidden="true"
+                    />
+                  )}
+                </pre>
+              </div>
+            )}
 
             {/* Actions */}
             {!generating && generated && (

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BookOpen, CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function BBSeedButton(): React.ReactElement {
   const [loading, setLoading] = useState(false);
@@ -34,28 +36,27 @@ export function BBSeedButton(): React.ReactElement {
   if (done) {
     return (
       <div
-        className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.1em] uppercase"
-        style={{ color: "#2D5016" }}
+        className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.1em] uppercase text-green-600 dark:text-green-400"
       >
-        ✓ 4 books loaded — refreshing…
+        <CheckCircle size={14} /> 4 books loaded — refreshing…
       </div>
     );
   }
 
   return (
     <div>
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.95 }}
         onClick={handleSeed}
         disabled={loading}
-        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer hover:opacity-90 border-none"
-        style={{ background: "#C85A2C" }}
+        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer bg-[var(--v3-accent)] border-none hover:opacity-90"
       >
-        {loading ? "Loading books…" : "📚 Load 4 starter books"}
-      </button>
+        {loading ? "Loading books…" : <><BookOpen size={14} /> Load 4 starter books</>}
+      </motion.button>
       {error && (
         <p
-          className="font-mono text-[11px] mt-[8px] m-0"
-          style={{ color: "#DC2626" }}
+          className="font-mono text-[11px] mt-[8px] m-0 text-red-500"
         >
           {error}
         </p>

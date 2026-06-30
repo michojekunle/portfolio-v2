@@ -50,6 +50,16 @@ export function Footer(): React.ReactElement {
                   </Link>
                 </MagneticWrapper>
               </li>
+               <li>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
+                    href="/tools"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Creator &amp; Tools
+                  </Link>
+                </MagneticWrapper>
+              </li>
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
                   <Link

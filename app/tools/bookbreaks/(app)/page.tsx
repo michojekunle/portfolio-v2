@@ -3,7 +3,8 @@ import { getDashboardStats, getBBBooks, getBBContent } from "@/lib/bookbreaks/qu
 import { BOOK_THEMES, CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS } from "@/lib/bookbreaks/constants";
 import Link from "next/link";
 import { BBSeedButton } from "@/components/bookbreaks/SeedButton";
-
+import { BookOpen, Sparkles, Calendar, Settings, AlertCircle, LayoutTemplate } from "lucide-react";
+import { TiltCard } from "@/components/tilt-card";
 export default async function BookBreaksDashboard(): Promise<React.ReactElement> {
   const supabase = await createClient();
   const {
@@ -26,26 +27,22 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
       {/* Header */}
       <div className="mb-[48px]">
         <div
-          className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px]"
-          style={{ color: "#8B6F47" }}
+          className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px] text-[var(--ink-3)]"
         >
           Dashboard
         </div>
         <h1
-          className="font-display font-normal text-[40px] max-[720px]:text-[28px] leading-[1.05] tracking-[-0.025em] fvs-text m-0"
-          style={{ color: "#2C2C2C" }}
+          className="font-display font-normal text-[40px] max-[720px]:text-[28px] leading-[1.05] tracking-[-0.025em] fvs-text m-0 text-[var(--ink)]"
         >
           Good{getTimeOfDay()},{" "}
           <em
-            className="not-italic italic fvs-text-soft"
-            style={{ color: "#C85A2C" }}
+            className="not-italic italic fvs-text-soft text-[var(--v3-accent)]"
           >
             {firstName}.
           </em>
         </h1>
         <p
-          className="text-[15px] leading-[1.6] mt-[8px] m-0"
-          style={{ color: "#8B6F47" }}
+          className="text-[15px] leading-[1.6] mt-[8px] m-0 text-[var(--ink-3)]"
         >
           {isEmpty
             ? "Your library is ready. Add your first book to get started."
@@ -56,22 +53,16 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
       {/* Seed prompt for new users */}
       {isEmpty && (
         <div
-          className="rounded-[12px] p-[32px] mb-[48px] flex flex-col max-[720px]:flex-col gap-[20px] items-start"
-          style={{
-            background: "rgba(200,90,44,0.08)",
-            border: "1px solid rgba(200,90,44,0.2)",
-          }}
+          className="rounded-[12px] p-[32px] mb-[48px] flex flex-col max-[720px]:flex-col gap-[20px] items-start bg-[color-mix(in_oklab,var(--v3-accent)_10%,var(--bg))] border border-[color-mix(in_oklab,var(--v3-accent)_20%,var(--bg))]"
         >
           <div>
             <h2
-              className="font-display text-[22px] fvs-text m-0 mb-[8px]"
-              style={{ color: "#2C2C2C" }}
+              className="font-display text-[22px] fvs-text m-0 mb-[8px] text-[var(--ink)]"
             >
               Start with 4 pre-loaded books
             </h2>
             <p
-              className="text-[14px] leading-[1.6] m-0 max-w-[52ch]"
-              style={{ color: "#8B6F47" }}
+              className="text-[14px] leading-[1.6] m-0 max-w-[52ch] text-[var(--ink-2)]"
             >
               Load{" "}
               <em>The Diary of a CEO</em>,{" "}
@@ -86,9 +77,9 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
 
       {/* Stats */}
       <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-[16px] mb-[48px]">
-        <StatCard label="Books Read" value={stats.book_count} icon="📚" />
-        <StatCard label="Content Created" value={stats.content_count} icon="✦" />
-        <StatCard label="This Month" value={stats.this_month_count} icon="📅" />
+        <StatCard label="Books Read" value={stats.book_count} icon={<BookOpen size={20} />} />
+        <StatCard label="Content Created" value={stats.content_count} icon={<Sparkles size={20} />} />
+        <StatCard label="This Month" value={stats.this_month_count} icon={<Calendar size={20} />} />
       </div>
 
       <div className="grid grid-cols-[1fr_320px] max-[1100px]:grid-cols-1 gap-[32px]">
@@ -96,15 +87,13 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
         <section>
           <div className="flex items-center justify-between mb-[20px]">
             <h2
-              className="font-mono text-[10px] tracking-[0.14em] uppercase m-0"
-              style={{ color: "#8B6F47" }}
+              className="font-mono text-[10px] tracking-[0.14em] uppercase m-0 text-[var(--ink-3)]"
             >
               Recent Books
             </h2>
             <Link
               href="/tools/bookbreaks/books"
-              className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors"
-              style={{ color: "#C85A2C" }}
+              className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors text-[var(--v3-accent)] hover:opacity-80"
             >
               All books →
             </Link>
@@ -220,28 +209,21 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
               {latestContent.map((c) => (
                 <div
                   key={c.id}
-                  className="rounded-[8px] p-[14px] flex items-start gap-[12px]"
-                  style={{
-                    background: "#FAF5EC",
-                    border: "1px solid #D4B896",
-                  }}
+                  className="rounded-[8px] p-[14px] flex items-start gap-[12px] bg-[var(--bg-2)] border border-[var(--rule)]"
                 >
                   <span
-                    className="text-[16px] flex-shrink-0 mt-[1px]"
-                    aria-hidden="true"
+                    className="flex-shrink-0 mt-[1px] text-[var(--v3-accent)]"
                   >
-                    {CONTENT_TYPE_ICONS[c.content_type] ?? "📄"}
+                    <LayoutTemplate size={16} />
                   </span>
                   <div className="min-w-0">
                     <div
-                      className="text-[13px] leading-[1.4] font-medium truncate"
-                      style={{ color: "#2C2C2C", fontFamily: "inherit" }}
+                      className="text-[13px] leading-[1.4] font-medium truncate text-[var(--ink)]"
                     >
                       {c.title}
                     </div>
                     <div
-                      className="font-mono text-[10px] mt-[3px] flex items-center gap-[8px]"
-                      style={{ color: "#8B6F47" }}
+                      className="font-mono text-[10px] mt-[3px] flex items-center gap-[8px] text-[var(--ink-3)]"
                     >
                       <span>{CONTENT_TYPE_LABELS[c.content_type]}</span>
                       <span aria-hidden="true">·</span>
@@ -271,29 +253,28 @@ function StatCard({
 }: {
   label: string;
   value: number;
-  icon: string;
+  icon: React.ReactNode;
 }): React.ReactElement {
   return (
-    <div
-      className="rounded-[10px] p-[24px]"
-      style={{ background: "#FAF5EC", border: "1px solid #D4B896" }}
-    >
-      <div className="flex items-center justify-between mb-[12px]">
-        <span
-          className="font-mono text-[10px] tracking-[0.12em] uppercase"
-          style={{ color: "#8B6F47" }}
-        >
-          {label}
-        </span>
-        <span className="text-[18px]" aria-hidden="true">{icon}</span>
-      </div>
+    <TiltCard intensity={10}>
       <div
-        className="font-display text-[44px] font-normal fvs-text leading-[1]"
-        style={{ color: "#2C2C2C" }}
+        className="rounded-[10px] p-[24px] bg-[var(--bg-2)] border border-[var(--rule)] h-full"
       >
-        {value}
+        <div className="flex items-center justify-between mb-[12px]">
+          <span
+            className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]"
+          >
+            {label}
+          </span>
+          <span className="text-[var(--v3-accent)]">{icon}</span>
+        </div>
+        <div
+          className="font-display text-[44px] font-normal fvs-text leading-[1] text-[var(--ink)]"
+        >
+          {value}
+        </div>
       </div>
-    </div>
+    </TiltCard>
   );
 }
 
@@ -302,26 +283,23 @@ function EmptyState({
   message,
   cta,
 }: {
-  icon: string;
+  icon: React.ReactNode | string;
   message: string;
   cta: { label: string; href: string };
 }): React.ReactElement {
   return (
     <div
-      className="rounded-[10px] p-[32px] text-center"
-      style={{ background: "#FAF5EC", border: "1px dashed #D4B896" }}
+      className="rounded-[10px] p-[32px] text-center bg-[var(--bg-2)] border border-dashed border-[var(--rule)]"
     >
-      <div className="text-[32px] mb-[12px]">{icon}</div>
+      <div className="flex justify-center mb-[12px] text-[var(--v3-accent)]">{typeof icon === 'string' ? <AlertCircle size={32} /> : icon}</div>
       <div
-        className="font-mono text-[11px] tracking-[0.1em] uppercase mb-[16px]"
-        style={{ color: "#8B6F47" }}
+        className="font-mono text-[11px] tracking-[0.1em] uppercase mb-[16px] text-[var(--ink-3)]"
       >
         {message}
       </div>
       <Link
         href={cta.href}
-        className="inline-flex items-center gap-[6px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline"
-        style={{ color: "#C85A2C" }}
+        className="inline-flex items-center gap-[6px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-[var(--v3-accent)] hover:opacity-80"
       >
         {cta.label} →
       </Link>

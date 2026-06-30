@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import type { BookTheme } from "@/lib/bookbreaks/types";
+import { motion } from "framer-motion";
+import { Plus, X } from "lucide-react";
 
 const THEME_OPTIONS = Object.entries(BOOK_THEMES).map(([value, cfg]) => ({
   value: value as BookTheme,
@@ -30,13 +32,14 @@ export function BBAddBookButton(): React.ReactElement {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 hover:opacity-90 border-none cursor-pointer"
-        style={{ background: "#C85A2C" }}
+        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 hover:opacity-90 border-none cursor-pointer bg-[var(--v3-accent)]"
       >
-        + Add Book
-      </button>
+        <Plus size={14} /> Add Book
+      </motion.button>
       {open && <AddBookModal onClose={() => setOpen(false)} />}
     </>
   );
@@ -126,31 +129,26 @@ function AddBookModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-[24px]"
-      style={{ background: "rgba(44,44,44,0.5)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-[24px] bg-black/40 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-[580px] max-h-[90vh] overflow-y-auto rounded-[16px]"
-        style={{ background: "#FAF5EC", border: "1px solid #D4B896" }}
+        className="w-full max-w-[580px] max-h-[90vh] overflow-y-auto rounded-[16px] bg-[var(--bg-2)] border border-[var(--rule)]"
       >
         <div
-          className="sticky top-0 flex items-center justify-between px-[28px] py-[20px] z-10"
-          style={{ background: "#FAF5EC", borderBottom: "1px solid #D4B896" }}
+          className="sticky top-0 flex items-center justify-between px-[28px] py-[20px] z-10 bg-[var(--bg-2)] border-b border-[var(--rule)]"
         >
           <div
-            className="font-display text-[20px] fvs-text"
-            style={{ color: "#2C2C2C" }}
+            className="font-display text-[20px] fvs-text text-[var(--ink)]"
           >
             Add a Book
           </div>
           <button
             onClick={onClose}
-            className="w-[32px] h-[32px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer font-mono text-[14px]"
-            style={{ color: "#8B6F47" }}
+            className="w-[32px] h-[32px] flex items-center justify-center rounded-[8px] border-none bg-transparent cursor-pointer font-mono text-[14px] text-[var(--ink-2)] hover:bg-[color-mix(in_oklab,var(--bg)_80%,var(--ink))] hover:text-[var(--v3-accent)]"
             aria-label="Close"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 
@@ -187,15 +185,16 @@ function AddBookModal({
                   key={t.value}
                   type="button"
                   onClick={() => setTheme(t.value)}
-                  className="flex items-center gap-[8px] px-[12px] h-[36px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.08em] transition-all cursor-pointer border-none"
-                  style={{
-                    background:
-                      theme === t.value ? t.bg : "rgba(44,44,44,0.06)",
-                    color: theme === t.value ? t.accent : "#4A3728",
-                    outline:
-                      theme === t.value ? `2px solid ${t.accent}` : "none",
-                    outlineOffset: "2px",
-                  }}
+                  className={`flex items-center gap-[8px] px-[12px] h-[36px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.08em] transition-all cursor-pointer border-none ${
+                    theme === t.value
+                      ? "ring-2 ring-offset-2 ring-offset-transparent"
+                      : "bg-[var(--bg-2)] text-[var(--ink-2)]"
+                  }`}
+                  style={
+                    theme === t.value
+                      ? { background: t.bg, color: t.accent, '--tw-ring-color': t.accent } as React.CSSProperties
+                      : {}
+                  }
                 >
                   <span
                     className="w-[8px] h-[8px] rounded-full flex-shrink-0"
@@ -221,16 +220,11 @@ function AddBookModal({
                   key={n}
                   type="button"
                   onClick={() => setRating(rating === n ? 0 : n)}
-                  className="w-[36px] h-[36px] rounded-[6px] font-mono text-[16px] transition-all cursor-pointer border-none"
-                  style={{
-                    background:
-                      n <= rating
-                        ? "rgba(200,90,44,0.15)"
-                        : "rgba(44,44,44,0.06)",
-                    color: n <= rating ? "#C85A2C" : "#8B6F47",
-                    outline:
-                      n <= rating ? "1.5px solid rgba(200,90,44,0.3)" : "none",
-                  }}
+                  className={`w-[36px] h-[36px] rounded-[6px] font-mono text-[16px] transition-all cursor-pointer border-none ${
+                    n <= rating
+                      ? "bg-[var(--v3-accent)]/15 text-[var(--v3-accent)] ring-1 ring-[var(--v3-accent)]/30"
+                      : "bg-[var(--bg-2)] text-[var(--ink-3)]"
+                  }`}
                   aria-label={`${n} star${n !== 1 ? "s" : ""}`}
                 >
                   ★
@@ -245,21 +239,16 @@ function AddBookModal({
               {genres.map((g) => (
                 <span
                   key={g}
-                  className="inline-flex items-center gap-[4px] font-mono text-[10px] uppercase tracking-[0.08em] px-[8px] py-[3px] rounded-full"
-                  style={{
-                    background: "rgba(200,90,44,0.1)",
-                    color: "#C85A2C",
-                  }}
+                  className="inline-flex items-center gap-[4px] font-mono text-[10px] uppercase tracking-[0.08em] px-[8px] py-[3px] rounded-full bg-[var(--v3-accent)]/10 text-[var(--v3-accent)]"
                 >
                   {g}
                   <button
                     type="button"
                     onClick={() => removeGenre(g)}
-                    className="bg-transparent border-none cursor-pointer p-0 leading-none text-[11px]"
-                    style={{ color: "#C85A2C" }}
+                    className="bg-transparent border-none cursor-pointer p-0 leading-none text-[11px] text-[var(--v3-accent)] hover:opacity-70 transition-opacity"
                     aria-label={`Remove ${g}`}
                   >
-                    ✕
+                    <X size={10} />
                   </button>
                 </span>
               ))}
@@ -286,11 +275,7 @@ function AddBookModal({
                     key={g}
                     type="button"
                     onClick={() => addGenre(g)}
-                    className="font-mono text-[9px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded-full cursor-pointer border-none transition-all"
-                    style={{
-                      background: "rgba(44,44,44,0.06)",
-                      color: "#8B6F47",
-                    }}
+                    className="font-mono text-[9px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded-full cursor-pointer border-none transition-all bg-[var(--bg-2)] text-[var(--ink-3)] hover:text-[var(--ink)]"
                   >
                     + {g}
                   </button>
@@ -305,8 +290,7 @@ function AddBookModal({
               {insights.map((ins, i) => (
                 <div key={i} className="flex items-start gap-[8px]">
                   <span
-                    className="font-mono text-[10px] mt-[14px] flex-shrink-0 w-[16px]"
-                    style={{ color: "#8B6F47" }}
+                    className="font-mono text-[10px] mt-[14px] flex-shrink-0 w-[16px] text-[var(--ink-3)]"
                   >
                     {i + 1}.
                   </span>
@@ -336,37 +320,31 @@ function AddBookModal({
 
           {error && (
             <div
-              className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px]"
-              style={{
-                background: "rgba(220,38,38,0.08)",
-                color: "#DC2626",
-                border: "1px solid rgba(220,38,38,0.2)",
-              }}
+              className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px] bg-red-500/10 text-red-500 border border-red-500/20"
             >
               {error}
             </div>
           )}
 
           <div className="flex gap-[12px] pt-[8px]">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={loading}
-              className="flex-1 h-[48px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90"
-              style={{ background: "#C85A2C" }}
+              className="flex-1 h-[48px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 bg-[var(--v3-accent)]"
             >
               {loading ? "Saving…" : "Save Book"}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={onClose}
-              className="h-[48px] px-[20px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] cursor-pointer border-none transition-all"
-              style={{
-                background: "rgba(44,44,44,0.06)",
-                color: "#8B6F47",
-              }}
+              className="h-[48px] px-[20px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] cursor-pointer border-none transition-all bg-[var(--bg-2)] text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[color-mix(in_oklab,var(--bg)_80%,var(--ink))]"
             >
               Cancel
-            </button>
+            </motion.button>
           </div>
         </form>
       </div>
@@ -381,12 +359,12 @@ function AddBookModal({
           font-family: inherit;
           outline: none;
           transition: border-color 0.15s;
-          background: #F5E6D3;
-          border: 1.5px solid #D4B896;
-          color: #2C2C2C;
+          background: color-mix(in oklab, var(--bg-2) 60%, var(--bg));
+          border: 1.5px solid var(--rule);
+          color: var(--ink);
         }
-        .bb-input::placeholder { color: #B3A08A; }
-        .bb-input:focus { border-color: #C85A2C; }
+        .bb-input::placeholder { color: var(--ink-3); }
+        .bb-input:focus { border-color: var(--v3-accent); }
         textarea.bb-input { height: auto; padding: 12px 14px; }
       `}</style>
     </div>
@@ -405,12 +383,11 @@ function Field({
   return (
     <div>
       <label
-        className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-        style={{ color: "#8B6F47" }}
+        className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]"
       >
         {label}
         {required && (
-          <span className="ml-[4px]" style={{ color: "#C85A2C" }}>
+          <span className="ml-[4px] text-[var(--v3-accent)]">
             *
           </span>
         )}
