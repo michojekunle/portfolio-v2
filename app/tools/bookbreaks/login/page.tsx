@@ -103,7 +103,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
           >
             <span
               className="font-mono text-[10px] tracking-[0.14em] uppercase transition-colors"
-              style={{ color: "#8B6F47" }}
+              
             >
               ← Creator Suite
             </span>
@@ -119,13 +119,13 @@ export default function BookBreaksLoginPage(): React.ReactElement {
             <div>
               <div
                 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-[1]"
-                style={{ color: "#2C2C2C" }}
+                
               >
                 BookBreaks
               </div>
               <div
                 className="font-mono text-[10px] tracking-[0.12em] uppercase"
-                style={{ color: "#8B6F47" }}
+                
               >
                 AI-Powered Book Insights
               </div>
@@ -134,13 +134,13 @@ export default function BookBreaksLoginPage(): React.ReactElement {
 
           <h1
             className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0"
-            style={{ color: "#2C2C2C" }}
+            
           >
             {mode === "signin" ? "Welcome back." : "Start your journey."}
           </h1>
           <p
             className="text-[14px] leading-[1.6] mt-[8px] m-0"
-            style={{ color: "#8B6F47" }}
+            
           >
             {mode === "signin"
               ? "Sign in to access your books and generated content."
@@ -195,7 +195,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
             <label
               htmlFor="email"
               className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              style={{ color: "#8B6F47" }}
+              
             >
               Email address
             </label>
@@ -224,7 +224,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
             <label
               htmlFor="password"
               className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              style={{ color: "#8B6F47" }}
+              
             >
               Password
             </label>
@@ -295,7 +295,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
         <div className="mt-[24px] text-center">
           <span
             className="text-[13px]"
-            style={{ color: "#8B6F47", fontFamily: "inherit" }}
+            
           >
             {mode === "signin"
               ? "Don't have an account? "
@@ -318,7 +318,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
         <div className="mt-[48px] pt-[24px]" style={{ borderTop: "1px solid #D4B896" }}>
           <p
             className="text-center text-[12px] leading-[1.6] m-0"
-            style={{ color: "#8B6F47", fontFamily: "inherit" }}
+            
           >
             Part of{" "}
             <Link

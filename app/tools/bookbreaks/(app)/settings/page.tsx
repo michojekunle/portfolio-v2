@@ -9,19 +9,19 @@ export default async function SettingsPage(): Promise<React.ReactElement> {
       <div className="mb-[40px]">
         <div
           className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px]"
-          style={{ color: "#8B6F47" }}
+          
         >
           Settings
         </div>
         <h1
           className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.025em] fvs-text m-0"
-          style={{ color: "#2C2C2C" }}
+          
         >
           Preferences
         </h1>
         <p
           className="text-[14px] mt-[6px] m-0"
-          style={{ color: "#8B6F47" }}
+          
         >
           Configure how BookBreaks generates content for you.
         </p>

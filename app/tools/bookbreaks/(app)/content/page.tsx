@@ -1,6 +1,7 @@
 import { getBBContent, getBBBooks } from "@/lib/bookbreaks/queries";
 import { CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS, BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import { BBContentActions } from "@/components/bookbreaks/ContentActions";
+import { Sparkles } from "lucide-react";
 
 export default async function ContentHubPage(): Promise<React.ReactElement> {
   const [content, books] = await Promise.all([getBBContent(), getBBBooks()]);
@@ -11,19 +12,19 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
         <div>
           <div
             className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px]"
-            style={{ color: "#8B6F47" }}
+            
           >
             Content Hub
           </div>
           <h1
             className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.025em] fvs-text m-0"
-            style={{ color: "#2C2C2C" }}
+            
           >
             All Content
           </h1>
           <p
             className="text-[14px] mt-[6px] m-0"
-            style={{ color: "#8B6F47" }}
+            
           >
             {content.length} piece{content.length !== 1 ? "s" : ""} generated
           </p>
@@ -48,7 +49,7 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
               <div
                 key={c.id}
                 className="rounded-[10px] group/content"
-                style={{ border: "1px solid #D4B896", background: "#FAF5EC" }}
+                
               >
                 {/* Collapsed summary */}
                 <details>
@@ -77,7 +78,7 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
                       </div>
                       <div
                         className="font-mono text-[10px] mt-[2px] flex items-center gap-[8px] flex-wrap"
-                        style={{ color: "#8B6F47" }}
+                        
                       >
                         <span
                           className="px-[6px] py-[2px] rounded-full text-[9px] uppercase tracking-[0.1em]"
@@ -109,7 +110,7 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
                       </span>
                       <span
                         className="font-mono text-[12px] transition-transform duration-200"
-                        style={{ color: "#8B6F47" }}
+                        
                         aria-hidden="true"
                       >
                         ▾
@@ -137,28 +138,24 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
         </div>
       ) : (
         <div
-          className="rounded-[12px] p-[64px] text-center"
-          style={{ border: "1.5px dashed #D4B896", background: "#FAF5EC" }}
+          className="rounded-[12px] p-[64px] text-center border-[1.5px] border-dashed border-[var(--rule)] bg-[var(--bg-2)]"
         >
-          <div className="text-[48px] mb-[16px]">◈</div>
+          <div className="mb-[16px] text-[var(--v3-accent)]"><Sparkles size={48} className="mx-auto" /></div>
           <h2
-            className="font-display text-[24px] fvs-text font-normal m-0 mb-[10px]"
-            style={{ color: "#2C2C2C" }}
+            className="font-display text-[24px] fvs-text font-normal m-0 mb-[10px] text-[var(--ink)]"
           >
             No content yet.
           </h2>
           <p
-            className="text-[14px] leading-[1.65] mb-[24px] max-w-[40ch] mx-auto"
-            style={{ color: "#8B6F47", fontFamily: "inherit" }}
+            className="text-[14px] leading-[1.65] mb-[24px] max-w-[40ch] mx-auto text-[var(--ink-3)]"
           >
             Generate your first piece of content and it'll appear here for easy access and management.
           </p>
           <a
             href="/tools/bookbreaks/generate"
-            className="inline-flex items-center gap-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline"
-            style={{ color: "#C85A2C" }}
+            className="inline-flex items-center gap-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-[var(--v3-accent)] hover:opacity-80"
           >
-            ✦ Generate content →
+            Generate Content →
           </a>
         </div>
       )}

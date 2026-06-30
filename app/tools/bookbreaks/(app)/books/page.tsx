@@ -2,6 +2,7 @@ import { getBBBooks } from "@/lib/bookbreaks/queries";
 import { BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import Link from "next/link";
 import { BBAddBookButton } from "@/components/bookbreaks/AddBookButton";
+import { BookOpen } from "lucide-react";
 
 export default async function BooksPage(): Promise<React.ReactElement> {
   const books = await getBBBooks();
@@ -13,19 +14,19 @@ export default async function BooksPage(): Promise<React.ReactElement> {
         <div>
           <div
             className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px]"
-            style={{ color: "#8B6F47" }}
+            
           >
             Library
           </div>
           <h1
             className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.025em] fvs-text m-0"
-            style={{ color: "#2C2C2C" }}
+            
           >
             My Books
           </h1>
           <p
             className="text-[14px] mt-[6px] m-0"
-            style={{ color: "#8B6F47" }}
+            
           >
             {books.length} book{books.length !== 1 ? "s" : ""} in your library
           </p>
@@ -42,7 +43,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
               <div
                 key={book.id}
                 className="rounded-[12px] overflow-hidden group/book"
-                style={{ border: "1px solid #D4B896", background: "#FAF5EC" }}
+                
               >
                 {/* Book spine */}
                 <div
@@ -84,11 +85,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
                       {book.genres.slice(0, 3).map((g) => (
                         <span
                           key={g}
-                          className="font-mono text-[9px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
-                          style={{
-                            background: "rgba(200,90,44,0.1)",
-                            color: "#C85A2C",
-                          }}
+                          className="font-mono text-[9px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-[var(--v3-accent)]"
                         >
                           {g}
                         </span>
@@ -100,7 +97,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
                   {book.insights.length > 0 && (
                     <div
                       className="font-mono text-[11px] leading-[1.5] mb-[16px] line-clamp-2"
-                      style={{ color: "#8B6F47" }}
+                      
                     >
                       {book.insights[0]}
                     </div>
@@ -110,11 +107,11 @@ export default async function BooksPage(): Promise<React.ReactElement> {
                   <div className="flex items-center justify-between">
                     <div
                       className="font-mono text-[10px] tracking-[0.08em]"
-                      style={{ color: "#8B6F47" }}
+                      
                     >
                       <span
                         className="font-semibold"
-                        style={{ color: "#C85A2C" }}
+                        
                       >
                         {book.content_count}
                       </span>{" "}
@@ -135,19 +132,16 @@ export default async function BooksPage(): Promise<React.ReactElement> {
         </div>
       ) : (
         <div
-          className="rounded-[12px] p-[64px] text-center"
-          style={{ border: "1.5px dashed #D4B896", background: "#FAF5EC" }}
+          className="rounded-[12px] p-[64px] text-center border-[1.5px] border-dashed border-[var(--rule)] bg-[var(--bg-2)]"
         >
-          <div className="text-[48px] mb-[16px]">📚</div>
+          <div className="mb-[16px] text-[var(--v3-accent)]"><BookOpen size={48} className="mx-auto" /></div>
           <h2
-            className="font-display text-[24px] fvs-text font-normal m-0 mb-[10px]"
-            style={{ color: "#2C2C2C" }}
+            className="font-display text-[24px] fvs-text font-normal m-0 mb-[10px] text-[var(--ink)]"
           >
             Your library is empty.
           </h2>
           <p
-            className="text-[14px] leading-[1.65] mb-[24px] max-w-[40ch] mx-auto m-0"
-            style={{ color: "#8B6F47" }}
+            className="text-[14px] leading-[1.65] mb-[24px] max-w-[40ch] mx-auto m-0 text-[var(--ink-3)]"
           >
             Add the books you've read and generate multi-platform content from each one.
           </p>

@@ -106,11 +106,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
                 return (
                   <div
                     key={book.id}
-                    className="rounded-[10px] p-[20px] flex items-center gap-[16px]"
-                    style={{
-                      background: "#FAF5EC",
-                      border: "1px solid #D4B896",
-                    }}
+                    className="rounded-[10px] p-[20px] flex items-center gap-[16px] bg-[var(--bg-2)] border border-[var(--rule)] transition-all duration-200 hover:border-[var(--v3-accent-soft)]"
                   >
                     <div
                       className="w-[44px] h-[56px] rounded-[6px] flex-shrink-0 flex items-end justify-end p-[6px]"
@@ -124,30 +120,18 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div
-                        className="font-display text-[17px] fvs-text leading-[1.2] truncate"
-                        style={{ color: "#2C2C2C" }}
-                      >
+                      <div className="font-display text-[17px] fvs-text leading-[1.2] truncate text-[var(--ink)]">
                         {book.title}
                       </div>
-                      <div
-                        className="font-mono text-[11px] mt-[2px]"
-                        style={{ color: "#8B6F47" }}
-                      >
+                      <div className="font-mono text-[11px] mt-[2px] text-[var(--ink-3)]">
                         {book.author}
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div
-                        className="font-mono text-[11px] font-semibold"
-                        style={{ color: "#C85A2C" }}
-                      >
+                      <div className="font-mono text-[11px] font-semibold text-[var(--v3-accent)]">
                         {book.content_count}
                       </div>
-                      <div
-                        className="font-mono text-[9px] uppercase tracking-[0.1em]"
-                        style={{ color: "#8B6F47" }}
-                      >
+                      <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--ink-4)]">
                         pieces
                       </div>
                     </div>
@@ -157,7 +141,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
             </div>
           ) : (
             <EmptyState
-              icon="📚"
+              icon={<BookOpen size={24} />}
               message="No books yet"
               cta={{ label: "Add your first book", href: "/tools/bookbreaks/books" }}
             />
@@ -167,19 +151,13 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
           <div className="flex gap-[12px] mt-[24px]">
             <Link
               href="/tools/bookbreaks/books"
-              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 hover:opacity-90"
-              style={{ background: "#C85A2C", color: "#FFF" }}
+              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 hover:opacity-90 bg-[var(--v3-accent)] text-white"
             >
               + Add Book
             </Link>
             <Link
               href="/tools/bookbreaks/generate"
-              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150"
-              style={{
-                background: "transparent",
-                color: "#2D5016",
-                border: "1.5px solid #2D5016",
-              }}
+              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 bg-transparent text-[var(--ink-2)] border-[1.5px] border-[var(--rule)] hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)]"
             >
               ✦ Generate Content
             </Link>
@@ -189,16 +167,12 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
         {/* Recent content */}
         <section>
           <div className="flex items-center justify-between mb-[20px]">
-            <h2
-              className="font-mono text-[10px] tracking-[0.14em] uppercase m-0"
-              style={{ color: "#8B6F47" }}
-            >
+            <h2 className="font-mono text-[10px] tracking-[0.14em] uppercase m-0 text-[var(--ink-3)]">
               Recent Content
             </h2>
             <Link
               href="/tools/bookbreaks/content"
-              className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors"
-              style={{ color: "#C85A2C" }}
+              className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors text-[var(--v3-accent)] hover:opacity-80"
             >
               All →
             </Link>
@@ -235,7 +209,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
             </div>
           ) : (
             <EmptyState
-              icon="✦"
+              icon={<Sparkles size={24} />}
               message="No content yet"
               cta={{ label: "Generate your first piece", href: "/tools/bookbreaks/generate" }}
             />
