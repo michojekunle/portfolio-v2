@@ -36,7 +36,7 @@ export function BBAddBookButton(): React.ReactElement {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 hover:opacity-90 border-none cursor-pointer bg-[var(--v3-accent)]"
+        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 hover:opacity-90 border-none cursor-pointer bg-[var(--v3-accent)]"
       >
         <Plus size={14} /> Add Book
       </motion.button>
@@ -325,7 +325,12 @@ function AddBookModal({
 
           {error && (
             <div
-              className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px] bg-red-500/10 text-red-500 border border-red-500/20"
+              className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px]"
+              style={{
+                background: "color-mix(in oklab, #ef4444 10%, transparent)",
+                color: "color-mix(in oklab, #dc2626 100%, transparent)",
+                border: "1px solid color-mix(in oklab, #ef4444 20%, transparent)",
+              }}
             >
               {error}
             </div>
@@ -337,7 +342,7 @@ function AddBookModal({
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={loading}
-              className="flex-1 h-[48px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 bg-[var(--v3-accent)]"
+              className="flex-1 h-[48px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 bg-[var(--v3-accent)]"
             >
               {loading ? "Saving…" : "Save Book"}
             </motion.button>

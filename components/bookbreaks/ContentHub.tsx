@@ -141,7 +141,7 @@ export function ContentHub({ content, books }: ContentHubProps) {
         {/* Generate CTA */}
         <a
           href="/tools/bookbreaks/generate"
-          className="group inline-flex items-center gap-[10px] h-[48px] px-[24px] rounded-[12px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 hover:-translate-y-[1px] hover:shadow-lg active:translate-y-0"
+          className="group inline-flex items-center gap-[10px] h-[48px] px-[24px] rounded-[12px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-(--bg) no-underline transition-all duration-200 hover:opacity-90 hover:-translate-y-[1px] hover:shadow-lg active:translate-y-0"
           style={{
             background: "var(--v3-accent)",
             boxShadow: "0 2px 12px color-mix(in oklab, var(--v3-accent) 30%, transparent)",
@@ -158,7 +158,7 @@ export function ContentHub({ content, books }: ContentHubProps) {
         style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
       >
         {/* Search */}
-        <div className="relative flex-1 min-w-[180px]">
+        <div className="relative flex-1 min-w-[140px]">
           <Search
             size={13}
             className="absolute left-[12px] top-1/2 -translate-y-1/2 text-[var(--ink-4)] pointer-events-none"
@@ -399,7 +399,7 @@ export function ContentHub({ content, books }: ContentHubProps) {
               </p>
               <a
                 href="/tools/bookbreaks/generate"
-                className="inline-flex items-center gap-[8px] h-[44px] px-[22px] rounded-[10px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-white transition-all duration-200 hover:opacity-90"
+                className="inline-flex items-center gap-[8px] h-[44px] px-[22px] rounded-[10px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-(--bg) transition-all duration-200 hover:opacity-90"
                 style={{ background: "var(--v3-accent)" }}
               >
                 <Sparkles size={13} /> Generate Content

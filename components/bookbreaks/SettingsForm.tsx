@@ -155,7 +155,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
           </div>
         </Field>
 
-        <div className="grid grid-cols-2 gap-[12px]">
+        <div className="grid grid-cols-2 max-[480px]:grid-cols-1 gap-[12px]">
           <Field label="Default Tone">
             <select
               value={defaultTone}
@@ -214,7 +214,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
       <button
         type="submit"
         disabled={saving}
-        className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-200 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 flex items-center justify-center gap-2"
+        className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) transition-all duration-200 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 flex items-center justify-center gap-2"
         style={{
           background: saved
             ? "color-mix(in oklab, #22c55e 60%, var(--v3-accent))"
