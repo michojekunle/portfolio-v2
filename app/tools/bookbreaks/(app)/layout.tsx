@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BBSidebarNav } from "@/components/bookbreaks/SidebarNav";
 import { PortfolioFooter } from "@/components/portfolio-footer";
+import { ThemeTweaker } from "@/components/bookbreaks/ThemeTweaker";
 
 export default async function BookBreaksLayout({
   children,
@@ -20,9 +21,10 @@ export default async function BookBreaksLayout({
       className="min-h-screen flex bg-[var(--bg)] text-[var(--ink)]"
     >
       <BBSidebarNav userEmail={user.email ?? ""} />
-      <div className="flex-1 min-w-0 ml-[260px] max-[1024px]:ml-0 flex flex-col">
+      <div className="flex-1 min-w-0 ml-[260px] max-[1024px]:ml-0 flex flex-col relative">
         <main className="flex-1 min-h-screen">{children}</main>
         <PortfolioFooter />
+        <ThemeTweaker />
       </div>
     </div>
   );

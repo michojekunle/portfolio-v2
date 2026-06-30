@@ -350,7 +350,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
           >
             {generating
               ? "Generating…"
-              : `<Sparkles size={16} className="inline-block mr-2" /> Generate ${CONTENT_TYPE_LABELS[contentType]}`}
+              : `Generate ${CONTENT_TYPE_LABELS[contentType]}`}
           </button>
         </div>
       </div>
