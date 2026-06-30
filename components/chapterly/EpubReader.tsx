@@ -2,17 +2,11 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { Rendition, Location } from "epubjs";
+import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { HighlightColor } from "@/lib/chapterly/types";
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 
 const ACCENT = "#4F6D7A";
-
-const HIGHLIGHT_COLORS: { id: HighlightColor; bg: string; ring: string }[] = [
-  { id: "yellow", bg: "#FEF08A", ring: "#CA8A04" },
-  { id: "green", bg: "#BBF7D0", ring: "#16A34A" },
-  { id: "blue", bg: "#BFDBFE", ring: "#1D4ED8" },
-  { id: "pink", bg: "#FBCFE8", ring: "#9D174D" },
-];
 
 interface EpubTheme {
   bg: string;
@@ -26,9 +20,11 @@ interface Props {
   onHighlight: (text: string, cfiRange: string, color: HighlightColor) => Promise<void>;
   /** Called with the plain text of each newly rendered chapter, for TTS. */
   onChapterText?: (text: string) => void;
+  /** Called on every chapter navigation with the current progress percentage (0-100). */
+  onProgress?: (pct: number) => void;
 }
 
-export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText }: Props): React.ReactElement {
+export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText, onProgress }: Props): React.ReactElement {
   const viewerRef = useRef<HTMLDivElement>(null);
   const renditionRef = useRef<Rendition | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +61,9 @@ export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText }:
 
         rendition.on("relocated", (location: Location) => {
           if (location.start?.percentage !== undefined) {
-            setProgress(Math.round(location.start.percentage * 100));
+            const pct = Math.round(location.start.percentage * 100);
+            setProgress(pct);
+            onProgress?.(pct);
           }
           if (onChapterText) {
             // Extract plain text of the current chapter for TTS.
@@ -219,7 +217,7 @@ export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText }:
       {/* Highlight color picker — appears at bottom when epub text is selected */}
       {pendingSelection && (
         <div
-          className="fixed bottom-[72px] left-1/2 z-50 flex items-center gap-[8px] px-[12px] py-[10px] rounded-[14px] shadow-2xl border"
+          className="fixed bottom-[72px] max-[1024px]:bottom-[96px] left-1/2 z-50 flex items-center gap-[8px] px-[12px] py-[10px] rounded-[14px] shadow-2xl border"
           style={{
             transform: "translateX(-50%)",
             background: "#1A1A1A",

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { ChBook, HighlightColor } from "@/lib/chapterly/types";
 
 const EpubReader = dynamic(
@@ -42,12 +43,6 @@ const THEMES: Record<ReaderTheme, { bg: string; text: string; label: string }> =
     oled: { bg: "#000000", text: "#E8E4DE", label: "OLED" },
   };
 
-const HIGHLIGHT_COLORS: { id: HighlightColor; bg: string; ring: string }[] = [
-  { id: "yellow", bg: "#FEF08A", ring: "#CA8A04" },
-  { id: "green", bg: "#BBF7D0", ring: "#16A34A" },
-  { id: "blue", bg: "#BFDBFE", ring: "#1D4ED8" },
-  { id: "pink", bg: "#FBCFE8", ring: "#9D174D" },
-];
 
 interface TextSelection {
   text: string;
@@ -89,6 +84,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   // already logged so the second call is a no-op.
   const sessionLoggedRef = useRef(false);
   const notePanelRef = useRef<HTMLTextAreaElement>(null);
+  const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const current = THEMES[theme];
   const isTextFormat = ["docx", "txt", "md", "html", "fb2"].includes(
@@ -109,8 +105,9 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       );
       if (duration < 10) return;
       sessionLoggedRef.current = true;
+      const localDate = new Date().toLocaleDateString("en-CA");
       const blob = new Blob(
-        [JSON.stringify({ book_id: book.id, duration_seconds: duration })],
+        [JSON.stringify({ book_id: book.id, duration_seconds: duration, local_date: localDate })],
         { type: "application/json" }
       );
       navigator.sendBeacon("/api/chapterly/session", blob);
@@ -195,6 +192,21 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     const el = document.getElementById("reader-content");
     return el?.innerText?.trim() || book.title;
   }, [chapterText, book.title]);
+
+  // ── Progress persistence (debounced 2 s) ──────────────────────
+  const saveProgress = useCallback(
+    (updates: { current_page?: number; progress_pct?: number; total_pages?: number }): void => {
+      if (progressTimerRef.current) clearTimeout(progressTimerRef.current);
+      progressTimerRef.current = setTimeout(() => {
+        void fetch(`/api/chapterly/books/${book.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        }).catch((err: unknown) => console.error("[reader] progress save error:", err));
+      }, 2000);
+    },
+    [book.id]
+  );
 
   // ── Text selection → highlight ────────────────────────────────
   const handleTextMouseUp = (): void => {
@@ -430,6 +442,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               theme={current}
               fontSize={fontSize}
               onChapterText={setChapterText}
+              onProgress={(pct) => saveProgress({ progress_pct: pct })}
               onHighlight={async (text, cfi, color) => {
                 try {
                   const res = await fetch("/api/chapterly/highlights", {
@@ -448,6 +461,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           <div className="overflow-auto h-[calc(100vh-56px)]" style={{ background: current.bg }}>
             <PdfReader
               url={book.file_url}
+              onChapterText={setChapterText}
+              onProgress={(page, total) =>
+                saveProgress({
+                  current_page: page,
+                  total_pages: total,
+                  progress_pct: Math.round((page / total) * 100),
+                })
+              }
               onHighlight={async (text, color) => {
                 try {
                   const res = await fetch("/api/chapterly/highlights", {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { PDFDocumentProxy, PDFPageProxy, PageViewport } from "pdfjs-dist";
+import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { HighlightColor } from "@/lib/chapterly/types";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader2, X } from "lucide-react";
 
@@ -10,13 +11,6 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader2, X } from "lucide-r
 const PDF_WORKER_URL = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url);
 
 const ACCENT = "#4F6D7A";
-
-const HIGHLIGHT_COLORS: { id: HighlightColor; bg: string; ring: string }[] = [
-  { id: "yellow", bg: "#FEF08A", ring: "#CA8A04" },
-  { id: "green", bg: "#BBF7D0", ring: "#16A34A" },
-  { id: "blue", bg: "#BFDBFE", ring: "#1D4ED8" },
-  { id: "pink", bg: "#FBCFE8", ring: "#9D174D" },
-];
 
 const TEXT_LAYER_CSS = `
 .ch-pdf-text-layer {
@@ -51,9 +45,13 @@ interface TextSel {
 interface Props {
   url: string;
   onHighlight: (text: string, color: HighlightColor) => Promise<void>;
+  /** Called with the plain text of each rendered page, for TTS. */
+  onChapterText?: (text: string) => void;
+  /** Called after each page render with current page and total pages. */
+  onProgress?: (currentPage: number, totalPages: number) => void;
 }
 
-export function PdfReader({ url, onHighlight }: Props): React.ReactElement {
+export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<PDFDocumentProxy | null>(null);
@@ -63,6 +61,12 @@ export function PdfReader({ url, onHighlight }: Props): React.ReactElement {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [scale, setScale] = useState(1.4);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setScale(window.innerWidth < 768 ? 0.8 : 1.4);
+    }
+  }, []);
   const [loadingPdf, setLoadingPdf] = useState(true);
   const [rendering, setRendering] = useState(false);
   const [textSel, setTextSel] = useState<TextSel | null>(null);
@@ -89,6 +93,7 @@ export function PdfReader({ url, onHighlight }: Props): React.ReactElement {
       pdfRef.current = pdf;
       setTotalPages(pdf.numPages);
       setLoadingPdf(false);
+      onProgress?.(1, pdf.numPages);
     };
 
     void load().catch((err: unknown) => {
@@ -144,6 +149,14 @@ export function PdfReader({ url, onHighlight }: Props): React.ReactElement {
         viewport,
       });
       await textLayer.render();
+
+      // Collect page text for TTS
+      if (onChapterText) {
+        const spans = tl.querySelectorAll("span");
+        const text = Array.from(spans).map((s) => s.textContent ?? "").join(" ").trim();
+        if (text) onChapterText(text);
+      }
+      onProgress?.(pageNum, pdf.numPages);
 
       page.cleanup();
     } catch (err: unknown) {
@@ -243,7 +256,7 @@ export function PdfReader({ url, onHighlight }: Props): React.ReactElement {
         )}
 
         {/* Controls: zoom + pagination */}
-        <div className="fixed bottom-[12px] left-1/2 -translate-x-1/2 z-40 flex items-center gap-[6px] px-[18px] py-[10px] rounded-[16px] shadow-xl border border-[var(--rule)] bg-[var(--bg-2)]">
+        <div className="fixed bottom-[16px] max-[1024px]:bottom-[32px] left-1/2 -translate-x-1/2 z-40 flex items-center gap-[6px] px-[18px] py-[10px] rounded-[16px] shadow-xl border border-[var(--rule)] bg-[var(--bg-2)] max-[480px]:w-[92%] max-[480px]:justify-between">
           <button
             onClick={() => setScale((s) => Math.max(0.5, +(s - 0.2).toFixed(1)))}
             className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"

@@ -126,7 +126,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
 
   return (
     <div
-      className="fixed bottom-[20px] right-[20px] z-50 rounded-[16px] shadow-2xl overflow-hidden"
+      className="fixed bottom-[20px] right-[20px] max-[480px]:bottom-[80px] max-[480px]:right-[16px] max-[480px]:left-[16px] z-50 rounded-[16px] shadow-2xl overflow-hidden"
       style={{
         background: bg,
         border: `1px solid ${fg}18`,

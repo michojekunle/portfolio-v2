@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { FREE_BOOK_LIMIT } from "@/lib/chapterly/types";
 import type {
   ChBookWithStats,
   ReadingStatus,
@@ -82,13 +83,11 @@ function detectFormat(filename: string): FileFormat {
 interface Props {
   books: ChBookWithStats[];
   atFreeLimit: boolean;
-  freeLimit: number;
 }
 
 export function ChLibraryClient({
   books: initialBooks,
   atFreeLimit,
-  freeLimit,
 }: Props): React.ReactElement {
   const [books, setBooks] = useState(initialBooks);
   const [query, setQuery] = useState("");
@@ -112,9 +111,9 @@ export function ChLibraryClient({
   });
 
   const handleFile = async (file: File): Promise<void> => {
-    if (atFreeLimit && books.length >= freeLimit) {
+    if (atFreeLimit && books.length >= FREE_BOOK_LIMIT) {
       setUploadError(
-        `Free plan is limited to ${freeLimit} books. Upgrade to add more.`
+        `Free plan is limited to ${FREE_BOOK_LIMIT} books. Upgrade to add more.`
       );
       return;
     }
@@ -137,50 +136,29 @@ export function ChLibraryClient({
     setUploadError(null);
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const safeName = `${Date.now()}-${file.name.replace(
-        /[^a-zA-Z0-9._-]/g,
-        "_"
-      )}`;
-      const path = `chapterly/${user.id}/${safeName}`;
-
-      const { error: storageError } = await supabase.storage
-        .from("user-uploads")
-        .upload(path, file, { upsert: false });
-
-      if (storageError) throw new Error(storageError.message);
-
-      const { data: urlData } = supabase.storage
-        .from("user-uploads")
-        .getPublicUrl(path);
-
       const titleGuess = file.name
         .replace(/\.[^.]+$/, "")
         .replace(/[-_]/g, " ");
-      const format = detectFormat(file.name);
 
-      const { data: bookRow, error: dbError } = await supabase
-        .from("ch_books")
-        .insert({
-          user_id: user.id,
-          title: titleGuess,
-          file_url: urlData.publicUrl,
-          file_format: format,
-          file_size_bytes: file.size,
-          status: "unread",
-        })
-        .select()
-        .single();
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("title", titleGuess);
 
-      if (dbError) throw new Error(dbError.message);
+      const res = await fetch("/api/chapterly/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errData = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(errData.error || "Upload failed");
+      }
+
+      const { book } = (await res.json()) as { book: ChBookWithStats };
 
       setBooks((prev) => [
         {
-          ...bookRow,
+          ...book,
           total_reading_time_minutes: 0,
           highlight_count: 0,
           note_count: 0,
@@ -218,10 +196,10 @@ export function ChLibraryClient({
         </div>
         <button
           onClick={() => {
-            if (!atFreeLimit || books.length < freeLimit) setShowUpload(true);
+            if (!atFreeLimit || books.length < FREE_BOOK_LIMIT) setShowUpload(true);
             else
               setUploadError(
-                `Free plan limit: ${freeLimit} books. Upgrade to add more.`
+                `Free plan limit: ${FREE_BOOK_LIMIT} books. Upgrade to add more.`
               );
           }}
           className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[10px] text-(--bg) cursor-pointer border-none transition-all hover:opacity-90"

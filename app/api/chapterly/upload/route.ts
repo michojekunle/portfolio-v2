@@ -117,6 +117,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   return NextResponse.json({
+    book,
     book_id: book.id,
     file_url: urlData.publicUrl,
     file_format: format,
