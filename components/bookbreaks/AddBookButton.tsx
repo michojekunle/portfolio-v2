@@ -137,7 +137,7 @@ function AddBookModal({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.98 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="w-full max-w-[580px] max-h-[90vh] overflow-y-auto rounded-[16px] bg-[var(--bg-2)] border border-[var(--rule)]"
+        className="w-full max-w-[580px] max-h-[90vh] overflow-y-auto overscroll-contain rounded-[16px] bg-[var(--bg-2)] border border-[var(--rule)]"
         data-lenis-prevent="true"
       >
         <div
