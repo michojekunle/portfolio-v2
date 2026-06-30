@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { BOOK_THEMES, CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS, TONE_OPTIONS } from "@/lib/bookbreaks/constants";
 import type { BBBookWithContent, ContentType } from "@/lib/bookbreaks/types";
 import { CarouselPreview } from "@/components/bookbreaks/CarouselPreview";
+import { Sparkles, BookOpen, ArrowRight } from "lucide-react";
 
 const CONTENT_TYPES: ContentType[] = ["article", "thread", "carousel", "tiktok", "caption"];
 
@@ -159,19 +160,17 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
   if (books.length === 0) {
     return (
       <div
-        className="rounded-[12px] p-[48px] text-center"
-        style={{ background: "#FAF5EC", border: "1.5px dashed #D4B896" }}
+        className="rounded-[12px] p-[48px] text-center bg-[var(--bg-2)] border-[1.5px] border-dashed border-[var(--rule)]"
       >
-        <div className="text-[40px] mb-[16px]">📚</div>
-        <p className="font-mono text-[12px] uppercase tracking-[0.1em] mb-[20px]" style={{ color: "#8B6F47" }}>
+        <div className="mb-[16px] text-[var(--v3-accent)]"><BookOpen size={48} className="mx-auto" /></div>
+        <p className="font-mono text-[12px] uppercase tracking-[0.1em] mb-[20px] text-[var(--ink-3)]">
           No books in your library yet
         </p>
         <a
           href="/tools/bookbreaks/books"
-          className="inline-flex items-center gap-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline"
-          style={{ color: "#C85A2C" }}
+          className="inline-flex items-center gap-[8px] font-mono text-[12px] uppercase tracking-[0.12em] font-semibold no-underline text-[var(--v3-accent)] hover:opacity-80"
         >
-          Add a book first →
+          Add a book first <ArrowRight size={14} className="ml-1 inline-block" />
         </a>
       </div>
     );
@@ -181,16 +180,13 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
     <div className="grid grid-cols-[360px_1fr] max-[1100px]:grid-cols-1 gap-[32px] items-start">
       {/* Controls panel */}
       <div
-        className="rounded-[16px] overflow-hidden sticky top-[24px] max-[1100px]:static"
-        style={{ border: "1px solid #D4B896", background: "#FAF5EC" }}
+        className="rounded-[16px] overflow-hidden sticky top-[24px] max-[1100px]:static bg-[var(--bg-2)] border border-[var(--rule)]"
       >
         <div
-          className="px-[24px] py-[20px]"
-          style={{ borderBottom: "1px solid #D4B896", background: "#EDD9BA" }}
+          className="px-[24px] py-[20px] border-b border-[var(--rule)] bg-[color-mix(in_oklab,var(--bg-2)_95%,var(--ink))] "
         >
           <div
-            className="font-mono text-[10px] tracking-[0.14em] uppercase"
-            style={{ color: "#8B6F47" }}
+            className="font-mono text-[11px] tracking-[0.14em] uppercase text-[var(--ink-3)]"
           >
             Configuration
           </div>
@@ -200,21 +196,14 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
           {/* Book selector */}
           <div>
             <label
-              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              style={{ color: "#8B6F47" }}
+              className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]"
             >
               Book
             </label>
             <select
               value={bookId}
               onChange={(e) => setBookId(e.target.value)}
-              className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[12px] outline-none cursor-pointer"
-              style={{
-                background: "#F5E6D3",
-                border: "1.5px solid #D4B896",
-                color: "#2C2C2C",
-                fontFamily: "inherit",
-              }}
+              className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[14px] outline-none cursor-pointer bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
             >
               {books.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -234,8 +223,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
           {/* Content type */}
           <div>
             <label
-              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[10px]"
-              style={{ color: "#8B6F47" }}
+              className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[10px] text-[var(--ink-3)]"
             >
               Content Type
             </label>
@@ -249,14 +237,14 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
                   style={{
                     background:
                       contentType === ct
-                        ? "rgba(200,90,44,0.12)"
-                        : "rgba(44,44,44,0.05)",
-                    color: contentType === ct ? "#C85A2C" : "#4A3728",
+                        ? "color-mix(in oklab, var(--v3-accent) 15%, transparent)"
+                        : "var(--bg)",
+                    color: contentType === ct ? "var(--v3-accent)" : "var(--ink-2)",
                     fontWeight: contentType === ct ? 600 : 400,
                     outline:
                       contentType === ct
-                        ? "1.5px solid rgba(200,90,44,0.3)"
-                        : "none",
+                        ? "1.5px solid var(--v3-accent)"
+                        : "1px solid var(--rule)",
                   }}
                 >
                   <span aria-hidden="true">{CONTENT_TYPE_ICONS[ct]}</span>
@@ -269,21 +257,14 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
           {/* Tone */}
           <div>
             <label
-              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              style={{ color: "#8B6F47" }}
+              className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]"
             >
               Tone
             </label>
             <select
               value={tone}
               onChange={(e) => setTone(e.target.value)}
-              className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[12px] outline-none cursor-pointer"
-              style={{
-                background: "#F5E6D3",
-                border: "1.5px solid #D4B896",
-                color: "#2C2C2C",
-                fontFamily: "inherit",
-              }}
+              className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[14px] outline-none cursor-pointer bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
             >
               {TONE_OPTIONS.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -298,7 +279,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
             <div>
               <label
                 className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-                style={{ color: "#8B6F47" }}
+                style={{ color: "var(--ink-3)" }}
               >
                 Target Word Count
               </label>
@@ -309,13 +290,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
                 min={500}
                 max={3000}
                 step={100}
-                className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[12px] outline-none"
-                style={{
-                  background: "#F5E6D3",
-                  border: "1.5px solid #D4B896",
-                  color: "#2C2C2C",
-                  fontFamily: "inherit",
-                }}
+                className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[14px] outline-none bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
               />
             </div>
           )}
@@ -325,7 +300,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
             <div>
               <label
                 className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-                style={{ color: "#8B6F47" }}
+                style={{ color: "var(--ink-3)" }}
               >
                 SEO Keywords (comma-separated)
               </label>
@@ -334,13 +309,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
                 placeholder="book review, entrepreneurship, productivity"
-                className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[12px] outline-none"
-                style={{
-                  background: "#F5E6D3",
-                  border: "1.5px solid #D4B896",
-                  color: "#2C2C2C",
-                  fontFamily: "inherit",
-                }}
+                className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[14px] outline-none bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
               />
             </div>
           )}
@@ -348,8 +317,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
           {/* Custom instructions */}
           <div>
             <label
-              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              style={{ color: "#8B6F47" }}
+              className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]"
             >
               Custom Instructions (optional)
             </label>
@@ -358,13 +326,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
               onChange={(e) => setCustomInstructions(e.target.value)}
               placeholder="Any specific angle, format, or style notes…"
               rows={3}
-              className="w-full px-[14px] py-[12px] rounded-[8px] font-mono text-[12px] outline-none resize-none"
-              style={{
-                background: "#F5E6D3",
-                border: "1.5px solid #D4B896",
-                color: "#2C2C2C",
-                fontFamily: "inherit",
-              }}
+              className="w-full px-[14px] py-[12px] rounded-[8px] font-mono text-[14px] outline-none resize-none bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
             />
           </div>
 
@@ -384,12 +346,11 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
           <button
             onClick={handleGenerate}
             disabled={generating || !bookId}
-            className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90"
-            style={{ background: "#C85A2C" }}
+            className="w-full h-[52px] rounded-[10px] font-mono text-[12px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 bg-[var(--v3-accent)]"
           >
             {generating
               ? "Generating…"
-              : `✦ Generate ${CONTENT_TYPE_LABELS[contentType]}`}
+              : `<Sparkles size={16} className="inline-block mr-2" /> Generate ${CONTENT_TYPE_LABELS[contentType]}`}
           </button>
         </div>
       </div>
@@ -398,8 +359,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
       <div ref={outputRef}>
         {generating || generated ? (
           <div
-            className="rounded-[16px] overflow-hidden"
-            style={{ border: "1px solid #D4B896" }}
+            className="rounded-[16px] overflow-hidden border border-[var(--rule)]"
           >
             {/* Output header */}
             <div
@@ -449,7 +409,7 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
 
             {/* Content body */}
             {contentType === "carousel" && generated && !generating ? (
-              <div className="p-[28px] max-[720px]:p-[20px]" style={{ background: "#FAF5EC" }}>
+              <div className="p-[28px] max-[720px]:p-[20px]" style={{ background: "var(--bg-2)" }}>
                 {/* Visual preview */}
                 <CarouselPreview
                   content={generated}
@@ -460,13 +420,13 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
                 <details className="mt-[20px]">
                   <summary
                     className="font-mono text-[10px] tracking-[0.12em] uppercase cursor-pointer"
-                    style={{ color: "#8B6F47" }}
+                    style={{ color: "var(--ink-3)" }}
                   >
                     View raw slide text ▾
                   </summary>
                   <pre
                     className="whitespace-pre-wrap text-[12px] leading-[1.7] font-mono mt-[12px] p-[16px] rounded-[8px]"
-                    style={{ background: "#F5E6D3", color: "#4A3728", border: "1px solid #D4B896" }}
+                    style={{ background: "var(--bg)", color: "#4A3728", border: "1px solid #D4B896" }}
                   >
                     {generated}
                   </pre>
@@ -475,11 +435,11 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
             ) : (
               <div
                 className="p-[28px] max-[720px]:p-[20px]"
-                style={{ background: "#FAF5EC" }}
+                style={{ background: "var(--bg-2)" }}
               >
                 <pre
                   className="whitespace-pre-wrap text-[14px] leading-[1.75] font-[inherit] m-0"
-                  style={{ color: "#2C2C2C", fontFamily: "inherit" }}
+                  style={{ color: "var(--ink)", fontFamily: "inherit" }}
                 >
                   {generated}
                   {generating && (
@@ -534,12 +494,12 @@ export function BBGenerator({ books, defaultTone, defaultWordCount }: Props): Re
         ) : (
           <div
             className="rounded-[16px] h-[400px] flex flex-col items-center justify-center text-center p-[40px]"
-            style={{ border: "1.5px dashed #D4B896", background: "#FAF5EC" }}
+            style={{ border: "1.5px dashed #D4B896", background: "var(--bg-2)" }}
           >
             <div className="text-[48px] mb-[16px]">✦</div>
             <p
               className="font-mono text-[12px] uppercase tracking-[0.12em] mb-[8px]"
-              style={{ color: "#8B6F47" }}
+              style={{ color: "var(--ink-3)" }}
             >
               Ready to generate
             </p>

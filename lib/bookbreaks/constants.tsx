@@ -1,3 +1,5 @@
+import { FileText, MessageSquare, Images, Video, Hash } from "lucide-react";
+import React from "react";
 import type { BookThemeConfig } from "./types";
 
 export const BOOK_THEMES: Record<string, BookThemeConfig> = {
@@ -41,12 +43,17 @@ export const CONTENT_TYPE_LABELS: Record<string, string> = {
   caption: "Caption",
 };
 
-export const CONTENT_TYPE_ICONS: Record<string, string> = {
-  article: "📝",
-  thread: "🐦",
-  carousel: "📸",
-  tiktok: "🎬",
-  caption: "💬",
+export const CONTENT_TYPE_ICONS: Record<string, React.ReactElement> = {
+  article: <FileText size={16} />,
+
+  thread: <MessageSquare size={16} />,
+
+  carousel: <Images size={16} />,
+
+  tiktok: <Video size={16} />,
+
+  caption: <Hash size={16} />,
+
 };
 
 export const TONE_OPTIONS = [
