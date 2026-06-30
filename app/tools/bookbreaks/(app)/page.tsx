@@ -23,7 +23,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
   const isEmpty = books.length === 0;
 
   return (
-    <div className="p-[48px] max-[720px]:p-[24px] max-[1024px]:pt-[80px]">
+    <div className="px-[48px] py-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[24px] max-[720px]:pt-[80px]">
       {/* Header */}
       <div className="mb-[48px]">
         <div
@@ -76,7 +76,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 max-[768px]:grid-cols-2 max-[480px]:grid-cols-1 gap-[16px] mb-[48px]">
+      <div className="grid grid-cols-3 max-[768px]:grid-cols-1 gap-[16px] mb-[48px]">
         <StatCard label="Books Read" value={stats.book_count} icon={<BookOpen size={20} />} />
         <StatCard label="Content Created" value={stats.content_count} icon={<Sparkles size={20} />} />
         <StatCard label="This Month" value={stats.this_month_count} icon={<Calendar size={20} />} />

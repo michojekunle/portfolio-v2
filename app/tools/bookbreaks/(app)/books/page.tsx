@@ -8,7 +8,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
   const books = await getBBBooks();
 
   return (
-    <div className="p-[48px] max-[720px]:p-[24px] max-[1024px]:pt-[80px]">
+    <div className="px-[48px] py-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[24px] max-[720px]:pt-[80px]">
       {/* Header */}
       <div className="flex items-end justify-between mb-[40px] max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-[20px]">
         <div>

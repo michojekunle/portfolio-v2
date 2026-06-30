@@ -5,7 +5,7 @@ export default async function GeneratePage(): Promise<React.ReactElement> {
   const [books, settings] = await Promise.all([getBBBooks(), getBBSettings()]);
 
   return (
-    <div className="p-[48px] max-[720px]:p-[24px] max-[1024px]:pt-[80px] min-h-screen">
+    <div className="px-[48px] py-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[24px] max-[720px]:pt-[80px] min-h-screen">
       <div className="mb-[40px]">
         <div
           className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px] text-[var(--ink-3)]"

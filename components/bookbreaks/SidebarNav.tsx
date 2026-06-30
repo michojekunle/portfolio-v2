@@ -175,8 +175,6 @@ export function BBSidebarNav({ userEmail }: Props): React.ReactElement {
         </>
       )}
 
-      {/* Mobile top padding spacer */}
-      <div className="hidden max-[1024px]:block h-[60px] w-full flex-shrink-0" />
     </>
   );
 }

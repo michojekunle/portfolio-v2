@@ -87,11 +87,10 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
     <div className="w-full">
       {/* Slide viewer */}
       <div
-        className="relative w-full rounded-[16px] overflow-hidden flex flex-col items-center justify-center text-center p-[40px]"
+        className="carousel-slide-card relative w-full rounded-[16px] overflow-hidden flex flex-col items-center justify-center text-center p-[40px] max-[640px]:p-[24px]"
         style={{
           background: gradient,
           color: bookTheme.text,
-          aspectRatio: "1 / 1",
           boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
         }}
       >
@@ -220,6 +219,18 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
       >
         {slides.length} slides · Instagram 1:1 format · {bookTheme.label} theme
       </p>
+
+      <style>{`
+        .carousel-slide-card {
+          aspect-ratio: 1 / 1;
+        }
+        @media (max-width: 640px) {
+          .carousel-slide-card {
+            aspect-ratio: auto;
+            min-height: 320px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

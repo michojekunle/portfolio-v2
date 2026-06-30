@@ -122,7 +122,7 @@ export function ContentHub({ content, books }: ContentHubProps) {
   const hasFilters = search || typeFilter !== "all" || statusFilter !== "all";
 
   return (
-    <div className="p-[48px] max-[720px]:p-[24px] max-[1024px]:pt-[80px]">
+    <div className="px-[48px] py-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[24px] max-[720px]:pt-[80px]">
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <div className="flex items-end justify-between mb-[40px] max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-[16px]">
@@ -291,7 +291,7 @@ export function ContentHub({ content, books }: ContentHubProps) {
                         {/* Title + meta */}
                         <div className="flex-1 min-w-0">
                           <div
-                            className="text-[14px] font-semibold leading-[1.3] truncate text-[var(--ink)]"
+                            className="text-[14px] font-semibold leading-[1.3] text-[var(--ink)] break-words"
                           >
                             {c.title}
                           </div>
@@ -306,16 +306,26 @@ export function ContentHub({ content, books }: ContentHubProps) {
                             >
                               {CONTENT_TYPE_LABELS[c.content_type]}
                             </span>
-                            <span className="truncate">{c.book_title}</span>
+                            <span
+                              className="hidden max-[480px]:inline-block font-mono text-[8px] uppercase tracking-[0.15em] px-[8px] py-[2px] rounded-full"
+                              style={{
+                                  background: statusCfg.bg,
+                                  color: statusCfg.color,
+                                  border: `1px solid ${statusCfg.border}`,
+                              }}
+                            >
+                              {statusCfg.label}
+                            </span>
+                            <span className="truncate max-[480px]:max-w-[120px]">{c.book_title}</span>
                             <span>·</span>
-                            <span>{c.book_author}</span>
+                            <span className="truncate max-[480px]:max-w-[100px]">{c.book_author}</span>
                           </div>
                         </div>
 
                         {/* Status badge + chevron */}
                         <div className="flex items-center gap-[10px] flex-shrink-0">
                           <span
-                            className="font-mono text-[8px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded-full"
+                            className="font-mono text-[8px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded-full max-[480px]:hidden"
                             style={{
                               background: statusCfg.bg,
                               color: statusCfg.color,
