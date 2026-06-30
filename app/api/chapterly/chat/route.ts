@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import Groq from "groq-sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
+import { getBBSettings } from "@/lib/bookbreaks/queries";
+
+export const DEFAULT_MODEL_CHAIN = [
+  "google:gemini-3.5-flash",
+  "google:gemini-2.5-flash",
+  "google:gemini-3.1-flash-lite",
+  "google:gemini-2.5-flash-lite",
+  "groq:llama-3.3-70b-versatile",
+  "groq:llama-3.1-8b-instant",
+  "google:gemini-3-flash-preview",
+  "google:gemini-flash-latest"
+];
 
 const RequestSchema = z.object({
   book_id: z.string().uuid(),
@@ -14,6 +27,151 @@ const RequestSchema = z.object({
     })
   ).min(1),
 });
+
+function getModelChain(preference: string): string[] {
+  const googleModels = DEFAULT_MODEL_CHAIN.filter((m) => m.startsWith("google:"));
+  const groqModels = DEFAULT_MODEL_CHAIN.filter((m) => m.startsWith("groq:"));
+
+  if (preference === "gemini") {
+    return [...googleModels, ...groqModels];
+  }
+  if (preference === "groq") {
+    return [...groqModels, ...googleModels];
+  }
+  return DEFAULT_MODEL_CHAIN;
+}
+
+async function tryStreamModel(
+  modelString: string,
+  systemPrompt: string,
+  messages: { role: "user" | "assistant"; content: string }[]
+): Promise<ReadableStream<Uint8Array>> {
+  const [provider, modelName] = modelString.split(":");
+  if (!provider || !modelName) {
+    throw new Error(`Invalid model name: ${modelString}`);
+  }
+
+  if (provider === "google") {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not configured");
+    }
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      systemInstruction: systemPrompt,
+    });
+
+    let chatContents = messages.map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+    // Google Gemini content APIs require history to start with a user message
+    if (chatContents[0]?.role === "model") {
+      chatContents = chatContents.slice(1);
+    }
+
+    const result = await model.generateContentStream({ contents: chatContents });
+    const iterator = result.stream[Symbol.asyncIterator]();
+
+    // Verify stream starts successfully before returning it
+    const firstResult = await iterator.next();
+    if (firstResult.done) {
+      throw new Error("Empty stream returned from Google AI");
+    }
+
+    const encoder = new TextEncoder();
+    return new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          const firstText = firstResult.value.text();
+          if (firstText) {
+            controller.enqueue(encoder.encode(firstText));
+          }
+
+          let next = await iterator.next();
+          while (!next.done) {
+            const text = next.value.text();
+            if (text) {
+              controller.enqueue(encoder.encode(text));
+            }
+            next = await iterator.next();
+          }
+        } catch (err) {
+          controller.error(err);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+  } else if (provider === "groq") {
+    if (!process.env.GROQ_API_KEY) {
+      throw new Error("GROQ_API_KEY is not configured");
+    }
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const stream = await groq.chat.completions.create({
+      model: modelName,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+      ],
+      stream: true,
+      temperature: 0.7,
+      max_tokens: 1024,
+    });
+
+    const iterator = stream[Symbol.asyncIterator]();
+
+    // Verify stream starts successfully before returning it
+    const firstResult = await iterator.next();
+    if (firstResult.done) {
+      throw new Error("Empty stream returned from Groq");
+    }
+
+    const encoder = new TextEncoder();
+    return new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          const firstDelta = firstResult.value.choices[0]?.delta?.content ?? "";
+          if (firstDelta) {
+            controller.enqueue(encoder.encode(firstDelta));
+          }
+
+          let next = await iterator.next();
+          while (!next.done) {
+            const delta = next.value.choices[0]?.delta?.content ?? "";
+            if (delta) {
+              controller.enqueue(encoder.encode(delta));
+            }
+            next = await iterator.next();
+          }
+        } catch (err) {
+          controller.error(err);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+  } else {
+    throw new Error(`Unsupported provider: ${provider}`);
+  }
+}
+
+function fallbackStream(bookTitle: string): ReadableStream<Uint8Array> {
+  const text = `I'm having trouble connecting to my AI models to discuss "${bookTitle}". Please configure a valid GEMINI_API_KEY or GROQ_API_KEY in your settings to enable chat.`;
+  const encoder = new TextEncoder();
+  const chunks = text.match(/.{1,40}/g) ?? [text];
+
+  return new ReadableStream<Uint8Array>({
+    async start(controller) {
+      for (const chunk of chunks) {
+        controller.enqueue(encoder.encode(chunk));
+        await new Promise((r) => setTimeout(r, 10));
+      }
+      controller.close();
+    },
+  });
+}
 
 export async function POST(request: NextRequest): Promise<NextResponse | Response> {
   const supabase = await createClient();
@@ -80,38 +238,28 @@ ${highlightContext}
 
 Respond conversationally. If asked about something outside this book, gently redirect back to the book unless it's a direct connection.`;
 
-  if (!process.env.GROQ_API_KEY) {
-    // Graceful fallback when API key is not set
-    const fallback = `I can discuss "${book_title}" with you! This feature requires a Groq API key to be configured. Once set up, I'll be able to answer questions, create summaries, generate quizzes, and discuss the book's ideas with you in depth.`;
-    return new Response(fallback, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
+  const settings = await getBBSettings();
+  const models = getModelChain(settings?.ai_provider ?? "auto");
+  let stream: ReadableStream<Uint8Array> | null = null;
+  const errors: string[] = [];
+
+  for (const modelString of models) {
+    try {
+      stream = await tryStreamModel(modelString, systemPrompt, messages);
+      break;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`${modelString}: ${msg}`);
+      console.warn(`Fallback triggered from model ${modelString} due to error:`, msg);
+    }
   }
 
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  if (!stream) {
+    console.error("All models in the chain failed:", errors);
+    stream = fallbackStream(book_title);
+  }
 
-  const stream = await groq.chat.completions.create({
-    model: "llama-3.1-70b-versatile",
-    messages: [
-      { role: "system", content: systemPrompt },
-      ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-    ],
-    stream: true,
-    temperature: 0.7,
-    max_tokens: 1024,
-  });
-
-  const readable = new ReadableStream({
-    async start(controller) {
-      for await (const chunk of stream) {
-        const delta = chunk.choices[0]?.delta?.content;
-        if (delta) controller.enqueue(new TextEncoder().encode(delta));
-      }
-      controller.close();
-    },
-  });
-
-  return new Response(readable, {
+  return new Response(stream, {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
