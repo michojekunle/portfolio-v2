@@ -2,7 +2,7 @@ import { getBBBooks } from "@/lib/bookbreaks/queries";
 import { BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import Link from "next/link";
 import { BBAddBookButton } from "@/components/bookbreaks/AddBookButton";
-import { BookOpen } from "lucide-react";
+import { BookOpen, ArrowRight } from "lucide-react";
 
 export default async function BooksPage(): Promise<React.ReactElement> {
   const books = await getBBBooks();
@@ -122,7 +122,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
                       className="font-mono text-[10px] uppercase tracking-[0.1em] font-semibold no-underline transition-colors"
                       style={{ color: "#2D5016" }}
                     >
-                      Generate →
+                      Generate <ArrowRight className="w-3 h-3 ml-1 inline-block" />
                     </Link>
                   </div>
                 </div>

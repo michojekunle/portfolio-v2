@@ -1,7 +1,7 @@
 import { getBBContent, getBBBooks } from "@/lib/bookbreaks/queries";
 import { CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS, BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import { BBContentActions } from "@/components/bookbreaks/ContentActions";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 export default async function ContentHubPage(): Promise<React.ReactElement> {
   const [content, books] = await Promise.all([getBBContent(), getBBBooks()]);
@@ -34,7 +34,7 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
           className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white no-underline transition-all hover:opacity-90"
           style={{ background: "#C85A2C" }}
         >
-          ✦ Generate More
+          <Sparkles className="w-3 h-3 mr-1 inline-block" /> Generate More
         </a>
       </div>
 
@@ -155,7 +155,7 @@ export default async function ContentHubPage(): Promise<React.ReactElement> {
             href="/tools/bookbreaks/generate"
             className="inline-flex items-center gap-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-[var(--v3-accent)] hover:opacity-80"
           >
-            Generate Content →
+            Generate Content <ArrowRight className="w-3 h-3 ml-1 inline-block" />
           </a>
         </div>
       )}

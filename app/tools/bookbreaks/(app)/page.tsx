@@ -3,7 +3,7 @@ import { getDashboardStats, getBBBooks, getBBContent } from "@/lib/bookbreaks/qu
 import { BOOK_THEMES, CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS } from "@/lib/bookbreaks/constants";
 import Link from "next/link";
 import { BBSeedButton } from "@/components/bookbreaks/SeedButton";
-import { BookOpen, Sparkles, Calendar, Settings, AlertCircle, LayoutTemplate } from "lucide-react";
+import { BookOpen, Sparkles, Calendar, Settings, AlertCircle, LayoutTemplate, ArrowRight } from "lucide-react";
 import { TiltCard } from "@/components/tilt-card";
 export default async function BookBreaksDashboard(): Promise<React.ReactElement> {
   const supabase = await createClient();
@@ -95,7 +95,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
               href="/tools/bookbreaks/books"
               className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors text-[var(--v3-accent)] hover:opacity-80"
             >
-              All books →
+              All books <ArrowRight className="w-3 h-3 ml-1 inline-block" />
             </Link>
           </div>
 
@@ -159,7 +159,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
               href="/tools/bookbreaks/generate"
               className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 bg-transparent text-[var(--ink-2)] border-[1.5px] border-[var(--rule)] hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)]"
             >
-              ✦ Generate Content
+              <Sparkles className="w-3 h-3 mr-1 inline-block" /> Generate Content
             </Link>
           </div>
         </section>
@@ -174,7 +174,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
               href="/tools/bookbreaks/content"
               className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors text-[var(--v3-accent)] hover:opacity-80"
             >
-              All →
+              All <ArrowRight className="w-3 h-3 ml-1 inline-block" />
             </Link>
           </div>
 
@@ -275,7 +275,7 @@ function EmptyState({
         href={cta.href}
         className="inline-flex items-center gap-[6px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-[var(--v3-accent)] hover:opacity-80"
       >
-        {cta.label} →
+        {cta.label} <ArrowRight className="w-3 h-3 ml-1 inline-block" />
       </Link>
     </div>
   );

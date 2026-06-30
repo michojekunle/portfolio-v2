@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { ArrowRight, ArrowLeft, BookOpen } from "lucide-react";
 
 type Mode = "signin" | "signup";
 
-export default function BookBreaksLoginPage(): React.ReactElement {
+function LoginContent(): React.ReactElement {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -91,8 +92,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-[24px] py-[80px]"
-      style={{ background: "#F5E6D3" }}
+      className="min-h-screen flex items-center justify-center px-[24px] py-[80px] bg-[var(--bg)]"
     >
       <div className="w-full max-w-[420px]">
         {/* Logo mark */}
@@ -105,7 +105,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
               className="font-mono text-[10px] tracking-[0.14em] uppercase transition-colors"
               
             >
-              ← Creator Suite
+              <ArrowLeft className="w-3 h-3 mr-1 inline-block" /> Creator Suite
             </span>
           </Link>
 
@@ -114,7 +114,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
               className="w-[40px] h-[40px] rounded-[8px] flex items-center justify-center text-[20px]"
               style={{ background: "rgba(200,90,44,0.15)" }}
             >
-              📚
+              <BookOpen className="w-5 h-5 text-[var(--v3-accent)]" />
             </div>
             <div>
               <div
@@ -208,15 +208,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
               required
               disabled={isDisabled}
               autoComplete="email"
-              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200"
-              style={{
-                background: "#FAF5EC",
-                border: "1.5px solid #D4B896",
-                color: "#2C2C2C",
-                fontFamily: "inherit",
-              }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = "#C85A2C"; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = "#D4B896"; }}
+              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
+              
             />
           </div>
 
@@ -238,15 +231,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
               disabled={isDisabled}
               autoComplete={mode === "signin" ? "current-password" : "new-password"}
               minLength={6}
-              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200"
-              style={{
-                background: "#FAF5EC",
-                border: "1.5px solid #D4B896",
-                color: "#2C2C2C",
-                fontFamily: "inherit",
-              }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = "#C85A2C"; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = "#D4B896"; }}
+              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
+              
             />
           </div>
 
@@ -286,8 +272,8 @@ export default function BookBreaksLoginPage(): React.ReactElement {
             {loading
               ? "Please wait…"
               : mode === "signin"
-              ? "Sign In →"
-              : "Create Account →"}
+              ? <><span className="mr-1">Sign In</span> <ArrowRight className="w-3 h-3 inline-block" /></>
+              : <><span className="mr-1">Create Account</span> <ArrowRight className="w-3 h-3 inline-block" /></>}
           </button>
         </form>
 
@@ -356,5 +342,13 @@ function GoogleIcon(): React.ReactElement {
         fill="#EA4335"
       />
     </svg>
+  );
+}
+
+export default function BookBreaksLoginPage(): React.ReactElement {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--ink-3)]">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
