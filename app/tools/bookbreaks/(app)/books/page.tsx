@@ -13,20 +13,17 @@ export default async function BooksPage(): Promise<React.ReactElement> {
       <div className="flex items-end justify-between mb-[40px] max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-[20px]">
         <div>
           <div
-            className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px]"
-            
+            className="font-mono text-[10px] tracking-[0.16em] uppercase mb-[8px] text-[var(--ink-3)]"
           >
             Library
           </div>
           <h1
-            className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.025em] fvs-text m-0"
-            
+            className="font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.05] tracking-[-0.025em] fvs-text m-0 text-[var(--ink)]"
           >
             My Books
           </h1>
           <p
-            className="text-[14px] mt-[6px] m-0"
-            
+            className="text-[14px] mt-[6px] m-0 text-[var(--ink-3)]"
           >
             {books.length} book{books.length !== 1 ? "s" : ""} in your library
           </p>
@@ -96,8 +93,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
                   {/* Insights preview */}
                   {book.insights.length > 0 && (
                     <div
-                      className="font-mono text-[11px] leading-[1.5] mb-[16px] line-clamp-2"
-                      
+                      className="font-mono text-[11px] leading-[1.5] mb-[16px] line-clamp-2 text-[var(--ink-3)]"
                     >
                       {book.insights[0]}
                     </div>
@@ -105,22 +101,15 @@ export default async function BooksPage(): Promise<React.ReactElement> {
 
                   {/* Stats + CTA */}
                   <div className="flex items-center justify-between">
-                    <div
-                      className="font-mono text-[10px] tracking-[0.08em]"
-                      
-                    >
-                      <span
-                        className="font-semibold"
-                        
-                      >
+                    <div className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)]">
+                      <span className="font-semibold text-[var(--ink)]">
                         {book.content_count}
                       </span>{" "}
                       piece{book.content_count !== 1 ? "s" : ""}
                     </div>
                     <Link
                       href={`/tools/bookbreaks/generate?book=${book.id}`}
-                      className="font-mono text-[10px] uppercase tracking-[0.1em] font-semibold no-underline transition-colors"
-                      style={{ color: "#2D5016" }}
+                      className="font-mono text-[10px] uppercase tracking-[0.1em] font-semibold no-underline transition-colors text-[var(--v3-accent)] hover:opacity-80"
                     >
                       Generate <ArrowRight className="w-3 h-3 ml-1 inline-block" />
                     </Link>

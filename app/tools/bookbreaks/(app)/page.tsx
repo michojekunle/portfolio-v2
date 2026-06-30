@@ -76,7 +76,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-[16px] mb-[48px]">
+      <div className="grid grid-cols-3 max-[768px]:grid-cols-2 max-[480px]:grid-cols-1 gap-[16px] mb-[48px]">
         <StatCard label="Books Read" value={stats.book_count} icon={<BookOpen size={20} />} />
         <StatCard label="Content Created" value={stats.content_count} icon={<Sparkles size={20} />} />
         <StatCard label="This Month" value={stats.this_month_count} icon={<Calendar size={20} />} />
@@ -148,18 +148,18 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
           )}
 
           {/* Quick actions */}
-          <div className="flex gap-[12px] mt-[24px]">
+          <div className="flex flex-wrap gap-[10px] mt-[24px]">
             <Link
               href="/tools/bookbreaks/books"
-              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 hover:opacity-90 bg-[var(--v3-accent)] text-white"
+              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 hover:opacity-90 bg-[var(--v3-accent)] text-white max-[480px]:flex-1 max-[480px]:justify-center"
             >
               + Add Book
             </Link>
             <Link
               href="/tools/bookbreaks/generate"
-              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 bg-transparent text-[var(--ink-2)] border-[1.5px] border-[var(--rule)] hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)]"
+              className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-150 bg-transparent text-[var(--ink-2)] border-[1.5px] border-[var(--rule)] hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] max-[480px]:flex-1 max-[480px]:justify-center"
             >
-              <Sparkles className="w-3 h-3 mr-1 inline-block" /> Generate Content
+              <Sparkles className="w-3 h-3 mr-1 inline-block" /> Generate
             </Link>
           </div>
         </section>
