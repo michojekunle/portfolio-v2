@@ -123,7 +123,7 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
 
       {/* Content Column */}
       <div className="flex-1 relative overflow-hidden flex flex-col h-full">
-        <div className="flex-1 p-[32px] md:p-[48px] overflow-y-auto v3-sleek-scrollbar">
+        <div className="flex-1 p-[32px] md:p-[48px] overflow-y-auto v3-sleek-scrollbar" data-lenis-prevent="true">
           <div className="max-w-[720px] pb-[40px]">
             {/* Meta */}
             <div className="mb-[40px]">

@@ -119,7 +119,7 @@ export function TableOfContents({
               className="absolute bottom-14 right-0 w-64 bg-[var(--paper)] border border-[var(--rule)] rounded-[16px] shadow-2xl p-4 origin-bottom-right"
             >
               <h4 className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mb-3 border-b border-[var(--rule)] pb-2">Contents</h4>
-              <nav className="max-h-[50vh] overflow-y-auto pr-2 flex flex-col gap-2">
+              <nav className="max-h-[50vh] overflow-y-auto pr-2 flex flex-col gap-2" data-lenis-prevent="true">
                 {headings.map((h) => (
                   <a
                     key={h.id}

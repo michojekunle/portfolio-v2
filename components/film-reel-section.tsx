@@ -32,7 +32,7 @@ export function FilmReelSection(): React.ReactElement {
         </div>
       </div>
 
-      <div className="w-full overflow-x-auto snap-x snap-mandatory [scroll-padding:var(--gutter)] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="list" aria-label="All case studies">
+      <div className="w-full overflow-x-auto snap-x snap-mandatory [scroll-padding:var(--gutter)] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="list" aria-label="All case studies" data-lenis-prevent="true">
         <div className="flex gap-[24px] px-[var(--gutter)] w-max pb-[32px]">
           {CASE_STUDIES.map((p) => (
             <Link

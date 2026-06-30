@@ -129,11 +129,16 @@ function AddBookModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-[24px] bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-[20px] bg-black/40 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
         className="w-full max-w-[580px] max-h-[90vh] overflow-y-auto rounded-[16px] bg-[var(--bg-2)] border border-[var(--rule)]"
+        data-lenis-prevent="true"
       >
         <div
           className="sticky top-0 flex items-center justify-between px-[28px] py-[20px] z-10 bg-[var(--bg-2)] border-b border-[var(--rule)]"
@@ -347,7 +352,7 @@ function AddBookModal({
             </motion.button>
           </div>
         </form>
-      </div>
+      </motion.div>
 
       <style>{`
         .bb-input {
