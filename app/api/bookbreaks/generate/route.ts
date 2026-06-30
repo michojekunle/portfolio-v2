@@ -8,6 +8,17 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/bookbreaks/prompts";
 import type { ContentType } from "@/lib/bookbreaks/types";
 import { SEED_CONTENT } from "@/lib/bookbreaks/seed-data";
 
+export const DEFAULT_MODEL_CHAIN = [
+  "google:gemini-3.5-flash",
+  "google:gemini-2.5-flash",
+  "google:gemini-3.1-flash-lite",
+  "google:gemini-2.5-flash-lite",
+  "groq:llama-3.3-70b-versatile",
+  "groq:llama-3.1-8b-instant",
+  "google:gemini-3-flash-preview",
+  "google:gemini-flash-latest"
+];
+
 const RequestSchema = z.object({
   book_id: z.string().uuid(),
   content_type: z.enum(["article", "thread", "carousel", "tiktok", "caption"]),
@@ -18,82 +29,129 @@ const RequestSchema = z.object({
   custom_instructions: z.string().optional(),
 });
 
-// Articles → Gemini (long context, high quality)
-// Everything else → Groq (fast streaming)
-function chooseProvider(
-  contentType: ContentType,
-  preference: string
-): "gemini" | "groq" {
-  if (preference === "gemini") return "gemini";
-  if (preference === "groq") return "groq";
-  return contentType === "article" ? "gemini" : "groq";
+function getModelChain(preference: string): string[] {
+  const googleModels = DEFAULT_MODEL_CHAIN.filter((m) => m.startsWith("google:"));
+  const groqModels = DEFAULT_MODEL_CHAIN.filter((m) => m.startsWith("groq:"));
+
+  if (preference === "gemini") {
+    return [...googleModels, ...groqModels];
+  }
+  if (preference === "groq") {
+    return [...groqModels, ...googleModels];
+  }
+  return DEFAULT_MODEL_CHAIN;
 }
 
-async function streamWithGroq(
+async function tryStreamModel(
+  modelString: string,
   systemPrompt: string,
   userPrompt: string
 ): Promise<ReadableStream<Uint8Array>> {
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  const [provider, modelName] = modelString.split(":");
+  if (!provider || !modelName) {
+    throw new Error(`Invalid model name: ${modelString}`);
+  }
 
-  const stream = await groq.chat.completions.create({
-    model: "llama-3.1-70b-versatile",
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ],
-    stream: true,
-    temperature: 0.7,
-    max_tokens: 4096,
-  });
+  if (provider === "google") {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not configured");
+    }
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      systemInstruction: systemPrompt,
+    });
 
-  const encoder = new TextEncoder();
+    const result = await model.generateContentStream(userPrompt);
+    const iterator = result.stream[Symbol.asyncIterator]();
 
-  return new ReadableStream<Uint8Array>({
-    async start(controller) {
-      try {
-        for await (const chunk of stream) {
-          const delta = chunk.choices[0]?.delta?.content ?? "";
-          if (delta) controller.enqueue(encoder.encode(delta));
+    // Verify stream starts successfully before returning it
+    const firstResult = await iterator.next();
+    if (firstResult.done) {
+      throw new Error("Empty stream returned from Google AI");
+    }
+
+    const encoder = new TextEncoder();
+    return new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          const firstText = firstResult.value.text();
+          if (firstText) {
+            controller.enqueue(encoder.encode(firstText));
+          }
+
+          let next = await iterator.next();
+          while (!next.done) {
+            const text = next.value.text();
+            if (text) {
+              controller.enqueue(encoder.encode(text));
+            }
+            next = await iterator.next();
+          }
+        } catch (err) {
+          controller.error(err);
+        } finally {
+          controller.close();
         }
-      } finally {
-        controller.close();
-      }
-    },
-  });
-}
+      },
+    });
+  } else if (provider === "groq") {
+    if (!process.env.GROQ_API_KEY) {
+      throw new Error("GROQ_API_KEY is not configured");
+    }
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const stream = await groq.chat.completions.create({
+      model: modelName,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      stream: true,
+      temperature: 0.7,
+      max_tokens: 4096,
+    });
 
-async function streamWithGemini(
-  systemPrompt: string,
-  userPrompt: string
-): Promise<ReadableStream<Uint8Array>> {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    systemInstruction: systemPrompt,
-  });
+    const iterator = stream[Symbol.asyncIterator]();
 
-  const result = await model.generateContentStream(userPrompt);
-  const encoder = new TextEncoder();
+    // Verify stream starts successfully before returning it
+    const firstResult = await iterator.next();
+    if (firstResult.done) {
+      throw new Error("Empty stream returned from Groq");
+    }
 
-  return new ReadableStream<Uint8Array>({
-    async start(controller) {
-      try {
-        for await (const chunk of result.stream) {
-          const text = chunk.text();
-          if (text) controller.enqueue(encoder.encode(text));
+    const encoder = new TextEncoder();
+    return new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          const firstDelta = firstResult.value.choices[0]?.delta?.content ?? "";
+          if (firstDelta) {
+            controller.enqueue(encoder.encode(firstDelta));
+          }
+
+          let next = await iterator.next();
+          while (!next.done) {
+            const delta = next.value.choices[0]?.delta?.content ?? "";
+            if (delta) {
+              controller.enqueue(encoder.encode(delta));
+            }
+            next = await iterator.next();
+          }
+        } catch (err) {
+          controller.error(err);
+        } finally {
+          controller.close();
         }
-      } finally {
-        controller.close();
-      }
-    },
-  });
+      },
+    });
+  } else {
+    throw new Error(`Unsupported provider: ${provider}`);
+  }
 }
 
 function fallbackStream(
   bookTitle: string,
   contentType: ContentType
 ): ReadableStream<Uint8Array> {
-  // Return pre-seeded content when no API keys are configured
   const match = SEED_CONTENT.find(
     (c) =>
       c.content_type === contentType &&
@@ -150,32 +208,25 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   const systemPrompt = buildSystemPrompt(request.content_type);
   const userPrompt = buildUserPrompt(book, request, settings?.website_url);
-  const provider = chooseProvider(
-    request.content_type,
-    settings?.ai_provider ?? "auto"
-  );
 
-  const hasGroq = Boolean(process.env.GROQ_API_KEY);
-  const hasGemini = Boolean(process.env.GEMINI_API_KEY);
+  const models = getModelChain(settings?.ai_provider ?? "auto");
+  let stream: ReadableStream<Uint8Array> | null = null;
+  const errors: string[] = [];
 
-  let stream: ReadableStream<Uint8Array>;
-
-  try {
-    if (provider === "gemini" && hasGemini) {
-      stream = await streamWithGemini(systemPrompt, userPrompt);
-    } else if (provider === "groq" && hasGroq) {
-      stream = await streamWithGroq(systemPrompt, userPrompt);
-    } else if (hasGroq) {
-      stream = await streamWithGroq(systemPrompt, userPrompt);
-    } else if (hasGemini) {
-      stream = await streamWithGemini(systemPrompt, userPrompt);
-    } else {
-      stream = fallbackStream(book.title, request.content_type);
+  for (const modelString of models) {
+    try {
+      stream = await tryStreamModel(modelString, systemPrompt, userPrompt);
+      break;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`${modelString}: ${msg}`);
+      console.warn(`Fallback triggered from model ${modelString} due to error:`, msg);
     }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Generation failed";
-    console.error("[generate]", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+  }
+
+  if (!stream) {
+    console.error("All models in the chain failed:", errors);
+    stream = fallbackStream(book.title, request.content_type);
   }
 
   return new Response(stream, {
