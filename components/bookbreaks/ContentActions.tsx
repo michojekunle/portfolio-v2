@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { motion } from "framer-motion";
 import { Copy, CheckCircle, RotateCcw, CheckSquare, Trash2 } from "lucide-react";
+
 interface Props {
   contentId: string;
   content: string;
@@ -52,41 +53,65 @@ export function BBContentActions({ contentId, content, status }: Props): React.R
 
   return (
     <div className="flex items-center gap-[8px] flex-wrap">
+      {/* Copy */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
         onClick={handleCopy}
-        className={`inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none ${
-          copied ? "bg-green-500/10 text-green-600" : "bg-[var(--bg-2)] text-[var(--ink-2)] hover:bg-[color-mix(in_oklab,var(--bg-2)_80%,var(--ink))]"
-        }`}
+        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none"
+        style={
+          copied
+            ? {
+                background: "color-mix(in oklab, var(--v3-accent) 12%, transparent)",
+                color: "var(--v3-accent)",
+              }
+            : {
+                background: "var(--bg)",
+                border: "1px solid var(--rule)",
+                color: "var(--ink-3)",
+              }
+        }
       >
         {copied ? <><CheckCircle size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
       </motion.button>
 
+      {/* Publish toggle */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
         onClick={handleToggleStatus}
         disabled={toggling}
-        className={`inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50 ${
+        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50"
+        style={
           status === "published"
-            ? "bg-green-500/10 text-green-600 hover:bg-green-500/20"
-            : "bg-[var(--v3-accent)]/10 text-[var(--v3-accent)] hover:bg-[var(--v3-accent)]/20"
-        }`}
+            ? {
+                background: "color-mix(in oklab, #22c55e 10%, transparent)",
+                color: "color-mix(in oklab, #16a34a 100%, transparent)",
+              }
+            : {
+                background: "color-mix(in oklab, var(--v3-accent) 10%, transparent)",
+                color: "var(--v3-accent)",
+              }
+        }
       >
         {toggling
           ? "…"
           : status === "published"
           ? <><RotateCcw size={12} /> Unpublish</>
-          : <><CheckSquare size={12} /> Mark Published</>}
+          : <><CheckSquare size={12} /> Publish</>}
       </motion.button>
 
+      {/* Delete */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
         onClick={handleDelete}
         disabled={deleting}
-        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none hover:opacity-80 disabled:opacity-50 bg-red-500/10 text-red-600"
+        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50"
+        style={{
+          background: "color-mix(in oklab, #ef4444 10%, transparent)",
+          color: "color-mix(in oklab, #dc2626 100%, transparent)",
+        }}
       >
         {deleting ? "…" : <><Trash2 size={12} /> Delete</>}
       </motion.button>

@@ -1,95 +1,125 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Settings, X } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Palette, X, Sun, Moon } from "lucide-react";
+import { ThemeSelector } from "@/components/theme-selector";
+import { useTheme } from "next-themes";
 
 /**
- * ThemeTweaker – a lightweight floating button that opens a small sheet
- * allowing the user to adjust the colour theme (light/dark) and base font size.
- * The adjustments are applied by mutating CSS custom properties on the root
- * element, which are already used throughout the project (e.g. var(--bg),
- * var(--ink), var(--v3-accent)).
+ * ThemeTweaker – floating palette FAB that opens a premium sheet with:
+ *  - colour theme picker
+ *  - font picker (affects entire BookBreaks app via CSS var)
+ *  - light / dark mode toggle (synced with next-themes + localStorage)
  */
 export function ThemeTweaker() {
   const [open, setOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [fontSize, setFontSize] = useState<number>(16);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  // Initialise from existing root styles (if any)
   useEffect(() => {
-    const root = document.documentElement;
-    const currentSize = parseInt(root.style.fontSize) || 16;
-    setFontSize(currentSize);
-    setDarkMode(root.classList.contains("dark"));
+    setMounted(true);
   }, []);
 
-  // Apply changes whenever controls update
-  useEffect(() => {
-    const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add("dark");
+  const isDark = resolvedTheme === "dark";
+
+  const toggleDark = useCallback(() => {
+    const next = isDark ? "light" : "dark";
+    setTheme(next);
+    // Also keep the ThemeSelector's palette in sync
+    const current = localStorage.getItem("portfolio-theme") ?? "ochre";
+    // Dispatch a class change so the existing MutationObserver in ThemeSelector picks it up
+    if (next === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      root.classList.remove("dark");
+      document.documentElement.classList.remove("dark");
     }
-    root.style.fontSize = `${fontSize}px`;
-  }, [darkMode, fontSize]);
+  }, [isDark, setTheme]);
 
   return (
     <>
-      {/* Floating button */}
+      {/* Floating palette FAB */}
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Open theme tweaker"
-        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--v3-accent)] text-white shadow-lg transition-transform hover:scale-105"
+        style={{ zIndex: 200 }}
+        className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--v3-accent)] text-white shadow-xl ring-4 ring-[color-mix(in_oklab,var(--v3-accent)_40%,transparent)] transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95"
       >
-        <Settings size={24} />
+        <Palette size={20} />
       </button>
 
-      {/* Sliding sheet – only rendered when open */}
+      {/* Overlay sheet */}
       {open && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center sm:items-center">
+        <div className="fixed inset-0 z-[190] flex items-end justify-end sm:items-start sm:justify-end p-4 sm:p-6">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black bg-opacity-30"
+            className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
             onClick={() => setOpen(false)}
           />
           {/* Sheet */}
-          <div className="relative w-full max-w-md rounded-t-[12px] bg-[var(--bg-2)] p-6 shadow-lg sm:rounded-[12px] sm:mt-0">
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Close"
-              className="absolute right-4 top-4 text-[var(--ink-2)]"
+          <div
+            className="relative w-full max-w-sm rounded-[16px] shadow-2xl overflow-hidden sm:mt-0 mt-4"
+            style={{
+              background: "var(--bg-2)",
+              border: "1px solid var(--rule)",
+            }}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between px-5 py-4"
+              style={{ borderBottom: "1px solid var(--rule)" }}
             >
-              <X size={20} />
-            </button>
-
-            <h2 className="mb-4 text-lg font-medium text-[var(--ink)]">Theme Tweaker</h2>
-
-            {/* Theme toggle */}
-            <div className="mb-4">
-              <label className="mr-2 text-[var(--ink-2)]">Theme:</label>
-              <select
-                value={darkMode ? "dark" : "light"}
-                onChange={(e) => setDarkMode(e.target.value === "dark")}
-                className="rounded border border-[var(--rule)] bg-[var(--bg)] px-2 py-1 text-[var(--ink)]"
+              <div className="flex items-center gap-2">
+                <Palette size={14} className="text-[var(--v3-accent)]" />
+                <span className="font-mono text-[10px] tracking-[0.16em] uppercase font-semibold text-[var(--ink-3)]">
+                  Theme Tweaks
+                </span>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-transparent border-none cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--bg)] transition-colors"
               >
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
+                <X size={14} />
+              </button>
             </div>
 
-            {/* Font size slider */}
-            <div>
-              <label className="mr-2 text-[var(--ink-2)]">Base font size (px):</label>
-              <input
-                type="range"
-                min={12}
-                max={24}
-                value={fontSize}
-                onChange={(e) => setFontSize(parseInt(e.target.value, 10))}
-                className="vertical-align middle"
-              />
-              <span className="ml-2 text-[var(--ink)]">{fontSize}px</span>
+            {/* Body */}
+            <div className="px-5 py-5 flex flex-col gap-6 max-h-[75vh] overflow-y-auto">
+              {/* Light / Dark mode toggle – at the top for quick access */}
+              <div className="flex flex-col gap-3">
+                <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">
+                  Appearance
+                </div>
+                <button
+                  onClick={toggleDark}
+                  aria-pressed={isDark}
+                  className="group flex items-center gap-3 w-full rounded-[10px] px-4 py-3 border border-[var(--rule)] bg-transparent cursor-pointer transition-all duration-200 hover:border-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]"
+                >
+                  {/* Toggle pill */}
+                  <div
+                    className={`relative w-10 h-5 rounded-full flex-shrink-0 transition-colors duration-200 ${isDark ? "bg-[var(--v3-accent)]" : "bg-[var(--rule)]"}`}
+                  >
+                    <span
+                      className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-[var(--bg)] transition-transform duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex items-center justify-center ${isDark ? "translate-x-[20px]" : "translate-x-0"}`}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 flex-1">
+                    {mounted && (
+                      isDark ? (
+                        <Moon size={14} className="text-[var(--v3-accent)]" />
+                      ) : (
+                        <Sun size={14} className="text-[var(--ink-3)]" />
+                      )
+                    )}
+                    <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--ink-2)]">
+                      {mounted ? (isDark ? "Dark mode" : "Light mode") : "Mode"}
+                    </span>
+                  </div>
+                </button>
+              </div>
+
+              {/* ThemeSelector: colour palette + font picker (already has these sections) */}
+              <ThemeSelector />
             </div>
           </div>
         </div>

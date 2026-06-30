@@ -107,6 +107,18 @@ export function ThemeSelector(): React.ReactElement {
     localStorage.setItem("portfolio-theme", key)
   }, [])
 
+  const handleDarkMode = useCallback((dark: boolean): void => {
+    setIsDark(dark)
+    if (dark) {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+    localStorage.setItem("portfolio-dark", dark ? "1" : "0")
+    const current = localStorage.getItem("portfolio-theme") ?? "ochre"
+    applyPalette(current, dark)
+  }, [])
+
   const handleFont = useCallback((key: string): void => {
     applyFont(key)
     setActiveFont(key)
@@ -123,7 +135,10 @@ export function ThemeSelector(): React.ReactElement {
     const savedTheme = localStorage.getItem("portfolio-theme") ?? "ochre"
     const savedFont = localStorage.getItem("portfolio-font") ?? "fraunces"
     const savedMarginalia = localStorage.getItem("portfolio-marginalia") !== "off"
-    const dark = document.documentElement.classList.contains("dark")
+    const savedDark = localStorage.getItem("portfolio-dark")
+    const dark = savedDark !== null
+      ? savedDark === "1"
+      : document.documentElement.classList.contains("dark")
 
     setIsDark(dark)
     setActiveFont(savedFont)
@@ -174,6 +189,22 @@ export function ThemeSelector(): React.ReactElement {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Light / Dark mode toggle */}
+      <div className="flex flex-col gap-[12px]">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Appearance</div>
+        <button
+          type="button"
+          onClick={() => handleDarkMode(!isDark)}
+          aria-pressed={isDark}
+          className={`flex items-center gap-[10px] bg-transparent border-none cursor-pointer font-inherit text-[13px] p-0 transition-colors duration-150 hover:text-[var(--ink)] ${isDark ? "text-[var(--ink)]" : "text-[var(--ink-2)]"}`}
+        >
+          <span className={`w-[36px] h-[20px] rounded-full relative transition-colors duration-150 ${isDark ? "bg-[var(--v3-accent)]" : "bg-[var(--rule)]"}`}>
+            <span className={`absolute top-[2px] left-[2px] w-[16px] h-[16px] rounded-full bg-[var(--bg)] transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${isDark ? "translate-x-[16px]" : "translate-x-0"}`} />
+          </span>
+          <span>{isDark ? "Dark mode" : "Light mode"}</span>
+        </button>
       </div>
 
       {/* Display font */}

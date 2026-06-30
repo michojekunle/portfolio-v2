@@ -4,6 +4,14 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { BBSettings, AIProvider } from "@/lib/bookbreaks/types";
 import { TONE_OPTIONS } from "@/lib/bookbreaks/constants";
+import {
+  Globe,
+  Sparkles,
+  Search,
+  Zap,
+  Check,
+  User,
+} from "lucide-react";
 
 interface Props {
   initialSettings: BBSettings | null;
@@ -29,6 +37,9 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
   );
   const [newsletterCta, setNewsletterCta] = useState(
     initialSettings?.newsletter_cta ?? ""
+  );
+  const [authorBio, setAuthorBio] = useState(
+    (initialSettings as any)?.author_bio ?? ""
   );
 
   const [saving, setSaving] = useState(false);
@@ -66,6 +77,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
           .map((k) => k.trim())
           .filter(Boolean),
         newsletter_cta: newsletterCta.trim(),
+        author_bio: authorBio.trim(),
       });
 
     if (upsertError) {
@@ -78,74 +90,64 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
     setSaving(false);
   };
 
-  const sectionStyle = {
-    background: "#FAF5EC",
-    border: "1px solid #D4B896",
-    borderRadius: "12px",
-    padding: "24px",
-    marginBottom: "16px",
-  };
+  const AI_PROVIDERS = [
+    { value: "auto", label: "Auto", desc: "Best model per task" },
+    { value: "groq", label: "Groq", desc: "Fastest · Llama 3.1" },
+    { value: "gemini", label: "Gemini", desc: "Google · 1.5 Flash" },
+  ];
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-[16px]">
-      {/* Website */}
-      <section style={sectionStyle}>
-        <SectionTitle>Website & Branding</SectionTitle>
-        <Field label="Your Website URL">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]">
+
+      {/* ─── Website & Branding ─────────────────────────────────── */}
+      <SettingsSection icon={<Globe size={14} />} title="Website & Branding">
+        <Field label="Your Website URL" hint="Included in all generated content CTAs.">
           <input
             type="text"
             value={websiteUrl}
             onChange={(e) => setWebsiteUrl(e.target.value)}
-            placeholder="www.michaelojekunle.dev"
-            className="bb-settings-input"
+            placeholder="www.yoursite.dev"
+            className="bb-input"
           />
-          <p className="font-mono text-[10px] mt-[6px] m-0" style={{ color: "#8B6F47" }}>
-            This URL is included in all generated content CTAs.
-          </p>
         </Field>
-        <Field label="Newsletter / Follow CTA (optional)">
+        <Field label="Newsletter / Follow CTA" hint="Optional — appended to content as a call-to-action.">
           <input
             type="text"
             value={newsletterCta}
             onChange={(e) => setNewsletterCta(e.target.value)}
-            placeholder="Subscribe at newsletter.michaelojekunle.dev"
-            className="bb-settings-input"
+            placeholder="Subscribe at newsletter.yoursite.dev"
+            className="bb-input"
           />
         </Field>
-      </section>
+        <Field label="Author Bio" hint="Used to personalise AI-generated content with your voice.">
+          <textarea
+            value={authorBio}
+            onChange={(e) => setAuthorBio(e.target.value)}
+            placeholder="I'm a founder and builder who writes about books, business, and learning in public…"
+            rows={3}
+            className="bb-input"
+            style={{ height: "auto", paddingTop: "12px", paddingBottom: "12px", resize: "vertical" }}
+          />
+        </Field>
+      </SettingsSection>
 
-      {/* AI */}
-      <section style={sectionStyle}>
-        <SectionTitle>AI Generation</SectionTitle>
+      {/* ─── AI Generation ──────────────────────────────────────── */}
+      <SettingsSection icon={<Sparkles size={14} />} title="AI Generation">
         <Field label="Preferred AI Provider">
-          <div className="flex gap-[8px]">
-            {[
-              { value: "auto", label: "Auto", desc: "Best tool per content type" },
-              { value: "groq", label: "Groq", desc: "Fastest (Llama 3.1)" },
-              { value: "gemini", label: "Gemini", desc: "Google Gemini 1.5" },
-            ].map((p) => (
+          <div className="grid grid-cols-3 gap-[8px]">
+            {AI_PROVIDERS.map((p) => (
               <button
                 key={p.value}
                 type="button"
                 onClick={() => setAiProvider(p.value as AIProvider)}
-                className="flex-1 py-[10px] px-[12px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.08em] cursor-pointer border-none transition-all"
-                style={{
-                  background:
-                    aiProvider === p.value
-                      ? "rgba(200,90,44,0.12)"
-                      : "rgba(44,44,44,0.05)",
-                  color: aiProvider === p.value ? "#C85A2C" : "#4A3728",
-                  outline:
-                    aiProvider === p.value
-                      ? "1.5px solid rgba(200,90,44,0.3)"
-                      : "none",
-                }}
+                className={`flex flex-col items-start gap-[3px] py-[10px] px-[12px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.08em] cursor-pointer border transition-all duration-150 ${
+                  aiProvider === p.value
+                    ? "border-[var(--v3-accent)] bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-[var(--v3-accent)]"
+                    : "border-[var(--rule)] bg-transparent text-[var(--ink-3)] hover:border-[var(--v3-accent)] hover:text-[var(--ink-2)]"
+                }`}
               >
                 <div className="font-semibold">{p.label}</div>
-                <div
-                  className="text-[8px] normal-case tracking-normal mt-[2px] opacity-70"
-                  style={{ textTransform: "none", letterSpacing: "0" }}
-                >
+                <div className="text-[8px] normal-case tracking-normal opacity-60" style={{ letterSpacing: 0 }}>
                   {p.desc}
                 </div>
               </button>
@@ -153,119 +155,156 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
           </div>
         </Field>
 
-        <Field label="Default Tone">
-          <select
-            value={defaultTone}
-            onChange={(e) => setDefaultTone(e.target.value)}
-            className="bb-settings-input"
-          >
-            {TONE_OPTIONS.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+        <div className="grid grid-cols-2 gap-[12px]">
+          <Field label="Default Tone">
+            <select
+              value={defaultTone}
+              onChange={(e) => setDefaultTone(e.target.value)}
+              className="bb-input"
+            >
+              {TONE_OPTIONS.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Default Word Count">
+            <input
+              type="number"
+              value={defaultWordCount}
+              onChange={(e) => setDefaultWordCount(Number(e.target.value))}
+              min={500}
+              max={3000}
+              step={100}
+              className="bb-input"
+            />
+          </Field>
+        </div>
+      </SettingsSection>
 
-        <Field label="Default Article Word Count">
-          <input
-            type="number"
-            value={defaultWordCount}
-            onChange={(e) => setDefaultWordCount(Number(e.target.value))}
-            min={500}
-            max={3000}
-            step={100}
-            className="bb-settings-input"
-          />
-        </Field>
-      </section>
-
-      {/* SEO */}
-      <section style={sectionStyle}>
-        <SectionTitle>SEO Defaults</SectionTitle>
-        <Field label="Default SEO Keywords (comma-separated)">
+      {/* ─── SEO ────────────────────────────────────────────────── */}
+      <SettingsSection icon={<Search size={14} />} title="SEO Defaults">
+        <Field label="Default SEO Keywords" hint="Comma-separated · automatically injected into generation prompts.">
           <input
             type="text"
             value={seoKeywords}
             onChange={(e) => setSeoKeywords(e.target.value)}
             placeholder="learning in public, book review, entrepreneurship"
-            className="bb-settings-input"
+            className="bb-input"
           />
-          <p className="font-mono text-[10px] mt-[6px] m-0" style={{ color: "#8B6F47" }}>
-            These are included in article generation prompts automatically.
-          </p>
         </Field>
-      </section>
+      </SettingsSection>
 
+      {/* ─── Error ──────────────────────────────────────────────── */}
       {error && (
         <div
           className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px]"
           style={{
-            background: "rgba(220,38,38,0.08)",
-            color: "#DC2626",
-            border: "1px solid rgba(220,38,38,0.2)",
+            background: "color-mix(in oklab, var(--v3-accent) 10%, transparent)",
+            color: "var(--v3-accent)",
+            border: "1px solid color-mix(in oklab, var(--v3-accent) 25%, transparent)",
           }}
         >
           {error}
         </div>
       )}
 
+      {/* ─── Submit ─────────────────────────────────────────────── */}
       <button
         type="submit"
         disabled={saving}
-        className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90"
-        style={{ background: saved ? "#2D5016" : "#C85A2C" }}
+        className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-200 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 flex items-center justify-center gap-2"
+        style={{
+          background: saved
+            ? "color-mix(in oklab, #22c55e 60%, var(--v3-accent))"
+            : "var(--v3-accent)",
+        }}
       >
-        {saving ? "Saving…" : saved ? "✓ Saved" : "Save Settings"}
+        {saving ? (
+          <><Zap size={13} className="animate-pulse" /> Saving…</>
+        ) : saved ? (
+          <><Check size={13} /> Saved</>
+        ) : (
+          "Save Settings"
+        )}
       </button>
 
       <style>{`
-        .bb-settings-input {
+        .bb-input {
           width: 100%;
-          height: 44px;
+          min-height: 44px;
           padding: 0 14px;
           border-radius: 8px;
           font-size: 13px;
           font-family: inherit;
           outline: none;
-          transition: border-color 0.15s;
-          background: #F5E6D3;
-          border: 1.5px solid #D4B896;
-          color: #2C2C2C;
+          transition: border-color 0.15s, box-shadow 0.15s;
+          background: color-mix(in oklab, var(--bg) 60%, var(--bg-2));
+          border: 1.5px solid var(--rule);
+          color: var(--ink);
+          display: block;
         }
-        .bb-settings-input:focus { border-color: #C85A2C; }
+        .bb-input::placeholder { color: var(--ink-4); }
+        .bb-input:focus {
+          border-color: var(--v3-accent);
+          box-shadow: 0 0 0 3px color-mix(in oklab, var(--v3-accent) 12%, transparent);
+        }
+        select.bb-input { cursor: pointer; }
       `}</style>
     </form>
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }): React.ReactElement {
+function SettingsSection({
+  icon,
+  title,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+}): React.ReactElement {
   return (
-    <div
-      className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[20px]"
-      style={{ color: "#8B6F47" }}
+    <section
+      className="rounded-[12px] overflow-hidden"
+      style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}
     >
-      {children}
-    </div>
+      {/* Section header */}
+      <div
+        className="flex items-center gap-[8px] px-[20px] py-[14px]"
+        style={{ borderBottom: "1px solid var(--rule)", background: "color-mix(in oklab, var(--bg-2) 80%, var(--bg))" }}
+      >
+        <span className="text-[var(--v3-accent)]">{icon}</span>
+        <span className="font-mono text-[10px] tracking-[0.16em] uppercase font-semibold text-[var(--ink-3)]">
+          {title}
+        </span>
+      </div>
+      <div className="px-[20px] py-[20px] flex flex-col gap-[16px]">{children}</div>
+    </section>
   );
 }
 
 function Field({
   label,
+  hint,
   children,
 }: {
   label: string;
+  hint?: string;
   children: React.ReactNode;
 }): React.ReactElement {
   return (
-    <div className="mb-[16px] last:mb-0">
-      <label
-        className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-        style={{ color: "#8B6F47" }}
-      >
+    <div className="flex flex-col gap-[6px]">
+      <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
         {label}
       </label>
       {children}
+      {hint && (
+        <p className="font-mono text-[10px] m-0 text-[var(--ink-4)] leading-[1.5]">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
