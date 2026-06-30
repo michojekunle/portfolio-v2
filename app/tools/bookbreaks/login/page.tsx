@@ -153,18 +153,18 @@ function LoginContent(): React.ReactElement {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isDisabled}
-          className="w-full h-[52px] rounded-[8px] flex items-center justify-center gap-[12px] text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
+          className="w-full h-[52px] rounded-[8px] flex items-center justify-center gap-[12px] text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-md hover:-translate-y-[1px]"
           style={{
-            background: "#FFFFFF",
-            color: "#2C2C2C",
-            border: "1.5px solid #D4B896",
+            background: "var(--bg-2)",
+            color: "var(--ink)",
+            border: "1.5px solid var(--rule)",
             fontFamily: "inherit",
           }}
         >
           {googleLoading ? (
             <span
               className="w-[18px] h-[18px] rounded-full border-[2px] border-t-transparent animate-spin"
-              style={{ borderColor: "#D4B896", borderTopColor: "transparent" }}
+              style={{ borderColor: "var(--rule)", borderTopColor: "transparent" }}
               aria-hidden="true"
             />
           ) : (
@@ -179,14 +179,14 @@ function LoginContent(): React.ReactElement {
 
         {/* Divider */}
         <div className="flex items-center gap-[12px] my-[24px]">
-          <div className="flex-1 h-[1px]" style={{ background: "#D4B896" }} />
+          <div className="flex-1 h-[1px]" style={{ background: "var(--rule)" }} />
           <span
             className="font-mono text-[10px] tracking-[0.12em] uppercase shrink-0"
-            style={{ color: "#B3A08A" }}
+            style={{ color: "var(--ink-4)" }}
           >
             or
           </span>
-          <div className="flex-1 h-[1px]" style={{ background: "#D4B896" }} />
+          <div className="flex-1 h-[1px]" style={{ background: "var(--rule)" }} />
         </div>
 
         {/* Email / password form */}
@@ -267,7 +267,7 @@ function LoginContent(): React.ReactElement {
             type="submit"
             disabled={isDisabled}
             className="w-full h-[52px] rounded-[8px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 hover:scale-[1.01]"
-            style={{ background: "#C85A2C" }}
+            style={{ background: "var(--v3-accent)" }}
           >
             {loading
               ? "Please wait…"
@@ -280,8 +280,7 @@ function LoginContent(): React.ReactElement {
         {/* Toggle mode */}
         <div className="mt-[24px] text-center">
           <span
-            className="text-[13px]"
-            
+            className="text-[13px] text-[var(--ink-3)]"
           >
             {mode === "signin"
               ? "Don't have an account? "
@@ -294,23 +293,22 @@ function LoginContent(): React.ReactElement {
               setSuccess(null);
             }}
             className="text-[13px] font-semibold underline bg-transparent border-none cursor-pointer p-0"
-            style={{ color: "#C85A2C", fontFamily: "inherit" }}
+            style={{ color: "var(--v3-accent)", fontFamily: "inherit" }}
           >
             {mode === "signin" ? "Sign up free" : "Sign in"}
           </button>
         </div>
 
         {/* Footer */}
-        <div className="mt-[48px] pt-[24px]" style={{ borderTop: "1px solid #D4B896" }}>
+        <div className="mt-[48px] pt-[24px]" style={{ borderTop: "1px solid var(--rule)" }}>
           <p
-            className="text-center text-[12px] leading-[1.6] m-0"
-            
+            className="text-center text-[12px] leading-[1.6] m-0 text-[var(--ink-4)]"
           >
             Part of{" "}
             <Link
               href="/tools"
               className="underline"
-              style={{ color: "#2D5016" }}
+              style={{ color: "var(--v3-accent)" }}
             >
               michaelojekunle.dev/tools
             </Link>{" "}
