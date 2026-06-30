@@ -88,7 +88,7 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
   const hasNotes = book.notes.length > 0;
 
   return (
-    <article className="group relative flex flex-col md:flex-row items-start bg-[var(--paper)] border border-[var(--rule)] rounded-[20px] overflow-hidden transition-all duration-300 hover:border-[var(--v3-accent-soft)] hover:shadow-[0_20px_50px_color-mix(in_oklab,var(--ink)_4%,transparent)] h-full w-full">
+    <article className="group relative flex flex-col md:flex-row items-stretch bg-[var(--paper)] border border-[var(--rule)] rounded-[20px] overflow-hidden transition-all duration-300 hover:border-[var(--v3-accent-soft)] hover:shadow-[0_20px_50px_color-mix(in_oklab,var(--ink)_4%,transparent)] h-full w-full">
       {/* Cover Column */}
       <div className="w-full md:w-[300px] shrink-0 p-[24px] md:p-[40px] bg-[var(--bg-2)] flex flex-col items-center border-b md:border-b-0 md:border-r border-[var(--rule)] h-full">
         <TiltCard intensity={25}>
@@ -122,8 +122,8 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
       </div>
 
       {/* Content Column */}
-      <div className="flex-1 relative overflow-hidden flex flex-col">
-        <div className="flex-1 p-[32px] md:p-[48px] overflow-y-auto max-h-[85vh] v3-sleek-scrollbar">
+      <div className="flex-1 relative overflow-hidden flex flex-col h-full">
+        <div className="flex-1 p-[32px] md:p-[48px] overflow-y-auto v3-sleek-scrollbar">
           <div className="max-w-[720px] pb-[40px]">
             {/* Meta */}
             <div className="mb-[40px]">

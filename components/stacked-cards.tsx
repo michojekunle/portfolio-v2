@@ -24,7 +24,7 @@ function Card({ child, index, total, progress }: { child: React.ReactNode, index
         top: `calc(10dvh + ${index * 20}px)`
       }}
     >
-      <div className="w-full max-w-[1000px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] rounded-[20px] overflow-hidden">
+      <div className="w-full max-w-[1000px] h-[75vh] min-h-[600px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] rounded-[20px] overflow-hidden bg-[var(--paper)]">
         {child}
       </div>
     </motion.div>

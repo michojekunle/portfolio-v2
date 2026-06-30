@@ -59,7 +59,7 @@ export function ContactPage(): React.ReactElement {
           >
             05 — CONTACT · BOOKING
           </motion.div>
-          <h1 className="m-0 font-display font-light text-[clamp(64px,10vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px]">
+          <h1 className="m-0 font-display font-light text-[clamp(64px,10vw,120px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[16px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
             <motion.span
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
