@@ -102,7 +102,7 @@ export function GoalsClient({ initialGoals }: Props): React.ReactElement {
               goal={goal}
               addingAmount={addingAmount === goal.id}
               onAddAmount={() => setAddingAmount(addingAmount === goal.id ? null : goal.id)}
-              onSaveProgress={handleAddProgress}
+              onSaveProgress={(id, extra) => handleAddProgress(id, extra)}
               onComplete={() => handleMarkComplete(goal.id)}
               onDelete={() => handleDelete(goal.id)}
             />
@@ -143,11 +143,12 @@ function GoalCard({ goal, addingAmount, onAddAmount, onSaveProgress, onComplete,
   goal: FwGoal;
   addingAmount: boolean;
   onAddAmount: () => void;
-  onSaveProgress: (id: string, extra: number) => void;
+  onSaveProgress: (id: string, extra: number) => Promise<void>;
   onComplete: () => void;
   onDelete: () => void;
 }): React.ReactElement {
   const [extraInput, setExtraInput] = useState("");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const pct = goal.target_amount > 0 ? Math.min((goal.current_amount / goal.target_amount) * 100, 100) : 0;
   const remaining = goal.target_amount - goal.current_amount;
 
@@ -158,11 +159,16 @@ function GoalCard({ goal, addingAmount, onAddAmount, onSaveProgress, onComplete,
     ? remaining / (daysLeft / 30)
     : null;
 
-  const handleSave = (): void => {
+  const handleSave = async (): Promise<void> => {
     const n = parseFloat(extraInput);
-    if (isNaN(n) || n <= 0) return;
-    onSaveProgress(goal.id, n);
-    setExtraInput("");
+    if (isNaN(n) || n <= 0) { setSaveError("Enter a valid amount"); return; }
+    setSaveError(null);
+    try {
+      await onSaveProgress(goal.id, n);
+      setExtraInput("");
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Failed to save progress");
+    }
   };
 
   // SVG ring
@@ -232,23 +238,30 @@ function GoalCard({ goal, addingAmount, onAddAmount, onSaveProgress, onComplete,
 
       {/* Add progress */}
       {addingAmount ? (
-        <div className="flex gap-[8px]">
-          <div className="relative flex-1">
-            <span className="absolute left-[10px] top-1/2 -translate-y-1/2 font-mono text-[12px] text-[var(--ink-3)]">₦</span>
-            <input
-              type="number"
-              value={extraInput}
-              onChange={(e) => setExtraInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSave()}
-              placeholder="amount to add"
-              min="1"
-              autoFocus
-              className="w-full h-[38px] pl-[28px] pr-[10px] rounded-[8px] text-[13px] outline-none bg-[var(--bg)] text-[var(--ink)]"
-              style={{ border: "1.5px solid var(--rule)" }}
-            />
+        <div className="space-y-[6px]">
+          <div className="flex gap-[8px]">
+            <div className="relative flex-1">
+              <span className="absolute left-[10px] top-1/2 -translate-y-1/2 font-mono text-[12px] text-[var(--ink-3)]">₦</span>
+              <input
+                type="number"
+                value={extraInput}
+                onChange={(e) => { setExtraInput(e.target.value); setSaveError(null); }}
+                onKeyDown={(e) => e.key === "Enter" && void handleSave()}
+                placeholder="amount to add"
+                min="1"
+                autoFocus
+                className="w-full h-[38px] pl-[28px] pr-[10px] rounded-[8px] text-[13px] outline-none bg-[var(--bg)] text-[var(--ink)]"
+                style={{ border: "1.5px solid var(--rule)" }}
+              />
+            </div>
+            <button onClick={() => void handleSave()} className="h-[38px] px-[14px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.1em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>Add</button>
+            <button onClick={onAddAmount} className="h-[38px] px-[10px] rounded-[8px] border-none bg-transparent cursor-pointer text-[var(--ink-3)]"><X size={14} /></button>
           </div>
-          <button onClick={handleSave} className="h-[38px] px-[14px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.1em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>Add</button>
-          <button onClick={onAddAmount} className="h-[38px] px-[10px] rounded-[8px] border-none bg-transparent cursor-pointer text-[var(--ink-3)]"><X size={14} /></button>
+          {saveError && (
+            <div className="font-mono text-[10px] px-[8px] py-[4px] rounded-[6px]" style={{ color: "#DC2626", background: "rgba(220,38,38,0.08)" }}>
+              {saveError}
+            </div>
+          )}
         </div>
       ) : (
         <button
