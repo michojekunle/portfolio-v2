@@ -10,8 +10,7 @@ import { CustomCursor } from "@/components/custom-cursor";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { NoiseOverlay } from "@/components/noise-overlay";
 import { Preloader } from "@/components/preloader";
-import { Analytics } from "@vercel/analytics/next"
-
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -160,7 +159,8 @@ const jsonLd = {
       "@id": "https://michaelojekunle.dev/#website",
       url: "https://michaelojekunle.dev",
       name: "Michael Ojekunle",
-      description: "Portfolio and blog of Michael Ojekunle — Full-Stack & Web3 Developer",
+      description:
+        "Portfolio and blog of Michael Ojekunle — Full-Stack & Web3 Developer",
       author: { "@id": "https://michaelojekunle.dev/#person" },
     },
   ],
@@ -176,14 +176,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+        />
         {/* JSON-LD structured data — in <head> avoids React 19 script-in-body warning */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         {/* Skip navigation — visible on focus for keyboard/screen-reader users */}
         <a
           href="#main-content"
@@ -201,8 +206,7 @@ export default function RootLayout({
             <Preloader />
             <NoiseOverlay />
             <CustomCursor />
-            <PortfolioChrome />
-            {children}
+            <PortfolioChrome children={children} />
             <CommandPalette />
             <Toaster />
           </SmoothScroll>
