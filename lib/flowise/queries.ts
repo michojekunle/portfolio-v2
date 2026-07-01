@@ -36,7 +36,6 @@ export async function getUserCategories(): Promise<FwCategory[]> {
   }
 
   const userCats = (data ?? []) as FwCategory[];
-  // Always include system categories; user cats override by id
   const sysCats = getSystemCategories();
   const userIds = new Set(userCats.filter((c) => c.is_system).map((c) => c.id));
   const merged = [...sysCats.filter((s) => !userIds.has(s.id)), ...userCats];
@@ -65,9 +64,12 @@ export async function getTransactions(opts: {
   offset?: number;
 }): Promise<FwTransaction[]> {
   const supabase = await createClient();
+  // Intentionally no fw_categories join — system categories have no DB rows
+  // and would cause a PostgREST relationship error. Category info is resolved
+  // client-side via the categories prop + SYSTEM_CATEGORIES.
   let query = supabase
     .from("fw_transactions")
-    .select("*, account:fw_accounts(name, color, currency, icon), category:fw_categories(name, icon, color)")
+    .select("*, account:fw_accounts(name, color, currency, icon)")
     .order("date", { ascending: false })
     .order("created_at", { ascending: false });
 
@@ -105,9 +107,11 @@ export async function getGoals(): Promise<FwGoal[]> {
 
 export async function getBudgets(month: string): Promise<FwBudget[]> {
   const supabase = await createClient();
+  // No fw_categories join — system categories aren't in the DB.
+  // BudgetsClient resolves category display using SYSTEM_CATEGORIES locally.
   const { data, error } = await supabase
     .from("fw_budgets")
-    .select("*, category:fw_categories(name, icon, color)")
+    .select("*")
     .eq("month", month);
 
   if (error) {
