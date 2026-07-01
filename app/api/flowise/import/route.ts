@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import Groq from "groq-sdk";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
+import { syncAccountBalance } from "@/lib/flowise/balance";
 
 const ImportSchema = z.object({
   account_id: z.string().uuid(),
@@ -14,9 +15,7 @@ const ImportSchema = z.object({
   })).min(1).max(500),
 });
 
-async function categorizeBatch(
-  descriptions: string[],
-): Promise<(string | null)[]> {
+async function categorizeBatch(descriptions: string[]): Promise<(string | null)[]> {
   const catList = SYSTEM_CATEGORIES.map((c) => `${c.id}: ${c.name}`).join(", ");
   const prompt = `Categorize these ${descriptions.length} Nigerian bank transaction descriptions into one of these categories: ${catList}.
 Return ONLY a JSON array of category IDs (or null if unclear), in the same order. No extra text.
@@ -47,7 +46,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   let body: unknown;
-  try { body = await request.json(); } catch {
+  try {
+    body = await request.json();
+  } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
@@ -58,21 +59,46 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const { account_id, rows } = parsed.data;
 
-  // Verify account ownership
   const { data: account } = await supabase
     .from("fw_accounts")
-    .select("id, current_balance")
+    .select("id")
     .eq("id", account_id)
     .eq("user_id", user.id)
     .single();
 
   if (!account) return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
-  // AI categorize all descriptions in one call
-  const categories = await categorizeBatch(rows.map((r) => r.description));
+  // Build dedup keys: deterministic hash of account + date + description + amount.
+  // Prevents importing the same CSV twice from creating duplicates.
+  const incomingRefs = rows.map(
+    (r) => `${account_id}:${r.date}:${r.description}:${r.amount}`,
+  );
 
-  // Build transaction inserts
-  const inserts = rows.map((row, i) => ({
+  const { data: existingRows } = await supabase
+    .from("fw_transactions")
+    .select("raw_import_ref")
+    .eq("user_id", user.id)
+    .in("raw_import_ref", incomingRefs);
+
+  const existingRefs = new Set(
+    (existingRows ?? []).map((e) => e.raw_import_ref as string),
+  );
+
+  const newRows = rows.filter((_, i) => !existingRefs.has(incomingRefs[i]));
+  const newRefs = incomingRefs.filter((ref) => !existingRefs.has(ref));
+  const skipped = rows.length - newRows.length;
+
+  if (newRows.length === 0) {
+    return NextResponse.json({
+      imported: 0,
+      duplicates_skipped: skipped,
+      message: "All rows already imported — no duplicates created.",
+    });
+  }
+
+  const categories = await categorizeBatch(newRows.map((r) => r.description));
+
+  const inserts = newRows.map((row, i) => ({
     user_id: user.id,
     account_id,
     amount: row.amount,
@@ -81,6 +107,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     description: row.description,
     source: "csv_import" as const,
     tags: [] as string[],
+    raw_import_ref: newRefs[i],
   }));
 
   const { data: inserted, error } = await supabase
@@ -93,16 +120,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to import transactions" }, { status: 500 });
   }
 
-  // Update account balance
-  const balanceDelta = rows.reduce((s, r) => s + r.amount, 0);
-  await supabase
-    .from("fw_accounts")
-    .update({ current_balance: (account.current_balance as number) + balanceDelta })
-    .eq("id", account_id)
-    .eq("user_id", user.id);
+  // Recompute balance from source of truth — handles partial inserts correctly.
+  await syncAccountBalance(supabase, account_id, user.id);
 
   return NextResponse.json({
     imported: inserted?.length ?? 0,
+    duplicates_skipped: skipped,
     categories_assigned: categories.filter(Boolean).length,
   });
 }
