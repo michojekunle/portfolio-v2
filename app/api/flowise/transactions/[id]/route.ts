@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { syncAccountBalance } from "@/lib/flowise/balance";
 
 const UpdateSchema = z.object({
   account_id: z.string().uuid().optional(),
@@ -20,9 +21,7 @@ export async function PATCH(
 ): Promise<NextResponse> {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   let body: unknown;
@@ -37,10 +36,10 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
-  // Fetch old transaction to adjust account balance
+  // Fetch original to know which account(s) to resync after update.
   const { data: oldTx } = await supabase
     .from("fw_transactions")
-    .select("account_id, amount")
+    .select("account_id")
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
@@ -62,61 +61,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Failed to update transaction" }, { status: 500 });
   }
 
-  // Recalculate account balance if amount or account changed
-  const amountChanged = parsed.data.amount !== undefined && parsed.data.amount !== (oldTx.amount as number);
-  const accountChanged = parsed.data.account_id !== undefined && parsed.data.account_id !== (oldTx.account_id as string);
+  // Resync the old account. If the account changed, also resync the new one.
+  const oldAccountId = oldTx.account_id as string;
+  const newAccountId = parsed.data.account_id;
 
-  if (amountChanged || accountChanged) {
-    const newAmount = parsed.data.amount ?? (oldTx.amount as number);
-    const oldAccountId = oldTx.account_id as string;
-    const newAccountId = parsed.data.account_id ?? oldAccountId;
-
-    if (accountChanged) {
-      // Revert old account
-      const { data: oldAccount } = await supabase
-        .from("fw_accounts")
-        .select("current_balance")
-        .eq("id", oldAccountId)
-        .eq("user_id", user.id)
-        .single();
-      if (oldAccount) {
-        await supabase
-          .from("fw_accounts")
-          .update({ current_balance: (oldAccount.current_balance as number) - (oldTx.amount as number) })
-          .eq("id", oldAccountId)
-          .eq("user_id", user.id);
-      }
-      // Apply to new account
-      const { data: newAccount } = await supabase
-        .from("fw_accounts")
-        .select("current_balance")
-        .eq("id", newAccountId)
-        .eq("user_id", user.id)
-        .single();
-      if (newAccount) {
-        await supabase
-          .from("fw_accounts")
-          .update({ current_balance: (newAccount.current_balance as number) + newAmount })
-          .eq("id", newAccountId)
-          .eq("user_id", user.id);
-      }
-    } else {
-      // Same account, just adjust by the diff
-      const diff = newAmount - (oldTx.amount as number);
-      const { data: account } = await supabase
-        .from("fw_accounts")
-        .select("current_balance")
-        .eq("id", oldAccountId)
-        .eq("user_id", user.id)
-        .single();
-      if (account) {
-        await supabase
-          .from("fw_accounts")
-          .update({ current_balance: (account.current_balance as number) + diff })
-          .eq("id", oldAccountId)
-          .eq("user_id", user.id);
-      }
-    }
+  await syncAccountBalance(supabase, oldAccountId, user.id);
+  if (newAccountId && newAccountId !== oldAccountId) {
+    await syncAccountBalance(supabase, newAccountId, user.id);
   }
 
   return NextResponse.json({ transaction: tx });
@@ -128,15 +79,12 @@ export async function DELETE(
 ): Promise<NextResponse> {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Fetch first to reverse the balance
   const { data: tx } = await supabase
     .from("fw_transactions")
-    .select("account_id, amount")
+    .select("account_id")
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
@@ -144,6 +92,8 @@ export async function DELETE(
   if (!tx) {
     return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
   }
+
+  const accountId = tx.account_id as string;
 
   const { error } = await supabase
     .from("fw_transactions")
@@ -156,21 +106,8 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete transaction" }, { status: 500 });
   }
 
-  // Revert balance
-  const { data: account } = await supabase
-    .from("fw_accounts")
-    .select("current_balance")
-    .eq("id", tx.account_id as string)
-    .eq("user_id", user.id)
-    .single();
-
-  if (account) {
-    await supabase
-      .from("fw_accounts")
-      .update({ current_balance: (account.current_balance as number) - (tx.amount as number) })
-      .eq("id", tx.account_id as string)
-      .eq("user_id", user.id);
-  }
+  // Resync after delete — balance will reflect the removed transaction.
+  await syncAccountBalance(supabase, accountId, user.id);
 
   return NextResponse.json({ success: true });
 }

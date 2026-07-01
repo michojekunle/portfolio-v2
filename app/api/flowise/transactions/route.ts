@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { syncAccountBalance } from "@/lib/flowise/balance";
 
 const CreateSchema = z.object({
   account_id: z.string().uuid(),
@@ -26,9 +27,7 @@ const ListSchema = z.object({
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const params = Object.fromEntries(request.nextUrl.searchParams);
@@ -39,12 +38,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const { account_id, category_id, month, limit, offset } = parsed.data;
 
+  // No fw_categories join — system categories aren't in the DB, which would
+  // cause a PostgREST "could not find relationship" error. Resolved client-side.
   let query = supabase
     .from("fw_transactions")
-    .select(
-      "*, account:fw_accounts(name, color, currency, icon), category:fw_categories(name, icon, color)",
-      { count: "exact" },
-    )
+    .select("*, account:fw_accounts(name, color, currency, icon)", { count: "exact" })
     .eq("user_id", user.id)
     .order("date", { ascending: false })
     .order("created_at", { ascending: false })
@@ -71,9 +69,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   let body: unknown;
@@ -88,10 +84,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
-  // Verify account belongs to this user
   const { data: account } = await supabase
     .from("fw_accounts")
-    .select("id, current_balance")
+    .select("id")
     .eq("id", parsed.data.account_id)
     .eq("user_id", user.id)
     .single();
@@ -100,7 +95,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Account not found" }, { status: 404 });
   }
 
-  // Insert transaction
   const { data: tx, error: txError } = await supabase
     .from("fw_transactions")
     .insert({ ...parsed.data, user_id: user.id })
@@ -112,18 +106,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 });
   }
 
-  // Update account balance
-  const newBalance = (account.current_balance as number) + parsed.data.amount;
-  const { error: balError } = await supabase
-    .from("fw_accounts")
-    .update({ current_balance: newBalance })
-    .eq("id", parsed.data.account_id)
-    .eq("user_id", user.id);
-
-  if (balError) {
-    console.error("[flowise/transactions] balance update error:", balError);
-    // Non-fatal — transaction was saved, balance can be recalculated
-  }
+  // Recompute balance from source of truth — idempotent and self-healing.
+  await syncAccountBalance(supabase, parsed.data.account_id, user.id);
 
   return NextResponse.json({ transaction: tx }, { status: 201 });
 }
