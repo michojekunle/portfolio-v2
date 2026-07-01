@@ -49,9 +49,11 @@ interface Props {
   onChapterText?: (text: string) => void;
   /** Called after each page render with current page and total pages. */
   onProgress?: (currentPage: number, totalPages: number) => void;
+  /** Called when book metadata (title, creator, cover base64) is parsed. */
+  onMetadata?: (meta: { title?: string; author?: string; coverUrl?: string }) => void;
 }
 
-export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props): React.ReactElement {
+export function PdfReader({ url, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<PDFDocumentProxy | null>(null);
@@ -69,6 +71,7 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props
   }, []);
   const [loadingPdf, setLoadingPdf] = useState(true);
   const [rendering, setRendering] = useState(false);
+  const [renderError, setRenderError] = useState<string | null>(null);
   const [textSel, setTextSel] = useState<TextSel | null>(null);
 
   // Load PDF document
@@ -94,6 +97,19 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props
       setTotalPages(pdf.numPages);
       setLoadingPdf(false);
       onProgress?.(1, pdf.numPages);
+
+      // Extract metadata
+      pdf.getMetadata().then((meta: any) => {
+        if (cancelled) return;
+        const title = meta.info?.Title;
+        const author = meta.info?.Author;
+        if (onMetadata && (title || author)) {
+          onMetadata({
+            title: title || undefined,
+            author: author || undefined,
+          });
+        }
+      }).catch(() => undefined);
     };
 
     void load().catch((err: unknown) => {
@@ -115,6 +131,7 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props
 
     renderTaskRef.current?.cancel();
     setRendering(true);
+    setRenderError(null);
 
     try {
       const page: PDFPageProxy = await pdf.getPage(pageNum);
@@ -158,11 +175,26 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props
       }
       onProgress?.(pageNum, pdf.numPages);
 
+      // If page 1, capture canvas contents to generate a cover image URL
+      if (pageNum === 1 && canvasRef.current && onMetadata) {
+        setTimeout(() => {
+          if (canvasRef.current) {
+            try {
+              const coverDataUrl = canvasRef.current.toDataURL("image/jpeg", 0.6);
+              onMetadata({ coverUrl: coverDataUrl });
+            } catch (err) {
+              console.warn("[pdf] cover export error:", err);
+            }
+          }
+        }, 100);
+      }
+
       page.cleanup();
     } catch (err: unknown) {
       // RenderingCancelledException is expected when scale/page changes rapidly
       if ((err as { name?: string }).name !== "RenderingCancelledException") {
         console.error("[pdf] render error:", err);
+        setRenderError("Failed to render this page. Try zooming or navigating to another page.");
       }
     } finally {
       setRendering(false);
@@ -217,6 +249,13 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress }: Props
           {rendering && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/20">
               <Loader2 size={18} className="animate-spin" style={{ color: ACCENT }} />
+            </div>
+          )}
+          {renderError && !rendering && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-black/60">
+              <p className="font-mono text-[11px] tracking-[0.08em] text-center px-[24px]" style={{ color: "#DC2626" }}>
+                {renderError}
+              </p>
             </div>
           )}
         </div>

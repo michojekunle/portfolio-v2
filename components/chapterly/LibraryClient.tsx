@@ -82,13 +82,9 @@ function detectFormat(filename: string): FileFormat {
 
 interface Props {
   books: ChBookWithStats[];
-  atFreeLimit: boolean;
 }
 
-export function ChLibraryClient({
-  books: initialBooks,
-  atFreeLimit,
-}: Props): React.ReactElement {
+export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElement {
   const [books, setBooks] = useState(initialBooks);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ReadingStatus | "all">(
@@ -111,7 +107,7 @@ export function ChLibraryClient({
   });
 
   const handleFile = async (file: File): Promise<void> => {
-    if (atFreeLimit && books.length >= FREE_BOOK_LIMIT) {
+    if (books.length >= FREE_BOOK_LIMIT) {
       setUploadError(
         `Free plan is limited to ${FREE_BOOK_LIMIT} books. Upgrade to add more.`
       );
@@ -196,7 +192,7 @@ export function ChLibraryClient({
         </div>
         <button
           onClick={() => {
-            if (!atFreeLimit || books.length < FREE_BOOK_LIMIT) setShowUpload(true);
+            if (books.length < FREE_BOOK_LIMIT) setShowUpload(true);
             else
               setUploadError(
                 `Free plan limit: ${FREE_BOOK_LIMIT} books. Upgrade to add more.`
@@ -389,10 +385,19 @@ function BookCard({ book }: { book: ChBookWithStats }): React.ReactElement {
     >
       {/* Cover */}
       <div
-        className="w-full aspect-[3/4] flex items-center justify-center"
+        className="w-full aspect-[3/4] flex items-center justify-center relative overflow-hidden"
         style={{ background: ACCENT + "18" }}
       >
-        <BookMarked size={32} style={{ color: ACCENT, opacity: 0.6 }} />
+        {book.cover_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={book.cover_url}
+            alt={book.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <BookMarked size={32} style={{ color: ACCENT, opacity: 0.6 }} />
+        )}
       </div>
 
       {/* Meta */}

@@ -21,10 +21,13 @@ interface Props {
   /** Called with the plain text of each newly rendered chapter, for TTS. */
   onChapterText?: (text: string) => void;
   /** Called on every chapter navigation with the current progress percentage (0-100). */
+  /** Called on every chapter navigation with the current progress percentage (0-100). */
   onProgress?: (pct: number) => void;
+  /** Called when book metadata (title, creator, cover base64) is parsed on mount. */
+  onMetadata?: (meta: { title?: string; author?: string; coverUrl?: string }) => void;
 }
 
-export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText, onProgress }: Props): React.ReactElement {
+export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
   const viewerRef = useRef<HTMLDivElement>(null);
   const renditionRef = useRef<Rendition | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,18 +62,74 @@ export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText, o
         rendition.themes.register("reader", buildTheme(theme, fontSize));
         rendition.themes.select("reader");
 
+        // Parse and report metadata & cover image
+        book.loaded.metadata.then((meta: any) => {
+          const author = meta.creator || null;
+          const title = meta.title || null;
+          
+          book.coverUrl().then((coverUrl: string | null) => {
+            if (coverUrl && onMetadata) {
+              fetch(coverUrl)
+                .then((r) => r.blob())
+                .then((blob) => {
+                  const reader = new FileReader();
+                  reader.readAsDataURL(blob);
+                  reader.onloadend = () => {
+                    onMetadata({
+                      title: title || undefined,
+                      author: author || undefined,
+                      coverUrl: reader.result as string,
+                    });
+                  };
+                })
+                .catch(() => {
+                  onMetadata({
+                    title: title || undefined,
+                    author: author || undefined,
+                  });
+                });
+            } else if (onMetadata) {
+              onMetadata({
+                title: title || undefined,
+                author: author || undefined,
+              });
+            }
+          });
+        });
+
+        // Generate locations to ensure percentage progress works
+        book.ready.then(() => {
+          return book.locations.generate(1024);
+        }).then(() => {
+          if (destroyed) return;
+          // Trigger initial progress calculate
+          if (rendition.location) {
+            const progressVal = book.locations.percentageFromCfi(rendition.location.start.cfi);
+            const pct = Math.round(progressVal * 100);
+            setProgress(pct);
+            onProgress?.(pct);
+          }
+        }).catch(() => undefined);
+
         rendition.on("relocated", (location: Location) => {
-          if (location.start?.percentage !== undefined) {
+          if (book.locations && location.start?.cfi) {
+            const progressVal = book.locations.percentageFromCfi(location.start.cfi);
+            const pct = Math.round(progressVal * 100);
+            setProgress(pct);
+            onProgress?.(pct);
+          } else if (location.start?.percentage !== undefined) {
             const pct = Math.round(location.start.percentage * 100);
             setProgress(pct);
             onProgress?.(pct);
           }
           if (onChapterText) {
-            // Extract plain text of the current chapter for TTS.
-            // getContents() returns the single Contents object for the active view.
+            // Extract plain text of the current viewport content for TTS
             const contents = rendition.getContents();
-            const text = contents.document?.body?.innerText ?? "";
-            if (text.trim()) onChapterText(text);
+            const text = contents
+              .map((c: any) => c.document?.body?.innerText ?? "")
+              .join("\n")
+              .trim();
+            if (text) onChapterText(text);
           }
         });
 

@@ -85,6 +85,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   const sessionLoggedRef = useRef(false);
   const notePanelRef = useRef<HTMLTextAreaElement>(null);
   const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingProgressRef = useRef<{ current_page?: number; progress_pct?: number; total_pages?: number } | null>(null);
 
   const current = THEMES[theme];
   const isTextFormat = ["docx", "txt", "md", "html", "fb2"].includes(
@@ -193,11 +194,13 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     return el?.innerText?.trim() || book.title;
   }, [chapterText, book.title]);
 
-  // ── Progress persistence (debounced 2 s) ──────────────────────
+  // ── Progress persistence (debounced 2 s, flushed on unmount) ──
   const saveProgress = useCallback(
     (updates: { current_page?: number; progress_pct?: number; total_pages?: number }): void => {
+      pendingProgressRef.current = updates;
       if (progressTimerRef.current) clearTimeout(progressTimerRef.current);
       progressTimerRef.current = setTimeout(() => {
+        pendingProgressRef.current = null;
         void fetch(`/api/chapterly/books/${book.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -207,6 +210,48 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     },
     [book.id]
   );
+
+  useEffect(() => {
+    return () => {
+      if (progressTimerRef.current) clearTimeout(progressTimerRef.current);
+      const pending = pendingProgressRef.current;
+      if (pending) {
+        // Flush on unmount (in-app navigation). fetch may not complete on full tab close
+        // but survives normal Next.js client-side route changes.
+        void fetch(`/api/chapterly/books/${book.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(pending),
+        }).catch(() => undefined);
+      }
+    };
+  }, [book.id]);
+
+  const handleMetadata = useCallback((meta: { title?: string; author?: string; coverUrl?: string }) => {
+    const updates: Record<string, string | null> = {};
+    let needsUpdate = false;
+
+    if (meta.title && book.title !== meta.title) {
+      updates.title = meta.title;
+      needsUpdate = true;
+    }
+    if (meta.author && !book.author) {
+      updates.author = meta.author;
+      needsUpdate = true;
+    }
+    if (meta.coverUrl && !book.cover_url) {
+      updates.cover_url = meta.coverUrl;
+      needsUpdate = true;
+    }
+
+    if (needsUpdate) {
+      void fetch(`/api/chapterly/books/${book.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      }).catch((err) => console.error("[reader] metadata save error:", err));
+    }
+  }, [book.id, book.title, book.author, book.cover_url]);
 
   // ── Text selection → highlight ────────────────────────────────
   const handleTextMouseUp = (): void => {
@@ -443,6 +488,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               fontSize={fontSize}
               onChapterText={setChapterText}
               onProgress={(pct) => saveProgress({ progress_pct: pct })}
+              onMetadata={handleMetadata}
               onHighlight={async (text, cfi, color) => {
                 try {
                   const res = await fetch("/api/chapterly/highlights", {
@@ -469,6 +515,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   progress_pct: Math.round((page / total) * 100),
                 })
               }
+              onMetadata={handleMetadata}
               onHighlight={async (text, color) => {
                 try {
                   const res = await fetch("/api/chapterly/highlights", {

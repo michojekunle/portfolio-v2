@@ -174,10 +174,19 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
               <div className="flex items-start gap-[16px]">
                 {/* Cover placeholder */}
                 <div
-                  className="w-[56px] h-[76px] rounded-[6px] shrink-0 flex items-center justify-center"
+                  className="w-[56px] h-[76px] rounded-[6px] shrink-0 flex items-center justify-center relative overflow-hidden"
                   style={{ background: ACCENT + "22" }}
                 >
-                  <BookMarked size={24} style={{ color: ACCENT }} />
+                  {currentBook.cover_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={currentBook.cover_url}
+                      alt={currentBook.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <BookMarked size={24} style={{ color: ACCENT }} />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[16px] font-semibold text-[var(--ink)] leading-[1.3] line-clamp-2">
@@ -272,13 +281,22 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                 className="rounded-[14px] p-[16px] no-underline border border-[var(--rule)] bg-[var(--bg-2)] hover:border-[var(--ink-3)] hover:shadow-md transition-all duration-200 group block"
               >
                 <div
-                  className="w-full aspect-[3/4] rounded-[6px] flex items-center justify-center mb-[12px]"
+                  className="w-full aspect-[3/4] rounded-[6px] flex items-center justify-center mb-[12px] relative overflow-hidden"
                   style={{ background: ACCENT + "18" }}
                 >
-                  <BookMarked
-                    size={28}
-                    style={{ color: ACCENT, opacity: 0.7 }}
-                  />
+                  {book.cover_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={book.cover_url}
+                      alt={book.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <BookMarked
+                      size={28}
+                      style={{ color: ACCENT, opacity: 0.7 }}
+                    />
+                  )}
                 </div>
                 <div className="text-[13px] font-semibold text-[var(--ink)] line-clamp-2 leading-[1.3]">
                   {book.title}
