@@ -54,13 +54,15 @@ function tryParseAmount(val: string): number | null {
 
 function tryParseDate(val: string): string | null {
   if (!val) return null;
-  // Try common formats: YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY, DD-Mon-YYYY
-  const iso = val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (iso) return val;
+  // YYYY-MM-DD — ISO, pass through directly
+  if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
+  // DD/MM/YYYY — Nigerian bank default (GTBank, Access, Zenith, Kuda, OPay, etc.)
   const dmy = val.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if (dmy) return `${dmy[3]}-${dmy[2]}-${dmy[1]}`;
-  const mdy = val.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (mdy) return `${mdy[3]}-${mdy[1]}-${mdy[2]}`;
+  // DD-MM-YYYY — hyphen variant used by some exporters
+  const dmyHyphen = val.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (dmyHyphen) return `${dmyHyphen[3]}-${dmyHyphen[2]}-${dmyHyphen[1]}`;
+  // "15-Jan-2025", "15 Jan 2025" or any locale string — let the engine parse it
   const d = new Date(val);
   if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
   return null;
