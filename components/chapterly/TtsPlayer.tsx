@@ -114,6 +114,13 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
     }
   }, [speed, selectedVoiceIndex]);
 
+  // Restart playback if text content changes (e.g. user turns the page) while active
+  useEffect(() => {
+    if (playStateRef.current === "playing") {
+      playRef.current();
+    }
+  }, [text]);
+
   // Clean up on unmount
   useEffect(() => () => window.speechSynthesis.cancel(), []);
 

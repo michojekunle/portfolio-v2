@@ -2,8 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { Camera, X, Upload, AlertCircle } from "lucide-react";
-import type { FwAccount, FwCategory } from "@/lib/flowise/types";
-import { CURRENCY_SYMBOLS } from "@/lib/flowise/types";
+import type { FwAccount, FwCategory, FwTransaction } from "@/lib/flowise/types";
 import { TransactionForm } from "./TransactionForm";
 
 const ACCENT = "#16A34A";
@@ -78,10 +77,6 @@ export function ReceiptScanner({ accounts, categories, onClose, onTransactionAdd
     isIncome: scanned.is_income ?? false,
   } : null;
 
-  // Get default currency from first account
-  const defaultCurrency = accounts[0]?.currency ?? "NGN";
-  const currencySymbol = CURRENCY_SYMBOLS[defaultCurrency];
-
   if (stage === "review" && prefill) {
     return (
       <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-[16px]">
@@ -102,9 +97,8 @@ export function ReceiptScanner({ accounts, categories, onClose, onTransactionAdd
               accounts={accounts}
               categories={categories}
               prefill={prefill}
-              currencySymbol={currencySymbol}
               onClose={onClose}
-              onSaved={() => { onTransactionAdded(); onClose(); }}
+              onCreated={(_tx: FwTransaction) => { onTransactionAdded(); onClose(); }}
               embedded
             />
           </div>

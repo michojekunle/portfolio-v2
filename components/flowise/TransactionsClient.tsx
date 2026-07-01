@@ -4,7 +4,9 @@ import { useState, useCallback } from "react";
 import type { FwAccount, FwCategory, FwTransaction } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
 import { TransactionForm } from "./TransactionForm";
-import { Plus, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { CSVImportWizard } from "./CSVImportWizard";
+import { ReceiptScanner } from "./ReceiptScanner";
+import { Plus, Trash2, ChevronLeft, ChevronRight, Upload, Camera } from "lucide-react";
 
 const ACCENT = "#16A34A";
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -21,6 +23,8 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
   const [month, setMonth] = useState(initialMonth);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchMonth = useCallback(async (m: string): Promise<void> => {
@@ -75,13 +79,17 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
         <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-[var(--ink)]">
           Transactions
         </h1>
-        <button
-          onClick={() => setShowForm(true)}
-          className="inline-flex items-center gap-[8px] h-[40px] px-[18px] rounded-full font-mono text-[10px] uppercase tracking-[0.14em] font-semibold text-white border-none cursor-pointer"
-          style={{ background: ACCENT }}
-        >
-          <Plus size={13} /> Add
-        </button>
+        <div className="flex items-center gap-[8px]">
+          <button onClick={() => setShowScanner(true)} className="inline-flex items-center gap-[6px] h-[36px] px-[14px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold border-none cursor-pointer" style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }} title="Scan receipt or bank alert">
+            <Camera size={12} /> Scan
+          </button>
+          <button onClick={() => setShowImport(true)} className="inline-flex items-center gap-[6px] h-[36px] px-[14px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold border-none cursor-pointer" style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }} title="Import CSV bank statement">
+            <Upload size={12} /> Import
+          </button>
+          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-[8px] h-[40px] px-[18px] rounded-full font-mono text-[10px] uppercase tracking-[0.14em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
+            <Plus size={13} /> Add
+          </button>
+        </div>
       </div>
 
       {/* Month nav */}
@@ -162,6 +170,12 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
 
       {showForm && (
         <TransactionForm accounts={accounts} categories={categories} onCreated={handleCreated} onClose={() => setShowForm(false)} />
+      )}
+      {showImport && (
+        <CSVImportWizard accounts={accounts} onClose={() => setShowImport(false)} onImported={() => void fetchMonth(month)} />
+      )}
+      {showScanner && (
+        <ReceiptScanner accounts={accounts} categories={categories} onClose={() => setShowScanner(false)} onTransactionAdded={() => void fetchMonth(month)} />
       )}
     </div>
   );

@@ -84,6 +84,18 @@ export function ChChatClient({ book }: Props): React.ReactElement {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Clean up any running SpeechSynthesis or SpeechRecognition on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
   const sendMessage = async (text: string): Promise<void> => {
     const trimmed = text.trim();
     if (!trimmed || loading) return;

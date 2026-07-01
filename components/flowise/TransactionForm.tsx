@@ -6,12 +6,22 @@ import { X, Check } from "lucide-react";
 
 const ACCENT = "#16A34A";
 
+interface Prefill {
+  amount: string;
+  description: string;
+  date: string;
+  category_id: string;
+  isIncome: boolean;
+}
+
 interface Props {
   accounts: FwAccount[];
   categories: FwCategory[];
   onCreated: (tx: FwTransaction) => void;
   onClose: () => void;
   defaultAccountId?: string;
+  prefill?: Prefill;
+  embedded?: boolean;
 }
 
 type TxType = "expense" | "income";
@@ -22,13 +32,15 @@ export function TransactionForm({
   onCreated,
   onClose,
   defaultAccountId,
+  prefill,
+  embedded = false,
 }: Props): React.ReactElement {
-  const [txType, setTxType] = useState<TxType>("expense");
-  const [amount, setAmount] = useState("");
-  const [description, setDescription] = useState("");
+  const [txType, setTxType] = useState<TxType>(prefill?.isIncome ? "income" : "expense");
+  const [amount, setAmount] = useState(prefill?.amount ?? "");
+  const [description, setDescription] = useState(prefill?.description ?? "");
   const [accountId, setAccountId] = useState(defaultAccountId ?? accounts[0]?.id ?? "");
-  const [categoryId, setCategoryId] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [categoryId, setCategoryId] = useState(prefill?.category_id ?? "");
+  const [date, setDate] = useState(prefill?.date ?? new Date().toISOString().slice(0, 10));
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -103,34 +115,7 @@ export function TransactionForm({
   };
   const symbol = currencySymbols[selectedAccount?.currency ?? "NGN"] ?? "₦";
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-[16px]">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
-      {/* Panel */}
-      <div
-        className="relative z-10 w-full max-w-[480px] rounded-t-[20px] sm:rounded-[16px] overflow-hidden"
-        style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-[24px] py-[20px] border-b border-[var(--rule)]">
-          <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">
-            Add Transaction
-          </h2>
-          <button
-            onClick={onClose}
-            className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:bg-[var(--bg-2)] transition-colors"
-            aria-label="Close"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
+  const formContent = (
         <form onSubmit={handleSubmit} className="px-[24px] py-[20px] space-y-[18px]">
           {/* Type toggle */}
           <div
@@ -311,6 +296,19 @@ export function TransactionForm({
             </p>
           )}
         </form>
+  );
+
+  if (embedded) return formContent;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-[16px]">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
+      <div className="relative z-10 w-full max-w-[480px] rounded-t-[20px] sm:rounded-[16px] overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
+        <div className="flex items-center justify-between px-[24px] py-[20px] border-b border-[var(--rule)]">
+          <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">Add Transaction</h2>
+          <button onClick={onClose} className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:bg-[var(--bg-2)] transition-colors" aria-label="Close"><X size={18} /></button>
+        </div>
+        {formContent}
       </div>
     </div>
   );
