@@ -55,7 +55,7 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
     setShowForm(false);
   }, [month]);
 
-  const handleDelete = async (id: string, amount: number, accountId: string): Promise<void> => {
+  const handleDelete = async (id: string): Promise<void> => {
     if (!confirm("Delete this transaction?")) return;
     setDeletingId(id);
     try {
@@ -154,7 +154,7 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
                     </div>
                   </div>
                   <button
-                    onClick={() => handleDelete(tx.id, tx.amount, tx.account_id)}
+                    onClick={() => void handleDelete(tx.id)}
                     disabled={deletingId === tx.id}
                     className="opacity-0 group-hover:opacity-100 w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-4)] hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)] transition-all"
                     aria-label="Delete transaction"
