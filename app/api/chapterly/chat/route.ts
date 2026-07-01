@@ -10,7 +10,7 @@ export const DEFAULT_MODEL_CHAIN = [
   "google:gemini-2.5-flash",
   "google:gemini-3.1-flash-lite",
   "google:gemini-2.5-flash-lite",
-  "groq:llama-3.3-70b-versatile",
+  "groq:openai/gpt-oss-120b",
   "groq:llama-3.1-8b-instant",
   "google:gemini-3-flash-preview",
   "google:gemini-flash-latest"
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
 
   const highlightContext =
     highlights && highlights.length > 0
-      ? `\n\nThe user's highlighted passages from this book:\n${highlights
+      ? `\n\nThe user's highlighted passages from this book (${highlights.length === 20 ? "showing 20 most recent; they may have more" : `${highlights.length} total`}):\n${highlights
           .map((h, i) => `${i + 1}. "${h.text}"${h.note ? ` — Note: ${h.note}` : ""}`)
           .join("\n")}`
       : "";
@@ -259,7 +259,38 @@ Respond conversationally. If asked about something outside this book, gently red
     stream = fallbackStream(book_title);
   }
 
-  return new Response(stream, {
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
+
+  // Wrap stream to intercept accumulated text and persist the exchange afterwards
+  const persistingStream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const reader = stream!.getReader();
+      let accumulated = "";
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          accumulated += new TextDecoder().decode(value, { stream: true });
+          controller.enqueue(value);
+        }
+      } catch (err) {
+        controller.error(err);
+        return;
+      } finally {
+        controller.close();
+        reader.releaseLock();
+      }
+      // Fire-and-forget persistence — never blocks the response
+      if (accumulated && lastUserMessage) {
+        void supabase.from("ch_chat_history").insert([
+          { user_id: user.id, book_id, role: "user", content: lastUserMessage.content },
+          { user_id: user.id, book_id, role: "assistant", content: accumulated },
+        ]);
+      }
+    },
+  });
+
+  return new Response(persistingStream, {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
