@@ -12,7 +12,11 @@ const TOOL_APP_PREFIXES = [
   "/tools/chapterly",
 ];
 
-export function PortfolioChrome(): React.ReactElement | null {
+export function PortfolioChrome({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement | null {
   const pathname = usePathname();
   const isToolApp = TOOL_APP_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
@@ -21,6 +25,7 @@ export function PortfolioChrome(): React.ReactElement | null {
   return (
     <>
       <Navbar />
+      {children}
       <GlobalContactCTA />
       <PortfolioFooter />
     </>
