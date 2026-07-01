@@ -10,6 +10,7 @@ import { GlobalContactCTA } from "@/components/global-contact-cta";
 const TOOL_APP_PREFIXES = [
   "/tools/bookbreaks",
   "/tools/chapterly",
+  "/tools/flowise",
 ];
 
 export function PortfolioChrome({
