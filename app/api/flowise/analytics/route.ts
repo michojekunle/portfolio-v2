@@ -18,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   // Fetch all transactions in range
   const { data: txRows, error } = await supabase
     .from("fw_transactions")
-    .select("date, amount, category_id, account_id, fw_accounts(currency)")
+    .select("date, amount, category_id")
     .eq("user_id", user.id)
     .gte("date", startStr)
     .lte("date", endStr)
