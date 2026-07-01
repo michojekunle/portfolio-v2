@@ -20,6 +20,7 @@ const RequestSchema = z.object({
   book_id: z.string().uuid(),
   book_title: z.string().min(1),
   book_author: z.string().nullable().optional(),
+  voice_mode: z.boolean().optional(),
   messages: z.array(
     z.object({
       role: z.enum(["user", "assistant"]),
@@ -195,7 +196,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
-  const { book_id, book_title, book_author, messages } = parsed.data;
+  const { book_id, book_title, book_author, messages, voice_mode } = parsed.data;
 
   // Verify user owns the book
   const { data: book } = await supabase
@@ -224,7 +225,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
           .join("\n")}`
       : "";
 
-  const systemPrompt = `You are an AI reading companion for the book "${book_title}"${
+  let systemPrompt = `You are an AI reading companion for the book "${book_title}"${
     book_author ? ` by ${book_author}` : ""
   }. You help the reader understand, analyze, and discuss this book deeply.
 
@@ -237,6 +238,13 @@ Your role:
 ${highlightContext}
 
 Respond conversationally. If asked about something outside this book, gently redirect back to the book unless it's a direct connection.`;
+
+  if (voice_mode) {
+    systemPrompt += `\n\nCRITICAL VOICE MODE INSTRUCTION: You are in a real-time live voice dialogue with the user.
+- Keep your answers very short (1-3 sentences maximum).
+- Respond in a natural, spoken-style tone. 
+- NEVER use markdown, bullet points, numbered lists, asterisks (**), or headers. Use plain, easy-to-read text that sounds natural when spoken aloud.`;
+  }
 
   const settings = await getBBSettings();
   const models = getModelChain(settings?.ai_provider ?? "auto");
