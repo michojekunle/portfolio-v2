@@ -21,7 +21,7 @@ export function PortfolioChrome({
   const pathname = usePathname();
   const isToolApp = TOOL_APP_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
-  if (isToolApp) return null;
+  if (isToolApp) return <>{children}</>;
 
   return (
     <>
