@@ -18,7 +18,11 @@ export function ImageUpload({
   onChange,
   bucket = "projects",
 }: ImageUploadProps) {
-  const [mode, setMode] = useState<"upload" | "url">(value.startsWith("http") && !value.includes("supabase.co") ? "url" : "upload");
+  const [mode, setMode] = useState<"upload" | "url">(
+    value.startsWith("http") && !value.includes("supabase.co")
+      ? "url"
+      : "upload"
+  );
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
@@ -41,7 +45,7 @@ export function ImageUpload({
 
     try {
       setUploading(true);
-      
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("bucket", bucket);
@@ -122,7 +126,7 @@ export function ImageUpload({
                   type="button"
                   variant="secondary"
                   size="sm"
-                  className="h-8 text-xs bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md"
+                  className="h-8 text-xs bg-white/10 hover:bg-white/20 text-(--bg) border-white/20 backdrop-blur-md"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   Change
@@ -153,7 +157,9 @@ export function ImageUpload({
             </div>
             <div className="text-center">
               <p className="text-sm font-medium">Click to upload image</p>
-              <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP up to 5MB</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                PNG, JPG, WebP up to 5MB
+              </p>
             </div>
             <input
               type="file"

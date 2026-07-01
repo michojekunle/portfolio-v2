@@ -91,9 +91,7 @@ function LoginContent(): React.ReactElement {
   const isDisabled = loading || googleLoading;
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-[24px] py-[80px] bg-[var(--bg)]"
-    >
+    <div className="min-h-screen flex items-center justify-center px-[24px] py-[80px] bg-[var(--bg)]">
       <div className="w-full max-w-[420px]">
         {/* Logo mark */}
         <div className="mb-[40px]">
@@ -101,10 +99,7 @@ function LoginContent(): React.ReactElement {
             href="/tools"
             className="inline-flex items-center gap-[8px] no-underline mb-[32px] group"
           >
-            <span
-              className="font-mono text-[10px] tracking-[0.14em] uppercase transition-colors"
-              
-            >
+            <span className="font-mono text-[10px] tracking-[0.14em] uppercase transition-colors">
               <ArrowLeft className="w-3 h-3 mr-1 inline-block" /> Creator Suite
             </span>
           </Link>
@@ -117,31 +112,19 @@ function LoginContent(): React.ReactElement {
               <BookOpen className="w-5 h-5 text-[var(--v3-accent)]" />
             </div>
             <div>
-              <div
-                className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-[1]"
-                
-              >
+              <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-[1]">
                 BookBreaks
               </div>
-              <div
-                className="font-mono text-[10px] tracking-[0.12em] uppercase"
-                
-              >
+              <div className="font-mono text-[10px] tracking-[0.12em] uppercase">
                 AI-Powered Book Insights
               </div>
             </div>
           </div>
 
-          <h1
-            className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0"
-            
-          >
+          <h1 className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0">
             {mode === "signin" ? "Welcome back." : "Start your journey."}
           </h1>
-          <p
-            className="text-[14px] leading-[1.6] mt-[8px] m-0"
-            
-          >
+          <p className="text-[14px] leading-[1.6] mt-[8px] m-0">
             {mode === "signin"
               ? "Sign in to access your books and generated content."
               : "Create an account to start turning books into content."}
@@ -164,7 +147,10 @@ function LoginContent(): React.ReactElement {
           {googleLoading ? (
             <span
               className="w-[18px] h-[18px] rounded-full border-[2px] border-t-transparent animate-spin"
-              style={{ borderColor: "var(--rule)", borderTopColor: "transparent" }}
+              style={{
+                borderColor: "var(--rule)",
+                borderTopColor: "transparent",
+              }}
               aria-hidden="true"
             />
           ) : (
@@ -179,14 +165,20 @@ function LoginContent(): React.ReactElement {
 
         {/* Divider */}
         <div className="flex items-center gap-[12px] my-[24px]">
-          <div className="flex-1 h-[1px]" style={{ background: "var(--rule)" }} />
+          <div
+            className="flex-1 h-[1px]"
+            style={{ background: "var(--rule)" }}
+          />
           <span
             className="font-mono text-[10px] tracking-[0.12em] uppercase shrink-0"
             style={{ color: "var(--ink-4)" }}
           >
             or
           </span>
-          <div className="flex-1 h-[1px]" style={{ background: "var(--rule)" }} />
+          <div
+            className="flex-1 h-[1px]"
+            style={{ background: "var(--rule)" }}
+          />
         </div>
 
         {/* Email / password form */}
@@ -195,7 +187,6 @@ function LoginContent(): React.ReactElement {
             <label
               htmlFor="email"
               className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              
             >
               Email address
             </label>
@@ -209,7 +200,6 @@ function LoginContent(): React.ReactElement {
               disabled={isDisabled}
               autoComplete="email"
               className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
-              
             />
           </div>
 
@@ -217,7 +207,6 @@ function LoginContent(): React.ReactElement {
             <label
               htmlFor="password"
               className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
-              
             >
               Password
             </label>
@@ -229,10 +218,11 @@ function LoginContent(): React.ReactElement {
               placeholder="••••••••"
               required
               disabled={isDisabled}
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
+              autoComplete={
+                mode === "signin" ? "current-password" : "new-password"
+              }
               minLength={6}
               className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
-              
             />
           </div>
 
@@ -266,22 +256,28 @@ function LoginContent(): React.ReactElement {
           <button
             type="submit"
             disabled={isDisabled}
-            className="w-full h-[52px] rounded-[8px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 hover:scale-[1.01]"
+            className="w-full h-[52px] rounded-[8px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-(--bg) transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 hover:scale-[1.01]"
             style={{ background: "var(--v3-accent)" }}
           >
-            {loading
-              ? "Please wait…"
-              : mode === "signin"
-              ? <><span className="mr-1">Sign In</span> <ArrowRight className="w-3 h-3 inline-block" /></>
-              : <><span className="mr-1">Create Account</span> <ArrowRight className="w-3 h-3 inline-block" /></>}
+            {loading ? (
+              "Please wait…"
+            ) : mode === "signin" ? (
+              <>
+                <span className="mr-1">Sign In</span>{" "}
+                <ArrowRight className="w-3 h-3 inline-block" />
+              </>
+            ) : (
+              <>
+                <span className="mr-1">Create Account</span>{" "}
+                <ArrowRight className="w-3 h-3 inline-block" />
+              </>
+            )}
           </button>
         </form>
 
         {/* Toggle mode */}
         <div className="mt-[24px] text-center">
-          <span
-            className="text-[13px] text-[var(--ink-3)]"
-          >
+          <span className="text-[13px] text-[var(--ink-3)]">
             {mode === "signin"
               ? "Don't have an account? "
               : "Already have an account? "}
@@ -300,10 +296,11 @@ function LoginContent(): React.ReactElement {
         </div>
 
         {/* Footer */}
-        <div className="mt-[48px] pt-[24px]" style={{ borderTop: "1px solid var(--rule)" }}>
-          <p
-            className="text-center text-[12px] leading-[1.6] m-0 text-[var(--ink-4)]"
-          >
+        <div
+          className="mt-[48px] pt-[24px]"
+          style={{ borderTop: "1px solid var(--rule)" }}
+        >
+          <p className="text-center text-[12px] leading-[1.6] m-0 text-[var(--ink-4)]">
             Part of{" "}
             <Link
               href="/tools"
@@ -345,7 +342,13 @@ function GoogleIcon(): React.ReactElement {
 
 export default function BookBreaksLoginPage(): React.ReactElement {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--ink-3)]">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--ink-3)]">
+          Loading...
+        </div>
+      }
+    >
       <LoginContent />
     </Suspense>
   );

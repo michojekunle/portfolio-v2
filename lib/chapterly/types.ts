@@ -4,6 +4,13 @@ export type FileFormat = "pdf" | "epub" | "docx" | "txt" | "md" | "html" | "azw3
 
 export type HighlightColor = "yellow" | "green" | "blue" | "pink";
 
+export const HIGHLIGHT_COLORS: { id: HighlightColor; bg: string; ring: string }[] = [
+  { id: "yellow", bg: "#FEF08A", ring: "#CA8A04" },
+  { id: "green", bg: "#BBF7D0", ring: "#16A34A" },
+  { id: "blue", bg: "#BFDBFE", ring: "#1D4ED8" },
+  { id: "pink", bg: "#FBCFE8", ring: "#9D174D" },
+];
+
 export type PlanTier = "free" | "pro";
 
 export const FREE_BOOK_LIMIT = 3;

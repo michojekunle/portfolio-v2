@@ -42,7 +42,7 @@ export function ThemeTweaker() {
         onClick={() => setOpen((o) => !o)}
         aria-label="Open theme tweaker"
         style={{ zIndex: 200 }}
-        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--v3-accent)] text-white shadow-xl ring-4 ring-[color-mix(in_oklab,var(--v3-accent)_40%,transparent)] transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95"
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--v3-accent)] text-(--bg) shadow-xl ring-4 ring-[color-mix(in_oklab,var(--v3-accent)_40%,transparent)] transition-all duration-200 hover:scale-110 hover:shadow-2xl active:scale-95"
       >
         <Palette size={20} />
       </button>
@@ -97,20 +97,23 @@ export function ThemeTweaker() {
                 >
                   {/* Toggle pill */}
                   <div
-                    className={`relative w-10 h-5 rounded-full flex-shrink-0 transition-colors duration-200 ${isDark ? "bg-[var(--v3-accent)]" : "bg-[var(--rule)]"}`}
+                    className={`relative w-10 h-5 rounded-full flex-shrink-0 transition-colors duration-200 ${
+                      isDark ? "bg-[var(--v3-accent)]" : "bg-[var(--rule)]"
+                    }`}
                   >
                     <span
-                      className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-[var(--bg)] transition-transform duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex items-center justify-center ${isDark ? "translate-x-[20px]" : "translate-x-0"}`}
+                      className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-[var(--bg)] transition-transform duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex items-center justify-center ${
+                        isDark ? "translate-x-[20px]" : "translate-x-0"
+                      }`}
                     />
                   </div>
                   <div className="flex items-center gap-2 flex-1">
-                    {mounted && (
-                      isDark ? (
+                    {mounted &&
+                      (isDark ? (
                         <Moon size={14} className="text-[var(--v3-accent)]" />
                       ) : (
                         <Sun size={14} className="text-[var(--ink-3)]" />
-                      )
-                    )}
+                      ))}
                     <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--ink-2)]">
                       {mounted ? (isDark ? "Dark mode" : "Light mode") : "Mode"}
                     </span>

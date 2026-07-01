@@ -6,7 +6,8 @@ const nextConfig = {
   // Strict mode catches double-invocation bugs early.
   reactStrictMode: true,
 
-
+  // Suppress the turbopack/webpack mismatch warning when no turbopack config is needed.
+  turbopack: {},
 
   async headers() {
     return [
@@ -44,6 +45,8 @@ const nextConfig = {
                 // WebSocket for Supabase realtime (if ever enabled)
                 `wss://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
               ].join(" "),
+              // blob: allows epubjs to render EPUB content in its internally-created iframes
+              "frame-src 'self' blob:",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

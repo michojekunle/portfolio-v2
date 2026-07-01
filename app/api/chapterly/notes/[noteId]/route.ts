@@ -5,6 +5,7 @@ import { z } from "zod";
 const UpdateSchema = z.object({
   content_md: z.string().min(1).max(10000).optional(),
   chapter_ref: z.string().max(200).nullable().optional(),
+  chapter_title: z.string().max(200).nullable().optional(),
 });
 
 export async function PATCH(

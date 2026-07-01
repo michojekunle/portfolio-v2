@@ -51,13 +51,18 @@ export async function POST(req: Request): Promise<NextResponse> {
   // Verify the highlight belongs to this user
   const { data: highlight } = await supabase
     .from("ch_highlights")
-    .select("id, text, note, is_flashcard")
+    .select("id, book_id, text, note, is_flashcard")
     .eq("id", highlight_id)
     .eq("user_id", user.id)
     .single();
 
   if (!highlight) {
     return NextResponse.json({ error: "Highlight not found" }, { status: 404 });
+  }
+
+  // Verify the provided book_id actually matches the highlight's book
+  if ((highlight.book_id as string) !== book_id) {
+    return NextResponse.json({ error: "Highlight does not belong to this book" }, { status: 400 });
   }
 
   if (highlight.is_flashcard) {

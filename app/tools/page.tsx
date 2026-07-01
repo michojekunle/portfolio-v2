@@ -5,7 +5,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Creator Suite",
   description:
-    "Michael Ojekunle's creator tools — BookBreaks, Thread Studio, Carousel Lab, and more. Build in public, learn out loud.",
+    "Michael Ojekunle's creator tools — BookBreaks, Chapterly, Flowise, Thread Studio, Carousel Lab. Build in public, learn out loud.",
 };
 
 const TOOLS = [
@@ -49,19 +49,20 @@ const TOOLS = [
     stats: ["4 visual themes", "6-slide templates", "One-click export"],
   },
   {
-    id: "content-calendar",
-    name: "Content Calendar",
-    tagline: "Ship consistently. Never miss a week.",
+    id: "chapterly",
+    name: "Chapterly",
+    tagline: "Read everything. Remember everything.",
     description:
-      "Plan and schedule content across X, Instagram, and your blog. Drag-and-drop calendar, batch scheduling, and a publishing queue.",
-    status: "soon" as const,
-    href: "#",
-    accent: "#2D5016",
-    accentSoft: "rgba(45,80,22,0.12)",
-    icon: "📅",
-    stats: ["Multi-platform", "Batch scheduling", "Analytics"],
+      "A personal reading OS. Upload PDFs, EPUBs, DOCX and more. AI reading companion, voice chat about your books, streaks, goals, highlights — and a direct bridge to BookBreaks.",
+    status: "live" as const,
+    href: "/tools/chapterly",
+    accent: "#4F6D7A",
+    accentSoft: "rgba(79,109,122,0.12)",
+    icon: "📖",
+    stats: ["10+ formats", "AI voice chat", "Streaks & goals"],
+    bridge: "bookbreaks",
   },
-];
+] as const;
 
 export default function CreatorSuitePage(): React.ReactElement {
   return (
@@ -111,7 +112,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 <MagneticWrapper>
                   <Link
                     href="/tools/bookbreaks"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "var(--v3-accent)" }}
                   >
                     Launch BookBreaks{" "}
@@ -120,24 +121,43 @@ export default function CreatorSuitePage(): React.ReactElement {
                     </span>
                   </Link>
                 </MagneticWrapper>
-                <span
-                  className="font-mono text-[11px] tracking-[0.12em] uppercase"
-                  style={{ color: "var(--ink-4)" }}
-                >
-                  3 more tools coming
-                </span>
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/chapterly"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    style={{ background: "rgba(79,109,122,0.12)", color: "#4F6D7A", border: "1px solid rgba(79,109,122,0.25)" }}
+                  >
+                    Try Chapterly{" "}
+                    <span className="text-[14px]" aria-hidden="true">→</span>
+                  </Link>
+                </MagneticWrapper>
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/flowise"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    style={{ background: "rgba(22,163,74,0.12)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.25)" }}
+                  >
+                    Try Flowise{" "}
+                    <span className="text-[14px]" aria-hidden="true">→</span>
+                  </Link>
+                </MagneticWrapper>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Tool grid ── */}
+      {/* ── Tool grid: 2×2 + full-width Flowise ── */}
       <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[100px] max-[720px]:py-[64px]">
-        <div className="grid grid-cols-2 max-[900px]:grid-cols-1 gap-0 border border-[var(--rule)] rounded-[2px]">
-          {TOOLS.map((tool, i) => (
-            <ToolCard key={tool.id} tool={tool} index={i} />
-          ))}
+        <div className="border border-[var(--rule)] rounded-[2px]">
+          {/* Top 4 tools — 2 column */}
+          <div className="grid grid-cols-2 max-[900px]:grid-cols-1">
+            {TOOLS.map((tool, i) => (
+              <ToolCard key={tool.id} tool={tool} index={i} totalInGrid={TOOLS.length} />
+            ))}
+          </div>
+          {/* Flowise — full-width featured row */}
+          <FlowiseCard />
         </div>
       </section>
 
@@ -199,20 +219,22 @@ export default function CreatorSuitePage(): React.ReactElement {
 function ToolCard({
   tool,
   index,
+  totalInGrid,
 }: {
   tool: (typeof TOOLS)[number];
   index: number;
+  totalInGrid: number;
 }): React.ReactElement {
   const isLive = tool.status === "live";
   const borderRight = index % 2 === 0;
-  const borderBottom = index < 2;
+  const borderBottom = index < totalInGrid - 2 || (totalInGrid % 2 !== 0 && index < totalInGrid - 1);
 
   return (
     <div
       className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
       style={{
         borderRight: borderRight ? "1px solid var(--rule)" : undefined,
-        borderBottom: borderBottom ? "1px solid var(--rule)" : undefined,
+        borderBottom: "1px solid var(--rule)",
       }}
     >
       {/* Accent hover background */}
@@ -277,33 +299,151 @@ function ToolCard({
         </div>
 
         {/* CTA */}
-        {isLive ? (
-          <Link
-            href={tool.href}
-            className="inline-flex items-center gap-[8px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 group/link"
-            style={{ color: tool.accent }}
-          >
-            Open tool
-            <span
-              className="inline-block transition-transform duration-200 group-hover/link:translate-x-[4px]"
-              aria-hidden="true"
+        <div className="flex items-center gap-[16px] flex-wrap">
+          {isLive ? (
+            <Link
+              href={tool.href}
+              className="inline-flex items-center gap-[8px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 group/link"
+              style={{ color: tool.accent }}
             >
-              →
-            </span>
-          </Link>
-        ) : (
-          <span
-            className="inline-flex items-center gap-[6px] font-mono text-[11px] uppercase tracking-[0.14em]"
-            style={{ color: "var(--ink-4)" }}
-          >
+              Open tool
+              <span
+                className="inline-block transition-transform duration-200 group-hover/link:translate-x-[4px]"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </Link>
+          ) : (
             <span
-              className="w-[6px] h-[6px] rounded-full inline-block"
-              style={{ background: "var(--ink-4)" }}
-              aria-hidden="true"
-            />
-            Notify me when ready
-          </span>
-        )}
+              className="inline-flex items-center gap-[6px] font-mono text-[11px] uppercase tracking-[0.14em]"
+              style={{ color: "var(--ink-4)" }}
+            >
+              <span
+                className="w-[6px] h-[6px] rounded-full inline-block"
+                style={{ background: "var(--ink-4)" }}
+                aria-hidden="true"
+              />
+              Notify me when ready
+            </span>
+          )}
+          {"bridge" in tool && tool.bridge === "bookbreaks" && (
+            <Link
+              href="/tools/bookbreaks"
+              className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline transition-colors px-[8px] py-[3px] rounded-full"
+              style={{
+                color: "#C85A2C",
+                background: "rgba(200,90,44,0.1)",
+                border: "1px solid rgba(200,90,44,0.2)",
+              }}
+            >
+              pairs with BookBreaks →
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlowiseCard(): React.ReactElement {
+  const accent = "#16A34A";
+  const accentSoft = "rgba(22,163,74,0.10)";
+
+  return (
+    <div
+      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
+      style={{ borderTop: "1px solid var(--rule)" }}
+    >
+      {/* Accent hover background */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: accentSoft }}
+      />
+
+      <div className="relative z-10">
+        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-[40px] items-start">
+          <div>
+            {/* Header */}
+            <div className="flex items-center gap-[16px] mb-[24px] flex-wrap">
+              <div
+                className="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[24px] font-mono select-none"
+                style={{ background: accentSoft, border: `1px solid ${accent}22` }}
+                aria-hidden="true"
+              >
+                💸
+              </div>
+              <StatusBadge status="live" />
+              <span
+                className="font-mono text-[9px] tracking-[0.12em] uppercase px-[8px] py-[3px] rounded-full"
+                style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
+              >
+                🇳🇬 Nigeria-first
+              </span>
+            </div>
+
+            <h2
+              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-[8px] fvs-text m-0"
+              style={{ color: "var(--ink)" }}
+            >
+              Flowise
+            </h2>
+            <div
+              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-[20px]"
+              style={{ color: accent }}
+            >
+              Your money, mapped.
+            </div>
+
+            <p
+              className="text-[15px] leading-[1.65] mb-[28px] max-w-[56ch] m-0"
+              style={{ color: "var(--ink-2)" }}
+            >
+              A personal finance OS. Log transactions manually, import bank statements, scan
+              receipts with AI, set monthly budgets and savings goals — then get plain-language
+              insights into where your money actually goes. Built for Nigerian money flows:
+              OPay, Kuda, PalmPay, GTBank, and more.
+            </p>
+
+            {/* Stats pills */}
+            <div className="flex flex-wrap gap-[8px]">
+              {["Multi-account", "AI categorization", "Budget & goals", "NGN-first", "CSV import"].map((s) => (
+                <span
+                  key={s}
+                  className="font-mono text-[10px] tracking-[0.1em] uppercase px-[10px] py-[4px] rounded-full"
+                  style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA block */}
+          <div className="flex flex-col gap-[12px] max-[900px]:flex-row max-[900px]:flex-wrap">
+            <Link
+              href="/tools/flowise"
+              className="inline-flex items-center justify-center gap-[8px] h-[48px] px-[28px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
+              style={{ background: accent }}
+            >
+              Open Flowise
+              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]" aria-hidden="true">
+                →
+              </span>
+            </Link>
+            <div
+              className="px-[16px] py-[12px] rounded-[10px] text-center"
+              style={{ background: accentSoft }}
+            >
+              <div className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[2px]" style={{ color: accent }}>
+                Free tier includes
+              </div>
+              <div className="text-[12px] text-[var(--ink-2)] leading-[1.5]">
+                3 accounts · 100 tx/month · 3 goals
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

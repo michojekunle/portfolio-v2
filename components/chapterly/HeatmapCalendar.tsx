@@ -28,24 +28,23 @@ interface Props {
 }
 
 export function HeatmapCalendar({ data }: Props): React.ReactElement {
-  // Build a 53-week × 7-day grid anchored on today
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // Build a 53-week × 7-day grid anchored on today.
+  // All arithmetic is done in UTC so cell keys match the UTC-based data from the server.
+  const nowUtcMs = Date.now();
+  // UTC midnight of today
+  const todayUtcMs = nowUtcMs - (nowUtcMs % 86_400_000);
 
-  // Find the Sunday that starts the oldest displayed week
-  const gridStart = new Date(today);
-  gridStart.setDate(today.getDate() - (WEEKS * 7 - 1));
-  // Roll back to the nearest preceding Sunday
-  gridStart.setDate(gridStart.getDate() - gridStart.getDay());
+  // Find the Sunday that starts the oldest displayed week (UTC)
+  const gridStartMs = todayUtcMs - (WEEKS * 7 - 1) * 86_400_000;
+  const gridStartDay = new Date(gridStartMs).getUTCDay(); // 0=Sun
+  const gridAnchorMs = gridStartMs - gridStartDay * 86_400_000;
 
-  // Build weeks: each is an array of 7 Date objects (Sun→Sat)
-  const weeks: Date[][] = [];
+  // Build weeks: each is an array of 7 UTC epoch-ms values (Sun→Sat)
+  const weeks: number[][] = [];
   for (let w = 0; w < WEEKS; w++) {
-    const week: Date[] = [];
+    const week: number[] = [];
     for (let d = 0; d < 7; d++) {
-      const date = new Date(gridStart);
-      date.setDate(gridStart.getDate() + w * 7 + d);
-      week.push(date);
+      week.push(gridAnchorMs + (w * 7 + d) * 86_400_000);
     }
     weeks.push(week);
   }
@@ -55,10 +54,10 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
   const monthLabels: { label: string; weekIndex: number }[] = [];
   let lastMonth = -1;
   weeks.forEach((week, i) => {
-    const m = week[0].getMonth();
+    const m = new Date(week[0]).getUTCMonth();
     if (m !== lastMonth) {
       monthLabels.push({
-        label: week[0].toLocaleDateString("en-US", { month: "short" }),
+        label: new Date(week[0]).toLocaleDateString("en-US", { month: "short", timeZone: "UTC" }),
         weekIndex: i,
       });
       lastMonth = m;
@@ -100,11 +99,11 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
         {/* Week columns */}
         {weeks.map((week, wi) => (
           <div key={wi} className="flex flex-col gap-[3px]">
-            {week.map((date) => {
-              const key = date.toISOString().split("T")[0];
+            {week.map((dayMs) => {
+              const key = new Date(dayMs).toISOString().slice(0, 10);
               const minutes = data[key] ?? 0;
               const intensity = getIntensity(minutes);
-              const isFuture = date > today;
+              const isFuture = dayMs > todayUtcMs;
 
               return (
                 <div

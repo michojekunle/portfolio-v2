@@ -10,6 +10,7 @@ import {
   RotateCcw,
   ChevronRight,
   Sparkles,
+  Trash2,
 } from "lucide-react";
 
 const ACCENT = "#4F6D7A";
@@ -39,10 +40,30 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
   const [sessionStats, setSessionStats] = useState<Record<Rating, number>>({
     0: 0, 1: 0, 2: 0, 3: 0,
   });
+  const [failedCardIds, setFailedCardIds] = useState<Set<string>>(new Set());
   const [done, setDone] = useState(queue.length === 0);
 
   const card = queue[current];
   const progress = queue.length > 0 ? Math.round((current / queue.length) * 100) : 100;
+
+  const removeCard = async (): Promise<void> => {
+    if (!card || submitting) return;
+    setSubmitting(true);
+    try {
+      await fetch(`/api/chapterly/flashcards/${card.id}`, { method: "DELETE" });
+    } catch (err) {
+      console.error("[flashcards] delete error:", err);
+    }
+    const newQueue = queue.filter((_, i) => i !== current);
+    if (newQueue.length === 0) {
+      setDone(true);
+    } else {
+      setQueue(newQueue);
+      if (current >= newQueue.length) setCurrent(newQueue.length - 1);
+      setFlipped(false);
+    }
+    setSubmitting(false);
+  };
 
   const submitRating = async (rating: Rating): Promise<void> => {
     if (!card || submitting) return;
@@ -60,6 +81,9 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
     }
 
     setSessionStats((prev) => ({ ...prev, [rating]: prev[rating] + 1 }));
+    if (rating === 0) {
+      setFailedCardIds((prev) => new Set(prev).add(card.id));
+    }
 
     if (current + 1 >= queue.length) {
       setDone(true);
@@ -138,17 +162,17 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
           </Link>
           <button
             onClick={() => {
-              // Restart with the same cards (re-review any that were "Again")
-              const again = queue.filter((_, i) => i < current && sessionStats[0] > 0);
+              const again = queue.filter((c) => failedCardIds.has(c.id));
               if (again.length > 0) {
                 setQueue(again);
                 setCurrent(0);
                 setFlipped(false);
                 setDone(false);
                 setSessionStats({ 0: 0, 1: 0, 2: 0, 3: 0 });
+                setFailedCardIds(new Set());
               }
             }}
-            disabled={sessionStats[0] === 0}
+            disabled={failedCardIds.size === 0}
             className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             style={{ background: ACCENT, color: "#fff" }}
           >
@@ -177,11 +201,22 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
         >
           <ArrowLeft size={12} /> Back
         </Link>
-        <div className="flex items-center gap-[10px]">
-          <Brain size={15} style={{ color: ACCENT }} />
-          <span className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-[var(--ink-3)]">
-            {current + 1} / {queue.length}
-          </span>
+        <div className="flex items-center gap-[16px]">
+          <button
+            onClick={() => void removeCard()}
+            disabled={submitting}
+            className="inline-flex items-center gap-[5px] font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[#DC2626] transition-colors bg-transparent border-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Remove this card permanently"
+          >
+            <Trash2 size={11} />
+            Remove
+          </button>
+          <div className="flex items-center gap-[10px]">
+            <Brain size={15} style={{ color: ACCENT }} />
+            <span className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-[var(--ink-3)]">
+              {current + 1} / {queue.length}
+            </span>
+          </div>
         </div>
       </div>
 

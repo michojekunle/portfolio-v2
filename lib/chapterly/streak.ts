@@ -2,13 +2,13 @@ import type { ChGoal } from "./types";
 
 export function isStreakAlive(goal: ChGoal): boolean {
   if (!goal.last_read_date) return false;
-  const lastRead = new Date(goal.last_read_date);
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  const fmt = (d: Date): string => d.toISOString().slice(0, 10);
-  return fmt(lastRead) === fmt(today) || fmt(lastRead) === fmt(yesterday);
+  // last_read_date is stored as a "YYYY-MM-DD" string (local date from client).
+  // Compare as plain strings to avoid UTC/local timezone drift when parsing dates.
+  const lastReadStr = String(goal.last_read_date).slice(0, 10);
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+  const yesterdayStr = new Date(now.getTime() - 86_400_000).toISOString().slice(0, 10);
+  return lastReadStr === todayStr || lastReadStr === yesterdayStr;
 }
 
 export function goalProgressPct(readMinutesToday: number, dailyGoalMinutes: number): number {

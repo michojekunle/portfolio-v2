@@ -45,6 +45,88 @@ function formatDate(iso: string): string {
   });
 }
 
+// ── NoteEditor ────────────────────────────────────────────────
+// Defined at module scope so React sees a stable component type across renders.
+// If defined inside ChNotesClient, every parent re-render produces a new type
+// reference, causing React to unmount+remount the editor (losing focus).
+
+interface NoteEditorProps {
+  content: string;
+  chapter: string;
+  saving: boolean;
+  onContent: (v: string) => void;
+  onChapter: (v: string) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  placeholder: string;
+}
+
+function NoteEditor({
+  content,
+  chapter,
+  saving,
+  onContent,
+  onChapter,
+  onSave,
+  onCancel,
+  placeholder,
+}: NoteEditorProps): React.ReactElement {
+  return (
+    <div
+      className="rounded-[12px] border p-[16px] space-y-[12px]"
+      style={{ borderColor: ACCENT + "40", background: ACCENT + "06" }}
+    >
+      <input
+        type="text"
+        value={chapter}
+        onChange={(e) => onChapter(e.target.value)}
+        placeholder="Chapter or section (optional)"
+        className="w-full text-[12px] font-mono tracking-[0.06em] px-[12px] py-[8px] rounded-[6px] border outline-none bg-[var(--bg)] text-[var(--ink)] placeholder:text-[var(--ink-3)]"
+        style={{ borderColor: "var(--rule)" }}
+      />
+      <textarea
+        value={content}
+        onChange={(e) => onContent(e.target.value)}
+        placeholder={placeholder}
+        rows={5}
+        autoFocus
+        className="w-full resize-none text-[14px] leading-[1.65] px-[12px] py-[10px] rounded-[8px] border outline-none bg-[var(--bg)] text-[var(--ink)] placeholder:text-[var(--ink-3)]"
+        style={{ borderColor: "var(--rule)" }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && e.metaKey) void onSave();
+          if (e.key === "Escape") onCancel();
+        }}
+      />
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+          ⌘↵ to save · Esc to cancel
+        </span>
+        <div className="flex gap-[8px]">
+          <button
+            onClick={onCancel}
+            className="font-mono text-[10px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => void onSave()}
+            disabled={saving || !content.trim()}
+            className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-[6px] border-none cursor-pointer font-semibold text-(--bg) transition-all disabled:opacity-40"
+            style={{ background: ACCENT }}
+          >
+            {saving ? (
+              <Loader2 size={11} className="animate-spin" />
+            ) : (
+              <Save size={11} />
+            )}
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   book: ChBook;
   initialNotes: ChNote[];
@@ -103,6 +185,7 @@ export function ChNotesClient({
         body: JSON.stringify({
           content_md: editContent.trim(),
           chapter_ref: editChapter.trim() || null,
+          chapter_title: editChapter.trim() || null,
         }),
       });
       if (!res.ok) throw new Error("Update failed");
@@ -127,6 +210,7 @@ export function ChNotesClient({
           book_id: book.id,
           content_md: newContent.trim(),
           chapter_ref: newChapter.trim() || undefined,
+          chapter_title: newChapter.trim() || undefined,
         }),
       });
       if (!res.ok) throw new Error("Create failed");
@@ -270,79 +354,6 @@ export function ChNotesClient({
     URL.revokeObjectURL(url);
   };
 
-  // ── Editor component ──────────────────────────────────────────
-
-  const NoteEditor = ({
-    content,
-    chapter,
-    onContent,
-    onChapter,
-    onSave,
-    onCancel,
-    placeholder,
-  }: {
-    content: string;
-    chapter: string;
-    onContent: (v: string) => void;
-    onChapter: (v: string) => void;
-    onSave: () => void;
-    onCancel: () => void;
-    placeholder: string;
-  }): React.ReactElement => (
-    <div
-      className="rounded-[12px] border p-[16px] space-y-[12px]"
-      style={{ borderColor: ACCENT + "40", background: ACCENT + "06" }}
-    >
-      <input
-        type="text"
-        value={chapter}
-        onChange={(e) => onChapter(e.target.value)}
-        placeholder="Chapter or section (optional)"
-        className="w-full text-[12px] font-mono tracking-[0.06em] px-[12px] py-[8px] rounded-[6px] border outline-none bg-[var(--bg)] text-[var(--ink)] placeholder:text-[var(--ink-3)]"
-        style={{ borderColor: "var(--rule)" }}
-      />
-      <textarea
-        value={content}
-        onChange={(e) => onContent(e.target.value)}
-        placeholder={placeholder}
-        rows={5}
-        autoFocus
-        className="w-full resize-none text-[14px] leading-[1.65] px-[12px] py-[10px] rounded-[8px] border outline-none bg-[var(--bg)] text-[var(--ink)] placeholder:text-[var(--ink-3)]"
-        style={{ borderColor: "var(--rule)" }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && e.metaKey) void onSave();
-          if (e.key === "Escape") onCancel();
-        }}
-      />
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
-          ⌘↵ to save · Esc to cancel
-        </span>
-        <div className="flex gap-[8px]">
-          <button
-            onClick={onCancel}
-            className="font-mono text-[10px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => void onSave()}
-            disabled={saving || !content.trim()}
-            className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-[6px] border-none cursor-pointer font-semibold text-(--bg) transition-all disabled:opacity-40"
-            style={{ background: ACCENT }}
-          >
-            {saving ? (
-              <Loader2 size={11} className="animate-spin" />
-            ) : (
-              <Save size={11} />
-            )}
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px] max-w-[800px]">
       {/* ── Header ── */}
@@ -432,6 +443,7 @@ export function ChNotesClient({
             <NoteEditor
               content={newContent}
               chapter={newChapter}
+              saving={saving}
               onContent={setNewContent}
               onChapter={setNewChapter}
               onSave={createNote}
@@ -480,6 +492,7 @@ export function ChNotesClient({
                     <NoteEditor
                       content={editContent}
                       chapter={editChapter}
+                      saving={saving}
                       onContent={setEditContent}
                       onChapter={setEditChapter}
                       onSave={saveEdit}

@@ -9,6 +9,7 @@ const CreateSchema = z.object({
   color: z.enum(["yellow", "green", "blue", "pink"]),
   note: z.string().max(2000).optional(),
   page_number: z.number().int().min(1).optional(),
+  cfi_range: z.string().max(500).optional(),
 });
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
-  const { book_id, text, color, note, page_number } = parsed.data;
+  const { book_id, text, color, note, page_number, cfi_range } = parsed.data;
 
   const { data: book } = await supabase
     .from("ch_books")
@@ -50,6 +51,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       color: color as HighlightColor,
       note: note ?? null,
       page_number: page_number ?? null,
+      cfi_range: cfi_range ?? null,
       is_flashcard: false,
     })
     .select()

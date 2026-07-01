@@ -62,7 +62,9 @@ export async function POST(): Promise<NextResponse> {
   const sessions = allSessionsResult.data;
 
   const nightOwlCount = sessions.filter((s) => {
-    const hour = new Date(s.started_at as string).getHours();
+    // Sessions are stored in UTC; compare UTC hours so users in any timezone
+    // are judged by their wall-clock time (stored as UTC from the client).
+    const hour = new Date(s.started_at as string).getUTCHours();
     return hour >= 23 || hour < 4;
   }).length;
 

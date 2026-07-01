@@ -6,6 +6,7 @@ const CreateSchema = z.object({
   book_id: z.string().uuid(),
   content_md: z.string().min(1).max(10000),
   chapter_ref: z.string().max(200).optional(),
+  chapter_title: z.string().max(200).optional(),
 });
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
-  const { book_id, content_md, chapter_ref } = parsed.data;
+  const { book_id, content_md, chapter_ref, chapter_title } = parsed.data;
 
   const { data: book } = await supabase
     .from("ch_books")
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const { data, error } = await supabase
     .from("ch_notes")
-    .insert({ user_id: user.id, book_id, content_md, chapter_ref: chapter_ref ?? null })
+    .insert({ user_id: user.id, book_id, content_md, chapter_ref: chapter_ref ?? null, chapter_title: chapter_title ?? null })
     .select()
     .single();
 

@@ -65,6 +65,49 @@ export async function PATCH(
   return NextResponse.json({ interval_days: newInterval, due_at: dueAt.toISOString() });
 }
 
+// DELETE /api/chapterly/flashcards/[flashcardId]  — remove a flashcard permanently
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ flashcardId: string }> }
+): Promise<NextResponse> {
+  const { flashcardId } = await params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Fetch highlight_id before deleting so we can reset is_flashcard on the parent highlight
+  const { data: card } = await supabase
+    .from("ch_flashcards")
+    .select("highlight_id")
+    .eq("id", flashcardId)
+    .eq("user_id", user.id)
+    .single();
+
+  const { error } = await supabase
+    .from("ch_flashcards")
+    .delete()
+    .eq("id", flashcardId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("[flashcards] delete error:", error);
+    return NextResponse.json({ error: "Failed to delete flashcard" }, { status: 500 });
+  }
+
+  // Reset the parent highlight so it can be converted to a flashcard again
+  if (card?.highlight_id) {
+    await supabase
+      .from("ch_highlights")
+      .update({ is_flashcard: false, flashcard_due_at: null })
+      .eq("id", card.highlight_id as string)
+      .eq("user_id", user.id);
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
 // Simplified SM-2 algorithm
 function sm2(
   rating: number,

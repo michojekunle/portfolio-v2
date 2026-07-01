@@ -123,7 +123,7 @@ export async function getOrCreateGoal(): Promise<ChGoal | null> {
     .from("ch_goals")
     .select("*")
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   if (existing) return existing as ChGoal;
 
@@ -160,9 +160,11 @@ export async function getReadingStats(): Promise<ReadingStats> {
   if (!user) return empty;
 
   const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  // Use pure UTC arithmetic so these boundaries are correct regardless of server timezone.
+  const todayUTC = now.toISOString().slice(0, 10);
+  const startOfDay = `${todayUTC}T00:00:00.000Z`;
   const startOfWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const startOfYear = new Date(now.getFullYear(), 0, 1).toISOString();
+  const startOfYear = `${now.getUTCFullYear()}-01-01T00:00:00.000Z`;
 
   // Fetch sessions once with started_at included; derive today/week subsets in JS
   // to avoid 3 separate ch_sessions scans per page load.
@@ -289,14 +291,14 @@ export async function getTodaySessions(): Promise<ChSession[]> {
   } = await supabase.auth.getUser();
   if (!user) return [];
 
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
+  const todayUTC = new Date().toISOString().slice(0, 10);
+  const startOfDay = `${todayUTC}T00:00:00.000Z`;
 
   const { data } = await supabase
     .from("ch_sessions")
     .select("*")
     .eq("user_id", user.id)
-    .gte("started_at", startOfDay.toISOString())
+    .gte("started_at", startOfDay)
     .order("started_at", { ascending: false });
 
   return (data ?? []) as ChSession[];

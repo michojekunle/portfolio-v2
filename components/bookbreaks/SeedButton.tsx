@@ -50,7 +50,7 @@ export function BBSeedButton(): React.ReactElement {
         whileTap={{ scale: 0.95 }}
         onClick={handleSeed}
         disabled={loading}
-        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white transition-all duration-150 disabled:opacity-60 cursor-pointer bg-[var(--v3-accent)] border-none hover:opacity-90"
+        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 disabled:opacity-60 cursor-pointer bg-[var(--v3-accent)] border-none hover:opacity-90"
       >
         {loading ? "Loading books…" : <><BookOpen size={14} /> Load 4 starter books</>}
       </motion.button>

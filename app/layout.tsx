@@ -5,9 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CommandPalette } from "@/components/command-palette";
-import { Navbar } from "@/components/navbar";
-import { PortfolioFooter } from "@/components/portfolio-footer";
-import { GlobalContactCTA } from "@/components/global-contact-cta";
+import { PortfolioChrome } from "@/components/portfolio-chrome";
 import { CustomCursor } from "@/components/custom-cursor";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { NoiseOverlay } from "@/components/noise-overlay";
@@ -203,10 +201,8 @@ export default function RootLayout({
             <Preloader />
             <NoiseOverlay />
             <CustomCursor />
-            <Navbar />
+            <PortfolioChrome />
             {children}
-            <GlobalContactCTA />
-            <PortfolioFooter />
             <CommandPalette />
             <Toaster />
           </SmoothScroll>
