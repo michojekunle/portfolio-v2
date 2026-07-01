@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { FwSidebarNav } from "@/components/flowise/SidebarNav";
 import { getUserAccounts } from "@/lib/flowise/queries";
 import { computeNetWorth } from "@/lib/flowise/calculator";
+import { AssistantWidget } from "@/components/flowise/AssistantWidget";
 
 export default async function FlowiseLayout({
   children,
@@ -29,6 +30,7 @@ export default async function FlowiseLayout({
       <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-[260px] flex flex-col relative">
         <main className="flex-1 min-h-screen">{children}</main>
       </div>
+      <AssistantWidget />
     </div>
   );
 }
