@@ -232,6 +232,8 @@ JSON Response Schema:
             current_amount: 0,
             deadline: deadline || null,
             is_completed: false,
+            color: "#16A34A",
+            icon: "🎯",
           });
 
         if (!goalErr) {
