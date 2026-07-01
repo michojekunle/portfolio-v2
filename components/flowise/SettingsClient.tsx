@@ -49,7 +49,6 @@ export function SettingsClient({ accounts, categories }: Props): React.ReactElem
   };
 
   const userCategories = categories.filter((c) => !c.is_system);
-  const systemIds = new Set(SYSTEM_CATEGORIES.map((c) => c.id));
 
   return (
     <div className="px-[40px] pt-[48px] pb-[60px] max-[1024px]:pt-[80px] max-[720px]:px-[20px] max-w-[720px]">
