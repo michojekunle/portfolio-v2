@@ -31,46 +31,34 @@ const NAV_LINKS = [
   { href: "/tools/flowise/settings",     label: "Settings",     icon: <Settings size={16} /> },
 ];
 
-interface Props {
-  userEmail: string;
+interface SidebarContentProps {
+  shortEmail: string;
+  symbol: string;
   netWorth?: number;
-  currency?: string;
+  signingOut: boolean;
+  isActive: (href: string) => boolean;
+  onNavClick: () => void;
+  onSignOut: () => void;
 }
 
-export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): React.ReactElement {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [signingOut, setSigningOut] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleSignOut = async (): Promise<void> => {
-    setSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/tools/flowise/login");
-    router.refresh();
-  };
-
-  const isActive = (href: string): boolean => {
-    if (href === "/tools/flowise") return pathname === href;
-    return pathname.startsWith(href);
-  };
-
-  const shortEmail = userEmail.length > 22 ? `${userEmail.slice(0, 22)}…` : userEmail;
-
-  const currencySymbols: Record<string, string> = {
-    NGN: "₦", USD: "$", GBP: "£", EUR: "€", GHS: "₵", KES: "KSh",
-  };
-  const symbol = currencySymbols[currency] ?? currency;
-
-  const SidebarContent = (): React.ReactElement => (
+// Module-level component so React never remounts it on parent re-renders.
+function SidebarContent({
+  shortEmail,
+  symbol,
+  netWorth,
+  signingOut,
+  isActive,
+  onNavClick,
+  onSignOut,
+}: SidebarContentProps): React.ReactElement {
+  return (
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="px-[24px] py-[28px] border-b border-[var(--rule)]">
         <Link
           href="/tools"
           className="block no-underline mb-[20px]"
-          onClick={() => setMobileOpen(false)}
+          onClick={onNavClick}
         >
           <span className="font-mono text-[9px] tracking-[0.16em] uppercase text-[var(--ink-3)]">
             ← Creator Suite
@@ -116,7 +104,7 @@ export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): 
             <Link
               key={link.href}
               href={link.href}
-              onClick={() => setMobileOpen(false)}
+              onClick={onNavClick}
               className={`flex items-center gap-[10px] h-[40px] px-[12px] rounded-[8px] no-underline transition-all duration-150 text-[14px] ${
                 active
                   ? "font-semibold"
@@ -141,7 +129,7 @@ export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): 
           </div>
         </div>
         <button
-          onClick={handleSignOut}
+          onClick={onSignOut}
           disabled={signingOut}
           className="flex items-center gap-[10px] h-[36px] px-[12px] rounded-[8px] w-full font-mono text-[10px] tracking-[0.1em] uppercase transition-all duration-150 disabled:opacity-50 cursor-pointer bg-transparent border-none text-[var(--ink-3)] hover:bg-[var(--bg-2)]"
         >
@@ -150,12 +138,55 @@ export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): 
       </div>
     </div>
   );
+}
+
+interface Props {
+  userEmail: string;
+  netWorth?: number;
+  currency?: string;
+}
+
+export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): React.ReactElement {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleSignOut = async (): Promise<void> => {
+    setSigningOut(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/tools/flowise/login");
+    router.refresh();
+  };
+
+  const isActive = (href: string): boolean => {
+    if (href === "/tools/flowise") return pathname === href;
+    return pathname.startsWith(href);
+  };
+
+  const shortEmail = userEmail.length > 22 ? `${userEmail.slice(0, 22)}…` : userEmail;
+
+  const currencySymbols: Record<string, string> = {
+    NGN: "₦", USD: "$", GBP: "£", EUR: "€", GHS: "₵", KES: "KSh",
+  };
+  const symbol = currencySymbols[currency] ?? currency;
+
+  const contentProps: SidebarContentProps = {
+    shortEmail,
+    symbol,
+    netWorth,
+    signingOut,
+    isActive,
+    onNavClick: () => setMobileOpen(false),
+    onSignOut: () => void handleSignOut(),
+  };
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside className="fixed left-0 top-0 h-screen w-[260px] max-[1024px]:hidden z-50 bg-[var(--bg-2)] border-r border-[var(--rule)]">
-        <SidebarContent />
+        <SidebarContent {...contentProps} />
       </aside>
 
       {/* Mobile topbar */}
@@ -183,7 +214,7 @@ export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): 
             aria-hidden="true"
           />
           <aside className="fixed top-0 left-0 h-screen w-[280px] max-[360px]:w-full z-50 bg-[var(--bg-2)] border-r border-[var(--rule)] shadow-2xl">
-            <SidebarContent />
+            <SidebarContent {...contentProps} />
           </aside>
         </>
       )}
