@@ -4,6 +4,15 @@ import { z } from "zod";
 import type { FileFormat } from "@/lib/chapterly/types";
 import { FREE_BOOK_LIMIT } from "@/lib/chapterly/types";
 
+const JsonImportSchema = z.object({
+  title: z.string().min(1),
+  author: z.string().nullable().optional(),
+  cover_url: z.string().nullable().optional(),
+  file_url: z.string().min(1),
+  file_format: z.enum(["pdf","epub","docx","txt","md","html","azw3","mobi","fb2","cbz","other"]).default("md"),
+  file_size_bytes: z.number().int().default(0),
+});
+
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 const ALLOWED_FORMATS = new Set([
@@ -44,6 +53,51 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { error: `Free plan allows ${FREE_BOOK_LIMIT} books. Upgrade to Pro to add more.` },
       { status: 403 }
     );
+  }
+
+  const contentType = request.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    let jsonBody: unknown;
+    try {
+      jsonBody = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+
+    const parsed = JsonImportSchema.safeParse(jsonBody);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const { title, author, cover_url, file_url, file_format, file_size_bytes } = parsed.data;
+
+    const { data: book, error: dbError } = await supabase
+      .from("ch_books")
+      .insert({
+        user_id: user.id,
+        title,
+        author,
+        cover_url: cover_url || null,
+        file_url,
+        file_format,
+        file_size_bytes,
+        status: "unread",
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      return NextResponse.json({ error: `Database error: ${dbError.message}` }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      book,
+      book_id: book.id,
+      file_url: book.file_url,
+      file_format: book.file_format,
+      total_pages: null,
+    });
   }
 
   let formData: FormData;

@@ -5,7 +5,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Creator Suite — Michael Ojekunle",
   description:
-    "Five live tools built for creators who read, ship, and share: BookBreaks turns books into content, Chapterly is a reading OS with AI voice chat, Flowise tracks your money with Nigerian bank support, Thread Studio engineers viral X threads, and Carousel Lab builds scroll-stopping slides.",
+    "Six live tools built for creators who read, ship, and share: BookBreaks turns books into content, Chapterly is a reading OS with AI voice chat, Flowise tracks your money, Vela is a life journal for objectives and daily logs, Thread Studio engineers viral X threads, and Carousel Lab builds scroll-stopping slides.",
 };
 
 const TOOLS = [
@@ -104,10 +104,10 @@ export default function CreatorSuitePage(): React.ReactElement {
                 className="text-[18px] leading-[1.65] m-0"
                 style={{ color: "var(--ink-2)" }}
               >
-                Five production tools I built because I needed them. Turn books
-                into content, track every naira, build viral threads, design
-                carousel slides — and read anything with an AI that remembers
-                your highlights.
+                Six production tools I built because I needed them. Turn books
+                into content, track every naira, journal your objectives, build
+                viral threads, design carousel slides — and read anything with
+                an AI that remembers your highlights.
               </p>
               <div className="mt-[32px] flex items-center gap-[16px] flex-wrap">
                 <MagneticWrapper>
@@ -157,6 +157,8 @@ export default function CreatorSuitePage(): React.ReactElement {
               <ToolCard key={tool.id} tool={tool} index={i} totalInGrid={TOOLS.length} />
             ))}
           </div>
+          {/* Vela — full-width featured row */}
+          <VelaCard />
           {/* Flowise — full-width featured row */}
           <FlowiseCard />
         </div>
@@ -341,6 +343,86 @@ function ToolCard({
               pairs with BookBreaks →
             </Link>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VelaCard(): React.ReactElement {
+  const accent = "#7C3AED";
+  const accentSoft = "rgba(124,58,237,0.10)";
+
+  return (
+    <div
+      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
+      style={{ borderTop: "1px solid var(--rule)" }}
+    >
+      <div
+        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: accentSoft }}
+      />
+      <div className="relative z-10">
+        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-[40px] items-start">
+          <div>
+            <div className="flex items-center gap-[16px] mb-[24px] flex-wrap">
+              <div
+                className="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[24px] font-mono select-none"
+                style={{ background: accentSoft, border: `1px solid ${accent}22` }}
+                aria-hidden="true"
+              >
+                🧭
+              </div>
+              <StatusBadge status="live" />
+            </div>
+
+            <h2
+              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-[8px] fvs-text m-0"
+              style={{ color: "var(--ink)" }}
+            >
+              Vela
+            </h2>
+            <div
+              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-[20px]"
+              style={{ color: accent }}
+            >
+              Set your course. Log your progress.
+            </div>
+
+            <p
+              className="text-[15px] leading-[1.65] mb-[28px] max-w-[56ch] m-0"
+              style={{ color: "var(--ink-2)" }}
+            >
+              A structured life journal for people who want to move with intention. Set clear
+              objectives with milestones, plan each day against them, log what you actually
+              accomplished, and track where your energy really goes — day by day.
+            </p>
+
+            <div className="flex flex-wrap gap-[8px]">
+              {["Objectives + milestones", "Daily structured logs", "7-day streak", "Energy tracking", "Priority-first"].map((s) => (
+                <span
+                  key={s}
+                  className="font-mono text-[10px] tracking-[0.1em] uppercase px-[10px] py-[4px] rounded-full"
+                  style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-[12px] max-[900px]:flex-row max-[900px]:flex-wrap">
+            <Link
+              href="/tools/journal"
+              className="inline-flex items-center justify-center gap-[8px] h-[48px] px-[28px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
+              style={{ background: accent }}
+            >
+              Open Vela
+              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

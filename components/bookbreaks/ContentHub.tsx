@@ -362,6 +362,8 @@ export function ContentHub({ content, books }: ContentHubProps) {
                             contentId={c.id}
                             content={c.content}
                             status={c.status}
+                            bookTitle={c.book_title}
+                            bookAuthor={c.book_author}
                           />
                         </div>
                       )}

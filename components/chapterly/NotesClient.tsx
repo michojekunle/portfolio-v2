@@ -23,6 +23,10 @@ import {
   Brain,
   ExternalLink,
   Check,
+  HelpCircle,
+  Sparkles,
+  RefreshCw,
+  XCircle,
 } from "lucide-react";
 
 const ACCENT = "#4F6D7A";
@@ -127,6 +131,13 @@ function NoteEditor({
   );
 }
 
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
 interface Props {
   book: ChBook;
   initialNotes: ChNote[];
@@ -141,7 +152,66 @@ export function ChNotesClient({
   const [notes, setNotes] = useState<ChNote[]>(initialNotes);
   const [highlights, setHighlights] =
     useState<ChHighlight[]>(initialHighlights);
-  const [tab, setTab] = useState<"notes" | "highlights">("notes");
+  const [tab, setTab] = useState<"notes" | "highlights" | "quiz">("notes");
+
+  // Quiz state
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+  const [quizScore, setQuizScore] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizFinished, setQuizFinished] = useState(false);
+
+  const generateQuiz = async (): Promise<void> => {
+    setGeneratingQuiz(true);
+    setQuizQuestions([]);
+    setQuizScore(0);
+    setCurrentQuestionIndex(0);
+    setSelectedOptionIndex(null);
+    setQuizSubmitted(false);
+    setQuizFinished(false);
+
+    try {
+      const res = await fetch("/api/chapterly/quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          book_id: book.id,
+          book_title: book.title,
+          book_author: book.author,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Quiz generation failed");
+      const data = (await res.json()) as { questions: QuizQuestion[] };
+      setQuizQuestions(data.questions);
+    } catch (err) {
+      console.error("[quiz] generation error:", err);
+      alert("Failed to generate quiz. Please check your API settings and try again.");
+    } finally {
+      setGeneratingQuiz(false);
+    }
+  };
+
+  const handleAnswerSubmit = (): void => {
+    if (selectedOptionIndex === null || quizSubmitted) return;
+    const currentQ = quizQuestions[currentQuestionIndex];
+    if (selectedOptionIndex === currentQ.correctIndex) {
+      setQuizScore((s) => s + 1);
+    }
+    setQuizSubmitted(true);
+  };
+
+  const handleNextQuestion = (): void => {
+    if (currentQuestionIndex + 1 >= quizQuestions.length) {
+      setQuizFinished(true);
+    } else {
+      setCurrentQuestionIndex((i) => i + 1);
+      setSelectedOptionIndex(null);
+      setQuizSubmitted(false);
+    }
+  };
 
   // Note editor state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -414,7 +484,7 @@ export function ChNotesClient({
 
       {/* ── Tabs ── */}
       <div className="flex gap-[2px] mb-[32px] p-[4px] rounded-[10px] bg-[var(--bg-2)] w-full sm:w-fit border border-[var(--rule)]">
-        {(["notes", "highlights"] as const).map((t) => (
+        {(["notes", "highlights", "quiz"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -425,12 +495,12 @@ export function ChNotesClient({
                 : { background: "transparent", color: "var(--ink-3)" }
             }
           >
-            {t === "notes" ? <StickyNote size={12} /> : <BookOpen size={12} />}
-            {t === "notes"
-              ? `Notes${notes.length > 0 ? ` (${notes.length})` : ""}`
-              : `Highlights${
-                  highlights.length > 0 ? ` (${highlights.length})` : ""
-                }`}
+            {t === "notes" && <StickyNote size={12} />}
+            {t === "highlights" && <BookOpen size={12} />}
+            {t === "quiz" && <Brain size={12} />}
+            {t === "notes" && `Notes${notes.length > 0 ? ` (${notes.length})` : ""}`}
+            {t === "highlights" && `Highlights${highlights.length > 0 ? ` (${highlights.length})` : ""}`}
+            {t === "quiz" && "AI Quiz"}
           </button>
         ))}
       </div>
@@ -634,6 +704,199 @@ export function ChNotesClient({
                 </div>
               );
             })
+          )}
+        </div>
+      )}
+
+      {/* ── AI Quiz tab ── */}
+      {tab === "quiz" && (
+        <div className="space-y-[24px]">
+          {quizQuestions.length === 0 && !generatingQuiz && (
+            <div className="text-center py-[64px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto">
+              <div
+                className="w-[56px] h-[56px] rounded-full flex items-center justify-center mx-auto mb-[20px]"
+                style={{ background: `${ACCENT}18` }}
+              >
+                <HelpCircle size={26} style={{ color: ACCENT }} />
+              </div>
+              <h3 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[8px]">
+                AI Comprehension Quiz
+              </h3>
+              <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 mb-[24px]">
+                Test your understanding, themes, and key concepts of &ldquo;{book.title}&rdquo; with a custom generated 5-question quiz.
+              </p>
+              <button
+                onClick={generateQuiz}
+                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+                style={{ background: ACCENT }}
+              >
+                <Sparkles size={13} />
+                Generate Quiz
+              </button>
+            </div>
+          )}
+
+          {generatingQuiz && (
+            <div className="text-center py-[80px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto">
+              <Loader2 size={32} className="animate-spin mx-auto mb-[16px]" style={{ color: ACCENT }} />
+              <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                Creating Quiz Questions…
+              </div>
+              <div className="text-[13px] text-[var(--ink-3)] mt-[6px]">
+                Analyzing book chapters and highlights. Please wait…
+              </div>
+            </div>
+          )}
+
+          {quizQuestions.length > 0 && !quizFinished && (
+            <div className="rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-[480px]:p-[20px] max-w-[640px] mx-auto space-y-[24px]">
+              {/* Progress */}
+              <div className="flex items-center justify-between border-b border-[var(--rule)] pb-[16px]">
+                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+                  Question {currentQuestionIndex + 1} of {quizQuestions.length}
+                </div>
+                <div className="font-mono text-[10px] tracking-[0.12em] uppercase" style={{ color: ACCENT }}>
+                  Score: {quizScore}
+                </div>
+              </div>
+
+              {/* Question text */}
+              <div className="text-[16px] font-medium leading-[1.5] text-[var(--ink)]">
+                {quizQuestions[currentQuestionIndex].question}
+              </div>
+
+              {/* Options */}
+              <div className="space-y-[10px]">
+                {quizQuestions[currentQuestionIndex].options.map((opt: string, oIdx: number) => {
+                  const isSelected = selectedOptionIndex === oIdx;
+                  const isCorrect = oIdx === quizQuestions[currentQuestionIndex].correctIndex;
+                  
+                  let optionBg = "var(--bg)";
+                  let optionBorder = "var(--rule)";
+                  let optionColor = "var(--ink)";
+
+                  if (quizSubmitted) {
+                    if (isCorrect) {
+                      optionBg = "rgba(22,163,74,0.08)";
+                      optionBorder = "#16A34A";
+                      optionColor = "#16A34A";
+                    } else if (isSelected) {
+                      optionBg = "rgba(220,38,38,0.08)";
+                      optionBorder = "#DC2626";
+                      optionColor = "#DC2626";
+                    }
+                  } else if (isSelected) {
+                    optionBorder = ACCENT;
+                    optionBg = `${ACCENT}08`;
+                  }
+
+                  return (
+                    <button
+                      key={oIdx}
+                      disabled={quizSubmitted}
+                      onClick={() => setSelectedOptionIndex(oIdx)}
+                      className="w-full text-left p-[16px] rounded-[10px] border text-[13px] leading-[1.5] transition-all cursor-pointer disabled:cursor-default"
+                      style={{
+                        background: optionBg,
+                        borderColor: optionBorder,
+                        color: optionColor,
+                        fontWeight: isSelected ? 500 : 400,
+                      }}
+                    >
+                      <div className="flex items-start gap-[12px]">
+                        <span className="font-mono text-[11px] mt-[1px] opacity-60">
+                          {String.fromCharCode(65 + oIdx)}.
+                        </span>
+                        <span>{opt}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Explanation block */}
+              {quizSubmitted && (
+                <div
+                  className="rounded-[10px] p-[16px] text-[13px] leading-[1.6]"
+                  style={{
+                    background: "rgba(79,109,122,0.05)",
+                    borderLeft: `3px solid ${ACCENT}`,
+                  }}
+                >
+                  <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-2)] mb-[4px] font-semibold">
+                    Explanation
+                  </div>
+                  <div className="text-[var(--ink-2)]">
+                    {quizQuestions[currentQuestionIndex].explanation}
+                  </div>
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="flex justify-end pt-[8px]">
+                {!quizSubmitted ? (
+                  <button
+                    disabled={selectedOptionIndex === null}
+                    onClick={handleAnswerSubmit}
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ background: ACCENT }}
+                  >
+                    Submit Answer
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleNextQuestion}
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-white transition-all"
+                    style={{ background: ACCENT }}
+                  >
+                    {currentQuestionIndex + 1 === quizQuestions.length ? "Finish Quiz" : "Next Question"}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {quizFinished && (
+            <div className="text-center py-[64px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto space-y-[24px]">
+              <div
+                className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto"
+                style={{ background: `${ACCENT}18` }}
+              >
+                <Sparkles size={32} style={{ color: ACCENT }} />
+              </div>
+              <div>
+                <h3 className="text-[22px] font-semibold text-[var(--ink)] m-0 mb-[6px]">
+                  Quiz Completed
+                </h3>
+                <div className="text-[32px] font-bold text-[var(--ink)] leading-[1] my-[12px]" style={{ color: ACCENT }}>
+                  {quizScore} / {quizQuestions.length} Correct
+                </div>
+                <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 max-w-[360px] mx-auto">
+                  {quizScore === quizQuestions.length
+                    ? "Perfect! You have a masterful understanding of this book's concepts."
+                    : quizScore >= 3
+                    ? "Great job! You retained most of the core concepts."
+                    : "Good effort! Try reviewing your highlights and notes before trying again."}
+                </p>
+              </div>
+
+              <div className="flex gap-[10px] justify-center pt-[8px]">
+                <button
+                  onClick={() => setTab("notes")}
+                  className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-colors"
+                >
+                  Back to Notes
+                </button>
+                <button
+                  onClick={generateQuiz}
+                  className="inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+                  style={{ background: ACCENT }}
+                >
+                  <RefreshCw size={12} />
+                  Retake Quiz
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}

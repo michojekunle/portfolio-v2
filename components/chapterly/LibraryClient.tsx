@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { FREE_BOOK_LIMIT } from "@/lib/chapterly/types";
 import type {
@@ -23,6 +24,7 @@ import {
   Circle,
   Loader2,
   AlertCircle,
+  Sparkles,
 } from "lucide-react";
 
 const ACCENT = "#4F6D7A";
@@ -80,22 +82,103 @@ function detectFormat(filename: string): FileFormat {
   return map[ext ?? ""] ?? "other";
 }
 
+interface RecommendedBook {
+  title: string;
+  author: string;
+  tagline: string;
+  description: string;
+  cover_url: string;
+  content: string;
+}
+
+const DAILY_PICK: RecommendedBook = {
+  title: "Atomic Habits",
+  author: "James Clear",
+  tagline: "Tiny Changes, Remarkable Results.",
+  description: "An easy & proven way to build good habits & break bad ones. Learn the 4 laws of behavior change: Make it obvious, attractive, easy, and satisfying.",
+  cover_url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=200",
+  content: `# Summary of Atomic Habits by James Clear
+
+## Chapter 1: The Surprising Power of Atomic Habits
+Success is the product of daily habits—not once-in-a-lifetime transformations. Your outcomes are a lagging measure of your habits. Your net worth is a lagging measure of your financial habits. Your weight is a lagging measure of your eating habits. Your knowledge is a lagging measure of your learning habits. Your clutter is a lagging measure of your cleaning habits. You get what you repeat.
+
+## Chapter 2: How Your Habits Shape Your Identity (and Vice Versa)
+Changing our habits is challenging for two reasons: (1) we try to change the wrong thing and (2) we try to change our habits in the wrong way. There are three layers of behavior change: a change in your outcomes, a change in your processes, or a change in your identity. The most effective way to change your habits is to focus not on what you want to achieve, but on who you wish to become.
+
+## The 4 Laws of Behavior Change
+1. **First Law (Cue)**: Make it obvious. Design your environment so cues are visible.
+2. **Second Law (Craving)**: Make it attractive. Use temptation bundling.
+3. **Third Law (Response)**: Make it easy. Reduce friction, prime the environment.
+4. **Fourth Law (Reward)**: Make it satisfying. Use immediate rewards and habit trackers.
+`
+};
+
 interface Props {
   books: ChBookWithStats[];
 }
 
 export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElement {
+  const router = useRouter();
   const [books, setBooks] = useState(initialBooks);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ReadingStatus | "all">(
     "all"
   );
   const [uploading, setUploading] = useState(false);
+  const [importingPick, setImportingPick] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
+
+  const importDailyPick = async (): Promise<void> => {
+    if (books.length >= FREE_BOOK_LIMIT) {
+      setUploadError(
+        `Free plan limit: ${FREE_BOOK_LIMIT} books. Upgrade to add more.`
+      );
+      return;
+    }
+    setImportingPick(true);
+    setUploadError(null);
+    try {
+      const dataUrl = `data:text/markdown;charset=utf-8,${encodeURIComponent(DAILY_PICK.content)}`;
+      const res = await fetch("/api/chapterly/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: `Summary: ${DAILY_PICK.title}`,
+          author: DAILY_PICK.author,
+          cover_url: DAILY_PICK.cover_url,
+          file_url: dataUrl,
+          file_format: "md",
+          file_size_bytes: DAILY_PICK.content.length,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = (await res.json()) as { error?: string };
+        throw new Error(errData.error || "Failed to import pick");
+      }
+
+      const { book } = (await res.json()) as { book: ChBookWithStats };
+      setBooks((prev) => [
+        {
+          ...book,
+          total_reading_time_minutes: 0,
+          highlight_count: 0,
+          note_count: 0,
+          session_count: 0,
+        },
+        ...prev,
+      ]);
+    } catch (err) {
+      console.error("[library] daily pick error:", err);
+      setUploadError(err instanceof Error ? err.message : "Failed to import daily pick");
+    } finally {
+      setImportingPick(false);
+    }
+  };
 
   const filtered = books.filter((b) => {
     const matchQuery =
@@ -293,6 +376,44 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           )}
         </div>
       )}
+      {/* ── Daily Pick / Spaced Learning Banner ── */}
+      <div
+        className="mb-[32px] rounded-[16px] border p-[24px] flex items-center justify-between gap-[24px] max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-[16px]"
+        style={{
+          borderColor: "var(--rule)",
+          background: "linear-gradient(135deg, rgba(79,109,122,0.08) 0%, rgba(79,109,122,0.02) 100%)",
+        }}
+      >
+        <div className="flex items-start gap-[16px]">
+          <div
+            className="w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0"
+            style={{ background: "rgba(79,109,122,0.12)" }}
+          >
+            <Sparkles size={20} style={{ color: ACCENT }} />
+          </div>
+          <div>
+            <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[4px] flex items-center gap-[6px]">
+              <span className="w-[6px] h-[6px] rounded-full animate-pulse inline-block" style={{ background: ACCENT }} />
+              Daily Summary Pick
+            </div>
+            <h2 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[6px]">
+              {DAILY_PICK.title} <span className="font-normal text-[14px] text-[var(--ink-3)]">by {DAILY_PICK.author}</span>
+            </h2>
+            <p className="text-[12px] leading-[1.5] text-[var(--ink-3)] m-0 max-w-[580px]">
+              {DAILY_PICK.description}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={importDailyPick}
+          disabled={importingPick}
+          className="shrink-0 font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 text-[var(--ink-2)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] bg-transparent"
+          style={{ borderColor: "var(--rule)" }}
+        >
+          {importingPick ? "Importing…" : "Read Summary"}
+        </button>
+      </div>
 
       {/* ── Filters ── */}
       <div className="flex items-center gap-[12px] mb-[28px] flex-wrap">

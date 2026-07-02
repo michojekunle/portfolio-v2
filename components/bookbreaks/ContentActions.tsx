@@ -4,20 +4,60 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { motion } from "framer-motion";
-import { Copy, CheckCircle, RotateCcw, CheckSquare, Trash2 } from "lucide-react";
+import { Copy, CheckCircle, RotateCcw, CheckSquare, Trash2, BookOpen } from "lucide-react";
 
 interface Props {
   contentId: string;
   content: string;
   status: string;
+  bookTitle?: string;
+  bookAuthor?: string;
 }
 
-export function BBContentActions({ contentId, content, status }: Props): React.ReactElement {
+export function BBContentActions({
+  contentId,
+  content,
+  status,
+  bookTitle,
+  bookAuthor,
+}: Props): React.ReactElement {
   const router = useRouter();
   const supabase = createClient();
   const [copied, setCopied] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const handleSendToChapterly = async (): Promise<void> => {
+    setSending(true);
+    try {
+      const dataUrl = `data:text/markdown;charset=utf-8,${encodeURIComponent(content)}`;
+      const res = await fetch("/api/chapterly/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: `Summary: ${bookTitle || "Generated Summary"}`,
+          author: bookAuthor || null,
+          cover_url: null,
+          file_url: dataUrl,
+          file_format: "md",
+          file_size_bytes: content.length,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to send to Chapterly");
+      }
+
+      const data = (await res.json()) as { book_id: string };
+      router.push(`/tools/chapterly/read/${data.book_id}`);
+    } catch (err) {
+      console.error("[sendToChapterly] error:", err);
+      alert("Failed to export summary to Chapterly. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
 
   const handleCopy = async (): Promise<void> => {
     await navigator.clipboard.writeText(content);
@@ -99,6 +139,20 @@ export function BBContentActions({ contentId, content, status }: Props): React.R
           : status === "published"
           ? <><RotateCcw size={12} /> Unpublish</>
           : <><CheckSquare size={12} /> Publish</>}
+      </motion.button>
+
+      {/* Send to Chapterly */}
+      <motion.button
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
+        onClick={handleSendToChapterly}
+        disabled={sending}
+        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50 text-white"
+        style={{
+          background: "color-mix(in oklab, #4F6D7A 100%, transparent)",
+        }}
+      >
+        {sending ? "Sending…" : <><BookOpen size={12} /> Read in Chapterly</>}
       </motion.button>
 
       {/* Delete */}
