@@ -486,6 +486,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               url={book.file_url}
               theme={current}
               fontSize={fontSize}
+              initialProgress={book.progress_pct}
               onChapterText={setChapterText}
               onProgress={(pct) => saveProgress({ progress_pct: pct })}
               onMetadata={handleMetadata}
@@ -507,6 +508,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           <div className="overflow-auto h-[calc(100vh-56px)]" style={{ background: current.bg }}>
             <PdfReader
               url={book.file_url}
+              initialPage={book.current_page > 0 ? book.current_page : undefined}
               onChapterText={setChapterText}
               onProgress={(page, total) =>
                 saveProgress({

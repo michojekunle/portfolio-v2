@@ -17,17 +17,44 @@ interface Props {
   url: string;
   theme: EpubTheme;
   fontSize: number;
+  /** Reading progress 0-100 to resume from on open. */
+  initialProgress?: number;
   onHighlight: (text: string, cfiRange: string, color: HighlightColor) => Promise<void>;
   /** Called with the plain text of each newly rendered chapter, for TTS. */
   onChapterText?: (text: string) => void;
-  /** Called on every chapter navigation with the current progress percentage (0-100). */
   /** Called on every chapter navigation with the current progress percentage (0-100). */
   onProgress?: (pct: number) => void;
   /** Called when book metadata (title, creator, cover base64) is parsed on mount. */
   onMetadata?: (meta: { title?: string; author?: string; coverUrl?: string }) => void;
 }
 
-export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
+function compressCoverToDataUrl(blob: Blob, maxW = 240, maxH = 360): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(blob);
+    img.onload = (): void => {
+      const scale = Math.min(maxW / img.width, maxH / img.height, 1);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext("2d");
+      URL.revokeObjectURL(objectUrl);
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.72));
+      } else {
+        resolve("");
+      }
+    };
+    img.onerror = (): void => {
+      URL.revokeObjectURL(objectUrl);
+      resolve("");
+    };
+    img.src = objectUrl;
+  });
+}
+
+export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
   const viewerRef = useRef<HTMLDivElement>(null);
   const renditionRef = useRef<Rendition | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,38 +98,37 @@ export function EpubReader({ url, theme, fontSize, onHighlight, onChapterText, o
             if (coverUrl && onMetadata) {
               fetch(coverUrl)
                 .then((r) => r.blob())
-                .then((blob) => {
-                  const reader = new FileReader();
-                  reader.readAsDataURL(blob);
-                  reader.onloadend = () => {
-                    onMetadata({
-                      title: title || undefined,
-                      author: author || undefined,
-                      coverUrl: reader.result as string,
-                    });
-                  };
-                })
-                .catch(() => {
+                .then((blob) => compressCoverToDataUrl(blob))
+                .then((dataUrl) => {
                   onMetadata({
                     title: title || undefined,
                     author: author || undefined,
+                    coverUrl: dataUrl || undefined,
                   });
+                })
+                .catch(() => {
+                  onMetadata({ title: title || undefined, author: author || undefined });
                 });
             } else if (onMetadata) {
-              onMetadata({
-                title: title || undefined,
-                author: author || undefined,
-              });
+              onMetadata({ title: title || undefined, author: author || undefined });
             }
           });
         });
 
-        // Generate locations to ensure percentage progress works
+        // Generate locations to enable CFI-based navigation and progress tracking
         book.ready.then(() => {
           return book.locations.generate(1024);
         }).then(() => {
           if (destroyed) return;
-          // Trigger initial progress calculate
+          // Resume from saved position if provided (and meaningfully non-zero)
+          if (initialProgress && initialProgress > 0) {
+            const resumeCfi = book.locations.cfiFromPercentage(initialProgress / 100);
+            if (resumeCfi) {
+              void rendition.display(resumeCfi);
+              return;
+            }
+          }
+          // Report initial position
           if (rendition.location) {
             const progressVal = book.locations.percentageFromCfi(rendition.location.start.cfi);
             const pct = Math.round(progressVal * 100);

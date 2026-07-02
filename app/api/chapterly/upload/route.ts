@@ -96,6 +96,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const { data: urlData } = supabase.storage.from("user-uploads").getPublicUrl(storagePath);
 
+  if (!urlData.publicUrl) {
+    await supabase.storage.from("user-uploads").remove([storagePath]);
+    return NextResponse.json({ error: "Failed to generate public URL for uploaded file" }, { status: 500 });
+  }
+
   const { data: book, error: dbError } = await supabase
     .from("ch_books")
     .insert({

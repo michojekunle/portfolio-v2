@@ -44,6 +44,8 @@ interface TextSel {
 
 interface Props {
   url: string;
+  /** Page number (1-based) to open on load. */
+  initialPage?: number;
   onHighlight: (text: string, color: HighlightColor) => Promise<void>;
   /** Called with the plain text of each rendered page, for TTS. */
   onChapterText?: (text: string) => void;
@@ -53,7 +55,7 @@ interface Props {
   onMetadata?: (meta: { title?: string; author?: string; coverUrl?: string }) => void;
 }
 
-export function PdfReader({ url, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
+export function PdfReader({ url, initialPage, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<PDFDocumentProxy | null>(null);
@@ -61,7 +63,7 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress, onMetad
   const renderTaskRef = useRef<{ cancel: () => void } | null>(null);
 
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage && initialPage > 1 ? initialPage : 1);
   const [scale, setScale] = useState(1.4);
 
   useEffect(() => {
@@ -96,7 +98,8 @@ export function PdfReader({ url, onHighlight, onChapterText, onProgress, onMetad
       pdfRef.current = pdf;
       setTotalPages(pdf.numPages);
       setLoadingPdf(false);
-      onProgress?.(1, pdf.numPages);
+      const startPage = initialPage && initialPage > 1 && initialPage <= pdf.numPages ? initialPage : 1;
+      onProgress?.(startPage, pdf.numPages);
 
       // Extract metadata
       pdf.getMetadata().then((meta: any) => {

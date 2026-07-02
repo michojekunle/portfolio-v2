@@ -61,6 +61,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
   const loadingRef = useRef(false);
   const messagesRef = useRef(messages);
   const ttsEnabledRef = useRef(false);
+  const enteringVoiceRef = useRef(false);
 
   useEffect(() => { voiceModeRef.current = voiceMode; }, [voiceMode]);
   useEffect(() => { loadingRef.current = loading; }, [loading]);
@@ -113,13 +114,18 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       }
     };
 
+    // Track whether this recognition session ended due to an error. Both onerror
+    // and onend fire on error; without this flag they schedule two restarts.
+    let stoppedDueToError = false;
+
     rec.onerror = () => {
+      stoppedDueToError = true;
       setListening(false);
       setInterimTranscript("");
       // Auto-retry after a pause so the conversation doesn't stall on mic errors.
       if (isVoiceMode && voiceModeRef.current) {
         setTimeout(() => {
-          if (voiceModeRef.current) {
+          if (voiceModeRef.current && !loadingRef.current) {
             setVoiceState("listening");
             startVoiceRecognition(true);
           }
@@ -130,6 +136,19 @@ export function ChChatClient({ book }: Props): React.ReactElement {
     rec.onend = () => {
       setListening(false);
       setInterimTranscript("");
+      // onerror already scheduled a restart — don't double-start.
+      if (stoppedDueToError) return;
+      // In voice mode, recognition stops naturally after silence (continuous=false).
+      // Restart if we're still in voice mode and not mid-request, so the mic
+      // stays open between turns even when the user pauses without speaking.
+      if (isVoiceMode && voiceModeRef.current && !loadingRef.current) {
+        setTimeout(() => {
+          if (voiceModeRef.current && !loadingRef.current) {
+            setVoiceState("listening");
+            startVoiceRecognition(true);
+          }
+        }, 300);
+      }
     };
 
     recognitionRef.current = rec;
@@ -186,9 +205,9 @@ export function ChChatClient({ book }: Props): React.ReactElement {
         });
       }
 
-      if (isVoice && accumulated) {
+      if (isVoice && accumulated && window.speechSynthesis) {
         setVoiceState("speaking");
-        window.speechSynthesis?.cancel();
+        window.speechSynthesis.cancel();
         const utt = new SpeechSynthesisUtterance(accumulated);
         utt.rate = 1.05;
         // Turn-taking: after AI finishes speaking, reopen the mic automatically.
@@ -203,17 +222,22 @@ export function ChChatClient({ book }: Props): React.ReactElement {
         utt.onend = onDone;
         utt.onerror = onDone;
         window.speechSynthesis.speak(utt);
-      } else if (ttsEnabledRef.current && accumulated) {
-        window.speechSynthesis?.cancel();
+      } else if (isVoice && accumulated) {
+        // speechSynthesis unavailable — skip TTS but keep turn-taking alive
+        setVoiceState("listening");
+        startVoiceRecognition(true);
+      } else if (ttsEnabledRef.current && accumulated && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
         const utt = new SpeechSynthesisUtterance(accumulated);
         window.speechSynthesis.speak(utt);
       }
     } catch (err) {
       console.error("[chapterly/chat] stream error:", err);
       setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, I ran into an issue. Please try again." }]);
+      // On API error in voice mode, exit voice mode rather than retrying immediately —
+      // retrying unconditionally causes an infinite loop if the server is down or auth expired.
       if (isVoice && voiceModeRef.current) {
-        setVoiceState("listening");
-        startVoiceRecognition(true);
+        exitVoiceMode();
       }
     } finally {
       setLoading(false);
@@ -223,11 +247,16 @@ export function ChChatClient({ book }: Props): React.ReactElement {
   }
 
   function enterVoiceMode(): void {
+    if (enteringVoiceRef.current || voiceModeRef.current) return;
+    enteringVoiceRef.current = true;
     window.speechSynthesis?.cancel();
     voiceModeRef.current = true;
     setVoiceMode(true);
     setVoiceState("listening");
-    setTimeout(() => startVoiceRecognition(true), 300);
+    setTimeout(() => {
+      enteringVoiceRef.current = false;
+      startVoiceRecognition(true);
+    }, 300);
   }
 
   function exitVoiceMode(): void {

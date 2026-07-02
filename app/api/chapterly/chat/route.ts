@@ -4,6 +4,7 @@ import Groq from "groq-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 import { getBBSettings } from "@/lib/bookbreaks/queries";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const DEFAULT_MODEL_CHAIN = [
   "google:gemini-3.5-flash",
@@ -184,6 +185,11 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rl = checkRateLimit(`chapterly:chat:${user.id}`, { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -288,12 +294,15 @@ Respond conversationally. If asked about something outside this book, gently red
         controller.close();
         reader.releaseLock();
       }
-      // Fire-and-forget persistence — never blocks the response
+      // Persist after stream closes — errors are logged but don't affect the client
       if (accumulated && lastUserMessage) {
-        void supabase.from("ch_chat_history").insert([
-          { user_id: user.id, book_id, role: "user", content: lastUserMessage.content },
-          { user_id: user.id, book_id, role: "assistant", content: accumulated },
-        ]);
+        void (async () => {
+          const { error } = await supabase.from("ch_chat_history").insert([
+            { user_id: user.id, book_id, role: "user", content: lastUserMessage.content },
+            { user_id: user.id, book_id, role: "assistant", content: accumulated },
+          ]);
+          if (error) console.error("[chapterly/chat] chat history insert failed:", error);
+        })();
       }
     },
   });
