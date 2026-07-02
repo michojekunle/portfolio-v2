@@ -69,9 +69,8 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Already a flashcard" }, { status: 409 });
   }
 
-  // Initial SM-2 state: interval=1 day, ease=2.5, due tomorrow
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  // Initial SM-2 state: interval=1 day, ease=2.5, due immediately
+  const nowStr = new Date().toISOString();
 
   const { data: flashcard, error: insertError } = await supabase
     .from("ch_flashcards")
@@ -81,7 +80,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       book_id,
       front: (highlight.text as string).slice(0, 2000),
       back: back ?? (highlight.note as string | null) ?? null,
-      due_at: tomorrow.toISOString(),
+      due_at: nowStr,
       interval_days: 1,
       ease_factor: 2.5,
       review_count: 0,
@@ -97,7 +96,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   // Mark the highlight as a flashcard
   await supabase
     .from("ch_highlights")
-    .update({ is_flashcard: true, flashcard_due_at: tomorrow.toISOString() })
+    .update({ is_flashcard: true, flashcard_due_at: nowStr })
     .eq("id", highlight_id)
     .eq("user_id", user.id);
 

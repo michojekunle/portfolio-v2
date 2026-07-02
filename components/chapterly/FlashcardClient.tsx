@@ -108,6 +108,36 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
     if (r) void submitRating(r.rating);
   };
 
+  if (initialCards.length === 0) {
+    return (
+      <div
+        className="min-h-screen flex flex-col items-center justify-center px-[24px] py-[80px] max-[1024px]:pt-[100px] gap-[24px] text-center"
+      >
+        <div
+          className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center"
+          style={{ background: `${ACCENT}18` }}
+        >
+          <Brain size={32} style={{ color: ACCENT }} />
+        </div>
+        <div className="max-w-[420px]">
+          <h1 className="font-display text-[26px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] mb-[10px]">
+            No flashcards due
+          </h1>
+          <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] mb-[24px]">
+            To create flashcards, open any book, highlight a passage, and click the <strong style={{ color: "var(--ink)" }}>Flashcard</strong> (sparkles) icon in the notes sidebar. They will appear here immediately for study.
+          </p>
+          <Link
+            href="/tools/chapterly"
+            className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] no-underline"
+            style={{ background: ACCENT, color: "#fff" }}
+          >
+            Go to Library
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (done) {
     const total = Object.values(sessionStats).reduce((s, v) => s + v, 0);
     return (
