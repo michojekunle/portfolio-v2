@@ -59,10 +59,15 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
     if (!confirm("Delete this transaction?")) return;
     setDeletingId(id);
     try {
-      await fetch(`/api/flowise/transactions/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/flowise/transactions/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(body.error ?? `Delete failed (${res.status})`);
+      }
       setTransactions((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
+      alert(err instanceof Error ? err.message : "Failed to delete transaction");
     } finally {
       setDeletingId(null);
     }

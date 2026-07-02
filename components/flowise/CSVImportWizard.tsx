@@ -133,6 +133,11 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
     if (!useSeparateColumns && headers.indexOf(colAmount) < 0) { setError("Map Amount column"); return; }
     if (useSeparateColumns && (headers.indexOf(colCredit) < 0 || headers.indexOf(colDebit) < 0)) { setError("Map Credit and Debit columns"); return; }
 
+    // Hoist column index lookups outside the loop — avoids O(n×m) indexOf per row
+    const crIdx = headers.indexOf(colCredit);
+    const drIdx = headers.indexOf(colDebit);
+    const amtIdx = headers.indexOf(colAmount);
+
     const rows: ParsedRow[] = [];
     for (const raw of rawRows) {
       const dateVal = raw[dateIdx] ?? "";
@@ -142,14 +147,12 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
 
       let amount: number | null = null;
       if (useSeparateColumns) {
-        const crIdx = headers.indexOf(colCredit);
-        const drIdx = headers.indexOf(colDebit);
         const cr = tryParseAmount(raw[crIdx] ?? "");
         const dr = tryParseAmount(raw[drIdx] ?? "");
         if (cr && cr > 0) amount = cr;
         else if (dr && dr > 0) amount = -dr;
       } else {
-        amount = tryParseAmount(raw[headers.indexOf(colAmount)] ?? "");
+        amount = tryParseAmount(raw[amtIdx] ?? "");
       }
 
       if (amount === null) continue;

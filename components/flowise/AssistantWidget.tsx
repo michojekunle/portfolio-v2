@@ -380,7 +380,7 @@ export function AssistantWidget(): React.ReactElement {
                 {/* Send */}
                 <button
                   type="button"
-                  onClick={() => handleSendMessage(input)}
+                  onClick={() => void handleSendMessage(input)}
                   disabled={!input.trim() || loading}
                   className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed text-white"
                   style={{ background: ACCENT }}

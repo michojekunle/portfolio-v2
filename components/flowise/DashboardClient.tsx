@@ -30,7 +30,7 @@ export function FwDashboardClient({
   const [transactions, setTransactions] = useState(initialTransactions);
   const [showForm, setShowForm] = useState(false);
   const [stats, setStats] = useState({ thisMonth, lastMonth });
-  const netWorth = accounts.filter(a => !a.is_archived && a.currency === "NGN")
+  const netWorth = accounts.filter(a => !a.is_archived)
     .reduce((s, a) => s + a.current_balance, 0);
 
   const handleTransactionCreated = useCallback((tx: FwTransaction): void => {
@@ -43,28 +43,24 @@ export function FwDashboardClient({
           : a,
       ),
     );
-    // Optimistically update month stats
-    if (tx.amount > 0) {
-      setStats((s) => ({
+    // Optimistically update month stats (recompute net and savingsRate in one place)
+    setStats((s) => {
+      const income = s.thisMonth.income + (tx.amount > 0 ? tx.amount : 0);
+      const expenses = s.thisMonth.expenses + (tx.amount < 0 ? Math.abs(tx.amount) : 0);
+      const net = income - expenses;
+      const savingsRate = income > 0 ? Math.round((net / income) * 100) : 0;
+      return {
         ...s,
         thisMonth: {
           ...s.thisMonth,
-          income: s.thisMonth.income + tx.amount,
-          net: s.thisMonth.net + tx.amount,
+          income,
+          expenses,
+          net,
+          savingsRate,
           transactionCount: s.thisMonth.transactionCount + 1,
         },
-      }));
-    } else {
-      setStats((s) => ({
-        ...s,
-        thisMonth: {
-          ...s.thisMonth,
-          expenses: s.thisMonth.expenses + Math.abs(tx.amount),
-          net: s.thisMonth.net + tx.amount,
-          transactionCount: s.thisMonth.transactionCount + 1,
-        },
-      }));
-    }
+      };
+    });
     setShowForm(false);
   }, []);
 

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { FwAccount, FwCategory, FwTransaction } from "@/lib/flowise/types";
+import { CURRENCY_SYMBOLS } from "@/lib/flowise/types";
 import { X, Check } from "lucide-react";
 
 const ACCENT = "#16A34A";
@@ -99,6 +100,7 @@ export function TransactionForm({
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -110,10 +112,7 @@ export function TransactionForm({
   );
 
   const selectedAccount = accounts.find((a) => a.id === accountId);
-  const currencySymbols: Record<string, string> = {
-    NGN: "₦", USD: "$", GBP: "£", EUR: "€", GHS: "₵", KES: "KSh",
-  };
-  const symbol = currencySymbols[selectedAccount?.currency ?? "NGN"] ?? "₦";
+  const symbol = CURRENCY_SYMBOLS[selectedAccount?.currency ?? "NGN"] ?? "₦";
 
   const formContent = (
         <form onSubmit={handleSubmit} className="px-[24px] py-[20px] space-y-[18px]">

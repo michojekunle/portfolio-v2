@@ -2,21 +2,51 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getUserAccounts, getUserCategories } from "@/lib/flowise/queries";
 import { syncAccountBalance } from "@/lib/flowise/balance";
+import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
+import { z } from "zod";
+
+// Built once at module load — avoids rebuilding a Set on every ADD_TRANSACTION request
+const VALID_CATEGORY_IDS = new Set<string>(SYSTEM_CATEGORIES.map((c) => c.id));
 
 export const DEFAULT_MODEL_CHAIN = [
   "google:gemini-2.5-flash",
   "google:gemini-3.5-flash",
   "google:gemini-2.5-flash-lite",
-  "groq:openai/gpt-oss-120b",
   "groq:llama-3.1-8b-instant",
 ];
+
+const AddTransactionDataSchema = z.object({
+  account_id: z.string().uuid(),
+  amount: z.number().finite(),
+  category_id: z.string().nullable().optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  description: z.string().max(200).optional(),
+});
+
+const SetBudgetDataSchema = z.object({
+  category_id: z.string().min(1),
+  amount: z.number().positive().finite(),
+  month: z.string().regex(/^\d{4}-\d{2}$/),
+});
+
+const CreateGoalDataSchema = z.object({
+  name: z.string().min(1).max(200),
+  target_amount: z.number().positive().finite(),
+  deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+});
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rl = checkRateLimit(`flowise:assistant:${user.id}`, { limit: 60, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
 
   let body: {
     messages: { role: "user" | "assistant"; content: string }[];
@@ -175,72 +205,90 @@ JSON Response Schema:
       const { type, data } = result.action;
 
       if (type === "ADD_TRANSACTION") {
-        const { account_id, amount, category_id, date, description } = data;
-        
-        // Verify account ownership
-        const { data: account } = await supabase
-          .from("fw_accounts")
-          .select("id")
-          .eq("id", account_id)
-          .eq("user_id", user.id)
-          .single();
+        const txParsed = AddTransactionDataSchema.safeParse(data);
+        if (!txParsed.success) {
+          console.error("[flowise/assistant] invalid ADD_TRANSACTION data:", txParsed.error.errors);
+        } else {
+          const { account_id, amount, category_id, date, description } = txParsed.data;
 
-        if (account) {
-          const { error: txErr } = await supabase
-            .from("fw_transactions")
-            .insert({
-              user_id: user.id,
-              account_id,
-              amount,
-              category_id: category_id || null,
-              date,
-              description: description || "Voice transaction",
-              source: "ai_scan",
-            });
+          // Verify account ownership before insert
+          const { data: account } = await supabase
+            .from("fw_accounts")
+            .select("id")
+            .eq("id", account_id)
+            .eq("user_id", user.id)
+            .single();
 
-          if (!txErr) {
-            await syncAccountBalance(supabase, account_id, user.id);
-            actionExecuted = "ADD_TRANSACTION";
-            refreshRequired = true;
-          } else {
-            console.error("[flowise/assistant] insert transaction error:", txErr);
+          if (account) {
+            const safeCategoryId = category_id != null && VALID_CATEGORY_IDS.has(category_id) ? category_id : null;
+
+            const { error: txErr } = await supabase
+              .from("fw_transactions")
+              .insert({
+                user_id: user.id,
+                account_id,
+                amount,
+                category_id: safeCategoryId,
+                date,
+                description: description ?? "Voice transaction",
+                source: "ai_scan",
+                tags: [],
+              });
+
+            if (!txErr) {
+              await syncAccountBalance(supabase, account_id, user.id);
+              actionExecuted = "ADD_TRANSACTION";
+              refreshRequired = true;
+            } else {
+              console.error("[flowise/assistant] insert transaction error:", txErr);
+            }
           }
         }
       } else if (type === "SET_BUDGET") {
-        const { category_id, amount, month } = data;
-        const { error: budgetErr } = await supabase
-          .from("fw_budgets")
-          .upsert(
-            { user_id: user.id, category_id, amount, month, rollover_enabled: false },
-            { onConflict: "user_id,category_id,month" }
-          );
-
-        if (!budgetErr) {
-          actionExecuted = "SET_BUDGET";
-          refreshRequired = true;
+        const budgetParsed = SetBudgetDataSchema.safeParse(data);
+        if (!budgetParsed.success) {
+          console.error("[flowise/assistant] invalid SET_BUDGET data:", budgetParsed.error.errors);
         } else {
-          console.error("[flowise/assistant] upsert budget error:", budgetErr);
+          const { category_id, amount, month } = budgetParsed.data;
+          const { error: budgetErr } = await supabase
+            .from("fw_budgets")
+            .upsert(
+              { user_id: user.id, category_id, amount, month, rollover_enabled: false },
+              { onConflict: "user_id,category_id,month" },
+            );
+
+          if (!budgetErr) {
+            actionExecuted = "SET_BUDGET";
+            refreshRequired = true;
+          } else {
+            console.error("[flowise/assistant] upsert budget error:", budgetErr);
+          }
         }
       } else if (type === "CREATE_GOAL") {
-        const { name, target_amount, deadline } = data;
-        const { error: goalErr } = await supabase
-          .from("fw_goals")
-          .insert({
-            user_id: user.id,
-            name,
-            target_amount,
-            current_amount: 0,
-            deadline: deadline || null,
-            is_completed: false,
-            color: "#16A34A",
-            icon: "🎯",
-          });
-
-        if (!goalErr) {
-          actionExecuted = "CREATE_GOAL";
-          refreshRequired = true;
+        const goalParsed = CreateGoalDataSchema.safeParse(data);
+        if (!goalParsed.success) {
+          console.error("[flowise/assistant] invalid CREATE_GOAL data:", goalParsed.error.errors);
         } else {
-          console.error("[flowise/assistant] create goal error:", goalErr);
+          const { name, target_amount, deadline } = goalParsed.data;
+          const { error: goalErr } = await supabase
+            .from("fw_goals")
+            .insert({
+              user_id: user.id,
+              name,
+              target_amount,
+              current_amount: 0,
+              deadline: deadline ?? null,
+              is_completed: false,
+              color: "#16A34A",
+              icon: "🎯",
+            });
+
+          if (!goalErr) {
+            actionExecuted = "CREATE_GOAL";
+            refreshRequired = true;
+          } else {
+            console.error("[flowise/assistant] create goal error:", goalErr);
+          }
         }
       }
     }

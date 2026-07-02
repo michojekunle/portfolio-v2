@@ -154,10 +154,15 @@ export function FwSidebarNav({ userEmail, netWorth, currency = "NGN" }: Props): 
 
   const handleSignOut = async (): Promise<void> => {
     setSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/tools/flowise/login");
-    router.refresh();
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push("/tools/flowise/login");
+      router.refresh();
+    } catch (err) {
+      console.error("[flowise/sidebar] signOut error:", err);
+      setSigningOut(false);
+    }
   };
 
   const isActive = (href: string): boolean => {
