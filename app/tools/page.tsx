@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Creator Suite",
+  title: "Creator Suite — Michael Ojekunle",
   description:
-    "Michael Ojekunle's creator tools — BookBreaks, Chapterly, Flowise, Thread Studio, Carousel Lab. Build in public, learn out loud.",
+    "Five live tools built for creators who read, ship, and share: BookBreaks turns books into content, Chapterly is a reading OS with AI voice chat, Flowise tracks your money with Nigerian bank support, Thread Studio engineers viral X threads, and Carousel Lab builds scroll-stopping slides.",
 };
 
 const TOOLS = [
@@ -28,8 +28,8 @@ const TOOLS = [
     tagline: "Engineer viral threads.",
     description:
       "Draft, structure, and schedule long-form X threads. Hook optimiser, engagement analytics, and a distraction-free writing canvas.",
-    status: "soon" as const,
-    href: "#",
+    status: "live" as const,
+    href: "/tools/thread-studio",
     accent: "#6366F1",
     accentSoft: "rgba(99,102,241,0.12)",
     icon: "🐦",
@@ -41,8 +41,8 @@ const TOOLS = [
     tagline: "Design scroll-stopping slides.",
     description:
       "Build Instagram and LinkedIn carousels with book-themed templates. Export as PNG or HTML, publish directly from the browser.",
-    status: "soon" as const,
-    href: "#",
+    status: "live" as const,
+    href: "/tools/carousel-lab",
     accent: "#FF6B35",
     accentSoft: "rgba(255,107,53,0.12)",
     icon: "📸",
@@ -104,9 +104,10 @@ export default function CreatorSuitePage(): React.ReactElement {
                 className="text-[18px] leading-[1.65] m-0"
                 style={{ color: "var(--ink-2)" }}
               >
-                A suite of creator tools for people learning in public. Read
-                more, build better, ship consistently — and let your community
-                grow alongside you.
+                Five production tools I built because I needed them. Turn books
+                into content, track every naira, build viral threads, design
+                carousel slides — and read anything with an AI that remembers
+                your highlights.
               </p>
               <div className="mt-[32px] flex items-center gap-[16px] flex-wrap">
                 <MagneticWrapper>
@@ -174,18 +175,18 @@ export default function CreatorSuitePage(): React.ReactElement {
             {[
               {
                 num: "01",
-                head: "Read deeply.",
-                body: "Every book contains compressed decades of someone else's experience. Extract it properly.",
+                head: "Built for actual use.",
+                body: "Every tool here has auth, a real database, AI integrations, and handles edge cases. Not demos — products.",
               },
               {
                 num: "02",
-                head: "Share freely.",
-                body: "Knowledge hoarded dies. Knowledge shared compounds — for you and for everyone you reach.",
+                head: "Nigerian context, global reach.",
+                body: "Flowise supports OPay, Kuda, and GTBank natively. The other tools work for anyone, anywhere.",
               },
               {
                 num: "03",
-                head: "Build in public.",
-                body: "The process is the product. Your learning journey is as valuable as the destination.",
+                head: "Free to start.",
+                body: "All tools have a free tier that covers real daily use. No bait-and-switch. Upgrade only when you need more.",
               },
             ].map((p) => (
               <div key={p.num}>
@@ -234,7 +235,7 @@ function ToolCard({
       className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
       style={{
         borderRight: borderRight ? "1px solid var(--rule)" : undefined,
-        borderBottom: "1px solid var(--rule)",
+        borderBottom: borderBottom ? "1px solid var(--rule)" : undefined,
       }}
     >
       {/* Accent hover background */}
