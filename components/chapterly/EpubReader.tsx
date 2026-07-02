@@ -115,38 +115,46 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
           });
         });
 
+        // Gate progress reporting until locations are ready — prevents the initial
+        // display() call from firing onProgress(0) and overwriting saved progress
+        // before generate() completes (which can take 3-6 s on large EPUBs).
+        let locationsReady = false;
+
         // Generate locations to enable CFI-based navigation and progress tracking
         book.ready.then(() => {
           return book.locations.generate(1024);
         }).then(() => {
           if (destroyed) return;
+          locationsReady = true;
           // Resume from saved position if provided (and meaningfully non-zero)
-          if (initialProgress && initialProgress > 0) {
+          if (initialProgress != null && initialProgress > 0) {
             const resumeCfi = book.locations.cfiFromPercentage(initialProgress / 100);
             if (resumeCfi) {
               void rendition.display(resumeCfi);
               return;
             }
           }
-          // Report initial position
-          if (rendition.location) {
+          // Locations just ready — report the current position now
+          if (rendition.location?.start?.cfi) {
             const progressVal = book.locations.percentageFromCfi(rendition.location.start.cfi);
-            const pct = Math.round(progressVal * 100);
+            const pct = Math.round((progressVal ?? 0) * 100);
             setProgress(pct);
             onProgress?.(pct);
           }
         }).catch(() => undefined);
 
         rendition.on("relocated", (location: Location) => {
-          if (book.locations && location.start?.cfi) {
+          // Only compute/report progress once locations are generated — before that,
+          // percentageFromCfi returns 0 and would overwrite real saved progress.
+          if (locationsReady && book.locations && location.start?.cfi) {
             const progressVal = book.locations.percentageFromCfi(location.start.cfi);
-            const pct = Math.round(progressVal * 100);
+            const pct = Math.round((progressVal ?? 0) * 100);
             setProgress(pct);
             onProgress?.(pct);
-          } else if (location.start?.percentage !== undefined) {
+          } else if (!locationsReady && location.start?.percentage !== undefined) {
+            // Show approximate progress visually (without saving) while locations load
             const pct = Math.round(location.start.percentage * 100);
             setProgress(pct);
-            onProgress?.(pct);
           }
           if (onChapterText) {
             // Extract plain text of the current viewport content for TTS

@@ -78,6 +78,8 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     null
   );
 
+  const [liveProgress, setLiveProgress] = useState<number>(book.progress_pct ?? 0);
+
   const sessionStartRef = useRef<number>(Date.now());
   // Prevents double-firing: visibilitychange (hidden) + cleanup can both call
   // logSession in the same navigation event. Track whether this session was
@@ -488,7 +490,10 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               fontSize={fontSize}
               initialProgress={book.progress_pct}
               onChapterText={setChapterText}
-              onProgress={(pct) => saveProgress({ progress_pct: pct })}
+              onProgress={(pct) => {
+                setLiveProgress(pct);
+                saveProgress({ progress_pct: pct });
+              }}
               onMetadata={handleMetadata}
               onHighlight={async (text, cfi, color) => {
                 try {
@@ -510,13 +515,11 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               url={book.file_url}
               initialPage={book.current_page > 0 ? book.current_page : undefined}
               onChapterText={setChapterText}
-              onProgress={(page, total) =>
-                saveProgress({
-                  current_page: page,
-                  total_pages: total,
-                  progress_pct: Math.round((page / total) * 100),
-                })
-              }
+              onProgress={(page, total) => {
+                const pct = Math.round((page / total) * 100);
+                setLiveProgress(pct);
+                saveProgress({ current_page: page, total_pages: total, progress_pct: pct });
+              }}
               onMetadata={handleMetadata}
               onHighlight={async (text, color) => {
                 try {
@@ -811,7 +814,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       >
         <div
           className="h-full transition-all duration-500"
-          style={{ width: `${book.progress_pct}%`, background: ACCENT }}
+          style={{ width: `${liveProgress}%`, background: ACCENT }}
         />
       </div>
     </div>
