@@ -24,7 +24,7 @@ Transactions: ${JSON.stringify(descriptions)}`;
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! });
   try {
     const res = await groq.chat.completions.create({
-      model: "openai/gpt-oss-120b",
+      model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
       temperature: 0,
       max_tokens: 800,
@@ -121,7 +121,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   // Recompute balance from source of truth — handles partial inserts correctly.
-  await syncAccountBalance(supabase, account_id, user.id);
+  try {
+    await syncAccountBalance(supabase, account_id, user.id);
+  } catch (syncErr) {
+    console.error("[flowise/import] balance sync failed (rows were imported):", syncErr);
+  }
 
   return NextResponse.json({
     imported: inserted?.length ?? 0,

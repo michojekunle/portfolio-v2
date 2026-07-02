@@ -64,8 +64,11 @@ export function computeMonthlyStats(
 }
 
 export function computeNetWorth(accounts: FwAccount[]): number {
+  // Sums all non-archived accounts regardless of currency. Multi-currency
+  // balances are treated as their numeric value without conversion — the caller
+  // is responsible for showing a caveat when mixed currencies are present.
   return accounts
-    .filter((a) => !a.is_archived && a.currency === "NGN")
+    .filter((a) => !a.is_archived)
     .reduce((sum, a) => sum + a.current_balance, 0);
 }
 

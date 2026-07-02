@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { syncAccountBalance } from "@/lib/flowise/balance";
+import { getMonthRange } from "@/lib/flowise/calculator";
+import { requireFlowiseAuth } from "@/lib/flowise/auth";
 
 const CreateSchema = z.object({
   account_id: z.string().uuid(),
@@ -26,9 +27,9 @@ const ListSchema = z.object({
 });
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireFlowiseAuth();
+  if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { supabase, user } = auth;
 
   const params = Object.fromEntries(request.nextUrl.searchParams);
   const parsed = ListSchema.safeParse(params);
@@ -51,11 +52,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (account_id) query = query.eq("account_id", account_id);
   if (category_id) query = query.eq("category_id", category_id);
   if (month) {
-    const [year, mon] = month.split("-").map(Number);
-    const lastDay = new Date(year, mon, 0).getDate();
-    query = query
-      .gte("date", `${month}-01`)
-      .lte("date", `${month}-${String(lastDay).padStart(2, "0")}`);
+    const { start, end } = getMonthRange(month);
+    query = query.gte("date", start).lte("date", end);
   }
 
   const { data, error, count } = await query;
@@ -68,9 +66,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireFlowiseAuth();
+  if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { supabase, user } = auth;
 
   let body: unknown;
   try {
@@ -107,7 +105,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   // Recompute balance from source of truth — idempotent and self-healing.
-  await syncAccountBalance(supabase, parsed.data.account_id, user.id);
+  try {
+    await syncAccountBalance(supabase, parsed.data.account_id, user.id);
+  } catch (syncErr) {
+    console.error("[flowise/transactions] balance sync failed (tx was saved):", syncErr);
+  }
 
   return NextResponse.json({ transaction: tx }, { status: 201 });
 }

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Groq from "groq-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const FALLBACK_MODELS = [
   "groq:openai/gpt-oss-120b",
@@ -39,6 +40,11 @@ export async function POST(): Promise<NextResponse> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rl = checkRateLimit(`flowise:insights:${user.id}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
 
   // Gather last 60 days of data for context
   const sixtyDaysAgo = new Date();
@@ -123,8 +129,11 @@ Return ONLY a JSON array of insight strings, no markdown, no extra text. Example
     try {
       const raw = await callModel(model, prompt);
       const clean = raw.trim().replace(/^```json?\s*/i, "").replace(/```\s*$/, "").trim();
-      insights = JSON.parse(clean) as string[];
-      if (Array.isArray(insights) && insights.length > 0) break;
+      const parsed: unknown = JSON.parse(clean);
+      if (Array.isArray(parsed) && parsed.length > 0 && parsed.every((i) => typeof i === "string")) {
+        insights = parsed as string[];
+        break;
+      }
     } catch (err) {
       console.warn(`[flowise/insights] model ${model} failed:`, err instanceof Error ? err.message : err);
     }

@@ -15,6 +15,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "from and to params required (YYYY-MM-DD)" }, { status: 400 });
   }
 
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRe.test(from) || !dateRe.test(to)) {
+    return NextResponse.json({ error: "from and to must be YYYY-MM-DD" }, { status: 400 });
+  }
+
+  if (from > to) {
+    return NextResponse.json({ error: "'from' date must be on or before 'to' date" }, { status: 400 });
+  }
+
   const { data: txRows, error } = await supabase
     .from("fw_transactions")
     .select("*, account:fw_accounts(name, currency)")
@@ -55,6 +64,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   const csv = lines.join("\n");
+  // Both from/to are validated YYYY-MM-DD above — safe to embed directly.
   const filename = `flowise-export-${from}-to-${to}.csv`;
 
   return new NextResponse(csv, {

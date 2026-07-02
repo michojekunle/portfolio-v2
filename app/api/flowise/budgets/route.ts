@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { getMonthRange } from "@/lib/flowise/calculator";
+import { requireFlowiseAuth } from "@/lib/flowise/auth";
 
 const UpsertSchema = z.object({
   category_id: z.string().min(1),
@@ -15,9 +16,9 @@ const DeleteSchema = z.object({
 });
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireFlowiseAuth();
+  if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { supabase, user } = auth;
 
   const month = request.nextUrl.searchParams.get("month");
   if (!month || !/^\d{4}-\d{2}$/.test(month)) {
@@ -37,15 +38,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // Fetch actual spend per category for the month
-  const [y, m] = month.split("-").map(Number);
-  const lastDay = new Date(y, m, 0).getDate();
+  const { start: monthStart, end: monthEnd } = getMonthRange(month);
   const { data: txRows, error: txErr } = await supabase
     .from("fw_transactions")
     .select("category_id, amount")
     .eq("user_id", user.id)
     .lt("amount", 0)
-    .gte("date", `${month}-01`)
-    .lte("date", `${month}-${String(lastDay).padStart(2, "0")}`);
+    .gte("date", monthStart)
+    .lte("date", monthEnd);
 
   if (txErr) {
     console.error("[flowise/budgets] spend query error:", txErr);
@@ -68,9 +68,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireFlowiseAuth();
+  if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { supabase, user } = auth;
 
   let body: unknown;
   try { body = await request.json(); } catch {
@@ -100,9 +100,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireFlowiseAuth();
+  if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { supabase, user } = auth;
 
   let body: unknown;
   try { body = await request.json(); } catch {

@@ -65,9 +65,13 @@ export async function PATCH(
   const oldAccountId = oldTx.account_id as string;
   const newAccountId = parsed.data.account_id;
 
-  await syncAccountBalance(supabase, oldAccountId, user.id);
-  if (newAccountId && newAccountId !== oldAccountId) {
-    await syncAccountBalance(supabase, newAccountId, user.id);
+  try {
+    await syncAccountBalance(supabase, oldAccountId, user.id);
+    if (newAccountId && newAccountId !== oldAccountId) {
+      await syncAccountBalance(supabase, newAccountId, user.id);
+    }
+  } catch (syncErr) {
+    console.error("[flowise/transactions/[id]] balance sync failed (tx was saved):", syncErr);
   }
 
   return NextResponse.json({ transaction: tx });
@@ -107,7 +111,11 @@ export async function DELETE(
   }
 
   // Resync after delete — balance will reflect the removed transaction.
-  await syncAccountBalance(supabase, accountId, user.id);
+  try {
+    await syncAccountBalance(supabase, accountId, user.id);
+  } catch (syncErr) {
+    console.error("[flowise/transactions/[id]] balance sync failed (tx was deleted):", syncErr);
+  }
 
   return NextResponse.json({ success: true });
 }

@@ -79,8 +79,13 @@ export async function getTransactions(opts: {
     const { start, end } = getMonthRange(opts.month);
     query = query.gte("date", start).lte("date", end);
   }
-  if (opts.limit) query = query.limit(opts.limit);
-  if (opts.offset) query = query.range(opts.offset, opts.offset + (opts.limit ?? 50) - 1);
+  // Use range() when offset is present (handles both pagination and limit together).
+  // Use limit() alone when only a count cap is needed with no offset.
+  if (opts.offset !== undefined) {
+    query = query.range(opts.offset, opts.offset + (opts.limit ?? 50) - 1);
+  } else if (opts.limit) {
+    query = query.limit(opts.limit);
+  }
 
   const { data, error } = await query;
   if (error) {

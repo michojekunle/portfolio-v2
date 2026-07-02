@@ -17,7 +17,8 @@ const CreateSchema = z.object({
 const UpdateSchema = CreateSchema.partial().extend({
   id: z.string().uuid(),
   is_archived: z.boolean().optional(),
-  current_balance: z.number().optional(),
+  // current_balance is intentionally excluded — it is managed exclusively by
+  // syncAccountBalance() to keep starting_balance + transactions as source of truth.
 });
 
 export async function GET(): Promise<NextResponse> {
