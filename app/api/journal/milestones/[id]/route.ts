@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireJournalAuth } from "@/lib/journal/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const UpdateSchema = z.object({
   title: z.string().min(1).max(200).optional(),
@@ -15,6 +16,10 @@ export async function PATCH(
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:milestones:patch:${user.id}`, { limit: 120, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const { id } = await params;
 
   let body: unknown;
@@ -35,15 +40,22 @@ export async function PATCH(
 
   const { data, error } = await supabase
     .from("jo_milestones")
-    .update(parsed.data)
+    .update({ ...parsed.data, updated_at: new Date().toISOString() })
     .eq("id", id)
     .eq("user_id", user.id)
     .select()
     .single();
 
-  if (error || !data) {
+  if (error) {
     console.error("[journal/milestones/[id]] PATCH error:", error);
-    return NextResponse.json({ error: "Milestone not found or update failed" }, { status: 404 });
+    if (error.code === "PGRST116") {
+      return NextResponse.json({ error: "Milestone not found" }, { status: 404 });
+    }
+    return NextResponse.json({ error: "Failed to update milestone" }, { status: 500 });
+  }
+
+  if (!data) {
+    return NextResponse.json({ error: "Milestone not found" }, { status: 404 });
   }
 
   return NextResponse.json({ milestone: data });
@@ -56,17 +68,26 @@ export async function DELETE(
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:milestones:delete:${user.id}`, { limit: 60, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const { id } = await params;
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("jo_milestones")
     .delete()
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("id");
 
   if (error) {
     console.error("[journal/milestones/[id]] DELETE error:", error);
     return NextResponse.json({ error: "Failed to delete milestone" }, { status: 500 });
+  }
+
+  if (!data || data.length === 0) {
+    return NextResponse.json({ error: "Milestone not found" }, { status: 404 });
   }
 
   return NextResponse.json({ success: true });

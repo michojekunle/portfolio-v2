@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Loader2, Target } from "lucide-react";
+import { Plus, Loader2, Target, AlertCircle } from "lucide-react";
 import { ObjectiveCard } from "@/components/journal/ObjectiveCard";
 import type { JoObjectiveWithMilestones } from "@/lib/journal/types";
 import {
@@ -15,8 +15,10 @@ const ICONS = ["🎯", "💡", "🚀", "📚", "💪", "🏆", "🌱", "✍️",
 export default function ObjectivesPage(): React.ReactElement {
   const [objectives, setObjectives] = useState<JoObjectiveWithMilestones[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -26,12 +28,18 @@ export default function ObjectivesPage(): React.ReactElement {
   const [icon, setIcon] = useState("🎯");
 
   const loadObjectives = useCallback(async (): Promise<void> => {
+    setFetchError(null);
     try {
       const res = await fetch("/api/journal/objectives");
+      if (!res.ok) {
+        const json = (await res.json()) as { error?: string };
+        throw new Error(json.error ?? "Failed to load objectives");
+      }
       const json = (await res.json()) as { objectives: JoObjectiveWithMilestones[] };
       setObjectives(json.objectives ?? []);
     } catch (err) {
       console.error("[objectives] load error:", err);
+      setFetchError(err instanceof Error ? err.message : "Failed to load objectives");
     } finally {
       setLoading(false);
     }
@@ -44,6 +52,7 @@ export default function ObjectivesPage(): React.ReactElement {
   const handleCreate = async (): Promise<void> => {
     if (!title.trim()) return;
     setSaving(true);
+    setCreateError(null);
     try {
       const res = await fetch("/api/journal/objectives", {
         method: "POST",
@@ -57,19 +66,21 @@ export default function ObjectivesPage(): React.ReactElement {
           icon,
         }),
       });
-      const json = (await res.json()) as { objective: JoObjectiveWithMilestones };
-      if (json.objective) {
-        setObjectives((prev) => [json.objective, ...prev]);
-        setTitle("");
-        setDescription("");
-        setTargetDate("");
-        setPriority("medium");
-        setColor(OBJECTIVE_COLORS[0]);
-        setIcon("🎯");
-        setShowForm(false);
+      const json = (await res.json()) as { objective?: JoObjectiveWithMilestones; error?: string };
+      if (!res.ok || !json.objective) {
+        throw new Error(json.error ?? "Failed to create objective");
       }
+      setObjectives((prev) => [json.objective!, ...prev]);
+      setTitle("");
+      setDescription("");
+      setTargetDate("");
+      setPriority("medium");
+      setColor(OBJECTIVE_COLORS[0]);
+      setIcon("🎯");
+      setShowForm(false);
     } catch (err) {
       console.error("[objectives] create error:", err);
+      setCreateError(err instanceof Error ? err.message : "Failed to create. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -166,11 +177,11 @@ export default function ObjectivesPage(): React.ReactElement {
             Objectives
           </h1>
           <p className="text-[13px] text-[var(--ink-3)] mt-[4px] mb-0">
-            The big things you're steering toward.
+            The big things you&apos;re steering toward.
           </p>
         </div>
         <button
-          onClick={() => setShowForm((s) => !s)}
+          onClick={() => { setShowForm((s) => !s); setCreateError(null); }}
           className="flex items-center gap-[8px] px-[16px] py-[9px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer transition-opacity hover:opacity-90"
           style={{ background: VELA_ACCENT }}
         >
@@ -189,7 +200,6 @@ export default function ObjectivesPage(): React.ReactElement {
             New Objective
           </div>
 
-          {/* Icon + color row */}
           <div className="flex gap-[16px] flex-wrap">
             <div>
               <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
@@ -241,6 +251,7 @@ export default function ObjectivesPage(): React.ReactElement {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") void handleCreate(); }}
               placeholder="What are you working toward?"
               className="w-full h-[42px] px-[14px] rounded-[8px] text-[14px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
             />
@@ -290,6 +301,16 @@ export default function ObjectivesPage(): React.ReactElement {
             </div>
           </div>
 
+          {createError && (
+            <div
+              className="flex items-center gap-[8px] rounded-[8px] px-[12px] py-[10px] text-[13px]"
+              style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626" }}
+            >
+              <AlertCircle size={14} />
+              {createError}
+            </div>
+          )}
+
           <div className="flex gap-[10px] pt-[4px]">
             <button
               onClick={() => void handleCreate()}
@@ -301,7 +322,7 @@ export default function ObjectivesPage(): React.ReactElement {
               Create Objective
             </button>
             <button
-              onClick={() => setShowForm(false)}
+              onClick={() => { setShowForm(false); setCreateError(null); }}
               className="px-[16px] h-[40px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] transition-opacity hover:opacity-70"
             >
               Cancel
@@ -314,6 +335,18 @@ export default function ObjectivesPage(): React.ReactElement {
       {loading ? (
         <div className="flex items-center justify-center py-[60px]">
           <Loader2 size={22} className="animate-spin" style={{ color: VELA_ACCENT }} />
+        </div>
+      ) : fetchError ? (
+        <div className="text-center py-[60px]">
+          <AlertCircle size={32} className="mx-auto mb-[12px]" style={{ color: "#DC2626", opacity: 0.5 }} />
+          <div className="text-[15px] font-medium mb-[8px] text-[var(--ink)]">Failed to load objectives</div>
+          <p className="text-[13px] text-[var(--ink-3)] mb-[20px]">{fetchError}</p>
+          <button
+            onClick={() => void loadObjectives()}
+            className="px-[16px] py-[8px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-2)] transition-opacity hover:opacity-70"
+          >
+            Try again
+          </button>
         </div>
       ) : objectives.length === 0 ? (
         <div className="text-center py-[60px]">

@@ -406,11 +406,20 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
       {/* ── Recent entries ── */}
       {entries.length > 0 && (
         <section>
-          <div
-            className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[16px]"
-            style={{ color: "var(--ink-3)" }}
-          >
-            Recent Entries
+          <div className="flex items-center justify-between mb-[16px]">
+            <div
+              className="font-mono text-[10px] tracking-[0.14em] uppercase"
+              style={{ color: "var(--ink-3)" }}
+            >
+              Recent Entries
+            </div>
+            <Link
+              href="/tools/journal/log/history"
+              className="font-mono text-[10px] tracking-[0.10em] uppercase no-underline transition-opacity hover:opacity-70"
+              style={{ color: VELA_ACCENT }}
+            >
+              View all →
+            </Link>
           </div>
           <div className="space-y-[8px]">
             {entries.slice(0, 5).map((entry) => (
