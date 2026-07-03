@@ -54,6 +54,36 @@ function formatDate(iso: string): string {
   });
 }
 
+function renderNoteContent(md: string): React.ReactElement {
+  const lines = md.split("\n");
+  const nodes: React.ReactNode[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i++; continue; }
+    if (line.startsWith("> ")) {
+      nodes.push(
+        <blockquote
+          key={i}
+          className="pl-[12px] py-[8px] italic text-[13px] text-[var(--ink-3)] my-[8px]"
+          style={{ borderTop: "1px solid var(--rule)", borderBottom: "1px solid var(--rule)" }}
+        >
+          {line.slice(2)}
+        </blockquote>
+      );
+    } else {
+      const parts = line.split(/(\*\*[^*]+\*\*)/g).map((part, pi) =>
+        part.startsWith("**") && part.endsWith("**")
+          ? <strong key={pi} className="font-semibold text-[var(--ink)]">{part.slice(2, -2)}</strong>
+          : part
+      );
+      nodes.push(<p key={i} className="text-[14px] leading-[1.7] text-[var(--ink)] m-0 mb-[6px]">{parts}</p>);
+    }
+    i++;
+  }
+  return <div className="flex flex-col gap-[2px]">{nodes}</div>;
+}
+
 // ── NoteEditor ────────────────────────────────────────────────
 // Defined at module scope so React sees a stable component type across renders.
 // If defined inside ChNotesClient, every parent re-render produces a new type
@@ -222,8 +252,10 @@ export function ChNotesClient({
   const [shortsCards, setShortsCards] = useState<ConceptCard[]>([]);
   const [shortsIndex, setShortsIndex] = useState(0);
   const [shortsLoading, setShortsLoading] = useState(false);
+  const [shortsError, setShortsError] = useState<string | null>(null);
   const [shortsSavedIds, setShortsSavedIds] = useState<Set<number>>(new Set());
   const [shortsSaving, setShortsSaving] = useState<number | null>(null);
+  const [shareConceptIdx, setShareConceptIdx] = useState<number | null>(null);
   const dragStartX = useRef<number | null>(null);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -232,6 +264,7 @@ export function ChNotesClient({
     setShortsLoading(true);
     setShortsCards([]);
     setShortsIndex(0);
+    setShortsError(null);
     setShortsSavedIds(new Set());
     try {
       const res = await fetch("/api/chapterly/shorts", {
@@ -248,6 +281,7 @@ export function ChNotesClient({
       setShortsCards(data.cards);
     } catch (err) {
       console.error("[shorts] generation error:", err);
+      setShortsError(err instanceof Error ? err.message : "Failed to generate shorts. Check your API settings and try again.");
     } finally {
       setShortsLoading(false);
     }
@@ -422,6 +456,9 @@ export function ChNotesClient({
   };
 
   // ── BookBreaks bridge ─────────────────────────────────────────
+  // Copies this book's highlights + notes as structured markdown so you can
+  // paste them into BookBreaks → Thread Studio or Carousel Lab to create
+  // social content from your reading.
 
   const copyForBookBreaks = async (): Promise<void> => {
     const lines: string[] = [
@@ -449,7 +486,7 @@ export function ChNotesClient({
     try {
       await navigator.clipboard.writeText(md);
       setBridgeCopied(true);
-      setTimeout(() => setBridgeCopied(false), 2500);
+      setTimeout(() => setBridgeCopied(false), 4000);
       window.open("/tools/bookbreaks", "_blank", "noopener,noreferrer");
     } catch (err) {
       console.error("[notes] clipboard error:", err);
@@ -531,20 +568,27 @@ export function ChNotesClient({
             </h1>
           </div>
           <div className="flex items-center gap-[8px] flex-wrap mt-[12px] sm:mt-0">
-            <button
-              onClick={() => void copyForBookBreaks()}
-              disabled={highlights.length === 0 && notes.length === 0}
-              className="shrink-0 inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              style={
-                bridgeCopied
-                  ? { background: "#16A34A", color: "#fff" }
-                  : { background: "#C85A2C", color: "#fff" }
-              }
-              title="Copy highlights as Markdown and open BookBreaks"
-            >
-              {bridgeCopied ? <Check size={13} /> : <ExternalLink size={13} />}
-              {bridgeCopied ? "Copied!" : "BookBreaks"}
-            </button>
+            <div className="flex flex-col items-end gap-[4px]">
+              <button
+                onClick={() => void copyForBookBreaks()}
+                disabled={highlights.length === 0 && notes.length === 0}
+                className="shrink-0 inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                style={
+                  bridgeCopied
+                    ? { background: "#16A34A", color: "#fff" }
+                    : { background: "#C85A2C", color: "#fff" }
+                }
+                title="Copy your highlights as Markdown, then paste them into BookBreaks to generate threads or carousels from your reading"
+              >
+                {bridgeCopied ? <Check size={13} /> : <ExternalLink size={13} />}
+                {bridgeCopied ? "Copied — paste in BookBreaks" : "Create content in BookBreaks"}
+              </button>
+              {!bridgeCopied && (highlights.length > 0 || notes.length > 0) && (
+                <span className="font-mono text-[8px] tracking-[0.08em] text-[var(--ink-3)] opacity-60 max-w-[240px] text-right leading-[1.4]">
+                  Copies your {highlights.length > 0 ? `${highlights.length} highlight${highlights.length !== 1 ? "s" : ""}` : "notes"} as Markdown · Paste into Thread Studio or Carousel Lab
+                </span>
+              )}
+            </div>
             <button
               onClick={exportMarkdown}
               disabled={notes.length === 0 && highlights.length === 0}
@@ -577,7 +621,7 @@ export function ChNotesClient({
             {t === "notes" && `Notes${notes.length > 0 ? ` (${notes.length})` : ""}`}
             {t === "highlights" && `Highlights${highlights.length > 0 ? ` (${highlights.length})` : ""}`}
             {t === "quiz" && "AI Quiz"}
-            {t === "shorts" && "Shorts"}
+            {t === "shorts" && `Shorts${shortsCards.length > 0 ? ` (${shortsCards.length})` : ""}`}
           </button>
         ))}
       </div>
@@ -657,9 +701,7 @@ export function ChNotesClient({
                         {note.chapter_ref}
                       </div>
                     )}
-                    <p className="text-[14px] leading-[1.7] text-[var(--ink)] m-0 whitespace-pre-wrap">
-                      {note.content_md}
-                    </p>
+                    {renderNoteContent(note.content_md)}
                     <div className="flex items-center justify-between mt-[16px]">
                       <span className="font-mono text-[10px] text-[var(--ink-3)]">
                         {formatDate(note.created_at)}
@@ -812,13 +854,18 @@ export function ChNotesClient({
               <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 mb-[24px]">
                 AI extracts the 6 most powerful concepts from &ldquo;{book.title}&rdquo; — distilled into snackable cards you can swipe through.
               </p>
+              {shortsError && (
+                <p className="text-[12px] text-red-500 mb-[16px] px-[12px] py-[8px] rounded-[8px] bg-[rgba(220,38,38,0.06)] border border-[rgba(220,38,38,0.15)]">
+                  {shortsError}
+                </p>
+              )}
               <button
                 onClick={() => void generateShorts()}
                 className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
                 style={{ background: ACCENT }}
               >
                 <Sparkles size={13} />
-                Generate Shorts
+                {shortsError ? "Try Again" : "Generate Shorts"}
               </button>
             </div>
           )}
@@ -973,7 +1020,19 @@ export function ChNotesClient({
                           &ldquo;{card.quote}&rdquo;
                         </blockquote>
                       )}
-                      <div className="mt-[16px] flex items-center justify-end">
+                      <div className="mt-[16px] flex items-center justify-between gap-[8px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShareConceptIdx(shortsIndex);
+                          }}
+                          className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[7px] rounded-[8px] border cursor-pointer transition-all"
+                          style={{ background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }}
+                          title="Share this concept"
+                        >
+                          <Share2 size={10} />
+                          Share
+                        </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -1231,6 +1290,15 @@ export function ChNotesClient({
           onClose={() => setShareHighlight(null)}
         />
       )}
+
+      {/* ── Concept Share Modal ── */}
+      {shareConceptIdx !== null && shortsCards[shareConceptIdx] && (
+        <ConceptShareModal
+          card={shortsCards[shareConceptIdx]}
+          book={book}
+          onClose={() => setShareConceptIdx(null)}
+        />
+      )}
     </div>
   );
 }
@@ -1396,6 +1464,122 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
           <div className="pb-[14px]">
             <p className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.08em] m-0">
               Perfect for Instagram · Twitter · Stories
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Concept Share Modal ────────────────────────────────────────
+
+interface ConceptShareModalProps {
+  card: ConceptCard;
+  book: ChBook;
+  onClose: () => void;
+}
+
+function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): React.ReactElement {
+  const [copied, setCopied] = useState(false);
+  const CH_ACCENT = "#4F6D7A";
+
+  const shareText = `💡 ${card.title}\n\n${card.concept}\n\n"${card.insight}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & learn with Chapterly 📖`;
+
+  const handleCopy = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // fallback silently
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-[20px] pointer-events-none">
+        <div
+          className="w-full max-w-[480px] rounded-[24px] border border-[var(--rule)] shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
+          style={{ background: "var(--bg)" }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)]">
+            <div>
+              <div className="font-semibold text-[15px] text-[var(--ink)]">Share Concept</div>
+              <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mt-[2px]">
+                Chapterly · Concept Short
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none cursor-pointer bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Card preview */}
+          <div className="px-[24px] py-[20px]">
+            <div
+              className="rounded-[16px] p-[24px] flex flex-col gap-[10px]"
+              style={{ background: `${CH_ACCENT}08`, border: `1px solid ${CH_ACCENT}20` }}
+            >
+              <div className="font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: CH_ACCENT }}>
+                💡 concept short · {book.title}
+              </div>
+              <h3 className="text-[17px] font-bold text-[var(--ink)] m-0 leading-[1.3]">{card.title}</h3>
+              <p className="text-[13px] font-medium text-[var(--ink-2)] m-0 leading-[1.5]">{card.concept}</p>
+              <p className="text-[12px] text-[var(--ink-3)] m-0 leading-[1.6]">{card.insight}</p>
+              <div
+                className="mt-[8px] pt-[12px] flex items-center justify-between"
+                style={{ borderTop: `1px solid ${CH_ACCENT}20` }}
+              >
+                <span className="font-mono text-[9px] tracking-[0.08em] text-[var(--ink-3)]">
+                  {book.author ? `by ${book.author}` : book.title}
+                </span>
+                <span
+                  className="font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
+                  style={{ background: `${CH_ACCENT}15`, color: CH_ACCENT }}
+                >
+                  Try Chapterly →
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Copy text share */}
+          <div className="px-[24px] pb-[20px] flex flex-col gap-[10px]">
+            <p className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)] m-0">Copy text to share on Twitter, LinkedIn, or Stories:</p>
+            <div
+              className="rounded-[10px] p-[14px] text-[12px] leading-[1.7] text-[var(--ink-2)] whitespace-pre-wrap font-mono"
+              style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
+            >
+              {shareText}
+            </div>
+            <div className="flex gap-[8px]">
+              <button
+                onClick={() => void handleCopy()}
+                className="flex-1 h-[40px] flex items-center justify-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold rounded-[10px] border-none cursor-pointer transition-all text-white"
+                style={{ background: copied ? "#16A34A" : CH_ACCENT }}
+              >
+                {copied ? <><Check size={12} /> Copied!</> : <><Share2 size={12} /> Copy Text</>}
+              </button>
+              <button
+                onClick={onClose}
+                className="h-[40px] px-[16px] rounded-[10px] border border-[var(--rule)] bg-transparent font-mono text-[10px] tracking-[0.1em] uppercase cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+
+          <div className="px-[24px] pb-[16px]">
+            <p className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.08em] m-0">
+              Share your reading insights · Powered by Chapterly
             </p>
           </div>
         </div>

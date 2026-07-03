@@ -297,7 +297,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       "var(--bg-2)";
 
     return (
-      <div className="flex flex-col h-screen bg-[var(--bg)] max-[1024px]:pt-[60px]">
+      <div className="flex flex-col h-[100dvh] bg-[var(--bg)] max-[1024px]:pt-[60px]">
         {/* Header */}
         <div className="flex items-center justify-between px-[20px] h-[56px] border-b border-[var(--rule)] bg-[var(--bg-2)] shrink-0">
           <div className="flex items-center gap-[10px]">
@@ -388,7 +388,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
 
   // ─── Text chat UI ─────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-screen bg-[var(--bg)] max-[1024px]:pt-[60px]">
+    <div className="flex flex-col h-[100dvh] bg-[var(--bg)] max-[1024px]:pt-[60px]">
       {/* Header */}
       <div className="flex items-center justify-between px-[16px] sm:px-[20px] h-[56px] border-b border-[var(--rule)] bg-[var(--bg-2)] shrink-0">
         <div className="flex items-center gap-[16px]">

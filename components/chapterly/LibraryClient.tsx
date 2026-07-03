@@ -73,30 +73,264 @@ interface RecommendedBook {
   tagline: string;
   description: string;
   cover_url: string;
+  category: string;
   content: string;
 }
 
-const DAILY_PICK: RecommendedBook = {
-  title: "Atomic Habits",
-  author: "James Clear",
-  tagline: "Tiny Changes, Remarkable Results.",
-  description: "An easy & proven way to build good habits & break bad ones. Learn the 4 laws of behavior change: Make it obvious, attractive, easy, and satisfying.",
-  cover_url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=200",
-  content: `# Summary of Atomic Habits by James Clear
+const PICKS: RecommendedBook[] = [
+  {
+    title: "Atomic Habits",
+    author: "James Clear",
+    tagline: "Tiny changes, remarkable results.",
+    description: "The definitive guide to building good habits and breaking bad ones using the science of small improvements.",
+    cover_url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=200",
+    category: "Productivity",
+    content: `## Core Premise
+Small habits compound into extraordinary results. A 1% improvement every day makes you 37× better in a year.
 
-## Chapter 1: The Surprising Power of Atomic Habits
-Success is the product of daily habits—not once-in-a-lifetime transformations. Your outcomes are a lagging measure of your habits. Your net worth is a lagging measure of your financial habits. Your weight is a lagging measure of your eating habits. Your knowledge is a lagging measure of your learning habits. Your clutter is a lagging measure of your cleaning habits. You get what you repeat.
+## Why This Book Matters
+For anyone who has tried and failed to build lasting habits. James Clear reframes the problem: you don't rise to the level of your goals, you fall to the level of your systems.
 
-## Chapter 2: How Your Habits Shape Your Identity (and Vice Versa)
-Changing our habits is challenging for two reasons: (1) we try to change the wrong thing and (2) we try to change our habits in the wrong way. There are three layers of behavior change: a change in your outcomes, a change in your processes, or a change in your identity. The most effective way to change your habits is to focus not on what you want to achieve, but on who you wish to become.
+## Key Insights
 
-## The 4 Laws of Behavior Change
-1. **First Law (Cue)**: Make it obvious. Design your environment so cues are visible.
-2. **Second Law (Craving)**: Make it attractive. Use temptation bundling.
-3. **Third Law (Response)**: Make it easy. Reduce friction, prime the environment.
-4. **Fourth Law (Reward)**: Make it satisfying. Use immediate rewards and habit trackers.
-`
-};
+1. **Habits Are the Compound Interest of Self-Improvement**
+Just as money multiplies through compound interest, the effects of your habits multiply as you repeat them. A slight change in daily habits can guide your life to a very different destination.
+
+2. **Focus on Identity, Not Outcomes**
+The most effective way to change your habits is to focus not on what you want to achieve, but on who you wish to become. Every action is a vote for the type of person you want to be.
+
+3. **The 4 Laws of Behavior Change**
+All habits follow the same loop: Cue → Craving → Response → Reward. To build a good habit: make it obvious, make it attractive, make it easy, make it satisfying.
+
+4. **Environment Is the Invisible Hand**
+Behavior is a function of the person in their environment. Design your surroundings so the right cues are visible and the wrong ones are hidden.
+
+5. **The Two-Minute Rule**
+When starting a new habit, scale it down to two minutes or less. "Read before bed" becomes "Read one page." The goal is to make starting effortless.
+
+6. **Never Miss Twice**
+Missing once is an accident. Missing twice is the start of a new habit. The first mistake never ruins you — it's the spiral of repeated mistakes that does.
+
+7. **Habit Stacking**
+Link a new habit to an existing one. "After I pour my morning coffee, I will journal for one minute." The existing habit becomes the cue.
+
+## Memorable Quotes
+
+> "You do not rise to the level of your goals. You fall to the level of your systems."
+
+> "Every action you take is a vote for the type of person you wish to become."
+
+## Action Steps
+
+1. Choose one habit. Write the implementation intention: "I will [BEHAVIOR] at [TIME] in [LOCATION]."
+2. Stack it onto something you already do automatically.
+3. Prepare your environment the night before so the first action requires no decision.
+4. Track it with a simple calendar — mark an X each day. Don't break the chain.
+5. After 30 days, raise the difficulty by 1%.
+
+## One-Line Takeaway
+Build the system, become the person — the results follow automatically.`,
+  },
+  {
+    title: "Deep Work",
+    author: "Cal Newport",
+    tagline: "Rules for focused success in a distracted world.",
+    description: "The ability to focus without distraction is becoming rare and increasingly valuable. Newport argues it's the superpower of the 21st century.",
+    cover_url: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=200",
+    category: "Focus",
+    content: `## Core Premise
+Deep work — professional activity performed in a state of distraction-free concentration — is the skill that separates winners from everyone else in the knowledge economy.
+
+## Why This Book Matters
+For knowledge workers drowning in shallow busywork. Newport provides both the case for depth and a practical rulebook for achieving it.
+
+## Key Insights
+
+1. **Deep Work Is Rare and Valuable Simultaneously**
+As attention becomes fragmented, the ability to do cognitively demanding work is both rarer and more economically rewarded. This is a structural arbitrage most people miss.
+
+2. **Shallow Work Has an Invisible Cost**
+Email, meetings, and social media feel productive but rarely create value that is hard to replicate. Treat shallow work as a cost to minimize, not a job to do well.
+
+3. **Schedule Every Minute of Your Day**
+Time blocking is about intentionality, not rigidity. When you decide in advance what you'll do with every hour, you reclaim time that would otherwise drift into low-value activities.
+
+4. **Embrace Boredom**
+The ability to concentrate is a skill that requires practice. If you seek distraction the moment you're bored, you undermine your capacity for depth. Train your attention like a muscle.
+
+5. **Work Deeply, Then Disconnect Completely**
+End each day with a shutdown ritual. Once you stop working, your brain continues processing in the background. Rest is productive — but only if you fully disconnect.
+
+## Memorable Quotes
+
+> "Clarity about what matters provides clarity about what does not."
+
+> "The ability to perform deep work is becoming increasingly rare at exactly the same time it is becoming increasingly valuable."
+
+## Action Steps
+
+1. Block 90-minute deep work sessions in your calendar — treat them as immovable.
+2. Choose a depth philosophy: monastic, bimodal, or rhythmic.
+3. Create a shutdown ritual: review tasks, capture loose ends, say "shutdown complete."
+4. Delete one social media app for 30 days. Note what you actually miss.
+5. Track deep work hours weekly. Set a target and protect it.
+
+## One-Line Takeaway
+Depth is the rarest resource in modern work — and the one that compounds the most.`,
+  },
+  {
+    title: "The Psychology of Money",
+    author: "Morgan Housel",
+    tagline: "Timeless lessons on wealth, greed, and happiness.",
+    description: "Doing well with money has little to do with how smart you are and a lot to do with how you behave. 19 short stories that change how you think about wealth.",
+    cover_url: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&q=80&w=200",
+    category: "Finance",
+    content: `## Core Premise
+Financial success is less about technical knowledge and more about behavior, time, and managing your own psychology under uncertainty.
+
+## Why This Book Matters
+For anyone who earns, saves, or invests. Housel reframes personal finance as a deeply human discipline — not a mathematical one.
+
+## Key Insights
+
+1. **No One Is Crazy**
+Everyone's financial behavior makes sense given their personal history with money. Different experiences lead to radically different assumptions about risk and value.
+
+2. **Wealth Is What You Don't See**
+Real wealth is not the cars or houses people display — it's the money not spent, the freedom not yet exercised. Wealth is what remains invisible.
+
+3. **Compounding Requires Staying in the Game**
+Warren Buffett's wealth is largely a function of starting early and never stopping. Avoiding catastrophic loss matters more than maximizing returns.
+
+4. **Save Like a Pessimist, Invest Like an Optimist**
+Pessimism about the short run gives you a margin of safety. Optimism about the long run lets you hold through volatility. Both are necessary simultaneously.
+
+5. **Freedom Is the Highest Dividend**
+The highest form of wealth is the ability to wake up and do whatever you want, with whoever you want, for however long you want.
+
+## Memorable Quotes
+
+> "The most important financial skill is getting the goalpost to stop moving."
+
+> "Wealth is the nice cars not purchased. The diamonds not bought."
+
+> "Getting money requires taking risks. Keeping money requires the opposite."
+
+## Action Steps
+
+1. Define your "enough number" — the wealth that buys the freedom you actually want.
+2. Set up automatic savings into an index fund. Never look at it during downturns.
+3. Calculate how many hours of your life each major purchase costs.
+4. Write a one-paragraph investment policy statement. Read it before any financial decision outside your plan.
+5. Ask monthly: "Did I spend in ways that increased my actual freedom, or just my visible status?"
+
+## One-Line Takeaway
+The best financial plan is the one you can stick to through fear, greed, and every market condition.`,
+  },
+  {
+    title: "Thinking, Fast and Slow",
+    author: "Daniel Kahneman",
+    tagline: "Two systems that drive the way we think.",
+    description: "Nobel laureate Daniel Kahneman reveals the two cognitive systems that shape our judgments and the systematic biases that lead us astray.",
+    cover_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
+    category: "Psychology",
+    content: `## Core Premise
+The mind runs on two systems: fast intuitive thinking and slow deliberate reasoning. Understanding when each system fails is the foundation of sound judgment.
+
+## Why This Book Matters
+For anyone who makes decisions — which is everyone. Kahneman reveals systematic errors in human reasoning and gives you tools to catch yourself before costly mistakes.
+
+## Key Insights
+
+1. **System 1 vs System 2**
+System 1 is fast, automatic, and largely unconscious. System 2 is slow, deliberate, and effortful. Most errors happen when System 1 overrides where System 2 should lead.
+
+2. **Anchoring Is Everywhere**
+The first number you encounter has a disproportionate influence on all subsequent judgments — even when it's completely irrelevant to the decision.
+
+3. **Overconfidence Is the Most Destructive Bias**
+People systematically overestimate their knowledge and underestimate uncertainty. Experts are often no better calibrated than laypeople in their predictions.
+
+4. **Loss Aversion Shapes Every Decision**
+Losses loom roughly twice as large as equivalent gains. This drives irrational risk aversion and resistance to change.
+
+5. **The Remembering Self Runs Your Life**
+We don't choose between experiences — we choose between memories of experiences. The peak and end of an experience matter far more than its duration.
+
+## Memorable Quotes
+
+> "Nothing in life is as important as you think it is, while you are thinking about it."
+
+> "Our comforting conviction that the world makes sense rests on our almost unlimited ability to ignore our ignorance."
+
+## Action Steps
+
+1. Before a major decision, write your confidence level (0-100%) and key assumptions. Review in 3 months.
+2. In negotiations, introduce your own anchor early rather than adjusting from theirs.
+3. Apply the pre-mortem: imagine a project has failed before it starts. What went wrong?
+4. When assessing risk, look up base rates — don't trust vividness.
+5. For recurring high-stakes decisions, build rules instead of relying on intuition.
+
+## One-Line Takeaway
+Know which system is running your decisions — and when to override it.`,
+  },
+  {
+    title: "The Almanack of Naval Ravikant",
+    author: "Eric Jorgenson",
+    tagline: "A guide to wealth and happiness.",
+    description: "A curated collection of Naval Ravikant's wisdom on building wealth and achieving inner peace — compiled from years of tweets, podcasts, and essays.",
+    cover_url: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=200",
+    category: "Wealth & Philosophy",
+    content: `## Core Premise
+Wealth and happiness are learnable skills, not luck. Naval distills the principles behind both into a coherent, practical philosophy anyone can apply.
+
+## Why This Book Matters
+For people who want to build lasting wealth without sacrificing peace of mind. Naval's frameworks cut through conventional career advice with a fundamentally different model.
+
+## Key Insights
+
+1. **Seek Wealth, Not Money or Status**
+Wealth is assets that earn while you sleep. Money is how you transfer time. Status is your rank in the hierarchy. Wealth is the real goal — it buys freedom.
+
+2. **Specific Knowledge Cannot Be Trained**
+Build skills at the intersection of what you're obsessed with, naturally good at, and what the world needs. This cannot be outsourced or automated.
+
+3. **Leverage Is the Force Multiplier**
+Code and media are the new leverage — they have zero marginal cost and can reach millions while you sleep. Build things that scale without you.
+
+4. **Play Long-Term Games with Long-Term People**
+All returns in life come from compound interest — in relationships, knowledge, and wealth. Choose people and fields where you can play for decades.
+
+5. **Happiness Is a Skill, Not a Destination**
+Happiness is the absence of desire — the recognition that the present moment is sufficient. It can be trained through meditation, presence, and reducing the stories you tell yourself.
+
+## Memorable Quotes
+
+> "Earn with your mind, not your time."
+
+> "Desire is a contract you make with yourself to be unhappy until you get what you want."
+
+> "The purpose of wealth is freedom. Nothing more, nothing less."
+
+## Action Steps
+
+1. Map your specific knowledge: what would you talk about obsessively even unpaid? Start building there.
+2. Identify one type of leverage you can access — write, code, teach, or invest.
+3. Audit last week: categorize time as wealth-building vs. status games. Eliminate the latter.
+4. Begin 10 minutes of daily silence — observe thoughts without acting on them.
+5. Write a personal definition of "enough." Optimize for reaching that, not for more.
+
+## One-Line Takeaway
+Wealth is freedom; happiness is peace — both are skills you build, not things that happen to you.`,
+  },
+];
+
+// Rotates daily so all users see the same pick on a given day
+function getDailyPick(): RecommendedBook {
+  const start = new Date(new Date().getFullYear(), 0, 0).getTime();
+  const dayOfYear = Math.floor((Date.now() - start) / 86_400_000);
+  return PICKS[dayOfYear % PICKS.length] as RecommendedBook;
+}
 
 interface Props {
   books: ChBookWithStats[];
@@ -400,6 +634,8 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
   const [editingBook, setEditingBook] = useState<ChBookWithStats | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const DAILY_PICK = getDailyPick();
+
   const handleBookSaved = useCallback((updated: ChBookWithStats): void => {
     setBooks((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
   }, []);
@@ -617,6 +853,12 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
             <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[4px] flex items-center gap-[6px]">
               <span className="w-[6px] h-[6px] rounded-full animate-pulse inline-block" style={{ background: ACCENT }} />
               Daily Summary Pick
+              <span
+                className="font-mono text-[8px] tracking-[0.1em] uppercase px-[6px] py-[2px] rounded-[4px]"
+                style={{ background: "rgba(79,109,122,0.12)", color: ACCENT }}
+              >
+                {DAILY_PICK.category}
+              </span>
             </div>
             <h2 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[6px]">
               {DAILY_PICK.title} <span className="font-normal text-[14px] text-[var(--ink-3)]">by {DAILY_PICK.author}</span>

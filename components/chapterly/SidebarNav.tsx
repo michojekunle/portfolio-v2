@@ -102,7 +102,7 @@ export function ChSidebarNav({ userEmail, streak = 0 }: Props): React.ReactEleme
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 px-[16px] py-[20px] space-y-[4px]">
+      <nav className="flex-1 px-[16px] py-[20px] space-y-[4px] overflow-y-auto">
         {NAV_LINKS.map((link) => {
           const active = isActive(link.href);
           return (
