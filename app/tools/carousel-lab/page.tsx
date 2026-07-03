@@ -198,7 +198,10 @@ export default function CarouselLabPage(): React.ReactElement {
         body: JSON.stringify({
           topic: activeTextSource,
           slideCount,
-          theme: aesthetic === "Premium Editorial (Zamir)" ? "Dark" : "Minimal",
+          theme: aesthetic === "Premium Editorial (Zamir)" ? "Dark"
+               : aesthetic === "Maximalist" || aesthetic === "Brutalist" ? "Bold"
+               : aesthetic === "Light Editorial (Zamir Light)" ? "Earthy"
+               : "Minimal",
           mode: inputMode === "refine" ? "refine" : "topic",
         }),
       });

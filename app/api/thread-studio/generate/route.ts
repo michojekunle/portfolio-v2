@@ -93,7 +93,12 @@ function parseJsonArray(raw: string): string[] {
     .replace(/\n?```$/i, "")
     .trim();
 
-  const parsed: unknown = JSON.parse(stripped);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(stripped);
+  } catch {
+    throw new Error("AI returned malformed JSON — please try again");
+  }
   if (!Array.isArray(parsed)) {
     throw new Error("Response is not a JSON array");
   }

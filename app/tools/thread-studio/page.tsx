@@ -39,8 +39,8 @@ export default function ThreadStudioPage(): React.ReactElement {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   // Customize profile details for mockup
-  const [creatorName, setCreatorName] = useState("Michael Ojekunle");
-  const [creatorHandle, setCreatorHandle] = useState("@michojekunle");
+  const [creatorName, setCreatorName] = useState("Your Name");
+  const [creatorHandle, setCreatorHandle] = useState("@yourhandle");
 
   // Re-number helper to maintain prefix order (e.g. 1/5 text...)
   const renumberTweets = (list: string[]): string[] => {
