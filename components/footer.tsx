@@ -46,7 +46,7 @@ export function Footer(): React.ReactElement {
                     href="/about"
                     className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
                   >
-                    Resume &amp; CV
+                    About Me
                   </Link>
                 </MagneticWrapper>
               </li>
@@ -56,7 +56,7 @@ export function Footer(): React.ReactElement {
                     href="/tools"
                     className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
                   >
-                    Creator &amp; Tools
+                    Creator Suite
                   </Link>
                 </MagneticWrapper>
               </li>
@@ -215,7 +215,7 @@ export function Footer(): React.ReactElement {
           <div>© {year} · Built with intent in Lagos, NG</div>
           <div className="font-display italic text-[13px] text-[var(--ink-2)]">
             &ldquo;Whatever you do, do it all to the glory of God.&rdquo; —
-            Col&nbsp;3:17
+            1&nbsp;Cor&nbsp;10:31
           </div>
         </div>
       </div>

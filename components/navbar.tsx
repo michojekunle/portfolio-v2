@@ -10,12 +10,9 @@ import { MagneticWrapper } from "./magnetic-wrapper";
 
 const navLinks = [
   { name: "Work", href: "/work" },
-  { name: "Notes", href: "/blog" },
   { name: "Tools", href: "/tools" },
+  { name: "Notes", href: "/blog" },
   { name: "About", href: "/about" },
-  { name: "Uses", href: "/uses" },
-  { name: "Guestbook", href: "/guestbook" },
-  { name: "Log", href: "/changelog" },
 ];
 
 export function Navbar(): React.ReactNode {
@@ -111,7 +108,7 @@ export function Navbar(): React.ReactNode {
           <MagneticWrapper strength={20}>
             <Link
               href="/contact"
-              className="group max-[600px]:hidden inline-flex items-center justify-center px-[20px] h-[38px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-[var(--rule)] transition-all duration-200 no-underline bg-[var(--ink)] text-[var(--bg)] hover:-translate-y-[1px] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-[20px] h-[38px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-[var(--rule)] transition-all duration-200 no-underline bg-[var(--ink)] text-[var(--bg)] hover:-translate-y-[1px] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
               aria-label="Book a call"
             >
               Book a call{" "}
@@ -120,7 +117,7 @@ export function Navbar(): React.ReactNode {
           </MagneticWrapper>
 
           <button
-            className="hidden max-[600px]:flex items-center justify-center w-[38px] h-[38px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer transition-all duration-150 hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
+            className="hidden max-[820px]:flex items-center justify-center w-[38px] h-[38px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer transition-all duration-150 hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
             onClick={() => setIsOpen((v) => !v)}
             aria-expanded={isOpen}
             aria-controls="v3-mobile-menu"

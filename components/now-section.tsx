@@ -65,7 +65,7 @@ export async function NowSection(): Promise<React.ReactElement> {
     <section className="relative py-[120px] max-[720px]:py-[72px] bg-[var(--bg-2)] border-y border-[var(--rule)]" id="now" aria-labelledby="now-heading">
       <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
         <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">03 — NOW</div>
+          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">04 — NOW</div>
           <div>
             <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
               Currently <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">working on.</em>

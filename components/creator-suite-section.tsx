@@ -6,11 +6,12 @@ import { MagneticWrapper } from "./magnetic-wrapper"
 import { ArrowRight } from "lucide-react"
 
 const TOOLS = [
-  { name: "BookBreaks",   tagline: "Books into content",         accent: "#C85A2C", icon: "📚", status: "live", href: "/tools/bookbreaks"   },
-  { name: "Chapterly",   tagline: "Read + remember",            accent: "#4F6D7A", icon: "📖", status: "live", href: "/tools/chapterly"    },
-  { name: "Flowise",     tagline: "Money mapped",               accent: "#16A34A", icon: "💸", status: "live", href: "/tools/flowise"      },
-  { name: "Thread Studio", tagline: "Viral threads",            accent: "#6366F1", icon: "🐦", status: "live", href: "/tools/thread-studio" },
-  { name: "Carousel Lab",  tagline: "Scroll-stopping slides",   accent: "#FF6B35", icon: "📸", status: "live", href: "/tools/carousel-lab"  },
+  { name: "BookBreaks",    tagline: "Books into content",        accent: "#C85A2C", icon: "📚", status: "live", href: "/tools/bookbreaks"    },
+  { name: "Chapterly",    tagline: "Read + remember",            accent: "#4F6D7A", icon: "📖", status: "live", href: "/tools/chapterly"     },
+  { name: "Flowise",      tagline: "Money mapped",               accent: "#16A34A", icon: "💸", status: "live", href: "/tools/flowise"       },
+  { name: "Vela",         tagline: "Set your course daily",      accent: "#7C3AED", icon: "🧭", status: "live", href: "/tools/journal"       },
+  { name: "Thread Studio", tagline: "Viral threads",             accent: "#6366F1", icon: "🐦", status: "live", href: "/tools/thread-studio" },
+  { name: "Carousel Lab",  tagline: "Scroll-stopping slides",    accent: "#FF6B35", icon: "📸", status: "live", href: "/tools/carousel-lab"  },
 ] as const
 
 export function CreatorSuiteSection(): React.ReactElement {
@@ -39,14 +40,14 @@ export function CreatorSuiteSection(): React.ReactElement {
             and ship.
           </h2>
           <p className="mt-[18px] max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] m-0 mt-[16px]">
-            Five live tools for creators learning in public — read more, build faster, share
-            consistently, and track every naira. All production-grade, all actually useful.
+            Six live tools for creators learning in public — read more, build faster, share
+            consistently, track every naira, and log every win. All production-grade, all actually useful.
           </p>
         </div>
       </motion.div>
 
       {/* Tool grid */}
-      <div className="grid grid-cols-5 max-[900px]:grid-cols-3 max-[600px]:grid-cols-2 gap-[1px] border border-[var(--rule)] rounded-[2px] overflow-hidden mb-[64px]">
+      <div className="grid grid-cols-6 max-[1100px]:grid-cols-3 max-[600px]:grid-cols-2 gap-[1px] border border-[var(--rule)] rounded-[2px] overflow-hidden mb-[64px]">
         {TOOLS.map((tool, i) => (
           <motion.div
             key={tool.name}

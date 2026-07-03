@@ -21,6 +21,7 @@ const TOOLS = [
     accentSoft: "rgba(200,90,44,0.12)",
     icon: "📚",
     stats: ["4 books seeded", "5 content types", "Groq + Gemini AI"],
+    cta: "Repurpose my first book",
   },
   {
     id: "thread-studio",
@@ -34,6 +35,7 @@ const TOOLS = [
     accentSoft: "rgba(99,102,241,0.12)",
     icon: "🐦",
     stats: ["Thread builder", "Hook analyser", "Scheduling"],
+    cta: "Engineer my next thread",
   },
   {
     id: "carousel-lab",
@@ -47,6 +49,7 @@ const TOOLS = [
     accentSoft: "rgba(255,107,53,0.12)",
     icon: "📸",
     stats: ["4 visual themes", "6-slide templates", "One-click export"],
+    cta: "Design a scroll-stopper",
   },
   {
     id: "chapterly",
@@ -61,6 +64,7 @@ const TOOLS = [
     icon: "📖",
     stats: ["10+ formats", "AI voice chat", "Streaks & goals"],
     bridge: "bookbreaks",
+    cta: "Start remembering more",
   },
 ] as const;
 
@@ -120,6 +124,16 @@ export default function CreatorSuitePage(): React.ReactElement {
                     <span className="text-[14px]" aria-hidden="true">
                       →
                     </span>
+                  </Link>
+                </MagneticWrapper>
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/journal"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    style={{ background: "rgba(124,58,237,0.12)", color: "#7C3AED", border: "1px solid rgba(124,58,237,0.25)" }}
+                  >
+                    Try Vela{" "}
+                    <span className="text-[14px]" aria-hidden="true">→</span>
                   </Link>
                 </MagneticWrapper>
                 <MagneticWrapper>
@@ -309,7 +323,7 @@ function ToolCard({
               className="inline-flex items-center gap-[8px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 group/link"
               style={{ color: tool.accent }}
             >
-              Open tool
+              {tool.cta}
               <span
                 className="inline-block transition-transform duration-200 group-hover/link:translate-x-[4px]"
                 aria-hidden="true"
@@ -374,6 +388,12 @@ function VelaCard(): React.ReactElement {
                 🧭
               </div>
               <StatusBadge status="live" />
+              <span
+                className="font-mono text-[9px] tracking-[0.12em] uppercase px-[8px] py-[3px] rounded-full"
+                style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
+              >
+                ★ Daily driver
+              </span>
             </div>
 
             <h2
@@ -428,7 +448,7 @@ function VelaCard(): React.ReactElement {
               className="inline-flex items-center justify-center gap-[8px] h-[48px] px-[28px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
               style={{ background: accent }}
             >
-              Open Vela
+              Set my first objective
               <span
                 className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]"
                 aria-hidden="true"
@@ -540,7 +560,7 @@ function FlowiseCard(): React.ReactElement {
               className="inline-flex items-center justify-center gap-[8px] h-[48px] px-[28px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
               style={{ background: accent }}
             >
-              Open Flowise
+              Take control of my money
               <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]" aria-hidden="true">
                 →
               </span>

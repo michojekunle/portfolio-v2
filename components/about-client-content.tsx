@@ -35,7 +35,7 @@ export function AboutClientContent() {
   const titleWords = "Curiosity is the constant.".split(" ")
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="overflow-x-hidden">
       {/* Hero */}
       <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
         <motion.div 
@@ -47,7 +47,7 @@ export function AboutClientContent() {
           02 — ABOUT · BACKGROUND
         </motion.div>
         
-        <h1 className="m-0 font-display font-light text-[clamp(64px,10vw,140px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[16px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
+        <h1 className="m-0 font-display font-light text-[clamp(36px,9vw,140px)] leading-[0.9] tracking-[-0.03em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[12px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
           {titleWords.map((word, i) => (
             <motion.span
               key={i}
