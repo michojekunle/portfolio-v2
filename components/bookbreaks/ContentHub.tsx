@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { CONTENT_TYPE_LABELS, CONTENT_TYPE_ICONS, BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import { BBContentActions } from "@/components/bookbreaks/ContentActions";
 import { Sparkles, Search, ChevronDown, FileText, Filter, X } from "lucide-react";
@@ -409,13 +410,13 @@ export function ContentHub({ content, books }: ContentHubProps) {
               <p className="text-[14px] leading-[1.65] mb-[24px] max-w-[40ch] mx-auto text-[var(--ink-3)]">
                 Generate your first piece of content and it'll appear here for easy access and management.
               </p>
-              <a
+              <Link
                 href="/tools/bookbreaks/generate"
                 className="inline-flex items-center gap-[8px] h-[44px] px-[22px] rounded-[10px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold no-underline text-(--bg) transition-all duration-200 hover:opacity-90"
                 style={{ background: "var(--v3-accent)" }}
               >
                 <Sparkles size={13} /> Generate Content
-              </a>
+              </Link>
             </>
           )}
         </div>
