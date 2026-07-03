@@ -65,15 +65,15 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
   });
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto scrollbar-custom pb-[10px]">
       {/* Month labels */}
-      <div className="flex gap-[3px] mb-[4px] pl-[28px]">
+      <div className="flex gap-[4px] mb-[6px] pl-[26px]">
         {weeks.map((_, i) => {
           const label = monthLabels.find((ml) => ml.weekIndex === i);
           return (
-            <div key={i} className="w-[12px] shrink-0">
+            <div key={i} className="w-[12px] shrink-0 relative">
               {label ? (
-                <span className="font-mono text-[8px] tracking-[0.08em] uppercase text-[var(--ink-3)] whitespace-nowrap">
+                <span className="absolute left-0 top-0 font-mono text-[8px] tracking-[0.08em] uppercase text-[var(--ink-3)] whitespace-nowrap">
                   {label.label}
                 </span>
               ) : null}
@@ -84,7 +84,7 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
 
       <div className="flex gap-[4px]">
         {/* Day-of-week labels */}
-        <div className="flex flex-col gap-[3px] mr-[2px]">
+        <div className="flex flex-col gap-[3px] mr-[2px] shrink-0">
           {DAYS_OF_WEEK.map((d, i) => (
             <div
               key={d}
@@ -98,7 +98,7 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
 
         {/* Week columns */}
         {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-[3px]">
+          <div key={wi} className="flex flex-col gap-[3px] shrink-0">
             {week.map((dayMs) => {
               const key = new Date(dayMs).toISOString().slice(0, 10);
               const minutes = data[key] ?? 0;
