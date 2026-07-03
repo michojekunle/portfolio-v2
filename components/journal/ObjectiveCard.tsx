@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp, Plus } from "lucide-react";
-import type { JoObjectiveWithMilestones, JoMilestone } from "@/lib/journal/types";
-import { PRIORITY_CONFIG, STATUS_CONFIG, VELA_ACCENT } from "@/lib/journal/types";
+import { CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp, Plus, Pencil, Check, X } from "lucide-react";
+import type { JoObjectiveWithMilestones, JoMilestone, JoObjective } from "@/lib/journal/types";
+import { PRIORITY_CONFIG, STATUS_CONFIG, OBJECTIVE_COLORS, VELA_ACCENT } from "@/lib/journal/types";
+
+const ICONS = ["🎯", "💡", "🚀", "📚", "💪", "🏆", "🌱", "✍️", "💰", "🎨", "🔬", "🤝"];
+
+// All four statuses reachable: active → completed → dropped → paused → active
+const STATUS_CYCLE: Record<JoObjective["status"], JoObjective["status"]> = {
+  active: "completed",
+  completed: "dropped",
+  dropped: "paused",
+  paused: "active",
+};
 
 interface Props {
   objective: JoObjectiveWithMilestones;
@@ -28,6 +38,16 @@ export function ObjectiveCard({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  // Inline edit state
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(objective.title);
+  const [editDesc, setEditDesc] = useState(objective.description ?? "");
+  const [editDate, setEditDate] = useState(objective.target_date ?? "");
+  const [editPriority, setEditPriority] = useState<JoObjective["priority"]>(objective.priority);
+  const [editColor, setEditColor] = useState(objective.color);
+  const [editIcon, setEditIcon] = useState(objective.icon);
+  const [editSaving, setEditSaving] = useState(false);
+
   const milestones = objective.milestones ?? [];
   const doneMilestones = milestones.filter((m) => m.is_done).length;
   const totalMilestones = milestones.length;
@@ -41,13 +61,32 @@ export function ObjectiveCard({
   const statusCfg = STATUS_CONFIG[objective.status];
 
   const handleStatusCycle = async (): Promise<void> => {
-    const next: Record<string, string> = {
-      active: "paused",
-      paused: "active",
-      completed: "active",
-      dropped: "active",
-    };
-    await onUpdate(objective.id, { status: next[objective.status] });
+    await onUpdate(objective.id, { status: STATUS_CYCLE[objective.status] });
+  };
+
+  const handleEditSave = async (): Promise<void> => {
+    if (!editTitle.trim()) return;
+    setEditSaving(true);
+    await onUpdate(objective.id, {
+      title: editTitle.trim(),
+      description: editDesc.trim() || null,
+      target_date: editDate || null,
+      priority: editPriority,
+      color: editColor,
+      icon: editIcon,
+    });
+    setEditSaving(false);
+    setEditing(false);
+  };
+
+  const handleEditCancel = (): void => {
+    setEditTitle(objective.title);
+    setEditDesc(objective.description ?? "");
+    setEditDate(objective.target_date ?? "");
+    setEditPriority(objective.priority);
+    setEditColor(objective.color);
+    setEditIcon(objective.icon);
+    setEditing(false);
   };
 
   const handleAddMilestone = async (): Promise<void> => {
@@ -74,105 +113,206 @@ export function ObjectiveCard({
       className="rounded-[12px] border border-[var(--rule)] overflow-hidden transition-shadow hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
       style={{ background: "var(--bg)" }}
     >
-      {/* Colour stripe at top */}
-      <div className="h-[3px]" style={{ background: objective.color }} />
+      <div className="h-[3px]" style={{ background: editing ? editColor : objective.color }} />
 
       <div className="p-[20px]">
-        {/* Header row */}
-        <div className="flex items-start gap-[12px]">
-          <span className="text-[22px] leading-none mt-[1px] select-none">{objective.icon}</span>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-[8px] flex-wrap">
-              <h3 className="font-medium text-[15px] leading-[1.3] text-[var(--ink)] m-0 truncate">
-                {objective.title}
-              </h3>
-              {/* Status pill */}
-              <button
-                onClick={() => void handleStatusCycle()}
-                className="flex-shrink-0 font-mono text-[9px] tracking-[0.1em] uppercase px-[7px] py-[3px] rounded-full border-none cursor-pointer transition-opacity hover:opacity-70"
-                style={{ background: `${statusCfg.color}18`, color: statusCfg.color }}
-                title="Click to toggle status"
-              >
-                {statusCfg.label}
-              </button>
-              {/* Priority pill */}
-              <span
-                className="flex-shrink-0 font-mono text-[9px] tracking-[0.1em] uppercase px-[7px] py-[3px] rounded-full"
-                style={{ background: `${priorityCfg.color}15`, color: priorityCfg.color }}
-              >
-                {priorityCfg.label}
-              </span>
+        {editing ? (
+          /* ── Inline edit panel ── */
+          <div className="space-y-[14px]">
+            <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+              Edit Objective
             </div>
 
-            {objective.description && (
-              <p className="text-[13px] leading-[1.5] mt-[6px] mb-0 text-[var(--ink-3)]">
-                {objective.description}
-              </p>
-            )}
+            <div className="flex gap-[16px] flex-wrap">
+              <div>
+                <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">Icon</label>
+                <div className="flex flex-wrap gap-[5px]">
+                  {ICONS.map((ic) => (
+                    <button
+                      key={ic}
+                      onClick={() => setEditIcon(ic)}
+                      className="w-[30px] h-[30px] text-[16px] rounded-[6px] flex items-center justify-center border cursor-pointer transition-all"
+                      style={{
+                        background: editIcon === ic ? `${editColor}18` : "var(--bg-2)",
+                        borderColor: editIcon === ic ? editColor : "var(--rule)",
+                      }}
+                    >
+                      {ic}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">Colour</label>
+                <div className="flex flex-wrap gap-[5px]">
+                  {OBJECTIVE_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setEditColor(c)}
+                      className="w-[22px] h-[22px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+                      style={{ background: c, borderColor: editColor === c ? "var(--ink)" : "transparent" }}
+                      aria-label={c}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
 
-            {/* Meta row */}
-            <div className="flex items-center gap-[16px] mt-[10px] flex-wrap">
-              {daysUntilTarget !== null && (
-                <span
-                  className="font-mono text-[10px] tracking-[0.06em]"
-                  style={{ color: daysUntilTarget < 7 ? "#DC2626" : "var(--ink-3)" }}
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder="Title *"
+              className="w-full h-[40px] px-[12px] rounded-[8px] text-[14px] border border-[var(--rule)] bg-[var(--bg-2)] text-[var(--ink)] outline-none focus:border-[var(--ink-3)]"
+            />
+
+            <textarea
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+              placeholder="Description (optional)"
+              rows={2}
+              className="w-full px-[12px] py-[9px] rounded-[8px] text-[13px] leading-[1.5] border border-[var(--rule)] bg-[var(--bg-2)] text-[var(--ink)] outline-none focus:border-[var(--ink-3)] resize-none"
+            />
+
+            <div className="flex gap-[12px] flex-wrap">
+              <div className="flex-1 min-w-[160px]">
+                <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[5px] text-[var(--ink-3)]">Target Date</label>
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  className="w-full h-[38px] px-[10px] rounded-[8px] text-[13px] border border-[var(--rule)] bg-[var(--bg-2)] text-[var(--ink)] outline-none"
+                />
+              </div>
+              <div className="flex-1 min-w-[160px]">
+                <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[5px] text-[var(--ink-3)]">Priority</label>
+                <select
+                  value={editPriority}
+                  onChange={(e) => setEditPriority(e.target.value as JoObjective["priority"])}
+                  className="w-full h-[38px] px-[10px] rounded-[8px] text-[13px] border border-[var(--rule)] bg-[var(--bg-2)] text-[var(--ink)] outline-none cursor-pointer"
                 >
-                  {daysUntilTarget < 0
-                    ? `${Math.abs(daysUntilTarget)}d overdue`
-                    : daysUntilTarget === 0
-                    ? "Due today"
-                    : `${daysUntilTarget}d left`}
-                </span>
-              )}
-              {totalMilestones > 0 && (
-                <span className="font-mono text-[10px] tracking-[0.06em] text-[var(--ink-3)]">
-                  {doneMilestones}/{totalMilestones} milestones
-                </span>
-              )}
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-[4px] flex-shrink-0">
-            <button
-              onClick={() => void handleDelete()}
-              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent"
-              style={{ color: confirmDelete ? "#DC2626" : "var(--ink-3)" }}
-              title={confirmDelete ? "Click again to confirm" : "Delete objective"}
-            >
-              <Trash2 size={13} />
-            </button>
-            <button
-              onClick={() => setExpanded((e) => !e)}
-              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent text-[var(--ink-3)]"
-              aria-label={expanded ? "Collapse" : "Expand"}
-            >
-              {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
+            <div className="flex gap-[8px]">
+              <button
+                onClick={() => void handleEditSave()}
+                disabled={editSaving || !editTitle.trim()}
+                className="flex items-center gap-[6px] h-[36px] px-[14px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-50 transition-opacity"
+                style={{ background: VELA_ACCENT }}
+              >
+                {editSaving ? "Saving…" : <><Check size={12} /> Save</>}
+              </button>
+              <button
+                onClick={handleEditCancel}
+                className="h-[36px] px-[12px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] transition-opacity hover:opacity-70"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* ── Display mode ── */
+          <>
+            <div className="flex items-start gap-[12px]">
+              <span className="text-[22px] leading-none mt-[1px] select-none">{objective.icon}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-[8px] flex-wrap">
+                  <h3 className="font-medium text-[15px] leading-[1.3] text-[var(--ink)] m-0 truncate">
+                    {objective.title}
+                  </h3>
+                  <button
+                    onClick={() => void handleStatusCycle()}
+                    className="flex-shrink-0 font-mono text-[9px] tracking-[0.1em] uppercase px-[7px] py-[3px] rounded-full border-none cursor-pointer transition-opacity hover:opacity-70"
+                    style={{ background: `${statusCfg.color}18`, color: statusCfg.color }}
+                    title={`Status: ${statusCfg.label} — click to advance`}
+                  >
+                    {statusCfg.label}
+                  </button>
+                  <span
+                    className="flex-shrink-0 font-mono text-[9px] tracking-[0.1em] uppercase px-[7px] py-[3px] rounded-full"
+                    style={{ background: `${priorityCfg.color}15`, color: priorityCfg.color }}
+                  >
+                    {priorityCfg.label}
+                  </span>
+                </div>
 
-        {/* Milestone progress bar */}
-        {totalMilestones > 0 && (
-          <div className="mt-[14px]">
-            <div className="h-[4px] rounded-full overflow-hidden" style={{ background: "var(--rule)" }}>
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${pct}%`, background: objective.color }}
-              />
+                {objective.description && (
+                  <p className="text-[13px] leading-[1.5] mt-[6px] mb-0 text-[var(--ink-3)]">
+                    {objective.description}
+                  </p>
+                )}
+
+                <div className="flex items-center gap-[16px] mt-[10px] flex-wrap">
+                  {daysUntilTarget !== null && (
+                    <span
+                      className="font-mono text-[10px] tracking-[0.06em]"
+                      style={{ color: daysUntilTarget < 7 ? "#DC2626" : "var(--ink-3)" }}
+                    >
+                      {daysUntilTarget < 0
+                        ? `${Math.abs(daysUntilTarget)}d overdue`
+                        : daysUntilTarget === 0
+                        ? "Due today"
+                        : `${daysUntilTarget}d left`}
+                    </span>
+                  )}
+                  {totalMilestones > 0 && (
+                    <span className="font-mono text-[10px] tracking-[0.06em] text-[var(--ink-3)]">
+                      {doneMilestones}/{totalMilestones} milestones
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-[4px] flex-shrink-0">
+                <button
+                  onClick={() => setEditing(true)}
+                  className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+                  title="Edit objective"
+                >
+                  <Pencil size={12} />
+                </button>
+                <button
+                  onClick={() => void handleDelete()}
+                  className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent"
+                  style={{ color: confirmDelete ? "#DC2626" : "var(--ink-3)" }}
+                  title={confirmDelete ? "Click again to confirm" : "Delete objective"}
+                >
+                  <Trash2 size={13} />
+                </button>
+                <button
+                  onClick={() => setExpanded((e) => !e)}
+                  className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent text-[var(--ink-3)]"
+                  aria-label={expanded ? "Collapse milestones" : "Expand milestones"}
+                >
+                  {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+              </div>
             </div>
-            <div
-              className="font-mono text-[10px] tracking-[0.06em] mt-[5px]"
-              style={{ color: "var(--ink-3)" }}
-            >
-              {pct}% complete
-            </div>
-          </div>
+
+            {totalMilestones > 0 && (
+              <div className="mt-[14px]">
+                <div className="h-[4px] rounded-full overflow-hidden" style={{ background: "var(--rule)" }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${pct}%`, background: objective.color }}
+                  />
+                </div>
+                <div className="font-mono text-[10px] tracking-[0.06em] mt-[5px] text-[var(--ink-3)]">
+                  {pct}% complete
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Expanded milestones section */}
-      {expanded && (
+      {/* Expanded milestones */}
+      {!editing && expanded && (
         <div
           className="border-t border-[var(--rule)] px-[20px] py-[16px] space-y-[8px]"
           style={{ background: "var(--bg-2)" }}
@@ -215,12 +355,11 @@ export function ObjectiveCard({
                 style={{ color: "var(--ink-3)" }}
                 aria-label="Delete milestone"
               >
-                <Trash2 size={11} />
+                <X size={11} />
               </button>
             </div>
           ))}
 
-          {/* Add milestone */}
           {addingMilestone ? (
             <div className="flex items-center gap-[8px] mt-[8px]">
               <input
