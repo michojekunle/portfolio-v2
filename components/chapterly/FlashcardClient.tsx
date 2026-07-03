@@ -30,9 +30,11 @@ interface FlashcardWithBook extends ChFlashcard {
 
 interface Props {
   initialCards: FlashcardWithBook[];
+  totalCount: number;
+  studyAll: boolean;
 }
 
-export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
+export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props): React.ReactElement {
   const [queue, setQueue] = useState<FlashcardWithBook[]>(initialCards);
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -109,6 +111,7 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
   };
 
   if (initialCards.length === 0) {
+    const hasCollection = totalCount > 0;
     return (
       <div
         className="min-h-screen flex flex-col items-center justify-center px-[24px] py-[80px] max-[1024px]:pt-[100px] gap-[24px] text-center"
@@ -121,18 +124,35 @@ export function ChFlashcardClient({ initialCards }: Props): React.ReactElement {
         </div>
         <div className="max-w-[420px]">
           <h1 className="font-display text-[26px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] mb-[10px]">
-            No flashcards due
+            {hasCollection ? "No cards due today" : "No flashcards yet"}
           </h1>
           <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] mb-[24px]">
-            To create flashcards, open any book, highlight a passage, and click the <strong style={{ color: "var(--ink)" }}>Flashcard</strong> (sparkles) icon in the notes sidebar. They will appear here immediately for study.
+            {hasCollection
+              ? `Great job! You have reviewed all cards due for today. You have ${totalCount} total card${totalCount > 1 ? "s" : ""} in your library collection.`
+              : "To create flashcards, open any book, highlight a passage, and click the Flashcard (sparkles) icon in the notes sidebar. They will appear here immediately for study."}
           </p>
-          <Link
-            href="/tools/chapterly"
-            className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] no-underline"
-            style={{ background: ACCENT, color: "#fff" }}
-          >
-            Go to Library
-          </Link>
+          <div className="flex items-center justify-center gap-[12px] flex-wrap">
+            {hasCollection && !studyAll && (
+              <Link
+                href="/tools/chapterly/flashcards?all=true"
+                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] no-underline"
+                style={{ background: ACCENT, color: "#fff" }}
+              >
+                Study All Anyway
+              </Link>
+            )}
+            <Link
+              href="/tools/chapterly"
+              className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] no-underline border transition-colors"
+              style={{
+                borderColor: hasCollection && !studyAll ? "var(--rule)" : ACCENT,
+                background: hasCollection && !studyAll ? "transparent" : ACCENT,
+                color: hasCollection && !studyAll ? "var(--ink)" : "#fff"
+              }}
+            >
+              Go to Library
+            </Link>
+          </div>
         </div>
       </div>
     );
