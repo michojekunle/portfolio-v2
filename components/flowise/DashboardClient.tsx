@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { FwAccount, FwTransaction, FwCategory, MonthlyStats } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
 import { TransactionForm } from "./TransactionForm";
@@ -27,6 +28,7 @@ export function FwDashboardClient({
   lastMonth,
   netWorth: initialNetWorth,
 }: Props): React.ReactElement {
+  const router = useRouter();
   const [accounts, setAccounts] = useState(initialAccounts);
   const [transactions, setTransactions] = useState(initialTransactions);
   const [showForm, setShowForm] = useState(false);
@@ -34,6 +36,19 @@ export function FwDashboardClient({
   const [stats, setStats] = useState({ thisMonth, lastMonth });
   const netWorth = accounts.filter(a => !a.is_archived)
     .reduce((s, a) => s + a.current_balance, 0);
+
+  // Resync from fresh server props on re-render — useState(initialX) only seeds
+  // once, so a reused component instance across a soft navigation would
+  // otherwise keep showing whatever was true when it first mounted.
+  useEffect(() => {
+    setAccounts(initialAccounts);
+  }, [initialAccounts]);
+  useEffect(() => {
+    setTransactions(initialTransactions);
+  }, [initialTransactions]);
+  useEffect(() => {
+    setStats({ thisMonth, lastMonth });
+  }, [thisMonth, lastMonth]);
 
   const handleTransactionCreated = useCallback((tx: FwTransaction): void => {
     setTransactions((prev) => [tx, ...prev].slice(0, 10));
@@ -64,7 +79,10 @@ export function FwDashboardClient({
       };
     });
     setShowForm(false);
-  }, []);
+    // Refresh server data so other pages (e.g. Transactions) don't serve a stale
+    // cached render that predates this transaction when navigated to next.
+    router.refresh();
+  }, [router]);
 
   const incomeChange =
     lastMonth.income > 0

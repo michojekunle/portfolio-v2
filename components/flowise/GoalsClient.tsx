@@ -29,19 +29,28 @@ export function GoalsClient({ initialGoals }: Props): React.ReactElement {
   }, []);
 
   const handleDelete = async (id: string): Promise<void> => {
-    if (!confirm("Delete this goal?")) return;
-    await fetch(`/api/flowise/goals?id=${id}`, { method: "DELETE" });
-    setGoals((prev) => prev.filter((g) => g.id !== id));
+    try {
+      const res = await fetch(`/api/flowise/goals?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setGoals((prev) => prev.filter((g) => g.id !== id));
+    } catch (err) {
+      console.error("[goals] delete error:", err);
+    }
   };
 
   const handleMarkComplete = async (id: string): Promise<void> => {
-    const res = await fetch("/api/flowise/goals", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, is_completed: true }),
-    });
-    const data = await res.json() as { goal: FwGoal };
-    if (res.ok) setGoals((prev) => prev.map((g) => g.id === id ? data.goal : g));
+    try {
+      const res = await fetch("/api/flowise/goals", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, is_completed: true }),
+      });
+      if (!res.ok) throw new Error("Mark complete failed");
+      const data = await res.json() as { goal: FwGoal };
+      setGoals((prev) => prev.map((g) => g.id === id ? data.goal : g));
+    } catch (err) {
+      console.error("[goals] mark-complete error:", err);
+    }
   };
 
   const handleAddProgress = async (id: string, extra: number): Promise<void> => {

@@ -16,6 +16,7 @@ const CreateSchema = z.object({
   recurrence_rule: z.enum(["daily", "weekly", "biweekly", "monthly", "yearly"]).nullable().optional(),
   source: z.enum(["manual", "csv_import", "ai_scan"]).default("manual"),
   raw_import_ref: z.string().nullable().optional(),
+  allow_duplicate: z.boolean().default(false),
 });
 
 const ListSchema = z.object({
@@ -93,9 +94,34 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Account not found" }, { status: 404 });
   }
 
+  const { allow_duplicate, ...txData } = parsed.data;
+
+  if (!allow_duplicate) {
+    const { data: existing } = await supabase
+      .from("fw_transactions")
+      .select("id, description, date, amount")
+      .eq("user_id", user.id)
+      .eq("account_id", txData.account_id)
+      .eq("date", txData.date)
+      .eq("amount", txData.amount)
+      .limit(1)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json(
+        {
+          error: "duplicate",
+          message: `A transaction of the same amount on the same date already exists ("${existing.description}")`,
+          existing,
+        },
+        { status: 409 },
+      );
+    }
+  }
+
   const { data: tx, error: txError } = await supabase
     .from("fw_transactions")
-    .insert({ ...parsed.data, user_id: user.id })
+    .insert({ ...txData, user_id: user.id })
     .select()
     .single();
 

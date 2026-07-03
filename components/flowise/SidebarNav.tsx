@@ -97,7 +97,7 @@ function SidebarContent({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-[16px] py-[20px] space-y-[4px]">
+      <nav className="flex-1 px-[16px] py-[20px] space-y-[4px] overflow-y-auto">
         {NAV_LINKS.map((link) => {
           const active = isActive(link.href);
           return (

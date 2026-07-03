@@ -68,22 +68,36 @@ export function TransactionForm({
     setLoading(true);
     try {
       const signedAmount = txType === "expense" ? -parsedAmount : parsedAmount;
-      const res = await fetch("/api/flowise/transactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          account_id: accountId,
-          amount: signedAmount,
-          category_id: categoryId || null,
-          date,
-          description: description.trim() || (txType === "expense" ? "Expense" : "Income"),
-          note: note.trim() || null,
-          tags: [],
-          source: "manual",
-        }),
-      });
+      const submit = async (allowDuplicate: boolean): Promise<Response> =>
+        fetch("/api/flowise/transactions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account_id: accountId,
+            amount: signedAmount,
+            category_id: categoryId || null,
+            date,
+            description: description.trim() || (txType === "expense" ? "Expense" : "Income"),
+            note: note.trim() || null,
+            tags: [],
+            source: "manual",
+            allow_duplicate: allowDuplicate,
+          }),
+        });
 
-      const data: unknown = await res.json();
+      let res = await submit(false);
+      let data: unknown = await res.json();
+
+      if (res.status === 409 && (data as { error?: string }).error === "duplicate") {
+        const message = (data as { message?: string }).message ?? "This looks like a duplicate.";
+        if (!confirm(`${message} Add it anyway?`)) {
+          setLoading(false);
+          return;
+        }
+        res = await submit(true);
+        data = await res.json();
+      }
+
       if (!res.ok) {
         const errData = data as { error?: string };
         throw new Error(errData.error ?? "Failed to create transaction");

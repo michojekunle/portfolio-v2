@@ -71,13 +71,17 @@ export function BudgetsClient({ initialBudgets, initialMonth, categories }: Prop
   }, []);
 
   const handleDelete = async (categoryId: string): Promise<void> => {
-    if (!confirm("Remove this budget?")) return;
-    await fetch("/api/flowise/budgets", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category_id: categoryId, month }),
-    });
-    setBudgets((prev) => prev.filter((b) => b.category_id !== categoryId));
+    try {
+      const res = await fetch("/api/flowise/budgets", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category_id: categoryId, month }),
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      setBudgets((prev) => prev.filter((b) => b.category_id !== categoryId));
+    } catch (err) {
+      console.error("[budgets] delete error:", err);
+    }
   };
 
   const totalBudgeted = budgets.reduce((s, b) => s + b.amount, 0);

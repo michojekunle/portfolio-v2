@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { FwAccount, FwCategory, FwTransaction } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
 import { TransactionForm } from "./TransactionForm";
@@ -26,6 +26,16 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
   const [showImport, setShowImport] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // useState(initialTransactions) only seeds state on first mount — if Next.js
+  // reuses this component instance across a soft navigation (e.g. Dashboard →
+  // scan → back to Transactions without a full reload), fresh server props
+  // land here but get ignored unless we explicitly resync.
+  useEffect(() => {
+    setTransactions(initialTransactions);
+  }, [initialTransactions]);
 
   const fetchMonth = useCallback(async (m: string): Promise<void> => {
     setLoading(true);
@@ -56,8 +66,13 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
   }, [month]);
 
   const handleDelete = async (id: string): Promise<void> => {
-    if (!confirm("Delete this transaction?")) return;
+    if (confirmDeleteId !== id) {
+      setConfirmDeleteId(id);
+      return;
+    }
     setDeletingId(id);
+    setConfirmDeleteId(null);
+    setDeleteError(null);
     try {
       const res = await fetch(`/api/flowise/transactions/${id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -67,7 +82,7 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
       setTransactions((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
-      alert(err instanceof Error ? err.message : "Failed to delete transaction");
+      setDeleteError(err instanceof Error ? err.message : "Failed to delete transaction");
     } finally {
       setDeletingId(null);
     }
@@ -79,6 +94,12 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
 
   return (
     <div className="px-[40px] pt-[48px] pb-[60px] max-[1024px]:pt-[80px] max-[720px]:px-[20px]">
+      {deleteError && (
+        <div className="mb-[16px] px-[14px] py-[10px] rounded-[10px] bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] font-mono text-[11px] flex items-center justify-between">
+          {deleteError}
+          <button onClick={() => setDeleteError(null)} className="ml-[12px] text-[#DC2626] bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100">✕</button>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between mb-[32px] gap-[16px] flex-wrap">
         <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-[var(--ink)]">
@@ -158,14 +179,26 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
                       {isIncome ? "+" : "−"}{formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
                     </div>
                   </div>
-                  <button
-                    onClick={() => void handleDelete(tx.id)}
-                    disabled={deletingId === tx.id}
-                    className="opacity-0 group-hover:opacity-100 w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-4)] hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)] transition-all"
-                    aria-label="Delete transaction"
-                  >
-                    <Trash2 size={13} />
-                  </button>
+                  {confirmDeleteId === tx.id ? (
+                    <button
+                      onClick={() => void handleDelete(tx.id)}
+                      disabled={deletingId === tx.id}
+                      className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none cursor-pointer text-[#DC2626] bg-[rgba(220,38,38,0.12)] transition-all text-[9px] font-mono font-semibold"
+                      aria-label="Confirm delete"
+                      title="Click again to confirm"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => void handleDelete(tx.id)}
+                      disabled={deletingId === tx.id}
+                      className="opacity-0 group-hover:opacity-100 w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-4)] hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)] transition-all"
+                      aria-label="Delete transaction"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  )}
                 </div>
               </div>
             );
