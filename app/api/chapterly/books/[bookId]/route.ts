@@ -55,3 +55,29 @@ export async function PATCH(
 
   return NextResponse.json({ book: data });
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ bookId: string }> }
+): Promise<NextResponse> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { bookId } = await params;
+
+  const { error } = await supabase
+    .from("ch_books")
+    .delete()
+    .eq("id", bookId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("[chapterly/books] delete error:", error);
+    return NextResponse.json({ error: "Failed to delete book" }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}
