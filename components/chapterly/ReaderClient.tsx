@@ -28,6 +28,7 @@ import {
   X,
   Loader2,
   Save,
+  Brain,
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
 
@@ -273,6 +274,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
   const saveHighlight = async (color: HighlightColor): Promise<void> => {
     if (!textSelection) return;
+    const selectionText = textSelection.text;
     setTextSelection(null);
     window.getSelection()?.removeAllRanges();
     try {
@@ -281,13 +283,49 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           book_id: book.id,
-          text: textSelection.text,
+          text: selectionText,
           color,
         }),
       });
       if (!res.ok) throw new Error("Highlight save failed");
     } catch (err) {
       console.error("[reader] highlight error:", err);
+    }
+  };
+
+  const saveHighlightAsFlashcard = async (customText?: string): Promise<void> => {
+    const textToUse = customText || textSelection?.text;
+    if (!textToUse) return;
+    
+    setTextSelection(null);
+    window.getSelection()?.removeAllRanges();
+
+    try {
+      // 1. Create highlight
+      const hlRes = await fetch("/api/chapterly/highlights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          book_id: book.id,
+          text: textToUse,
+          color: "yellow",
+        }),
+      });
+      if (!hlRes.ok) throw new Error("Highlight save failed");
+      const { highlight } = await hlRes.json();
+
+      // 2. Convert to flashcard
+      const fcRes = await fetch("/api/chapterly/flashcards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          highlight_id: highlight.id,
+          book_id: book.id,
+        }),
+      });
+      if (!fcRes.ok) throw new Error("Flashcard creation failed");
+    } catch (err) {
+      console.error("[reader] flashcard save error:", err);
     }
   };
 
@@ -533,6 +571,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   console.error("[reader] pdf highlight error:", err);
                 }
               }}
+              onMakeFlashcard={saveHighlightAsFlashcard}
             />
           </div>
         ) : isTextFormat ? (
@@ -677,6 +716,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               title={id}
             />
           ))}
+          <button
+            onClick={() => void saveHighlightAsFlashcard()}
+            className="ml-[4px] px-[8px] py-[4px] rounded bg-[#4F6D7A] hover:bg-[#3D5661] text-white font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
+            title="Add to flashcards"
+          >
+            <Brain size={11} />
+            <span>Flashcard</span>
+          </button>
           <button
             onClick={() => setTextSelection(null)}
             className="ml-[2px] w-[18px] h-[18px] flex items-center justify-center rounded-full border-none cursor-pointer opacity-40 hover:opacity-80 bg-transparent"
