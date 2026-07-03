@@ -29,7 +29,7 @@ function buildMonthGrid(year: number, month: number): (string | null)[] {
   return grid;
 }
 
-const DOW = ["S", "M", "T", "W", "T", "F", "S"];
+const DOW = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
   const now = new Date();
@@ -149,20 +149,11 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-[6px] mt-[12px] justify-end">
-        <span className="font-mono text-[9px]" style={{ color: "var(--ink-4)" }}>
-          Less
-        </span>
-        {[0.12, 0.35, 0.65, 1].map((opacity, i) => (
-          <div
-            key={i}
-            className="w-[10px] h-[10px] rounded-[2px]"
-            style={{ background: VELA_ACCENT, opacity }}
-          />
-        ))}
-        <span className="font-mono text-[9px]" style={{ color: "var(--ink-4)" }}>
-          More
-        </span>
+      <div className="flex items-center gap-[8px] mt-[12px] justify-end">
+        <div className="w-[10px] h-[10px] rounded-[2px]" style={{ background: "var(--bg-2)" }} />
+        <span className="font-mono text-[9px]" style={{ color: "var(--ink-4)" }}>No entry</span>
+        <div className="w-[10px] h-[10px] rounded-[2px] ml-[4px]" style={{ background: VELA_ACCENT }} />
+        <span className="font-mono text-[9px]" style={{ color: "var(--ink-4)" }}>Logged</span>
       </div>
     </div>
   );

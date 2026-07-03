@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface Props {
   params: Promise<{ date: string }>;
+  searchParams: Promise<{ focus?: string }>;
 }
 
 function formatHeaderDate(dateStr: string): { weekday: string; rest: string } {
@@ -24,8 +25,10 @@ function adjacentDate(dateStr: string, delta: number): string {
   return d.toLocaleDateString("en-CA");
 }
 
-export default async function LogDatePage({ params }: Props): Promise<React.ReactElement> {
+export default async function LogDatePage({ params, searchParams }: Props): Promise<React.ReactElement> {
   const { date } = await params;
+  const { focus } = await searchParams;
+  const initialView = focus === "priorities" ? "priorities" : "log";
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
 
@@ -94,6 +97,7 @@ export default async function LogDatePage({ params }: Props): Promise<React.Reac
         date={date}
         initialEntry={entry}
         objectives={objectives}
+        initialView={initialView}
       />
     </div>
   );

@@ -169,10 +169,15 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
 
   const handleSignOut = async (): Promise<void> => {
     setSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/tools/journal/login");
-    router.refresh();
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push("/tools/journal/login");
+      router.refresh();
+    } catch (err) {
+      console.error("[journal/sidebar] signOut error:", err);
+      setSigningOut(false);
+    }
   };
 
   const sharedProps = {

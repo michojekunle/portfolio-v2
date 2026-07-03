@@ -54,7 +54,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
             transition={{ duration: 0.25 }}
           >
             <Link
-              href={`/tools/journal/log/${date}#priorities`}
+              href={`/tools/journal/log/${date}?focus=priorities#priorities`}
               className="block rounded-[14px] p-[22px] no-underline transition-all hover:shadow-[0_6px_28px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
               style={
                 prioritiesSet
@@ -105,7 +105,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
             transition={{ duration: 0.25 }}
           >
             <Link
-              href={`/tools/journal/log/${date}#log-today`}
+              href={`/tools/journal/log/${date}?focus=log#log-today`}
               className="block rounded-[14px] p-[22px] no-underline transition-all hover:shadow-[0_6px_28px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
               style={
                 dayLogged

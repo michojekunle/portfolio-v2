@@ -32,7 +32,7 @@ export default async function JournalLayout({
 
   // Compute current streak for sidebar widget
   const [recentEntries, objectives] = await Promise.all([
-    getRecentEntries(60),
+    getRecentEntries(90),
     getObjectivesWithMilestones(),
   ]);
   const streakCount = (() => {
