@@ -399,11 +399,22 @@ function VelaCard(): React.ReactElement {
             </p>
 
             <div className="flex flex-wrap gap-[8px]">
-              {["Objectives + milestones", "Daily structured logs", "7-day streak", "Energy tracking", "Priority-first"].map((s) => (
+              {[
+                "Objectives + milestones",
+                "Daily structured logs",
+                "7-day streak",
+                "Energy tracking",
+                "Priority-first",
+                "Reflection prompts",
+              ].map((s) => (
                 <span
                   key={s}
                   className="font-mono text-[10px] tracking-[0.1em] uppercase px-[10px] py-[4px] rounded-full"
-                  style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
+                  style={{
+                    background: "var(--bg-2)",
+                    color: "var(--ink-3)",
+                    border: "1px solid var(--rule)",
+                  }}
                 >
                   {s}
                 </span>
@@ -418,10 +429,30 @@ function VelaCard(): React.ReactElement {
               style={{ background: accent }}
             >
               Open Vela
-              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]" aria-hidden="true">
+              <span
+                className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]"
+                aria-hidden="true"
+              >
                 →
               </span>
             </Link>
+            <div
+              className="px-[16px] py-[12px] rounded-[10px] text-center"
+              style={{ background: accentSoft }}
+            >
+              <div
+                className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[2px]"
+                style={{ color: accent }}
+              >
+                Free tier includes
+              </div>
+              <div
+                className="text-[12px] leading-[1.5]"
+                style={{ color: "var(--ink-2)" }}
+              >
+                Unlimited logs · All objectives · Streaks
+              </div>
+            </div>
           </div>
         </div>
       </div>
