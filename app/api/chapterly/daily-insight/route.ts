@@ -5,6 +5,21 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { checkRateLimit } from "@/lib/rate-limit";
 import type { ChBook, ChGoal } from "@/lib/chapterly/types";
 
+export interface DailyInsightPayload {
+  insight: string;
+  date: string;
+  stats: {
+    streak: number;
+    todayMinutes: number;
+    dailyGoal: number;
+    currentBook: string | null;
+    currentBookAuthor: string | null;
+    progressPct: number;
+    totalBooks: number;
+    finishedBooks: number;
+  };
+}
+
 export async function GET(): Promise<NextResponse> {
   const supabase = await createClient();
   const {
@@ -32,7 +47,7 @@ export async function GET(): Promise<NextResponse> {
       .select("id, title, author, status, progress_pct")
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
-      .limit(5),
+      .limit(10),
     supabase
       .from("ch_sessions")
       .select("duration_seconds")
@@ -55,21 +70,34 @@ export async function GET(): Promise<NextResponse> {
   const streak = goal?.streak_count ?? 0;
   const dailyGoal = goal?.daily_minutes ?? 15;
   const remainingMinutes = Math.max(0, dailyGoal - todayMinutes);
+  const finishedBooks = books.filter((b) => b.status === "finished").length;
 
   const contextLines = [
     currentBook
-      ? `Currently reading: "${currentBook.title}"${currentBook.author ? ` by ${currentBook.author}` : ""} (${Math.round(currentBook.progress_pct)}% done)`
-      : "No active book currently",
+      ? `Currently reading: "${currentBook.title}"${currentBook.author ? ` by ${currentBook.author}` : ""} — ${Math.round(currentBook.progress_pct ?? 0)}% through`
+      : "No active book",
     `Reading streak: ${streak} day${streak !== 1 ? "s" : ""}`,
     `Read today: ${todayMinutes} of ${dailyGoal} minutes`,
     remainingMinutes > 0
-      ? `${remainingMinutes} minutes remaining to hit today's goal`
-      : "Daily reading goal already met today",
+      ? `${remainingMinutes} minutes left to hit today's goal`
+      : "Daily goal already hit today — great work!",
+    `Total books: ${books.length} (${finishedBooks} finished)`,
   ].join(". ");
 
-  const prompt = `You are a concise, sharp reading coach. Generate ONE energizing daily insight for this reader in 2-3 sentences max (under 60 words total). Make it feel personal to their specific stats — reference their current book, streak, or progress directly. End with one concrete micro-action for today. Avoid generic platitudes.
+  const prompt = `You are a sharp, personal reading coach. Write ONE daily insight for this reader — maximum 3 sentences, under 70 words total. Make it feel genuinely personal to their specific context. Reference their current book, streak, or progress concretely (use the actual numbers). End with a single, specific micro-action they can do in the next 5 minutes. Avoid generic motivational fluff — be precise and actionable.
 
-Reader stats: ${contextLines}`;
+Reader context: ${contextLines}`;
+
+  const stats: DailyInsightPayload["stats"] = {
+    streak,
+    todayMinutes,
+    dailyGoal,
+    currentBook: currentBook?.title ?? null,
+    currentBookAuthor: currentBook?.author ?? null,
+    progressPct: Math.round(currentBook?.progress_pct ?? 0),
+    totalBooks: books.length,
+    finishedBooks,
+  };
 
   const generators: (() => Promise<string>)[] = [];
 
@@ -80,7 +108,7 @@ Reader stats: ${contextLines}`;
         model: "llama-3.1-8b-instant",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.75,
-        max_tokens: 120,
+        max_tokens: 140,
       });
       const text = res.choices[0]?.message?.content?.trim() ?? "";
       if (!text) throw new Error("Empty response from Groq");
@@ -91,7 +119,7 @@ Reader stats: ${contextLines}`;
   if (process.env.GEMINI_API_KEY) {
     generators.push(async (): Promise<string> => {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-      const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const res = await model.generateContent(prompt);
       const text = res.response.text().trim();
       if (!text) throw new Error("Empty response from Gemini");
@@ -103,7 +131,8 @@ Reader stats: ${contextLines}`;
   for (const gen of generators) {
     try {
       const insight = await gen();
-      return NextResponse.json({ insight, date: today });
+      const payload: DailyInsightPayload = { insight, date: today, stats };
+      return NextResponse.json(payload);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       errors.push(msg);
@@ -113,10 +142,10 @@ Reader stats: ${contextLines}`;
 
   console.error("[daily-insight] all providers failed:", errors);
 
-  // Deterministic fallback so the card is never empty
   const fallback = currentBook
-    ? `You're ${Math.round(currentBook.progress_pct)}% through "${currentBook.title}" — that's real momentum. ${remainingMinutes > 0 ? `${remainingMinutes} more minutes today keeps your streak alive.` : "You already hit your daily goal — well done."}`
-    : `Every reading journey starts with a single page. Open a book today and build your first streak — even 5 minutes daily compounds into weeks of knowledge by year-end.`;
+    ? `You're ${Math.round(currentBook.progress_pct ?? 0)}% through "${currentBook.title}" — momentum is real. ${remainingMinutes > 0 ? `${remainingMinutes} more minutes today locks in your streak.` : "You already crushed today's goal."}`
+    : `Every reading habit starts with one session. Open a book today and start building your streak — even 10 minutes compounds into weeks of knowledge.`;
 
-  return NextResponse.json({ insight: fallback, date: today });
+  const payload: DailyInsightPayload = { insight: fallback, date: today, stats };
+  return NextResponse.json(payload);
 }

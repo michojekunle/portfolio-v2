@@ -31,10 +31,193 @@ import {
   Save,
   Brain,
   Sparkles,
+  Headphones,
+  BookOpen,
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
 
 const ACCENT = "#4F6D7A";
+
+// Lightweight inline markdown → JSX renderer (no external deps)
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
+// Line-by-line parser that handles AI-generated structured summaries correctly.
+function renderMarkdown(text: string, textColor: string): React.ReactElement {
+  const raw = text.split("\n");
+  const elements: React.ReactElement[] = [];
+  let i = 0;
+  let key = 0;
+
+  while (i < raw.length) {
+    const line = raw[i] ?? "";
+
+    if (!line.trim()) { i++; continue; }
+
+    // ── H2: section header ──
+    if (line.startsWith("## ")) {
+      elements.push(
+        <div key={key++} className="mt-[32px] mb-[12px]">
+          <div
+            className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[2px]"
+            style={{ color: ACCENT }}
+          >
+            {line.slice(3)}
+          </div>
+          <div className="h-[1px] w-full" style={{ background: `${ACCENT}28` }} />
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // ── H3 ──
+    if (line.startsWith("### ")) {
+      elements.push(
+        <h3 key={key++} className="text-[14px] font-bold mt-[18px] mb-[4px]" style={{ color: textColor }}>
+          {renderInline(line.slice(4))}
+        </h3>
+      );
+      i++;
+      continue;
+    }
+
+    // ── Blockquote ──
+    if (line.startsWith("> ")) {
+      const quoteLines: string[] = [];
+      while (i < raw.length && (raw[i]?.startsWith("> ") ?? false)) {
+        quoteLines.push((raw[i] ?? "").replace(/^>\s?/, ""));
+        i++;
+      }
+      elements.push(
+        <div
+          key={key++}
+          className="my-[12px] px-[16px] py-[12px] rounded-[10px]"
+          style={{ background: `${ACCENT}12` }}
+        >
+          <p className="italic text-[13px] leading-[1.75] m-0" style={{ color: textColor, opacity: 0.9 }}>
+            &ldquo;{renderInline(quoteLines.join(" "))}&rdquo;
+          </p>
+        </div>
+      );
+      continue;
+    }
+
+    // ── Bullet list ──
+    if (line.trimStart().startsWith("- ")) {
+      const items: string[] = [];
+      while (i < raw.length && (raw[i]?.trimStart().startsWith("- ") ?? false)) {
+        items.push((raw[i] ?? "").replace(/^\s*-\s+/, ""));
+        i++;
+      }
+      elements.push(
+        <ul key={key++} className="space-y-[8px] my-[10px] list-none p-0">
+          {items.map((item, j) => (
+            <li key={j} className="flex items-start gap-[10px] text-[14px] leading-[1.65]" style={{ color: textColor }}>
+              <span
+                className="mt-[8px] w-[5px] h-[5px] rounded-full shrink-0"
+                style={{ background: ACCENT, opacity: 0.7 }}
+              />
+              <span>{renderInline(item)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    // ── Numbered insight ──
+    const numMatch = line.match(/^(\d+)\.\s+(.*)/);
+    if (numMatch) {
+      const num = numMatch[1] ?? "";
+      const titleLine = numMatch[2] ?? "";
+      i++;
+
+      const descLines: string[] = [];
+      const quoteLines: string[] = [];
+      while (i < raw.length) {
+        const next = raw[i] ?? "";
+        if (!next.trim()) { i++; break; }
+        if (next.startsWith("## ") || next.startsWith("### ") || /^\d+\.\s/.test(next) || next.trimStart().startsWith("- ")) break;
+        if (next.startsWith("> ")) { quoteLines.push(next.replace(/^>\s?/, "")); }
+        else { descLines.push(next); }
+        i++;
+      }
+
+      elements.push(
+        <div
+          key={key++}
+          className="flex items-start gap-[14px] my-[18px] rounded-[12px] px-[14px] py-[14px]"
+          style={{ background: `${ACCENT}08` }}
+        >
+          <span
+            className="shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center text-[11px] font-mono font-bold mt-[1px]"
+            style={{ background: ACCENT, color: "#fff" }}
+          >
+            {num}
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="text-[15px] font-bold leading-[1.4] mb-[6px]" style={{ color: textColor }}>
+              {renderInline(titleLine)}
+            </div>
+            {descLines.length > 0 && (
+              <p className="text-[13px] leading-[1.75] m-0" style={{ color: textColor, opacity: 0.85 }}>
+                {renderInline(descLines.join(" "))}
+              </p>
+            )}
+            {quoteLines.length > 0 && (
+              <div
+                className="mt-[10px] px-[12px] py-[8px] rounded-[8px]"
+                style={{ background: `${ACCENT}14` }}
+              >
+                <p className="italic text-[12px] leading-[1.6] m-0" style={{ color: textColor, opacity: 0.8 }}>
+                  &ldquo;{renderInline(quoteLines.join(" "))}&rdquo;
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+      continue;
+    }
+
+    // ── Regular paragraph ──
+    const paragraphLines: string[] = [];
+    while (i < raw.length) {
+      const next = raw[i] ?? "";
+      if (!next.trim()) { i++; break; }
+      if (next.startsWith("## ") || next.startsWith("### ") || next.startsWith("> ") || next.trimStart().startsWith("- ") || /^\d+\.\s/.test(next)) break;
+      paragraphLines.push(next);
+      i++;
+    }
+    if (paragraphLines.length > 0) {
+      elements.push(
+        <p key={key++} className="text-[14px] leading-[1.8] m-0" style={{ color: textColor }}>
+          {renderInline(paragraphLines.join(" "))}
+        </p>
+      );
+    }
+  }
+
+  return <div className="space-y-[6px]">{elements}</div>;
+}
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/#{1,6}\s+/g, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/^[-*]\s+/gm, "")
+    .replace(/^>\s*/gm, "")
+    .replace(/^\d+\.\s+/gm, "")
+    .trim();
+}
 
 type ReaderTheme = "white" | "sepia" | "dark" | "oled";
 
@@ -81,6 +264,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryText, setSummaryText] = useState("");
   const [generatingSummary, setGeneratingSummary] = useState(false);
+  const [showSummaryTts, setShowSummaryTts] = useState(false);
 
   // Phase 3: text selection → highlight
   const [textSelection, setTextSelection] = useState<TextSelection | null>(
@@ -986,14 +1170,20 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   </span>
                 </div>
               ) : summaryText ? (
-                <div
-                  className="text-[14px] leading-[1.8] whitespace-pre-wrap"
-                  style={{ color: current.text, opacity: 0.9 }}
-                >
-                  {summaryText}
+                <div>
+                  {showSummaryTts && (
+                    <div className="mb-[16px]">
+                      <TtsPlayer
+                        text={stripMarkdown(summaryText)}
+                        onClose={() => setShowSummaryTts(false)}
+                        theme={{ bg: current.bg, text: current.text }}
+                      />
+                    </div>
+                  )}
+                  {renderMarkdown(summaryText, current.text)}
                   {generatingSummary && (
                     <span
-                      className="inline-flex items-center gap-[6px] ml-[8px] font-mono text-[10px] tracking-[0.1em] uppercase opacity-50"
+                      className="inline-flex items-center gap-[6px] mt-[8px] font-mono text-[10px] tracking-[0.1em] uppercase opacity-50"
                       style={{ color: current.text }}
                     >
                       <Loader2 size={10} className="animate-spin" />
@@ -1043,23 +1233,47 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
             {summaryText && !generatingSummary && (
               <div
-                className="px-[20px] py-[14px] border-t shrink-0 flex items-center justify-between"
+                className="px-[20px] py-[14px] border-t shrink-0 space-y-[10px]"
                 style={{ borderColor: current.text + "15" }}
               >
-                <span
-                  className="font-mono text-[9px] tracking-[0.08em] uppercase"
-                  style={{ color: current.text, opacity: 0.35 }}
-                >
-                  Saved to notes
-                </span>
-                <button
-                  onClick={() => void startSummaryStream()}
-                  className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
-                  style={{ color: ACCENT }}
-                >
-                  <Sparkles size={11} />
-                  Regenerate
-                </button>
+                <div className="flex items-center gap-[8px]">
+                  <button
+                    onClick={() => setShowSummaryTts((v) => !v)}
+                    className="flex-1 inline-flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all"
+                    style={
+                      showSummaryTts
+                        ? { background: ACCENT, color: "#fff" }
+                        : { background: ACCENT + "15", color: ACCENT }
+                    }
+                  >
+                    <Headphones size={11} />
+                    {showSummaryTts ? "Stop audio" : "Listen"}
+                  </button>
+                  <a
+                    href={`/tools/chapterly/notes/${book.id}`}
+                    className="flex-1 inline-flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[8px] rounded-[8px] no-underline transition-all"
+                    style={{ background: current.text + "10", color: current.text, opacity: 0.7 }}
+                  >
+                    <BookOpen size={11} />
+                    View in notes
+                  </a>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span
+                    className="font-mono text-[9px] tracking-[0.08em] uppercase"
+                    style={{ color: current.text, opacity: 0.3 }}
+                  >
+                    Saved as book summary
+                  </span>
+                  <button
+                    onClick={() => void startSummaryStream()}
+                    className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
+                    style={{ color: ACCENT }}
+                  >
+                    <Sparkles size={11} />
+                    Regenerate
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -21,27 +21,59 @@ function getModelChain(preference: string): string[] {
   return DEFAULT_MODEL_CHAIN;
 }
 
+function buildPrompt(bookTitle: string, bookAuthor?: string | null, highlights: string[] = []): string {
+  const highlightBlock =
+    highlights.length > 0
+      ? `\n\nReader's actual highlights from this book:\n${highlights.map((h, i) => `${i + 1}. "${h}"`).join("\n")}\n\nWhere relevant, weave these quotes into the Key Insights section as supporting evidence.`
+      : "";
+
+  return `Generate a structured Headway-style book summary for "${bookTitle}"${bookAuthor ? ` by ${bookAuthor}` : ""}.${highlightBlock}
+
+Your output MUST follow this EXACT structure with these EXACT H2 headers:
+
+## Core Premise
+One compelling sentence capturing the book's central thesis.
+
+## Why This Book Matters
+2–3 sentences on who it's for and the key problem it solves.
+
+## Key Insights
+List exactly 7 to 12 numbered insights. Each insight MUST have:
+- A **bold title** (3–6 words)
+- 2–4 sentences explaining the concept with concrete examples
+- (optional) A > blockquote with a relevant quote from the book
+
+## Memorable Quotes
+3–5 of the most powerful, standalone quotes from the book as > blockquotes.
+
+## Action Steps
+Exactly 5 specific, immediately actionable steps the reader can start today. Number them.
+
+## One-Line Takeaway
+A single punchy sentence the reader will remember forever.
+
+Rules:
+- Use markdown headers (##, ###) and bold (**text**) consistently
+- Bullet lists use - prefix
+- Blockquotes use > prefix
+- Never use generic filler phrases like "This section discusses" — be direct and specific
+- Write for an intelligent adult reader, not a student
+- Keep Key Insights section as the longest and most detailed section`;
+}
+
 async function tryStreamModel(
   modelString: string,
   systemPrompt: string,
   bookTitle: string,
-  bookAuthor?: string | null
+  bookAuthor?: string | null,
+  highlights?: string[]
 ): Promise<ReadableStream<Uint8Array>> {
   const [provider, modelName] = modelString.split(":");
   if (!provider || !modelName) {
     throw new Error(`Invalid model name: ${modelString}`);
   }
 
-  const prompt = `Please generate a comprehensive, structured 15-minute summary of the book "${bookTitle}"${
-    bookAuthor ? ` by ${bookAuthor}` : ""
-  }.
-Your summary MUST contain:
-1. **Core Concept/Tagline**: A 1-sentence summary of the main premise.
-2. **Key Takeaways**: 3-5 bullet points of the most valuable lessons.
-3. **Chapter Summaries**: Summarize the most important chapters or phases of the book in detail, using bold headers and clean, readable markdown paragraphs.
-4. **Action Steps**: 3 concrete, actionable things the reader can start doing today.
-
-Structure the output with clean markdown headers (H2, H3) and keep the tone professional, inspiring, and engaging.`;
+  const prompt = buildPrompt(bookTitle, bookAuthor, highlights);
 
   if (provider === "google") {
     if (!process.env.GEMINI_API_KEY) {
@@ -55,6 +87,7 @@ Structure the output with clean markdown headers (H2, H3) and keep the tone prof
 
     const result = await model.generateContentStream({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: 3000 },
     });
     const iterator = result.stream[Symbol.asyncIterator]();
     const firstResult = await iterator.next();
@@ -95,7 +128,7 @@ Structure the output with clean markdown headers (H2, H3) and keep the tone prof
       ],
       stream: true,
       temperature: 0.5,
-      max_tokens: 2048,
+      max_tokens: 3000,
     });
 
     const iterator = stream[Symbol.asyncIterator]();
@@ -158,19 +191,25 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
 
   const { book_id, book_title, book_author } = parsed.data;
 
-  // Verify ownership
-  const { data: book } = await supabase
-    .from("ch_books")
-    .select("id")
-    .eq("id", book_id)
-    .eq("user_id", user.id)
-    .single();
+  // Verify ownership + fetch highlights in parallel
+  const [bookRes, highlightsRes] = await Promise.all([
+    supabase.from("ch_books").select("id").eq("id", book_id).eq("user_id", user.id).single(),
+    supabase
+      .from("ch_highlights")
+      .select("text")
+      .eq("book_id", book_id)
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(25),
+  ]);
 
-  if (!book) {
+  if (!bookRes.data) {
     return NextResponse.json({ error: "Book not found" }, { status: 404 });
   }
 
-  const systemPrompt = `You are a professional book summarizer similar to Headway and Blinkist. You generate high-quality, actionable, highly readable summaries of non-fiction bestsellers.`;
+  const highlights = (highlightsRes.data ?? []).map((h) => h.text as string).filter(Boolean);
+
+  const systemPrompt = `You are a professional book summarizer similar to Headway and Blinkist. You produce high-quality, structured, deeply insightful summaries that feel personal and immediately actionable.`;
 
   const settings = await getBBSettings();
   const models = getModelChain(settings?.ai_provider ?? "auto");
@@ -179,7 +218,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
 
   for (const modelString of models) {
     try {
-      stream = await tryStreamModel(modelString, systemPrompt, book_title, book_author);
+      stream = await tryStreamModel(modelString, systemPrompt, book_title, book_author, highlights);
       break;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
