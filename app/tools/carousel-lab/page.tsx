@@ -320,6 +320,13 @@ export default function CarouselLabPage(): React.ReactElement {
     if (!slide) return;
     const layout = slide.layout || "default";
 
+    // Dynamic scale factor relative to the CSS preview card dimensions
+    // Portrait preview is 360 wide, Square preview is 420 wide
+    const scale = width / (aspectRatio === "square" ? 420 : 360);
+
+    const margin = 36 * scale;
+    const contentWidth = width - margin * 2;
+
     // 1. Draw Background
     if (backgroundStyle === "gradient") {
       const grad = ctx.createLinearGradient(0, 0, width, height);
@@ -332,14 +339,14 @@ export default function CarouselLabPage(): React.ReactElement {
       ctx.fillRect(0, 0, width, height);
       
       // Top mesh glow
-      const grad1 = ctx.createRadialGradient(width * 0.2, height * 0.2, 50, width * 0.2, height * 0.2, width * 0.7);
+      const grad1 = ctx.createRadialGradient(width * 0.2, height * 0.2, 50 * scale, width * 0.2, height * 0.2, width * 0.7);
       grad1.addColorStop(0, activeAccent + "20");
       grad1.addColorStop(1, "transparent");
       ctx.fillStyle = grad1;
       ctx.fillRect(0, 0, width, height);
       
       // Bottom mesh glow
-      const grad2 = ctx.createRadialGradient(width * 0.8, height * 0.8, 50, width * 0.8, height * 0.8, width * 0.7);
+      const grad2 = ctx.createRadialGradient(width * 0.8, height * 0.8, 50 * scale, width * 0.8, height * 0.8, width * 0.7);
       grad2.addColorStop(0, activeText + "0b");
       grad2.addColorStop(1, "transparent");
       ctx.fillStyle = grad2;
@@ -351,209 +358,319 @@ export default function CarouselLabPage(): React.ReactElement {
 
     // Border
     ctx.strokeStyle = activeBorder;
-    ctx.lineWidth = activeBorderWidth * 4; // Scale border thickness for high res
+    ctx.lineWidth = activeBorderWidth * scale;
     ctx.strokeRect(0, 0, width, height);
 
-    // Helper text wrapper
-    const drawWrappedText = (
+    // Text Wrapping Helper
+    const getWrappedLines = (
       text: string,
-      x: number,
-      startY: number,
       maxWidth: number,
-      lineHeight: number,
-      fontStr: string,
-      color: string
-    ): number => {
-      ctx.fillStyle = color;
+      fontStr: string
+    ): string[] => {
       ctx.font = fontStr;
       const words = text.split(" ");
-      let line = "";
-      let y = startY;
+      const lines: string[] = [];
+      let currentLine = "";
 
       for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + " ";
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
+        const testLine = currentLine + words[n] + " ";
+        const testWidth = ctx.measureText(testLine).width;
         if (testWidth > maxWidth && n > 0) {
-          ctx.fillText(line, x, y);
-          line = words[n] + " ";
-          y += lineHeight;
+          lines.push(currentLine.trim());
+          currentLine = words[n] + " ";
         } else {
-          line = testLine;
+          currentLine = testLine;
         }
       }
-      ctx.fillText(line, x, y);
-      return y + lineHeight;
+      lines.push(currentLine.trim());
+      return lines;
     };
+
+    const drawLines = (
+      lines: string[],
+      x: number,
+      startY: number,
+      lineHeight: number,
+      color: string,
+      align: CanvasTextAlign = "left"
+    ): number => {
+      ctx.fillStyle = color;
+      ctx.textAlign = align;
+      let y = startY;
+      for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], x, y);
+        y += lineHeight;
+      }
+      ctx.textAlign = "left"; // reset
+      return y;
+    };
+
+    // Calculate Y Boundaries for Center Container
+    const logoSize = 28 * scale;
+    const headerBottom = showBranding && layout !== "cta" 
+      ? margin + logoSize + 10 * scale 
+      : margin;
+
+    const footerHeight = activeDivider && layout !== "split"
+      ? 20 * scale + 30 * scale
+      : 20 * scale;
+    const footerTop = height - margin - footerHeight;
+
+    const centerHeight = footerTop - headerBottom;
+    const centerY = headerBottom + centerHeight / 2;
 
     // 2. Creator Branding Header (Top)
     if (showBranding && layout !== "cta") {
       // Draw Logo Icon Badge
       ctx.fillStyle = activeAccent + "1a";
       ctx.beginPath();
-      ctx.roundRect(80, 70, 48, 48, 12);
+      ctx.roundRect(margin, margin, logoSize, logoSize, 8 * scale);
       ctx.fill();
       
-      // Draw inner icon symbol (crest/book style representation)
+      // Draw inner icon symbol
       ctx.fillStyle = activeAccent;
-      ctx.font = "bold 20px Georgia, serif";
+      ctx.font = "bold " + Math.round(12 * scale) + "px Georgia, serif";
       ctx.textAlign = "center";
-      ctx.fillText("🕮", 104, 101);
+      ctx.fillText("🕮", margin + logoSize / 2, margin + logoSize / 2 + 4 * scale);
       ctx.textAlign = "left"; // reset
 
       // Draw Logo Brand text
       ctx.fillStyle = activeAccent;
-      ctx.font = "bold 22px Inter, sans-serif";
-      // Letter spacing simulation by spacing out characters
+      ctx.font = "bold " + Math.round(12 * scale) + "px Inter, sans-serif";
       const spacedLogo = logoText.split("").join(" ");
-      ctx.fillText(spacedLogo, 144, 102);
+      ctx.fillText(spacedLogo, margin + logoSize + 8 * scale, margin + logoSize / 2 + 4 * scale);
 
       // Top Right tag info
       ctx.fillStyle = activeText + "80";
-      ctx.font = "bold 16px Inter, sans-serif";
+      ctx.font = "bold " + Math.round(9 * scale) + "px Inter, sans-serif";
       ctx.textAlign = "right";
-      ctx.fillText(topRightTag, width - 80, 102);
+      ctx.fillText(topRightTag, width - margin, margin + logoSize / 2 + 4 * scale);
       ctx.textAlign = "left"; // reset
+
+      // Header bottom border
+      ctx.strokeStyle = activeBorder;
+      ctx.lineWidth = 1 * scale;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin + logoSize + 10 * scale);
+      ctx.lineTo(width - margin, margin + logoSize + 10 * scale);
+      ctx.stroke();
     }
 
-    // 3. Draw Layout Content
+    // 3. Draw Layout Content (Vertically Centered)
     if (layout === "hook") {
-      // Hook Cover layout
-      let y = height / 2.7;
-      const titleFont = `${activeItalic ? "italic " : ""}bold 68px ${activeFontTitle}`;
-      y = drawWrappedText(slide.title, 80, y, width - 160, 84, titleFont, activeText);
-      
-      const bodyFont = `34px ${activeFontBody}`;
-      drawWrappedText(slide.content, 80, y + 40, width - 160, 52, bodyFont, activeSubtext);
+      const titleFont = `${activeItalic ? "italic " : ""}bold ${Math.round(28 * scale)}px ${activeFontTitle}`;
+      const titleLineHeight = 34 * scale;
+      const bodyFont = `${Math.round(14 * scale)}px ${activeFontBody}`;
+      const bodyLineHeight = 22 * scale;
+      const spacing = 16 * scale;
+
+      const titleLines = getWrappedLines(slide.title, contentWidth, titleFont);
+      const contentLines = getWrappedLines(slide.content, contentWidth, bodyFont);
+
+      const titleH = titleLines.length * titleLineHeight;
+      const bodyH = contentLines.length * bodyLineHeight;
+      const totalH = titleH + spacing + bodyH;
+      const startY = centerY - totalH / 2;
+
+      drawLines(titleLines, margin, startY + titleLineHeight - 8 * scale, titleLineHeight, activeText);
+      drawLines(contentLines, margin, startY + titleH + spacing + bodyLineHeight - 6 * scale, bodyLineHeight, activeSubtext);
     } 
     else if (layout === "split") {
-      // Split layout
-      ctx.fillStyle = activeAccent + "15";
-      ctx.fillRect(40, 140, width / 2 - 60, height - 300);
+      // Split layout container background
+      ctx.fillStyle = activeAccent + "08";
+      ctx.fillRect(margin - 12 * scale, headerBottom + 12 * scale, width / 2 - margin, centerHeight - 24 * scale);
 
-      // Title in split left
-      const titleFont = `bold 54px ${activeFontTitle}`;
-      drawWrappedText(slide.title, 80, height / 2.5, width / 2 - 140, 70, titleFont, activeText);
+      // Left split (Title)
+      const leftWidth = width / 2 - margin - 20 * scale;
+      const titleFont = `bold ${Math.round(20 * scale)}px ${activeFontTitle}`;
+      const titleLineHeight = 26 * scale;
+      const titleLines = getWrappedLines(slide.title, leftWidth, titleFont);
+      const titleH = titleLines.length * titleLineHeight;
+      const leftStartY = centerY - titleH / 2;
+      drawLines(titleLines, margin, leftStartY + titleLineHeight - 6 * scale, titleLineHeight, activeText);
 
-      // Content in split right
-      const bodyFont = `32px ${activeFontBody}`;
-      drawWrappedText(slide.content, width / 2 + 40, height / 2.5, width / 2 - 120, 50, bodyFont, activeText);
+      // Right split (Content)
+      const rightWidth = width / 2 - margin - 20 * scale;
+      const bodyFont = `${Math.round(13 * scale)}px ${activeFontBody}`;
+      const bodyLineHeight = 19 * scale;
+      const contentLines = getWrappedLines(slide.content, rightWidth, bodyFont);
+      const contentH = contentLines.length * bodyLineHeight;
+      const rightStartY = centerY - contentH / 2;
+      drawLines(contentLines, width / 2 + 10 * scale, rightStartY + bodyLineHeight - 4 * scale, bodyLineHeight, activeText);
     }
     else if (layout === "quote") {
-      // Quote layout with bottom pill badge
-      ctx.fillStyle = activeAccent + "22";
-      ctx.font = "bold 220px Georgia, serif";
-      ctx.fillText("“", 80, height / 3 + 20);
+      // Big background quote mark
+      ctx.fillStyle = activeAccent + "1a";
+      ctx.font = `italic bold ${Math.round(72 * scale)}px Georgia, serif`;
+      ctx.fillText("“", margin, centerY - 60 * scale);
 
-      let y = height / 3 + 10;
-      const bodyFont = `${activeItalic ? "italic " : ""}38px ${activeFontTitle}`;
-      y = drawWrappedText(`"${slide.content}"`, 80, y, width - 160, 56, bodyFont, activeText);
+      const bodyFont = `italic 500 ${Math.round(16 * scale)}px ${activeFontTitle}`;
+      const bodyLineHeight = 26 * scale;
+      const contentLines = getWrappedLines(slide.content, contentWidth - 20 * scale, bodyFont);
+      const contentH = contentLines.length * bodyLineHeight;
 
-      // Pill Badge container below quote (Title)
+      const badgeHeight = 28 * scale;
+      const spacing = 16 * scale;
+      const totalH = contentH + (slide.title ? spacing + badgeHeight : 0);
+      const startY = centerY - totalH / 2;
+
+      drawLines(contentLines, margin + 12 * scale, startY + bodyLineHeight - 6 * scale, bodyLineHeight, activeText);
+
       if (slide.title) {
+        const badgeY = startY + contentH + spacing;
+        const badgeText = slide.title.toUpperCase();
+        const badgeFont = `bold ${Math.round(10 * scale)}px Inter, sans-serif`;
+        ctx.font = badgeFont;
+        const textW = ctx.measureText(badgeText).width;
+        const badgeW = textW + 28 * scale;
+
         ctx.strokeStyle = activeAccent + "40";
-        ctx.lineWidth = 3;
-        const textWidth = ctx.measureText(slide.title.toUpperCase()).width + 48;
+        ctx.lineWidth = 1.5 * scale;
         ctx.beginPath();
-        ctx.roundRect(80, y + 20, textWidth, 48, 24);
+        ctx.roundRect(margin + 12 * scale, badgeY, badgeW, badgeHeight, badgeHeight / 2);
         ctx.stroke();
 
         ctx.fillStyle = activeAccent;
-        ctx.font = "bold 18px Inter, sans-serif";
-        ctx.fillText(slide.title.toUpperCase(), 104, y + 51);
+        ctx.textAlign = "center";
+        ctx.fillText(badgeText, margin + 12 * scale + badgeW / 2, badgeY + badgeHeight / 2 + 4 * scale);
+        ctx.textAlign = "left"; // reset
       }
     }
     else if (layout === "metrics") {
-      // Metrics list layout
+      const numFont = `bold ${Math.round(56 * scale)}px Space Mono, Courier New, monospace`;
+      const numLineHeight = 56 * scale;
+      const titleFont = `bold ${Math.round(20 * scale)}px ${activeFontTitle}`;
+      const titleLineHeight = 26 * scale;
+      const bodyFont = `${Math.round(13 * scale)}px ${activeFontBody}`;
+      const bodyLineHeight = 19 * scale;
+      const spacing = 12 * scale;
+
+      const titleLines = getWrappedLines(slide.title, contentWidth, titleFont);
+      const contentLines = getWrappedLines(slide.content, contentWidth, bodyFont);
+
+      const titleH = titleLines.length * titleLineHeight;
+      const bodyH = contentLines.length * bodyLineHeight;
+      const totalH = numLineHeight + spacing + titleH + spacing + bodyH;
+      const startY = centerY - totalH / 2;
+
       ctx.fillStyle = activeAccent;
-      ctx.font = "bold 130px Space Mono, Courier New, monospace";
-      ctx.fillText(`0${index + 1}`, 80, height / 3 + 20);
+      ctx.font = numFont;
+      ctx.fillText(`0${index + 1}`, margin, startY + numLineHeight - 8 * scale);
 
-      let y = height / 3 + 90;
-      const titleFont = `bold 50px ${activeFontTitle}`;
-      y = drawWrappedText(slide.title, 80, y, width - 160, 64, titleFont, activeText);
-
-      const bodyFont = `30px ${activeFontBody}`;
-      drawWrappedText(slide.content, 80, y + 30, width - 160, 48, bodyFont, activeSubtext);
+      drawLines(titleLines, margin, startY + numLineHeight + spacing + titleLineHeight - 6 * scale, titleLineHeight, activeText);
+      drawLines(contentLines, margin, startY + numLineHeight + spacing + titleH + spacing + bodyLineHeight - 4 * scale, bodyLineHeight, activeSubtext);
     }
     else if (layout === "cta") {
-      // Professional Personal Brand CTA Card
-      ctx.fillStyle = activeAccent + "12";
+      // Background card
+      const cardWidth = contentWidth;
+      const cardHeight = centerHeight - 20 * scale;
+      const cardX = margin;
+      const cardY = headerBottom + 10 * scale;
+
+      ctx.fillStyle = activeAccent + "08";
       ctx.beginPath();
-      ctx.roundRect(140, height / 3 - 60, width - 280, height / 2.5, 32);
+      ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 24 * scale);
       ctx.fill();
 
-      // Avatar/crest circle
+      const avatarRadius = 30 * scale;
+      const titleFont = `bold ${Math.round(20 * scale)}px ${activeFontTitle}`;
+      const bodyFont = `${Math.round(12 * scale)}px ${activeFontBody}`;
+      const btnFont = `bold ${Math.round(12 * scale)}px Inter, sans-serif`;
+      const btnHeight = 36 * scale;
+      
+      const titleLines = getWrappedLines(slide.title || "Let's connect!", cardWidth - 40 * scale, titleFont);
+      const contentLines = getWrappedLines(slide.content || "Follow for daily guides and resources.", cardWidth - 40 * scale, bodyFont);
+
+      const spacing1 = 20 * scale;
+      const spacing2 = 12 * scale;
+      const spacing3 = 20 * scale;
+
+      const titleH = titleLines.length * 26 * scale;
+      const bodyH = contentLines.length * 18 * scale;
+      const totalH = (avatarRadius * 2) + spacing1 + titleH + spacing2 + bodyH + spacing3 + btnHeight;
+      const startY = (cardY + cardHeight / 2) - totalH / 2;
+
+      // Avatar
       ctx.fillStyle = activeAccent;
       ctx.beginPath();
-      ctx.arc(width / 2, height / 3, 56, 0, Math.PI * 2);
+      ctx.arc(width / 2, startY + avatarRadius, avatarRadius, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = activeBg;
-      ctx.font = "bold 32px Inter, sans-serif";
+      ctx.font = `bold ${Math.round(16 * scale)}px Inter, sans-serif`;
       ctx.textAlign = "center";
       const initials = creatorName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-      ctx.fillText(initials, width / 2, height / 3 + 11);
-      ctx.textAlign = "left"; // reset
+      ctx.fillText(initials, width / 2, startY + avatarRadius + 6 * scale);
 
-      // Title/Name
-      ctx.fillStyle = activeText;
-      ctx.font = `bold 44px ${activeFontTitle}`;
-      ctx.textAlign = "center";
-      ctx.fillText(slide.title, width / 2, height / 2 + 10);
+      // Title
+      const titleY = startY + (avatarRadius * 2) + spacing1;
+      drawLines(titleLines, width / 2, titleY + 20 * scale, 26 * scale, activeText, "center");
 
-      // Description text
-      ctx.fillStyle = activeSubtext;
-      ctx.font = `28px ${activeFontBody}`;
-      ctx.fillText(slide.content, width / 2, height / 2 + 65);
+      // Content
+      const bodyY = titleY + titleH + spacing2;
+      drawLines(contentLines, width / 2, bodyY + 14 * scale, 18 * scale, activeSubtext, "center");
 
-      // Brand Link Button (ZAMIR style)
+      // Button
+      const btnY = bodyY + bodyH + spacing3;
+      ctx.font = btnFont;
+      const btnText = creatorHandle.toLowerCase();
+      const textW = ctx.measureText(btnText).width;
+      const btnW = textW + 48 * scale;
+
       ctx.fillStyle = activeAccent;
       ctx.beginPath();
-      const btnWidth = ctx.measureText(creatorHandle.toLowerCase()).width + 80;
-      ctx.roundRect(width / 2 - btnWidth / 2, height / 2 + 110, btnWidth, 64, 32);
+      ctx.roundRect(width / 2 - btnW / 2, btnY, btnW, btnHeight, btnHeight / 2);
       ctx.fill();
 
       ctx.fillStyle = activeBg;
-      ctx.font = "bold 26px Inter, sans-serif";
-      ctx.fillText(creatorHandle.toLowerCase(), width / 2, height / 2 + 151);
+      ctx.textAlign = "center";
+      ctx.fillText(btnText, width / 2, btnY + btnHeight / 2 + 4 * scale);
       ctx.textAlign = "left"; // reset
     }
     else {
-      // Default centered slide
-      let y = height / 2.7;
-      const titleFont = `bold 54px ${activeFontTitle}`;
-      y = drawWrappedText(slide.title, 80, y, width - 160, 72, titleFont, activeText);
+      // Default Centered slide
+      const titleFont = `bold ${Math.round(24 * scale)}px ${activeFontTitle}`;
+      const titleLineHeight = 30 * scale;
+      const bodyFont = `${Math.round(14 * scale)}px ${activeFontBody}`;
+      const bodyLineHeight = 22 * scale;
+      const spacing = 12 * scale;
 
-      const bodyFont = `30px ${activeFontBody}`;
-      drawWrappedText(slide.content, 80, y + 36, width - 160, 48, bodyFont, activeSubtext);
+      const titleLines = getWrappedLines(slide.title, contentWidth, titleFont);
+      const contentLines = getWrappedLines(slide.content, contentWidth, bodyFont);
+
+      const emojiHeight = slide.emoji ? 50 * scale : 0;
+      const totalH = (titleLines.length * titleLineHeight) + spacing + (contentLines.length * bodyLineHeight) + (slide.emoji ? spacing + emojiHeight : 0);
+      const startY = centerY - totalH / 2;
+
+      let currentY = drawLines(titleLines, margin, startY + titleLineHeight - 6 * scale, titleLineHeight, activeText);
+      currentY = drawLines(contentLines, margin, currentY + spacing, bodyLineHeight, activeSubtext);
 
       if (slide.emoji) {
-        ctx.font = "72px Arial";
-        ctx.fillText(slide.emoji, 80, height - 200);
+        ctx.font = `${Math.round(36 * scale)}px Arial`;
+        ctx.fillText(slide.emoji, margin, currentY + spacing + 30 * scale);
       }
     }
 
     // 4. Divider Line (Zamir style)
     if (activeDivider && layout !== "split") {
       ctx.strokeStyle = activeBorder;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1.5 * scale;
       ctx.beginPath();
-      ctx.moveTo(80, height - 120);
-      ctx.lineTo(width - 80, height - 120);
+      ctx.moveTo(margin, footerTop);
+      ctx.lineTo(width - margin, footerTop);
       ctx.stroke();
     }
 
-    // 5. Slide Number Indicator (Bottom Left)
+    // 5. Creator Name (Bottom Left)
     ctx.fillStyle = activeText + "80";
-    ctx.font = "bold 22px Space Mono, Courier New, monospace";
-    ctx.fillText(creatorName, 80, height - 60);
+    ctx.font = "bold " + Math.round(10 * scale) + "px Space Mono, Courier New, monospace";
+    ctx.fillText(creatorName, margin, height - margin);
 
     // 6. Brand Website Link (Bottom Right)
     ctx.fillStyle = activeText;
-    ctx.font = "bold 24px Inter, sans-serif";
+    ctx.font = "bold " + Math.round(11 * scale) + "px Inter, sans-serif";
     ctx.textAlign = "right";
-    ctx.fillText(creatorHandle.toLowerCase(), width - 80, height - 60);
+    ctx.fillText(creatorHandle.toLowerCase(), width - margin, height - margin);
     ctx.textAlign = "left"; // reset
   };
 

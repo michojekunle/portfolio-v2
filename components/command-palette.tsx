@@ -178,7 +178,24 @@ export function CommandPalette(): React.ReactElement {
       keywords: u.desc
     })),
 
+    // Creator Suite Tools
+    ...[
+      { name: "Explore Creator Suite", desc: "Explore the live tools and productivity apps.", href: "/tools" },
+      { name: "BookBreaks Summary Generator", desc: "AI summary generator that turns books into structured content.", href: "/tools/bookbreaks" },
+      { name: "Chapterly E-Reader", desc: "Speed reader, AI companion chats, and comprehension checks.", href: "/tools/chapterly" },
+      { name: "Flowise Finance OS", desc: "Budgeting, expense tracking, mobile money movement, and analytics.", href: "/tools/flowise" },
+      { name: "Vela Daily Log Journal", desc: "Daily reflection, bullet list planning, and mindfulness prompts.", href: "/tools/journal" },
+      { name: "Carousel Lab Creator", desc: "Design multi-page visual carousels for LinkedIn and Twitter.", href: "/tools/carousel-lab" },
+    ].map(t => ({
+      label: t.name,
+      icon: <Wrench className="h-4 w-4 text-primary/60" />,
+      action: () => navigate(t.href),
+      group: "Creator Suite Tools",
+      keywords: t.desc
+    })),
+
     // Pages
+    { label: "Tools", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/tools"), group: "Pages", keywords: "creator suite productivity apps" },
     { label: "Uses", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/uses"), group: "Pages", keywords: "tools setup hardware software" },
     { label: "Guestbook", icon: <MessageSquare className="h-4 w-4" />, action: () => navigate("/guestbook"), group: "Pages", keywords: "sign message" },
     { label: "Changelog", icon: <BookOpen className="h-4 w-4" />, action: () => navigate("/changelog"), group: "Pages", keywords: "activity updates commits" },

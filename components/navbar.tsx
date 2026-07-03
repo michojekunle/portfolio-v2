@@ -80,6 +80,20 @@ export function Navbar(): React.ReactNode {
           </Link>
         </MagneticWrapper>
 
+        {/* Center: Desktop Nav Links */}
+        <div className="flex gap-[24px] max-[820px]:hidden items-center">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              data-active={isActive(link.href)}
+              className="font-mono text-[10px] uppercase tracking-[0.1em] font-medium transition-colors duration-150 no-underline text-[var(--ink-2)] hover:text-[var(--ink)] data-[active=true]:text-[var(--v3-accent)] data-[active=true]:font-bold"
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+
         <div className="flex gap-[12px] items-center">
           <CommandPaletteTrigger />
 
