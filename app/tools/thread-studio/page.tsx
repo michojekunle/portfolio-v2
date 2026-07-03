@@ -42,6 +42,9 @@ export default function ThreadStudioPage(): React.ReactElement {
   const [creatorName, setCreatorName] = useState("Your Name");
   const [creatorHandle, setCreatorHandle] = useState("@yourhandle");
 
+  // Stable IDs for edited tweets so reordering doesn't lose focus
+  const [tweetIds, setTweetIds] = useState<string[]>([]);
+
   // Re-number helper to maintain prefix order (e.g. 1/5 text...)
   const renumberTweets = (list: string[]): string[] => {
     const total = list.length;
@@ -84,6 +87,8 @@ export default function ThreadStudioPage(): React.ReactElement {
       }
 
       setTweets(data.tweets);
+      const withIds = data.tweets.map(() => crypto.randomUUID());
+      setTweetIds(withIds);
       setEditedTweets([...data.tweets]);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
@@ -103,6 +108,11 @@ export default function ThreadStudioPage(): React.ReactElement {
 
   // Tweet card actions
   const addTweet = (index: number): void => {
+    setTweetIds((prev) => {
+      const next = [...prev];
+      next.splice(index + 1, 0, crypto.randomUUID());
+      return next;
+    });
     setEditedTweets((prev) => {
       const next = [...prev];
       const nextNum = next.length + 1;
@@ -113,6 +123,7 @@ export default function ThreadStudioPage(): React.ReactElement {
 
   const deleteTweet = (index: number): void => {
     if (editedTweets.length <= 1) return;
+    setTweetIds((prev) => prev.filter((_, idx) => idx !== index));
     setEditedTweets((prev) => {
       const next = prev.filter((_, idx) => idx !== index);
       return renumberTweets(next);
@@ -472,7 +483,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                 <div className="flex flex-col gap-[16px]">
                   {editedTweets.map((tweet, i) => (
                     <TweetCard
-                      key={i}
+                      key={tweetIds[i] ?? i}
                       index={i}
                       value={tweet}
                       onChange={updateTweet}
@@ -511,8 +522,26 @@ export default function ThreadStudioPage(): React.ReactElement {
 
               {/* X Feed scroll container */}
               <div className="max-h-[520px] overflow-y-auto pr-[4px] space-y-0 relative scrollbar-custom">
+                {/* Loading skeleton during generation */}
+                {loading && (
+                  <div className="space-y-[24px] py-[8px]">
+                    {Array.from({ length: threadLength }).map((_, i) => (
+                      <div key={i} className="flex gap-[12px]">
+                        <div className="shrink-0">
+                          <div className="w-[36px] h-[36px] rounded-full animate-pulse" style={{ background: "var(--rule)" }} />
+                        </div>
+                        <div className="flex-1 space-y-[8px] pt-[4px]">
+                          <div className="h-[10px] rounded-full animate-pulse" style={{ background: "var(--rule)", width: "40%" }} />
+                          <div className="h-[10px] rounded-full animate-pulse" style={{ background: "var(--rule)", width: "90%" }} />
+                          <div className="h-[10px] rounded-full animate-pulse" style={{ background: "var(--rule)", width: "75%" }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {editedTweets.map((tweet, i) => (
-                  <div key={i} className="flex gap-[12px] relative group">
+                  <div key={tweetIds[i] ?? i} className="flex gap-[12px] relative group">
                     {/* Left: Avatar & connecting thread line */}
                     <div className="flex flex-col items-center shrink-0">
                       <div 
