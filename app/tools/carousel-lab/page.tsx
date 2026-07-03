@@ -872,7 +872,10 @@ export default function CarouselLabPage(): React.ReactElement {
                     value={slideCount}
                     onChange={(e) => setSlideCount(Number(e.target.value))}
                     className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
-                    style={{ accentColor: ACCENT }}
+                    style={{
+                      background: `linear-gradient(90deg, ${ACCENT} ${((slideCount - 3) / (8 - 3)) * 100}%, var(--rule) ${((slideCount - 3) / (8 - 3)) * 100}%)`,
+                      accentColor: ACCENT
+                    }}
                     aria-label="Number of slides"
                   />
                   <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
@@ -929,7 +932,10 @@ export default function CarouselLabPage(): React.ReactElement {
                     value={slideCount}
                     onChange={(e) => setSlideCount(Number(e.target.value))}
                     className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
-                    style={{ accentColor: ACCENT }}
+                    style={{
+                      background: `linear-gradient(90deg, ${ACCENT} ${((slideCount - 3) / (8 - 3)) * 100}%, var(--rule) ${((slideCount - 3) / (8 - 3)) * 100}%)`,
+                      accentColor: ACCENT
+                    }}
                     aria-label="Number of slides"
                   />
                   <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
