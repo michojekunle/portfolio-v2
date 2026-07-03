@@ -866,6 +866,17 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   // eslint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{ __html: docContent }}
                 />
+              ) : book.file_format === "md" ? (
+                <div className="prose-reader" style={{ color: current.text }}>
+                  {renderMarkdown(docContent, current.text)}
+                </div>
+              ) : book.file_format === "html" ? (
+                <div
+                  className="prose-reader"
+                  style={{ color: current.text }}
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: docContent }}
+                />
               ) : (
                 <pre
                   style={{

@@ -33,6 +33,8 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
   const [selectedVoiceIndex, setSelectedVoiceIndex] = useState(0);
   const [showVoiceMenu, setShowVoiceMenu] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const voiceBtnRef = useRef<HTMLButtonElement>(null);
+  const [voiceMenuPos, setVoiceMenuPos] = useState<{ top: number; left: number; width: number } | null>(null);
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const charIndexRef = useRef(0);
@@ -283,9 +285,16 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
 
       {/* Voice selector */}
       {voices.length > 0 && (
-        <div className="px-[14px] pb-[12px] relative">
+        <div className="px-[14px] pb-[12px]">
           <button
-            onClick={() => setShowVoiceMenu((v) => !v)}
+            ref={voiceBtnRef}
+            onClick={() => {
+              if (!showVoiceMenu && voiceBtnRef.current) {
+                const rect = voiceBtnRef.current.getBoundingClientRect();
+                setVoiceMenuPos({ top: rect.top - 4, left: rect.left, width: rect.width });
+              }
+              setShowVoiceMenu((v) => !v);
+            }}
             className="w-full flex items-center justify-between px-[10px] py-[6px] rounded-[6px] border cursor-pointer text-left transition-colors bg-transparent"
             style={{ borderColor: `${fg}18`, color: fg }}
           >
@@ -303,10 +312,19 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
             />
           </button>
 
-          {showVoiceMenu && (
+          {showVoiceMenu && voiceMenuPos && (
             <div
-              className="absolute left-[14px] right-[14px] bottom-full mb-[4px] rounded-[8px] border shadow-xl overflow-y-auto max-h-[160px] z-10"
-              style={{ background: bg, borderColor: `${fg}18` }}
+              style={{
+                position: "fixed",
+                top: voiceMenuPos.top,
+                left: voiceMenuPos.left,
+                width: voiceMenuPos.width,
+                transform: "translateY(-100%)",
+                background: bg,
+                borderColor: `${fg}18`,
+                zIndex: 9999,
+              }}
+              className="rounded-[8px] border shadow-xl overflow-y-auto max-h-[180px]"
             >
               {voices.map((v, i) => (
                 <button
@@ -318,7 +336,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
                   className="w-full text-left px-[12px] py-[8px] font-mono text-[9px] tracking-[0.06em] cursor-pointer border-none bg-transparent transition-colors hover:opacity-70"
                   style={
                     i === selectedVoiceIndex
-                      ? { color: ACCENT, fontWeight: 600 }
+                      ? { color: ACCENT, fontWeight: 600, background: `${ACCENT}10` }
                       : { color: fg, opacity: 0.7 }
                   }
                 >

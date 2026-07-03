@@ -43,10 +43,15 @@ export function ChSidebarNav({ userEmail, streak = 0 }: Props): React.ReactEleme
 
   const handleSignOut = async (): Promise<void> => {
     setSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/tools/chapterly/login");
-    router.refresh();
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push("/tools/chapterly/login");
+      router.refresh();
+    } catch (err) {
+      console.error("[chapterly/sidebar] signOut error:", err);
+      setSigningOut(false);
+    }
   };
 
   const isActive = (href: string): boolean => {

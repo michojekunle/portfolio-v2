@@ -16,6 +16,7 @@ export function DailyInsightCard(): React.ReactElement {
   const [insight, setInsight] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -37,6 +38,7 @@ export function DailyInsightCard(): React.ReactElement {
     }
 
     if (force) setRefreshing(true);
+    setFetchError(false);
 
     try {
       const res = await fetch("/api/chapterly/daily-insight");
@@ -49,7 +51,7 @@ export function DailyInsightCard(): React.ReactElement {
       }
       setInsight(data.insight);
     } catch {
-      // silently fail — card hides itself
+      setFetchError(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -71,6 +73,28 @@ export function DailyInsightCard(): React.ReactElement {
         <span className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)]">
           Getting your daily insight…
         </span>
+      </div>
+    );
+  }
+
+  if (!insight && fetchError) {
+    return (
+      <div
+        className="rounded-[14px] px-[16px] py-[14px] mb-[24px] flex items-center justify-between gap-[10px]"
+        style={{ background: `rgba(239,68,68,0.06)`, border: `1px solid rgba(239,68,68,0.15)` }}
+      >
+        <span className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)]">
+          Could not load daily insight
+        </span>
+        <button
+          onClick={() => void fetchInsight(true)}
+          disabled={refreshing}
+          className="shrink-0 flex items-center gap-[5px] font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer bg-transparent disabled:opacity-50"
+          style={{ color: ACCENT }}
+        >
+          <RefreshCw size={10} className={refreshing ? "animate-spin" : ""} />
+          Retry
+        </button>
       </div>
     );
   }
