@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Sparkles,
   Plus,
@@ -9,17 +9,16 @@ import {
   ChevronRight,
   Download,
   Copy,
-  Edit3,
+  Layers,
+  Smartphone,
   Check,
   Type,
   Palette,
-  Layout,
-  Layers,
   FileText,
   HelpCircle,
-  Undo2,
-  Smartphone,
-  Maximize2
+  FolderHeart,
+  Quote,
+  Star
 } from "lucide-react";
 
 const ACCENT = "#FF6B35";
@@ -29,10 +28,13 @@ const ACCENT_BORDER = "rgba(255,107,53,0.25)";
 const THEMES = ["Minimal", "Dark", "Cyber", "Cream", "Midnight", "Terracotta"] as const;
 type Theme = (typeof THEMES)[number];
 
+type SlideLayout = "default" | "hook" | "split" | "quote" | "metrics";
+
 type Slide = {
   title: string;
   content: string;
   emoji?: string;
+  layout?: SlideLayout;
 };
 
 type GenerateResponse =
@@ -83,7 +85,7 @@ const THEME_STYLES: Record<
     accent: "#45f3ff",
     border: "#1f2833",
     numberBg: "#45f3ff",
-    fontTitle: "Space Mono, monospace",
+    fontTitle: "Courier New, monospace",
     fontBody: "Inter, sans-serif",
   },
   Cream: {
@@ -112,7 +114,7 @@ const THEME_STYLES: Record<
     bg: "#e07a5f",
     card: "#f4f1de",
     text: "#3d405b",
-    subtext: "#5d6284",
+    subtext: "#f4f1deee",
     accent: "#f2cc8f",
     border: "#3d405b33",
     numberBg: "#3d405b",
@@ -131,10 +133,9 @@ const THEME_DESCRIPTIONS: Record<Theme, string> = {
 };
 
 const FONTS_LIST = [
-  { name: "Default Sans", value: "Inter, -apple-system, BlinkMacSystemFont, sans-serif" },
-  { name: "Editorial Serif", value: "Georgia, 'Times New Roman', serif" },
-  { name: "Monospace Code", value: "Space Mono, Courier New, monospace" },
-  { name: "Impact Bold", value: "Impact, Haettenschweiler, sans-serif" },
+  { name: "Default Sans (Inter)", value: "Inter, sans-serif" },
+  { name: "Editorial Serif (Georgia)", value: "Georgia, serif" },
+  { name: "Monospace Code (Space Mono)", value: "Courier New, monospace" },
 ];
 
 export default function CarouselLabPage(): React.ReactElement {
@@ -145,15 +146,20 @@ export default function CarouselLabPage(): React.ReactElement {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Customization Overrides
+  // Customization controls
+  const [creatorName, setCreatorName] = useState("Michael Ojekunle");
+  const [creatorHandle, setCreatorHandle] = useState("@michojekunle");
+  const [showBranding, setShowBranding] = useState(true);
+  const [backgroundStyle, setBackgroundStyle] = useState<"solid" | "gradient" | "mesh">("mesh");
+  const [aspectRatio, setAspectRatio] = useState<"square" | "portrait">("portrait");
+  const [fontTitle, setFontTitle] = useState(FONTS_LIST[0].value);
+  const [fontBody, setFontBody] = useState(FONTS_LIST[0].value);
+
+  // Color Overrides
   const [customBg, setCustomBg] = useState("");
   const [customText, setCustomText] = useState("");
   const [customAccent, setCustomAccent] = useState("");
-  const [fontTitle, setFontTitle] = useState(FONTS_LIST[0].value);
-  const [fontBody, setFontBody] = useState(FONTS_LIST[0].value);
-  const [aspectRatio, setAspectRatio] = useState<"square" | "portrait">("portrait");
 
-  // Selected Slide Index for Editing
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
   const generate = useCallback(async (): Promise<void> => {
@@ -180,7 +186,13 @@ export default function CarouselLabPage(): React.ReactElement {
         throw new Error("No slides returned from AI");
       }
 
-      setSlides(data.slides);
+      // Add default layout (first is hook, rest are default, last is quote/cta fallback)
+      const mapped = data.slides.map((s, idx) => ({
+        ...s,
+        layout: idx === 0 ? ("hook" as SlideLayout) : idx === data.slides.length - 1 ? ("quote" as SlideLayout) : ("default" as SlideLayout),
+      }));
+
+      setSlides(mapped);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
       setError(msg);
@@ -209,9 +221,10 @@ export default function CarouselLabPage(): React.ReactElement {
 
   const addSlide = (): void => {
     const newSlide: Slide = {
-      title: "New Slide title",
-      content: "Add your main content here in punchy sentences.",
-      emoji: "💡",
+      title: "New Key Point",
+      content: "Explain the key takeaway here in 1-2 punchy sentences.",
+      emoji: "⚡",
+      layout: "default",
     };
     setSlides((prev) => [...prev, newSlide]);
     setActiveSlideIndex(slides.length);
@@ -235,62 +248,52 @@ export default function CarouselLabPage(): React.ReactElement {
     setActiveSlideIndex(index + 1);
   };
 
-  const reorderSlide = (index: number, direction: "up" | "down"): void => {
-    const targetIndex = direction === "up" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= slides.length) return;
-    setSlides((prev) => {
-      const copy = [...prev];
-      const temp = copy[index];
-      copy[index] = copy[targetIndex];
-      copy[targetIndex] = temp;
-      return copy;
-    });
-    setActiveSlideIndex(targetIndex);
-  };
-
-  // Canvas Exporter
-  const exportSlideAsPNG = (index: number): void => {
+  // Reusable drawing function for high resolution Canvas rendering
+  const drawSlideToCanvas = (
+    ctx: CanvasRenderingContext2D,
+    index: number,
+    width: number,
+    height: number
+  ): void => {
     const slide = slides[index];
     if (!slide) return;
+    const layout = slide.layout || "default";
 
-    const width = 1080;
-    const height = aspectRatio === "square" ? 1080 : 1350;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Background
-    ctx.fillStyle = activeBg;
-    ctx.fillRect(0, 0, width, height);
-
-    // Subtle pattern or light glow
-    ctx.fillStyle = activeAccent + "05";
-    ctx.beginPath();
-    ctx.arc(width / 2, height / 2, width / 1.5, 0, Math.PI * 2);
-    ctx.fill();
+    // 1. Draw Background
+    if (backgroundStyle === "gradient") {
+      const grad = ctx.createLinearGradient(0, 0, width, height);
+      grad.addColorStop(0, activeBg);
+      grad.addColorStop(1, activeAccent + "18");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+    } else if (backgroundStyle === "mesh") {
+      ctx.fillStyle = activeBg;
+      ctx.fillRect(0, 0, width, height);
+      
+      // Top mesh glow
+      const grad1 = ctx.createRadialGradient(width * 0.2, height * 0.2, 50, width * 0.2, height * 0.2, width * 0.7);
+      grad1.addColorStop(0, activeAccent + "20");
+      grad1.addColorStop(1, "transparent");
+      ctx.fillStyle = grad1;
+      ctx.fillRect(0, 0, width, height);
+      
+      // Bottom mesh glow
+      const grad2 = ctx.createRadialGradient(width * 0.8, height * 0.8, 50, width * 0.8, height * 0.8, width * 0.7);
+      grad2.addColorStop(0, activeText + "0b");
+      grad2.addColorStop(1, "transparent");
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, 0, width, height);
+    } else {
+      ctx.fillStyle = activeBg;
+      ctx.fillRect(0, 0, width, height);
+    }
 
     // Border
     ctx.strokeStyle = activeBorder;
     ctx.lineWidth = 20;
     ctx.strokeRect(0, 0, width, height);
 
-    // Slide Number (Top Left)
-    ctx.fillStyle = activeText;
-    ctx.font = "bold 28px Space Mono, Courier New, monospace";
-    ctx.fillText(`${index + 1} / ${slides.length}`, 80, 100);
-
-    // Emoji (Top Right)
-    if (slide.emoji) {
-      ctx.font = "90px Arial";
-      ctx.textAlign = "right";
-      ctx.fillText(slide.emoji, width - 80, 130);
-      ctx.textAlign = "left"; // reset
-    }
-
-    // Main text drawing helper
+    // Helper text wrapper
     const drawWrappedText = (
       text: string,
       x: number,
@@ -322,27 +325,128 @@ export default function CarouselLabPage(): React.ReactElement {
       return y + lineHeight;
     };
 
-    // Draw Title
-    let currentY = height / 3;
-    const titleFont = `bold 64px ${fontTitle}`;
-    currentY = drawWrappedText(slide.title, 80, currentY, width - 160, 80, titleFont, activeText);
+    // 2. Creator Branding Header (Top)
+    if (showBranding && layout !== "split") {
+      ctx.fillStyle = activeText;
+      ctx.font = "bold 24px Inter, sans-serif";
+      ctx.fillText(creatorName, 80, 85);
+      
+      ctx.fillStyle = activeAccent;
+      ctx.font = "20px Space Mono, monospace";
+      ctx.fillText(creatorHandle, 80, 115);
 
-    // Draw Body / Content
-    const bodyFont = `34px ${fontBody}`;
-    drawWrappedText(slide.content, 80, currentY + 30, width - 160, 52, bodyFont, activeSubtext);
+      // Simple text initials avatar
+      ctx.fillStyle = activeAccent;
+      ctx.beginPath();
+      ctx.arc(width - 100, 95, 25, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = activeBg;
+      ctx.font = "bold 20px Inter, sans-serif";
+      ctx.textAlign = "center";
+      const initials = creatorName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+      ctx.fillText(initials, width - 100, 102);
+      ctx.textAlign = "left"; // reset
+    }
 
-    // Footer dot indicators
+    // 3. Draw Layout Content
+    if (layout === "hook") {
+      // Hook Cover layout
+      let y = height / 2.7;
+      const titleFont = `bold 68px ${fontTitle}`;
+      y = drawWrappedText(slide.title, 80, y, width - 160, 84, titleFont, activeText);
+      
+      const bodyFont = `34px ${fontBody}`;
+      drawWrappedText(slide.content, 80, y + 40, width - 160, 52, bodyFont, activeSubtext);
+    } 
+    else if (layout === "split") {
+      // Split layout
+      ctx.fillStyle = activeAccent + "1a";
+      ctx.fillRect(20, 20, width / 2 - 20, height - 40);
+
+      // Title in split left
+      const titleFont = `bold 54px ${fontTitle}`;
+      drawWrappedText(slide.title, 60, height / 2 - 120, width / 2 - 100, 70, titleFont, activeText);
+
+      // Content in split right
+      const bodyFont = `32px ${fontBody}`;
+      drawWrappedText(slide.content, width / 2 + 60, height / 2 - 100, width / 2 - 120, 50, bodyFont, activeText);
+    }
+    else if (layout === "quote") {
+      // Quote layout
+      ctx.fillStyle = activeAccent + "20";
+      ctx.font = "bold 220px Georgia, serif";
+      ctx.fillText("“", 80, height / 3 + 20);
+
+      let y = height / 3 + 10;
+      const bodyFont = `italic 34px ${fontBody}`;
+      y = drawWrappedText(`"${slide.content}"`, 120, y, width - 240, 54, bodyFont, activeText);
+
+      // Signature
+      ctx.fillStyle = activeAccent;
+      ctx.font = "bold 26px Inter, sans-serif";
+      ctx.fillText(`— ${slide.title}`, 120, y + 40);
+    }
+    else if (layout === "metrics") {
+      // Metrics list layout
+      ctx.fillStyle = activeAccent;
+      ctx.font = "bold 130px Space Mono, Courier New, monospace";
+      ctx.fillText(`0${index + 1}`, 80, height / 3 + 20);
+
+      let y = height / 3 + 90;
+      const titleFont = `bold 50px ${fontTitle}`;
+      y = drawWrappedText(slide.title, 80, y, width - 160, 64, titleFont, activeText);
+
+      const bodyFont = `30px ${fontBody}`;
+      drawWrappedText(slide.content, 80, y + 30, width - 160, 48, bodyFont, activeSubtext);
+    }
+    else {
+      // Default
+      let y = height / 2.7;
+      const titleFont = `bold 54px ${fontTitle}`;
+      y = drawWrappedText(slide.title, 80, y, width - 160, 72, titleFont, activeText);
+
+      const bodyFont = `30px ${fontBody}`;
+      drawWrappedText(slide.content, 80, y + 36, width - 160, 48, bodyFont, activeSubtext);
+
+      if (slide.emoji) {
+        ctx.font = "72px Arial";
+        ctx.fillText(slide.emoji, 80, height - 170);
+      }
+    }
+
+    // 4. Slide Number Indicator (Bottom Left)
+    ctx.fillStyle = activeText + "90";
+    ctx.font = "bold 22px Space Mono, Courier New, monospace";
+    ctx.fillText(`${index + 1} / ${slides.length}`, 80, height - 60);
+
+    // 5. Pagination dots (Bottom Right)
     const dotSpacing = 24;
-    const dotY = height - 100;
-    const totalDotsWidth = (slides.length - 1) * dotSpacing;
-    const startX = (width - totalDotsWidth) / 2;
+    const dotY = height - 68;
+    const startX = width - 80 - (slides.length - 1) * dotSpacing;
 
     for (let j = 0; j < slides.length; j++) {
       ctx.fillStyle = j === index ? activeAccent : activeBorder;
       ctx.beginPath();
-      ctx.arc(startX + j * dotSpacing, dotY, j === index ? 10 : 6, 0, Math.PI * 2);
+      ctx.arc(startX + j * dotSpacing, dotY, j === index ? 9 : 5, 0, Math.PI * 2);
       ctx.fill();
     }
+  };
+
+  const exportSlideAsPNG = (index: number): void => {
+    const slide = slides[index];
+    if (!slide) return;
+
+    const width = 1080;
+    const height = aspectRatio === "square" ? 1080 : 1350;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    drawSlideToCanvas(ctx, index, width, height);
 
     // Trigger download
     const link = document.createElement("a");
@@ -355,8 +459,41 @@ export default function CarouselLabPage(): React.ReactElement {
     slides.forEach((_, idx) => {
       setTimeout(() => {
         exportSlideAsPNG(idx);
-      }, idx * 300); // Stagger downloads to prevent browser blocking
+      }, idx * 300);
     });
+  };
+
+  // LinkedIn Multi-page PDF compiler
+  const exportAsPDF = async (): Promise<void> => {
+    const { jsPDF } = (await import("jspdf")) as any;
+    
+    const width = 1080;
+    const height = aspectRatio === "square" ? 1080 : 1350;
+    
+    // Construct jsPDF
+    const pdf = new jsPDF({
+      orientation: "p",
+      unit: "px",
+      format: [width, height],
+    });
+
+    for (let idx = 0; idx < slides.length; idx++) {
+      if (idx > 0) {
+        pdf.addPage([width, height]);
+      }
+      
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        drawSlideToCanvas(ctx, idx, width, height);
+        const imgData = canvas.toDataURL("image/jpeg", 0.95);
+        pdf.addImage(imgData, "JPEG", 0, 0, width, height);
+      }
+    }
+
+    pdf.save(`${topic.slice(0, 16) || "carousel-lab"}-swipe.pdf`);
   };
 
   const activeSlide = slides[activeSlideIndex] ?? null;
@@ -368,12 +505,12 @@ export default function CarouselLabPage(): React.ReactElement {
       className="outline-none min-h-screen"
       style={{ background: "var(--bg)" }}
     >
-      {/* Hero */}
+      {/* Header Banner */}
       <section
         className="pt-[140px] pb-[60px] max-[720px]:pt-[100px] max-[720px]:pb-[36px] border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div className="max-w-[1200px] mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-[32px] max-[720px]:flex-col max-[720px]:items-start">
+        <div className="max-w-[1240px] mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-[32px] max-[720px]:flex-col max-[720px]:items-start">
           <div>
             <div
               className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.16em] uppercase mb-[20px] px-[10px] py-[4px] rounded-full"
@@ -388,22 +525,22 @@ export default function CarouselLabPage(): React.ReactElement {
                 style={{ background: ACCENT }}
                 aria-hidden="true"
               />
-              Carousel Lab 2.0
+              Carousel Lab Suite
             </div>
             <h1
               className="font-display font-normal leading-[0.9] tracking-[-0.04em] fvs-display m-0 mb-[16px]"
               style={{ fontSize: "clamp(44px,7vw,72px)", color: "var(--ink)" }}
             >
-              Custom slide{" "}
+              Design world-class{" "}
               <em className="not-italic italic fvs-soft" style={{ color: ACCENT }}>
-                creator.
+                content.
               </em>
             </h1>
             <p
-              className="text-[16px] leading-[1.6] m-0 max-w-[500px]"
+              className="text-[16px] leading-[1.65] m-0 max-w-[500px]"
               style={{ color: "var(--ink-2)" }}
             >
-              Generate high-converting carousels. Tweak colors, edit text, customize fonts, and export high-resolution PNG slides natively.
+              Generate high-impact content carousels. Mix layouts, customize branding, toggle styling elements, and export as native PDF/PNG.
             </p>
           </div>
 
@@ -413,15 +550,15 @@ export default function CarouselLabPage(): React.ReactElement {
           >
             <Smartphone className="shrink-0" size={24} style={{ color: ACCENT }} />
             <div className="text-[12px] leading-[1.4] text-[var(--ink-3)]">
-              <strong>Tip:</strong> Choose aspect ratio and download slides to upload directly to Instagram or LinkedIn!
+              <strong>LinkedIn PDF:</strong> We support compiling your slides directly into LinkedIn-compatible multi-page swipeable PDFs!
             </div>
           </div>
         </div>
       </section>
 
       {/* Generator & Builder */}
-      <section className="max-w-[1200px] mx-auto px-[var(--gutter,24px)] py-[48px]">
-        {/* Form input */}
+      <section className="max-w-[1240px] mx-auto px-[var(--gutter,24px)] py-[48px]">
+        {/* Input area */}
         <div
           className="rounded-[16px] p-[32px] max-[720px]:p-[20px] mb-[40px] space-y-[24px]"
           style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
@@ -531,29 +668,58 @@ export default function CarouselLabPage(): React.ReactElement {
           </button>
         </div>
 
-        {/* Error message */}
-        {error && (
-          <div
-            className="rounded-[8px] px-[20px] py-[16px] mb-[32px] text-[14px] leading-[1.5]"
-            style={{
-              background: "rgba(239,68,68,0.08)",
-              border: "1px solid rgba(239,68,68,0.25)",
-              color: "#dc2626",
-            }}
-          >
-            {error}
-          </div>
-        )}
-
         {/* Customization Workspace */}
         {hasSlides && (
-          <div className="grid grid-cols-[320px_1fr_260px] max-[1120px]:grid-cols-[280px_1fr] max-[800px]:grid-cols-1 gap-[32px]">
+          <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-[32px]">
             
             {/* Left Controls Panel */}
-            <div className="space-y-[28px] max-[800px]:order-2">
-              <div
-                className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[24px]"
-              >
+            <div className="space-y-[24px] max-[800px]:order-2">
+              
+              {/* Creator Branding */}
+              <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
+                  Creator Branding
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-[var(--ink-2)]">Show Profile Header</span>
+                  <input
+                    type="checkbox"
+                    checked={showBranding}
+                    onChange={(e) => setShowBranding(e.target.checked)}
+                    className="w-[36px] h-[20px] rounded-full appearance-none cursor-pointer relative bg-[var(--bg)] border border-[var(--rule)] checked:bg-[var(--accent)] transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:w-[14px] after:h-[14px] after:rounded-full after:bg-[var(--ink-3)] checked:after:translate-x-[16px] after:transition-transform"
+                    style={{ "--accent": ACCENT } as React.CSSProperties}
+                  />
+                </div>
+                {showBranding && (
+                  <div className="space-y-[12px]">
+                    <div>
+                      <label className="block font-mono text-[8px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                        Profile Name
+                      </label>
+                      <input
+                        type="text"
+                        value={creatorName}
+                        onChange={(e) => setCreatorName(e.target.value)}
+                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-mono text-[8px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                        Profile @Handle
+                      </label>
+                      <input
+                        type="text"
+                        value={creatorHandle}
+                        onChange={(e) => setCreatorHandle(e.target.value)}
+                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Design settings */}
+              <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[20px]">
                 <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
                   Canvas Customizer
                 </div>
@@ -571,7 +737,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <button
                         key={opt.id}
                         onClick={() => setAspectRatio(opt.id as "square" | "portrait")}
-                        className="py-[10px] rounded-[8px] border text-[11px] font-mono uppercase tracking-[0.05em] cursor-pointer"
+                        className="py-[10px] rounded-[8px] border text-[10px] font-mono uppercase tracking-[0.05em] cursor-pointer"
                         style={{
                           background: aspectRatio === opt.id ? "var(--bg)" : "transparent",
                           borderColor: aspectRatio === opt.id ? ACCENT : "var(--rule)",
@@ -584,16 +750,43 @@ export default function CarouselLabPage(): React.ReactElement {
                   </div>
                 </div>
 
-                {/* Typography */}
-                <div className="space-y-[16px]">
+                {/* Background style */}
+                <div>
+                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                    Background Style
+                  </label>
+                  <div className="grid grid-cols-3 gap-[6px]">
+                    {[
+                      { id: "solid", label: "Solid" },
+                      { id: "gradient", label: "Grad" },
+                      { id: "mesh", label: "Mesh" }
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setBackgroundStyle(opt.id as "solid" | "gradient" | "mesh")}
+                        className="py-[8px] rounded-[8px] border text-[9px] font-mono uppercase tracking-[0.05em] cursor-pointer"
+                        style={{
+                          background: backgroundStyle === opt.id ? "var(--bg)" : "transparent",
+                          borderColor: backgroundStyle === opt.id ? ACCENT : "var(--rule)",
+                          color: backgroundStyle === opt.id ? ACCENT : "var(--ink-2)"
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Typography select */}
+                <div className="space-y-[12px]">
                   <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
                       Title Font
                     </label>
                     <select
                       value={fontTitle}
                       onChange={(e) => setFontTitle(e.target.value)}
-                      className="w-full h-[40px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                      className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
                     >
                       {FONTS_LIST.map((f) => (
                         <option key={f.name} value={f.value}>
@@ -604,13 +797,13 @@ export default function CarouselLabPage(): React.ReactElement {
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
                       Body Font
                     </label>
                     <select
                       value={fontBody}
                       onChange={(e) => setFontBody(e.target.value)}
-                      className="w-full h-[40px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                      className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
                     >
                       {FONTS_LIST.map((f) => (
                         <option key={f.name} value={f.value}>
@@ -621,7 +814,7 @@ export default function CarouselLabPage(): React.ReactElement {
                   </div>
                 </div>
 
-                {/* Custom Color Overrides */}
+                {/* Color Pickers */}
                 <div className="space-y-[12px]">
                   <label className="block font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
                     Color Overrides
@@ -655,66 +848,8 @@ export default function CarouselLabPage(): React.ReactElement {
                       />
                     </div>
                   </div>
-                  {(customBg || customText || customAccent) && (
-                    <button
-                      onClick={() => {
-                        setCustomBg("");
-                        setCustomText("");
-                        setCustomAccent("");
-                      }}
-                      className="w-full font-mono text-[8px] uppercase tracking-[0.05em] py-[6px] rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)]"
-                    >
-                      Reset overrides
-                    </button>
-                  )}
                 </div>
               </div>
-
-              {/* Slide content inline editor */}
-              {activeSlide && (
-                <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">
-                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
-                    Edit Active Slide
-                  </div>
-
-                  <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
-                      Slide Emoji
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={4}
-                      value={activeSlide.emoji || ""}
-                      onChange={(e) => updateActiveSlide("emoji", e.target.value)}
-                      className="w-[60px] h-[36px] text-center rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[16px] outline-none focus:border-[var(--ink-3)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
-                      Slide Title
-                    </label>
-                    <input
-                      type="text"
-                      value={activeSlide.title}
-                      onChange={(e) => updateActiveSlide("title", e.target.value)}
-                      className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[13px] outline-none focus:border-[var(--ink-3)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
-                      Slide Content
-                    </label>
-                    <textarea
-                      value={activeSlide.content}
-                      onChange={(e) => updateActiveSlide("content", e.target.value)}
-                      rows={4}
-                      className="w-full p-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[13px] outline-none focus:border-[var(--ink-3)] resize-none"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Center Panel (Live Slide Preview Mockup) */}
@@ -729,84 +864,245 @@ export default function CarouselLabPage(): React.ReactElement {
                 <div className="flex items-center gap-[8px]">
                   <button
                     onClick={() => exportSlideAsPNG(activeSlideIndex)}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[6px] rounded-[6px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)]"
+                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)]"
                   >
                     <Download size={11} /> Export PNG
                   </button>
                   <button
-                    onClick={exportAllAsPNG}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[6px] rounded-[6px] border-none text-white cursor-pointer hover:opacity-90"
+                    onClick={exportAsPDF}
+                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none text-white cursor-pointer hover:opacity-90"
                     style={{ background: ACCENT }}
                   >
-                    <Layers size={11} /> Export All Slides
+                    <FileText size={11} /> LinkedIn PDF
                   </button>
                 </div>
               </div>
 
+              {/* Slide Layout Selector (Apply to active slide) */}
+              {activeSlide && (
+                <div className="p-[16px] rounded-[12px] border border-[var(--rule)] bg-[var(--bg-2)]">
+                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                    Active Slide Template Layout
+                  </label>
+                  <div className="grid grid-cols-5 gap-[6px] max-[480px]:grid-cols-2">
+                    {[
+                      { id: "default", label: "Default" },
+                      { id: "hook", label: "Hook Cover" },
+                      { id: "split", label: "Split screen" },
+                      { id: "quote", label: "Quote Card" },
+                      { id: "metrics", label: "Big number" }
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => updateActiveSlide("layout", opt.id)}
+                        className="py-[8px] rounded-[6px] border text-[9px] font-mono uppercase tracking-[0.05em] cursor-pointer"
+                        style={{
+                          background: (activeSlide.layout || "default") === opt.id ? "var(--bg)" : "transparent",
+                          borderColor: (activeSlide.layout || "default") === opt.id ? ACCENT : "var(--rule)",
+                          color: (activeSlide.layout || "default") === opt.id ? ACCENT : "var(--ink-2)"
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Device Mockup Wrapper */}
-              <div className="flex items-center justify-center p-[20px] rounded-[20px] border border-[var(--rule)] bg-[color-mix(in_oklab,var(--bg)_80%,var(--bg-2))] min-h-[460px]">
+              <div className="flex items-center justify-center p-[20px] rounded-[24px] border border-[var(--rule)] bg-[color-mix(in_oklab,var(--bg)_80%,var(--bg-2))] min-h-[500px] relative overflow-hidden">
+                {/* Ambient glowing circles if mesh background style selected */}
+                {backgroundStyle === "mesh" && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+                    <div
+                      className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px]"
+                      style={{ background: activeAccent }}
+                    />
+                    <div
+                      className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full blur-[80px]"
+                      style={{ background: activeText }}
+                    />
+                  </div>
+                )}
+
                 {activeSlide && (
                   <div
                     className="shadow-2xl rounded-[20px] overflow-hidden flex flex-col justify-between p-[36px] relative select-none transition-all duration-300 border"
                     style={{
-                      background: activeBg,
+                      background: backgroundStyle === "gradient"
+                        ? `linear-gradient(135deg, ${activeBg} 0%, ${activeAccent}18 100%)`
+                        : activeBg,
                       borderColor: activeBorder,
                       width: aspectRatio === "square" ? "420px" : "360px",
                       height: aspectRatio === "square" ? "420px" : "450px",
                     }}
                   >
-                    {/* Top strip */}
-                    <div className="flex items-center justify-between">
-                      <span
-                        className="font-mono text-[10px] tracking-[0.12em] uppercase px-[10px] py-[4px] rounded-full font-semibold"
-                        style={{
-                          background: activeText,
-                          color: activeBg,
-                        }}
-                      >
-                        {activeSlideIndex + 1} / {slides.length}
-                      </span>
-                      {activeSlide.emoji && (
-                        <span className="text-[32px]">{activeSlide.emoji}</span>
+                    {/* Header Branding (Header top) */}
+                    {showBranding && (activeSlide.layout || "default") !== "split" && (
+                      <div className="flex items-center justify-between border-b pb-[10px]" style={{ borderColor: activeBorder }}>
+                        <div>
+                          <div className="text-[12px] font-bold" style={{ color: activeText }}>
+                            {creatorName}
+                          </div>
+                          <div className="font-mono text-[9px] tracking-[0.05em] uppercase" style={{ color: activeAccent }}>
+                            {creatorHandle}
+                          </div>
+                        </div>
+                        {/* Text Initials Avatar */}
+                        <div
+                          className="w-[28px] h-[28px] rounded-full flex items-center justify-center text-[10px] font-bold"
+                          style={{ background: activeAccent, color: activeBg }}
+                        >
+                          {creatorName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Middle Card layouts based on active layout type */}
+                    <div className="flex-1 flex flex-col justify-center py-[10px]">
+                      {(activeSlide.layout || "default") === "hook" && (
+                        <div>
+                          <h3
+                            className="font-bold leading-[1.15] tracking-[-0.03em] mb-[12px] m-0"
+                            style={{
+                              fontFamily: fontTitle,
+                              fontSize: "clamp(24px,3.5vw,32px)",
+                              color: activeText,
+                            }}
+                          >
+                            {activeSlide.title}
+                          </h3>
+                          <p
+                            className="text-[14px] leading-[1.6] m-0"
+                            style={{
+                              fontFamily: fontBody,
+                              color: activeSubtext,
+                            }}
+                          >
+                            {activeSlide.content}
+                          </p>
+                        </div>
+                      )}
+
+                      {(activeSlide.layout || "default") === "split" && (
+                        <div className="grid grid-cols-2 h-full items-center gap-[12px] -mx-[36px] my-0 px-[36px] bg-[color-mix(in_oklab,var(--bg-2)_20%,transparent)]">
+                          <div className="h-full flex items-center border-r pr-[12px]" style={{ borderColor: activeBorder }}>
+                            <h3
+                              className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
+                              style={{
+                                fontFamily: fontTitle,
+                                fontSize: "clamp(18px,2.5vw,22px)",
+                                color: activeText,
+                              }}
+                            >
+                              {activeSlide.title}
+                            </h3>
+                          </div>
+                          <div className="pl-[4px]">
+                            <p
+                              className="text-[12px] leading-[1.5] m-0"
+                              style={{
+                                fontFamily: fontBody,
+                                color: activeText,
+                              }}
+                            >
+                              {activeSlide.content}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {(activeSlide.layout || "default") === "quote" && (
+                        <div className="relative">
+                          <Quote className="absolute -top-[24px] -left-[16px] opacity-10" size={56} style={{ color: activeAccent }} />
+                          <p
+                            className="text-[15px] leading-[1.65] italic m-0 font-medium pl-[12px]"
+                            style={{
+                              fontFamily: fontBody,
+                              color: activeText,
+                            }}
+                          >
+                            &ldquo;{activeSlide.content}&rdquo;
+                          </p>
+                          <div className="font-mono text-[11px] uppercase tracking-[0.05em] mt-[12px] text-right font-bold" style={{ color: activeAccent }}>
+                            — {activeSlide.title}
+                          </div>
+                        </div>
+                      )}
+
+                      {(activeSlide.layout || "default") === "metrics" && (
+                        <div className="space-y-[8px]">
+                          <div className="font-mono text-[64px] font-bold leading-[1] text-[var(--accent)]" style={{ color: activeAccent }}>
+                            0{activeSlideIndex + 1}
+                          </div>
+                          <h3
+                            className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
+                            style={{
+                              fontFamily: fontTitle,
+                              fontSize: "20px",
+                              color: activeText,
+                            }}
+                          >
+                            {activeSlide.title}
+                          </h3>
+                          <p
+                            className="text-[13px] leading-[1.5] m-0"
+                            style={{
+                              fontFamily: fontBody,
+                              color: activeSubtext,
+                            }}
+                          >
+                            {activeSlide.content}
+                          </p>
+                        </div>
+                      )}
+
+                      {(activeSlide.layout || "default") === "default" && (
+                        <div>
+                          <h3
+                            className="font-bold leading-[1.2] tracking-[-0.03em] mb-[10px] m-0"
+                            style={{
+                              fontFamily: fontTitle,
+                              fontSize: "24px",
+                              color: activeText,
+                            }}
+                          >
+                            {activeSlide.title}
+                          </h3>
+                          <p
+                            className="text-[14px] leading-[1.65] m-0"
+                            style={{
+                              fontFamily: fontBody,
+                              color: activeSubtext,
+                            }}
+                          >
+                            {activeSlide.content}
+                          </p>
+                          {activeSlide.emoji && (
+                            <div className="text-[40px] mt-[16px]">{activeSlide.emoji}</div>
+                          )}
+                        </div>
                       )}
                     </div>
 
-                    {/* Middle title and text */}
-                    <div className="flex-1 flex flex-col justify-center py-[20px]">
-                      <h3
-                        className="font-normal leading-[1.15] tracking-[-0.03em] mb-[12px] m-0"
-                        style={{
-                          fontFamily: fontTitle,
-                          fontSize: "clamp(22px,3vw,30px)",
-                          color: activeText,
-                        }}
-                      >
-                        {activeSlide.title}
-                      </h3>
-                      <p
-                        className="text-[14px] leading-[1.65] m-0"
-                        style={{
-                          fontFamily: fontBody,
-                          color: activeSubtext,
-                        }}
-                      >
-                        {activeSlide.content}
-                      </p>
-                    </div>
-
-                    {/* Pagination indicators */}
-                    <div className="flex gap-[6px] justify-center mt-[12px]">
-                      {slides.map((_, idx) => (
-                        <span
-                          key={idx}
-                          className="rounded-full transition-all duration-200"
-                          style={{
-                            width: idx === activeSlideIndex ? "18px" : "6px",
-                            height: "6px",
-                            background: idx === activeSlideIndex ? activeAccent : activeBorder,
-                          }}
-                        />
-                      ))}
+                    {/* Pagination indicators bottom */}
+                    <div className="flex items-center justify-between pt-[10px]" style={{ borderTop: `1px solid ${activeBorder}` }}>
+                      <span className="font-mono text-[10px] tracking-[0.05em] font-semibold" style={{ color: activeText + "90" }}>
+                        {activeSlideIndex + 1} / {slides.length}
+                      </span>
+                      <div className="flex gap-[5px]">
+                        {slides.map((_, idx) => (
+                          <span
+                            key={idx}
+                            className="rounded-full transition-all duration-200"
+                            style={{
+                              width: idx === activeSlideIndex ? "16px" : "5px",
+                              height: "5px",
+                              background: idx === activeSlideIndex ? activeAccent : activeBorder,
+                            }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -847,9 +1143,56 @@ export default function CarouselLabPage(): React.ReactElement {
                   <ChevronRight size={16} />
                 </button>
               </div>
+
+              {/* Quick Slide content inline editing fields */}
+              {activeSlide && (
+                <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">
+                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
+                    Edit Slide Content
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_auto] gap-[12px]">
+                    <div>
+                      <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                        Slide Title
+                      </label>
+                      <input
+                        type="text"
+                        value={activeSlide.title}
+                        onChange={(e) => updateActiveSlide("title", e.target.value)}
+                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[13px] outline-none focus:border-[var(--ink-3)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                        Emoji
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={4}
+                        value={activeSlide.emoji || ""}
+                        onChange={(e) => updateActiveSlide("emoji", e.target.value)}
+                        className="w-[60px] h-[36px] text-center rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[16px] outline-none focus:border-[var(--ink-3)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      Slide Description
+                    </label>
+                    <textarea
+                      value={activeSlide.content}
+                      onChange={(e) => updateActiveSlide("content", e.target.value)}
+                      rows={4}
+                      className="w-full p-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[13px] outline-none focus:border-[var(--ink-3)] resize-none"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Right Panel (All slides timeline list) */}
+            {/* Right Panel (All slides list) */}
             <div className="space-y-[16px] max-[1120px]:col-span-2 max-[800px]:col-span-1">
               <div className="flex items-center justify-between">
                 <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
@@ -878,7 +1221,7 @@ export default function CarouselLabPage(): React.ReactElement {
                     >
                       <div className="flex items-start justify-between gap-[8px] mb-[6px]">
                         <div className="font-mono text-[9px] text-[var(--ink-3)]">
-                          Slide {idx + 1}
+                          Slide {idx + 1} · <span className="capitalize">{s.layout || "default"}</span>
                         </div>
                         <div className="flex items-center gap-[4px] opacity-0 group-hover/item:opacity-100 transition-opacity">
                           <button
@@ -907,7 +1250,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <div className="text-[12px] font-semibold text-[var(--ink)] truncate mb-[2px]">
                         {s.title}
                       </div>
-                      <div className="text-[11px] text-[var(--ink-3)] line-clamp-1">
+                      <div className="text-[11px] text-[var(--ink-3)] line-clamp-1 font-sans">
                         {s.content}
                       </div>
                     </div>
