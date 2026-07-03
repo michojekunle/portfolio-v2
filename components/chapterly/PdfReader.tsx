@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { PDFDocumentProxy, PDFPageProxy, PageViewport } from "pdfjs-dist";
 import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { HighlightColor } from "@/lib/chapterly/types";
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader2, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader2, X, Brain } from "lucide-react";
 
 // webpack 5 processes this at build time and replaces it with the bundled asset URL.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -19,7 +19,7 @@ const TEXT_LAYER_CSS = `
   overflow: hidden;
   user-select: text;
   line-height: 1;
-  pointer-events: none;
+  pointer-events: auto;
 }
 .ch-pdf-text-layer span,
 .ch-pdf-text-layer br {
@@ -47,6 +47,7 @@ interface Props {
   /** Page number (1-based) to open on load. */
   initialPage?: number;
   onHighlight: (text: string, color: HighlightColor) => Promise<void>;
+  onMakeFlashcard?: (text: string) => Promise<void>;
   /** Called with the plain text of each rendered page, for TTS. */
   onChapterText?: (text: string) => void;
   /** Called after each page render with current page and total pages. */
@@ -55,7 +56,15 @@ interface Props {
   onMetadata?: (meta: { title?: string; author?: string; coverUrl?: string }) => void;
 }
 
-export function PdfReader({ url, initialPage, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
+export function PdfReader({
+  url,
+  initialPage,
+  onHighlight,
+  onMakeFlashcard,
+  onChapterText,
+  onProgress,
+  onMetadata,
+}: Props): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<PDFDocumentProxy | null>(null);
@@ -64,11 +73,11 @@ export function PdfReader({ url, initialPage, onHighlight, onChapterText, onProg
 
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(initialPage && initialPage > 1 ? initialPage : 1);
-  const [scale, setScale] = useState(1.4);
+  const [scale, setScale] = useState(1.0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setScale(window.innerWidth < 768 ? 0.8 : 1.4);
+      setScale(window.innerWidth < 768 ? 0.75 : 1.0);
     }
   }, []);
   const [loadingPdf, setLoadingPdf] = useState(true);
@@ -233,6 +242,16 @@ export function PdfReader({ url, initialPage, onHighlight, onChapterText, onProg
     await onHighlight(text, color);
   };
 
+  const saveAsFlashcard = async (): Promise<void> => {
+    if (!textSel) return;
+    const { text } = textSel;
+    setTextSel(null);
+    window.getSelection()?.removeAllRanges();
+    if (onMakeFlashcard) {
+      await onMakeFlashcard(text);
+    }
+  };
+
   if (loadingPdf) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
@@ -287,6 +306,16 @@ export function PdfReader({ url, initialPage, onHighlight, onChapterText, onProg
                 aria-label={`Highlight ${id}`}
               />
             ))}
+            {onMakeFlashcard && (
+              <button
+                onClick={() => void saveAsFlashcard()}
+                className="ml-[4px] px-[8px] py-[4px] rounded bg-[#4F6D7A] hover:bg-[#3D5661] text-white font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
+                title="Add to flashcards"
+              >
+                <Brain size={11} />
+                <span>Flashcard</span>
+              </button>
+            )}
             <button
               onClick={() => setTextSel(null)}
               className="ml-[2px] w-[16px] h-[16px] flex items-center justify-center rounded-full border-none cursor-pointer text-white opacity-40 hover:opacity-80 bg-transparent"
