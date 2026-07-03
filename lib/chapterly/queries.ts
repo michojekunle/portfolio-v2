@@ -282,6 +282,51 @@ export async function getUserAchievements(): Promise<ChAchievement[]> {
   return (data ?? []) as ChAchievement[];
 }
 
+// ── Monthly reading trends (last 12 months) ──────────────────
+
+export interface MonthlyReadingStat {
+  month: string; // "YYYY-MM"
+  minutes: number;
+  sessions: number;
+}
+
+export async function getMonthlyReadingTrends(): Promise<MonthlyReadingStat[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const since = new Date();
+  since.setMonth(since.getMonth() - 11);
+  since.setDate(1);
+  since.setHours(0, 0, 0, 0);
+
+  const { data } = await supabase
+    .from("ch_sessions")
+    .select("started_at, duration_seconds")
+    .eq("user_id", user.id)
+    .gte("started_at", since.toISOString());
+
+  const map: Record<string, { minutes: number; sessions: number }> = {};
+  (data ?? []).forEach((s) => {
+    const month = (s.started_at as string).slice(0, 7);
+    if (!map[month]) map[month] = { minutes: 0, sessions: 0 };
+    map[month].minutes += Math.round(((s.duration_seconds as number) ?? 0) / 60);
+    map[month].sessions += 1;
+  });
+
+  // Fill all 12 months even if no data
+  const result: MonthlyReadingStat[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    const key = d.toISOString().slice(0, 7);
+    result.push({ month: key, minutes: map[key]?.minutes ?? 0, sessions: map[key]?.sessions ?? 0 });
+  }
+  return result;
+}
+
 // ── Recent sessions for today ─────────────────────────────────
 
 export async function getTodaySessions(): Promise<ChSession[]> {

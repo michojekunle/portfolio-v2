@@ -1,0 +1,18 @@
+{
+  "name": "Thread Studio",
+  "short_name": "Thread Studio",
+  "description": "Engineer viral X threads with AI assistance and real-time preview.",
+  "start_url": "/tools/thread-studio",
+  "scope": "/tools/thread-studio",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d0d0d",
+  "theme_color": "#1D9BF0",
+  "categories": ["social", "productivity"],
+  "icons": [
+    { "src": "/icons/thread-studio-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/thread-studio-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

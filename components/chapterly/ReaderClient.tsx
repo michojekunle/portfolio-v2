@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { ChBook, HighlightColor } from "@/lib/chapterly/types";
 
@@ -29,6 +30,7 @@ import {
   Loader2,
   Save,
   Brain,
+  Sparkles,
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
 
@@ -73,6 +75,12 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   const [noteText, setNoteText] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
+
+  // AI Summary States
+  const [showSummary, setShowSummary] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryText, setSummaryText] = useState("");
+  const [generatingSummary, setGeneratingSummary] = useState(false);
 
   // Phase 3: text selection → highlight
   const [textSelection, setTextSelection] = useState<TextSelection | null>(
@@ -350,6 +358,66 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     }
   };
 
+  const openSummaryPanel = async (): Promise<void> => {
+    setShowSummary(true);
+    setSummaryLoading(true);
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("ch_notes")
+        .select("content_md")
+        .eq("book_id", book.id)
+        .eq("chapter_title", "AI Book Summary")
+        .maybeSingle();
+
+      if (data) {
+        setSummaryText(data.content_md);
+      } else {
+        setSummaryText("");
+      }
+    } catch (err) {
+      console.error("[reader] summary fetch error:", err);
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
+
+  const startSummaryStream = async (): Promise<void> => {
+    setGeneratingSummary(true);
+    setSummaryText("");
+    try {
+      const res = await fetch("/api/chapterly/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          book_id: book.id,
+          book_title: book.title,
+          book_author: book.author,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(errData.error || "Failed to generate summary");
+      }
+
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("No stream available");
+
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const text = decoder.decode(value, { stream: true });
+        setSummaryText((prev) => prev + text);
+      }
+    } catch (err) {
+      setSummaryText((prev) => prev + `\n\n[Error: ${err instanceof Error ? err.message : "Generation failed"}]`);
+    } finally {
+      setGeneratingSummary(false);
+    }
+  };
+
   const openNotePanel = (): void => {
     setShowNotePanel(true);
     setTimeout(() => notePanelRef.current?.focus(), 50);
@@ -480,6 +548,17 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           >
             <MessageSquare size={14} />
           </Link>
+
+          {/* AI Summary */}
+          <button
+            onClick={() => void openSummaryPanel()}
+            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+            style={{ background: current.text + "12", color: current.text }}
+            aria-label="Open AI summary"
+            title="AI book summary"
+          >
+            <Sparkles size={14} />
+          </button>
         </div>
       </div>
 
@@ -852,6 +931,139 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             <X size={11} />
           </button>
         </div>
+      )}
+
+      {/* ── AI Summary slide-in panel ── */}
+      {showSummary && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setShowSummary(false)}
+            aria-hidden="true"
+          />
+          <div
+            className="fixed top-[56px] max-[1024px]:top-[60px] right-0 bottom-0 z-50 w-[420px] max-[560px]:w-full flex flex-col shadow-2xl border-l overflow-hidden"
+            style={{ background: current.bg, borderColor: current.text + "20" }}
+          >
+            <div
+              className="flex items-center justify-between px-[20px] py-[16px] border-b shrink-0"
+              style={{ borderColor: current.text + "15" }}
+            >
+              <div className="flex items-center gap-[8px] min-w-0">
+                <Sparkles size={14} style={{ color: ACCENT }} />
+                <span
+                  className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold shrink-0"
+                  style={{ color: current.text }}
+                >
+                  AI Summary
+                </span>
+                <span
+                  className="font-mono text-[9px] opacity-40 truncate"
+                  style={{ color: current.text }}
+                >
+                  · {book.title}
+                </span>
+              </div>
+              <button
+                onClick={() => setShowSummary(false)}
+                className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60 bg-transparent shrink-0"
+                style={{ color: current.text }}
+                aria-label="Close summary"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-[20px] py-[20px]">
+              {summaryLoading ? (
+                <div
+                  className="flex items-center justify-center py-[60px] gap-[10px]"
+                  style={{ color: current.text, opacity: 0.4 }}
+                >
+                  <Loader2 size={18} className="animate-spin" />
+                  <span className="font-mono text-[11px] tracking-[0.1em] uppercase">
+                    Loading…
+                  </span>
+                </div>
+              ) : summaryText ? (
+                <div
+                  className="text-[14px] leading-[1.8] whitespace-pre-wrap"
+                  style={{ color: current.text, opacity: 0.9 }}
+                >
+                  {summaryText}
+                  {generatingSummary && (
+                    <span
+                      className="inline-flex items-center gap-[6px] ml-[8px] font-mono text-[10px] tracking-[0.1em] uppercase opacity-50"
+                      style={{ color: current.text }}
+                    >
+                      <Loader2 size={10} className="animate-spin" />
+                    </span>
+                  )}
+                </div>
+              ) : !generatingSummary ? (
+                <div className="text-center py-[60px]">
+                  <Sparkles
+                    size={32}
+                    className="mx-auto mb-[16px]"
+                    style={{ color: ACCENT, opacity: 0.4 }}
+                  />
+                  <div
+                    className="text-[15px] font-semibold mb-[8px]"
+                    style={{ color: current.text }}
+                  >
+                    No summary yet
+                  </div>
+                  <p
+                    className="text-[13px] mb-[28px] max-w-[260px] mx-auto leading-[1.6]"
+                    style={{ color: current.text, opacity: 0.5 }}
+                  >
+                    Generate a Headway-style 15-minute structured summary of this book using AI.
+                  </p>
+                  <button
+                    onClick={() => void startSummaryStream()}
+                    className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[18px] py-[10px] rounded-[8px] border-none cursor-pointer transition-opacity hover:opacity-90"
+                    style={{ background: ACCENT, color: "#fff" }}
+                  >
+                    <Sparkles size={13} />
+                    Generate Summary
+                  </button>
+                </div>
+              ) : (
+                <div
+                  className="flex items-center gap-[8px] py-[60px] justify-center"
+                  style={{ color: ACCENT, opacity: 0.6 }}
+                >
+                  <Loader2 size={16} className="animate-spin" />
+                  <span className="font-mono text-[11px] tracking-[0.1em] uppercase">
+                    Generating…
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {summaryText && !generatingSummary && (
+              <div
+                className="px-[20px] py-[14px] border-t shrink-0 flex items-center justify-between"
+                style={{ borderColor: current.text + "15" }}
+              >
+                <span
+                  className="font-mono text-[9px] tracking-[0.08em] uppercase"
+                  style={{ color: current.text, opacity: 0.35 }}
+                >
+                  Saved to notes
+                </span>
+                <button
+                  onClick={() => void startSummaryStream()}
+                  className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
+                  style={{ color: ACCENT }}
+                >
+                  <Sparkles size={11} />
+                  Regenerate
+                </button>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* ── Progress bar ── */}

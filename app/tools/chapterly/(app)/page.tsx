@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
   getUserBooks,
@@ -22,6 +23,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import type { Metadata } from "next";
+import { ChLearningPlanClient } from "@/components/chapterly/LearningPlanClient";
+import { DailyInsightCard } from "@/components/chapterly/DailyInsightCard";
 
 export const metadata: Metadata = {
   title: "Chapterly — Home",
@@ -48,6 +51,10 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
     getOrCreateGoal(),
   ]);
 
+  if (!goal || !goal.onboarded) {
+    redirect("/tools/chapterly/onboarding");
+  }
+
   const currentBook =
     books.find((b) => b.status === "reading") ?? books[0] ?? null;
   const recentBooks = books.slice(0, 4);
@@ -68,6 +75,9 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
           Your Reading OS
         </h1>
       </div>
+
+      {/* ── Daily Insight ── */}
+      <DailyInsightCard />
 
       {/* ── Stats strip ── */}
       <div className="grid grid-cols-4 max-[900px]:grid-cols-2 max-[480px]:grid-cols-2 gap-[16px] mb-[40px]">
@@ -104,61 +114,72 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
       </div>
 
       {/* ── Daily goal ring + current book ── */}
-      <div className="grid grid-cols-[1fr_1fr] max-[900px]:grid-cols-1 gap-[24px] mb-[40px]">
-        {/* Daily goal ring */}
-        <div className="rounded-[16px] p-[32px] max-[480px]:p-[24px] bg-[var(--bg-2)] border border-[var(--rule)]">
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[24px]">
-            Daily Goal
-          </div>
-          <div className="flex items-center gap-[32px]">
-            <GoalRing pct={dailyProgress} accent={ACCENT} />
-            <div>
-              <div className="text-[32px] font-bold text-[var(--ink)] leading-[1]">
-                {dailyProgress}%
-              </div>
-              <div className="text-[14px] text-[var(--ink-3)] mt-[4px]">
-                {formatReadingTime(stats.reading_time_today)} of{" "}
-                {goal?.daily_minutes ?? 15}m
-              </div>
-              {dailyProgress >= 100 ? (
-                <div
-                  className="mt-[12px] inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[10px] py-[5px] rounded-full"
-                  style={{
-                    background: "rgba(22,163,74,0.12)",
-                    color: "#16A34A",
-                  }}
-                >
-                  Goal complete!
-                </div>
-              ) : (
-                <div className="mt-[12px] font-mono text-[11px] text-[var(--ink-3)]">
-                  {formatReadingTime(
-                    Math.max(
-                      0,
-                      (goal?.daily_minutes ?? 15) - stats.reading_time_today
-                    )
-                  )}{" "}
-                  left
-                </div>
-              )}
+      <div className="grid grid-cols-[1fr_1fr] max-[900px]:grid-cols-1 gap-[24px] mb-[40px] items-start">
+        {/* Left Column: Daily goal & Learning plan */}
+        <div className="space-y-[24px]">
+          {/* Daily goal ring */}
+          <div className="rounded-[16px] p-[32px] max-[480px]:p-[24px] bg-[var(--bg-2)] border border-[var(--rule)]">
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[24px]">
+              Daily Goal
             </div>
-          </div>
-          <div className="mt-[24px] pt-[20px] border-t border-[var(--rule)] flex items-center justify-between">
-            <div>
-              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
-                Annual
-              </div>
-              <div className="text-[14px] font-semibold text-[var(--ink)] mt-[2px]">
-                {stats.books_this_year} / {goal?.annual_books ?? 12} books
+            <div className="flex items-center gap-[32px]">
+              <GoalRing pct={dailyProgress} accent={ACCENT} />
+              <div>
+                <div className="text-[32px] font-bold text-[var(--ink)] leading-[1]">
+                  {dailyProgress}%
+                </div>
+                <div className="text-[14px] text-[var(--ink-3)] mt-[4px]">
+                  {formatReadingTime(stats.reading_time_today)} of{" "}
+                  {goal?.daily_minutes ?? 15}m
+                </div>
+                {dailyProgress >= 100 ? (
+                  <div
+                    className="mt-[12px] inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[10px] py-[5px] rounded-full"
+                    style={{
+                      background: "rgba(22,163,74,0.12)",
+                      color: "#16A34A",
+                    }}
+                  >
+                    Goal complete!
+                  </div>
+                ) : (
+                  <div className="mt-[12px] font-mono text-[11px] text-[var(--ink-3)]">
+                    {formatReadingTime(
+                      Math.max(
+                        0,
+                        (goal?.daily_minutes ?? 15) - stats.reading_time_today
+                      )
+                    )}{" "}
+                    left
+                  </div>
+                )}
               </div>
             </div>
-            <Link
-              href="/tools/chapterly/settings"
-              className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline text-[var(--ink-3)] hover:text-[var(--ink)]"
-            >
-              Edit goals →
-            </Link>
+            <div className="mt-[24px] pt-[20px] border-t border-[var(--rule)] flex items-center justify-between">
+              <div>
+                <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+                  Annual
+                </div>
+                <div className="text-[14px] font-semibold text-[var(--ink)] mt-[2px]">
+                  {stats.books_this_year} / {goal?.annual_books ?? 12} books
+                </div>
+              </div>
+              <Link
+                href="/tools/chapterly/settings"
+                className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline text-[var(--ink-3)] hover:text-[var(--ink)]"
+              >
+                Edit goals →
+              </Link>
+            </div>
           </div>
+
+          {/* Learning plan timeline */}
+          {goal && (
+            <ChLearningPlanClient
+              initialPlan={goal.learning_plan}
+              userBookTitles={books.map((b) => b.title)}
+            />
+          )}
         </div>
 
         {/* Current book */}

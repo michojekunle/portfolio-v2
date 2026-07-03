@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import type {
   ChBook,
@@ -8,6 +8,7 @@ import type {
   ChHighlight,
   HighlightColor,
 } from "@/lib/chapterly/types";
+import type { ConceptCard } from "@/app/api/chapterly/shorts/route";
 import {
   ArrowLeft,
   Plus,
@@ -26,7 +27,11 @@ import {
   HelpCircle,
   Sparkles,
   RefreshCw,
-  XCircle,
+  Zap,
+  ChevronRight,
+  ChevronLeft,
+  BookmarkPlus,
+  Share2,
 } from "lucide-react";
 
 const ACCENT = "#4F6D7A";
@@ -152,7 +157,7 @@ export function ChNotesClient({
   const [notes, setNotes] = useState<ChNote[]>(initialNotes);
   const [highlights, setHighlights] =
     useState<ChHighlight[]>(initialHighlights);
-  const [tab, setTab] = useState<"notes" | "highlights" | "quiz">("notes");
+  const [tab, setTab] = useState<"notes" | "highlights" | "quiz" | "shorts">("notes");
 
   // Quiz state
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
@@ -213,6 +218,75 @@ export function ChNotesClient({
     }
   };
 
+  // Shorts state
+  const [shortsCards, setShortsCards] = useState<ConceptCard[]>([]);
+  const [shortsIndex, setShortsIndex] = useState(0);
+  const [shortsLoading, setShortsLoading] = useState(false);
+  const [shortsSavedIds, setShortsSavedIds] = useState<Set<number>>(new Set());
+  const [shortsSaving, setShortsSaving] = useState<number | null>(null);
+  const dragStartX = useRef<number | null>(null);
+  const [dragDelta, setDragDelta] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const generateShorts = async (): Promise<void> => {
+    setShortsLoading(true);
+    setShortsCards([]);
+    setShortsIndex(0);
+    setShortsSavedIds(new Set());
+    try {
+      const res = await fetch("/api/chapterly/shorts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          book_id: book.id,
+          book_title: book.title,
+          book_author: book.author,
+        }),
+      });
+      if (!res.ok) throw new Error("Shorts generation failed");
+      const data = (await res.json()) as { cards: ConceptCard[] };
+      setShortsCards(data.cards);
+    } catch (err) {
+      console.error("[shorts] generation error:", err);
+    } finally {
+      setShortsLoading(false);
+    }
+  };
+
+  const saveConceptAsNote = async (card: ConceptCard, idx: number): Promise<void> => {
+    if (shortsSavedIds.has(idx) || shortsSaving === idx) return;
+    setShortsSaving(idx);
+    try {
+      const content = `**${card.title}**\n\n${card.concept}\n\n${card.insight}${card.quote ? `\n\n> "${card.quote}"` : ""}`;
+      const res = await fetch("/api/chapterly/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          book_id: book.id,
+          content_md: content,
+          chapter_ref: "Concept Short",
+        }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      const { note } = (await res.json()) as { note: ChNote };
+      setNotes((prev) => [note, ...prev]);
+      setShortsSavedIds((prev) => new Set([...prev, idx]));
+    } catch (err) {
+      console.error("[shorts] save note error:", err);
+    } finally {
+      setShortsSaving(null);
+    }
+  };
+
+  const advanceCard = (direction: "next" | "prev"): void => {
+    if (direction === "next" && shortsIndex < shortsCards.length - 1) {
+      setShortsIndex((i) => i + 1);
+    } else if (direction === "prev" && shortsIndex > 0) {
+      setShortsIndex((i) => i - 1);
+    }
+    setDragDelta(0);
+  };
+
   // Note editor state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -229,6 +303,7 @@ export function ChNotesClient({
   );
   const [flashcardingId, setFlashcardingId] = useState<string | null>(null);
   const [bridgeCopied, setBridgeCopied] = useState(false);
+  const [shareHighlight, setShareHighlight] = useState<ChHighlight | null>(null);
 
   // ── Note CRUD ─────────────────────────────────────────────────
 
@@ -483,12 +558,12 @@ export function ChNotesClient({
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex gap-[2px] mb-[32px] p-[4px] rounded-[10px] bg-[var(--bg-2)] w-full sm:w-fit border border-[var(--rule)]">
-        {(["notes", "highlights", "quiz"] as const).map((t) => (
+      <div className="flex gap-[2px] mb-[32px] p-[4px] rounded-[10px] bg-[var(--bg-2)] w-full sm:w-fit border border-[var(--rule)] flex-wrap">
+        {(["notes", "highlights", "quiz", "shorts"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="flex items-center gap-[7px] px-[16px] py-[8px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold border-none cursor-pointer transition-all"
+            className="flex items-center gap-[7px] px-[14px] py-[8px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold border-none cursor-pointer transition-all"
             style={
               tab === t
                 ? { background: ACCENT, color: "#fff" }
@@ -498,9 +573,11 @@ export function ChNotesClient({
             {t === "notes" && <StickyNote size={12} />}
             {t === "highlights" && <BookOpen size={12} />}
             {t === "quiz" && <Brain size={12} />}
+            {t === "shorts" && <Zap size={12} />}
             {t === "notes" && `Notes${notes.length > 0 ? ` (${notes.length})` : ""}`}
             {t === "highlights" && `Highlights${highlights.length > 0 ? ` (${highlights.length})` : ""}`}
             {t === "quiz" && "AI Quiz"}
+            {t === "shorts" && "Shorts"}
           </button>
         ))}
       </div>
@@ -668,6 +745,15 @@ export function ChNotesClient({
                       </span>
                     </div>
                     <div className="flex items-center gap-[6px]">
+                      {/* Share card */}
+                      <button
+                        onClick={() => setShareHighlight(h)}
+                        className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[#C85A2C] hover:border-[#C85A2C] transition-colors"
+                        aria-label="Share as card"
+                        title="Share as card"
+                      >
+                        <Share2 size={12} />
+                      </button>
                       {/* Mark as flashcard */}
                       <button
                         onClick={() => void makeFlashcard(h)}
@@ -704,6 +790,242 @@ export function ChNotesClient({
                 </div>
               );
             })
+          )}
+        </div>
+      )}
+
+      {/* ── Shorts tab ── */}
+      {tab === "shorts" && (
+        <div>
+          {/* Empty / loading / generate state */}
+          {shortsCards.length === 0 && !shortsLoading && (
+            <div className="text-center py-[64px] rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[480px] mx-auto">
+              <div
+                className="w-[60px] h-[60px] rounded-[16px] flex items-center justify-center mx-auto mb-[20px]"
+                style={{ background: `${ACCENT}15` }}
+              >
+                <Zap size={28} style={{ color: ACCENT }} />
+              </div>
+              <h3 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[8px]">
+                Concept Shorts
+              </h3>
+              <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 mb-[24px]">
+                AI extracts the 6 most powerful concepts from &ldquo;{book.title}&rdquo; — distilled into snackable cards you can swipe through.
+              </p>
+              <button
+                onClick={() => void generateShorts()}
+                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+                style={{ background: ACCENT }}
+              >
+                <Sparkles size={13} />
+                Generate Shorts
+              </button>
+            </div>
+          )}
+
+          {shortsLoading && (
+            <div className="text-center py-[80px] rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[480px] mx-auto">
+              <Loader2 size={32} className="animate-spin mx-auto mb-[16px]" style={{ color: ACCENT }} />
+              <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                Extracting Concepts…
+              </div>
+              <div className="text-[13px] text-[var(--ink-3)] mt-[6px]">
+                Analyzing highlights and book themes. Give it a moment.
+              </div>
+            </div>
+          )}
+
+          {shortsCards.length > 0 && (
+            <div className="max-w-[520px] mx-auto">
+              {/* Progress */}
+              <div className="flex items-center justify-between mb-[20px]">
+                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+                  Concept {shortsIndex + 1} of {shortsCards.length}
+                </div>
+                <div className="flex items-center gap-[6px]">
+                  {shortsCards.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { setShortsIndex(i); setDragDelta(0); }}
+                      className="w-[6px] h-[6px] rounded-full border-none cursor-pointer transition-all p-0"
+                      style={{ background: i === shortsIndex ? ACCENT : "var(--rule)", transform: i === shortsIndex ? "scale(1.4)" : "scale(1)" }}
+                      aria-label={`Go to card ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <button
+                  onClick={() => void generateShorts()}
+                  className="flex items-center gap-[5px] font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer transition-colors"
+                >
+                  <RefreshCw size={10} />
+                  Redo
+                </button>
+              </div>
+
+              {/* Card stack — decorative background cards */}
+              <div className="relative h-[360px] mb-[24px]">
+                {/* Back cards (decorative) */}
+                {[2, 1].map((offset) => {
+                  const nextIdx = (shortsIndex + offset) % shortsCards.length;
+                  return (
+                    <div
+                      key={offset}
+                      className="absolute inset-x-0 rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)]"
+                      style={{
+                        top: `${offset * 10}px`,
+                        bottom: `-${offset * 4}px`,
+                        transform: `scale(${1 - offset * 0.025}) rotate(${offset * 1.5}deg)`,
+                        opacity: 1 - offset * 0.3,
+                        zIndex: 10 - offset,
+                      }}
+                      aria-hidden="true"
+                    >
+                      {shortsCards[nextIdx] && (
+                        <div className="p-[28px] opacity-20 pointer-events-none">
+                          <div className="font-mono text-[9px] tracking-[0.12em] uppercase mb-[10px]" style={{ color: ACCENT }}>
+                            concept
+                          </div>
+                          <div className="text-[16px] font-semibold text-[var(--ink)] leading-[1.3]">
+                            {shortsCards[nextIdx].title}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Active card */}
+                {(() => {
+                  const card = shortsCards[shortsIndex];
+                  const isSaved = shortsSavedIds.has(shortsIndex);
+                  const saving = shortsSaving === shortsIndex;
+                  return (
+                    <div
+                      className="absolute inset-0 rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[28px] flex flex-col z-20 select-none"
+                      style={{
+                        transform: isDragging ? `translateX(${dragDelta}px) rotate(${dragDelta * 0.04}deg)` : "translateX(0) rotate(0)",
+                        transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                        cursor: isDragging ? "grabbing" : "grab",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
+                      }}
+                      onMouseDown={(e) => {
+                        dragStartX.current = e.clientX;
+                        setIsDragging(true);
+                      }}
+                      onMouseMove={(e) => {
+                        if (!isDragging || dragStartX.current === null) return;
+                        setDragDelta(e.clientX - dragStartX.current);
+                      }}
+                      onMouseUp={() => {
+                        if (Math.abs(dragDelta) > 80) {
+                          advanceCard(dragDelta < 0 ? "next" : "prev");
+                        } else {
+                          setDragDelta(0);
+                        }
+                        setIsDragging(false);
+                        dragStartX.current = null;
+                      }}
+                      onMouseLeave={() => {
+                        if (isDragging) {
+                          setDragDelta(0);
+                          setIsDragging(false);
+                          dragStartX.current = null;
+                        }
+                      }}
+                      onTouchStart={(e) => {
+                        dragStartX.current = e.touches[0].clientX;
+                        setIsDragging(true);
+                      }}
+                      onTouchMove={(e) => {
+                        if (dragStartX.current === null) return;
+                        setDragDelta(e.touches[0].clientX - dragStartX.current);
+                      }}
+                      onTouchEnd={() => {
+                        if (Math.abs(dragDelta) > 60) {
+                          advanceCard(dragDelta < 0 ? "next" : "prev");
+                        } else {
+                          setDragDelta(0);
+                        }
+                        setIsDragging(false);
+                        dragStartX.current = null;
+                      }}
+                    >
+                      <div
+                        className="font-mono text-[9px] tracking-[0.14em] uppercase mb-[12px] inline-block"
+                        style={{ color: ACCENT }}
+                      >
+                        concept {shortsIndex + 1} / {shortsCards.length}
+                      </div>
+                      <h2 className="text-[20px] font-semibold text-[var(--ink)] leading-[1.3] m-0 mb-[10px]">
+                        {card.title}
+                      </h2>
+                      <p className="text-[13px] font-medium text-[var(--ink-2)] leading-[1.5] m-0 mb-[14px]">
+                        {card.concept}
+                      </p>
+                      <p className="text-[13px] leading-[1.7] text-[var(--ink-3)] m-0 flex-1">
+                        {card.insight}
+                      </p>
+                      {card.quote && (
+                        <blockquote
+                          className="mt-[14px] mb-0 pl-[12px] text-[12px] italic leading-[1.6] text-[var(--ink-3)]"
+                          style={{ borderLeft: "none", borderTop: "1px solid var(--rule)", paddingTop: "12px" }}
+                        >
+                          &ldquo;{card.quote}&rdquo;
+                        </blockquote>
+                      )}
+                      <div className="mt-[16px] flex items-center justify-end">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void saveConceptAsNote(card, shortsIndex);
+                          }}
+                          disabled={isSaved || saving}
+                          className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[7px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={
+                            isSaved
+                              ? { background: "#16A34A", color: "#fff", borderColor: "#16A34A" }
+                              : { background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }
+                          }
+                          title="Save as note"
+                        >
+                          {saving ? (
+                            <Loader2 size={10} className="animate-spin" />
+                          ) : isSaved ? (
+                            <Check size={10} />
+                          ) : (
+                            <BookmarkPlus size={10} />
+                          )}
+                          {isSaved ? "Saved" : "Save to notes"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Nav buttons */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => advanceCard("prev")}
+                  disabled={shortsIndex === 0}
+                  className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[14px] py-[9px] rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={13} />
+                  Prev
+                </button>
+                <span className="font-mono text-[9px] text-[var(--ink-3)] opacity-60">
+                  drag or click to navigate
+                </span>
+                <button
+                  onClick={() => advanceCard("next")}
+                  disabled={shortsIndex === shortsCards.length - 1}
+                  className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[14px] py-[9px] rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Next
+                  <ChevronRight size={13} />
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -900,6 +1222,184 @@ export function ChNotesClient({
           )}
         </div>
       )}
+
+      {/* ── Share Card Modal ── */}
+      {shareHighlight && (
+        <ShareCardModal
+          highlight={shareHighlight}
+          book={book}
+          onClose={() => setShareHighlight(null)}
+        />
+      )}
     </div>
+  );
+}
+
+// ── Share Card Modal ───────────────────────────────────────────
+
+interface ShareCardModalProps {
+  highlight: ChHighlight;
+  book: ChBook;
+  onClose: () => void;
+}
+
+function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): React.ReactElement {
+  const [downloading, setDownloading] = useState(false);
+  const BB_ORANGE = "#C85A2C";
+
+  const cardUrl = `/api/chapterly/share-card?${new URLSearchParams({
+    quote: highlight.text,
+    book: book.title,
+    author: book.author ?? "",
+    color: highlight.color,
+  }).toString()}`;
+
+  const downloadCard = async (): Promise<void> => {
+    setDownloading(true);
+    try {
+      const res = await fetch(cardUrl);
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${book.title.replace(/[^a-z0-9]/gi, "_")}-highlight.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("[share-card] download error:", err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const HIGHLIGHT_PREVIEW: Record<ChHighlight["color"], { dot: string; textColor: string; quoteBg: string }> = {
+    yellow: { dot: "#F59E0B", textColor: "#FDE68A", quoteBg: "rgba(245,158,11,0.08)" },
+    green:  { dot: "#22C55E", textColor: "#BBF7D0", quoteBg: "rgba(34,197,94,0.08)" },
+    blue:   { dot: "#3B82F6", textColor: "#BFDBFE", quoteBg: "rgba(59,130,246,0.08)" },
+    pink:   { dot: "#EC4899", textColor: "#FBCFE8", quoteBg: "rgba(236,72,153,0.08)" },
+  };
+  const ps = HIGHLIGHT_PREVIEW[highlight.color];
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-[20px] pointer-events-none">
+        <div
+          className="w-full max-w-[520px] rounded-[24px] border border-[var(--rule)] shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
+          style={{ background: "var(--bg)" }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)]">
+            <div>
+              <div className="font-semibold text-[15px] text-[var(--ink)]">Share Highlight</div>
+              <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mt-[2px]">
+                BookBreaks × Chapterly · 1080×1080 PNG
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none cursor-pointer bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Card preview */}
+          <div className="px-[24px] pt-[20px]">
+            <div
+              className="w-full rounded-[16px] p-[22px] relative overflow-hidden flex flex-col"
+              style={{ background: "#141010", minHeight: "280px" }}
+            >
+              {/* Top gradient stripe */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[3px]"
+                style={{ background: `linear-gradient(90deg, ${BB_ORANGE}, ${ps.dot})` }}
+              />
+
+              {/* Logo */}
+              <div className="flex items-center gap-[8px] mb-[16px]">
+                <div
+                  className="w-[22px] h-[22px] rounded-[5px] flex items-center justify-center font-bold text-[10px]"
+                  style={{ background: BB_ORANGE, color: "#fff" }}
+                >
+                  B
+                </div>
+                <span className="font-semibold text-[12px]" style={{ color: "#fff" }}>BookBreaks</span>
+                <span className="font-mono text-[8px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.3)" }}>
+                  × Chapterly
+                </span>
+              </div>
+
+              {/* Quote */}
+              <div
+                className="rounded-[10px] p-[14px] mb-[14px] flex-1"
+                style={{ background: ps.quoteBg }}
+              >
+                <p
+                  className="text-[13px] italic leading-[1.6] m-0 line-clamp-4"
+                  style={{ color: ps.textColor }}
+                >
+                  &ldquo;{highlight.text}&rdquo;
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-end justify-between">
+                <div>
+                  <div className="text-[11px] font-semibold" style={{ color: "#fff" }}>{book.title}</div>
+                  {book.author && (
+                    <div className="text-[9px] font-mono mt-[2px]" style={{ color: "rgba(255,255,255,0.4)" }}>
+                      by {book.author}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-[5px]">
+                  <div className="w-[6px] h-[6px] rounded-full" style={{ background: ps.dot }} />
+                  <span className="font-mono text-[8px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    {highlight.color}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="px-[24px] py-[16px] flex items-center gap-[10px]">
+            <button
+              onClick={() => void downloadCard()}
+              disabled={downloading}
+              className="flex-1 flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold h-[44px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 text-white"
+              style={{ background: BB_ORANGE }}
+            >
+              {downloading ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Download size={14} />
+              )}
+              {downloading ? "Generating…" : "Download PNG"}
+            </button>
+            <button
+              onClick={onClose}
+              className="h-[44px] px-[20px] rounded-[10px] border border-[var(--rule)] bg-transparent font-mono text-[10px] tracking-[0.1em] uppercase cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-all"
+            >
+              Close
+            </button>
+          </div>
+
+          <div className="pb-[14px]">
+            <p className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.08em] m-0">
+              Perfect for Instagram · Twitter · Stories
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

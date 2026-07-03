@@ -31,24 +31,47 @@ export async function POST(): Promise<NextResponse> {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [booksResult, goalResult, allSessionsResult, alreadyEarnedResult] =
-    await Promise.all([
-      supabase.from("ch_books").select("id, status").eq("user_id", user.id),
-      supabase
-        .from("ch_goals")
-        .select("longest_streak")
-        .eq("user_id", user.id)
-        .single(),
-      // Only fetch the two columns we aggregate — avoids unbounded row payloads
-      // for users with many sessions.
-      supabase
-        .from("ch_sessions")
-        .select("started_at, duration_seconds")
-        .eq("user_id", user.id),
-      supabase.from("ch_achievements").select("badge_id").eq("user_id", user.id),
-    ]);
+  const [
+    booksResult,
+    goalResult,
+    allSessionsResult,
+    alreadyEarnedResult,
+    highlightCountResult,
+    noteCountResult,
+    flashcardReviewsResult,
+    aiMessageCountResult,
+  ] = await Promise.all([
+    supabase.from("ch_books").select("id, status, genres").eq("user_id", user.id),
+    supabase
+      .from("ch_goals")
+      .select("longest_streak")
+      .eq("user_id", user.id)
+      .single(),
+    supabase
+      .from("ch_sessions")
+      .select("started_at, duration_seconds, pages_read")
+      .eq("user_id", user.id),
+    supabase.from("ch_achievements").select("badge_id").eq("user_id", user.id),
+    // Engagement counters — head-only for efficiency
+    supabase
+      .from("ch_highlights")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("ch_notes")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("ch_flashcards")
+      .select("review_count")
+      .eq("user_id", user.id),
+    supabase
+      .from("ch_chat_history")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("role", "user"),
+  ]);
 
-  // Surface DB errors rather than silently treating failures as empty data
   if (booksResult.error) {
     console.error("[achievements] books query error:", booksResult.error);
     return NextResponse.json({ error: "Failed to check achievements" }, { status: 500 });
@@ -62,14 +85,21 @@ export async function POST(): Promise<NextResponse> {
   const sessions = allSessionsResult.data;
 
   const nightOwlCount = sessions.filter((s) => {
-    // Sessions are stored in UTC; compare UTC hours so users in any timezone
-    // are judged by their wall-clock time (stored as UTC from the client).
     const hour = new Date(s.started_at as string).getUTCHours();
     return hour >= 23 || hour < 4;
   }).length;
 
+  const earlyBirdCount = sessions.filter((s) => {
+    const hour = new Date(s.started_at as string).getUTCHours();
+    return hour >= 4 && hour < 7;
+  }).length;
+
   const marathonCount = sessions.filter(
     (s) => (s.duration_seconds as number) >= 7200,
+  ).length;
+
+  const speedReaderCount = sessions.filter(
+    (s) => ((s.pages_read as number) ?? 0) >= 100,
   ).length;
 
   const totalMinutes = sessions.reduce(
@@ -77,13 +107,33 @@ export async function POST(): Promise<NextResponse> {
     0,
   );
 
+  const flashcardReviews = (flashcardReviewsResult.data ?? []).reduce(
+    (sum, r) => sum + ((r.review_count as number) ?? 0),
+    0,
+  );
+
+  // Count distinct genres across all books
+  const allGenres = new Set<string>();
+  books.forEach((b) => {
+    ((b.genres as string[]) ?? []).forEach((g: string) => {
+      if (g) allGenres.add(g.toLowerCase().trim());
+    });
+  });
+
   const input = {
     total_books: books.length,
     finished_books: books.filter((b) => b.status === "finished").length,
     longest_streak: (goalResult.data?.longest_streak as number) ?? 0,
     total_reading_time_minutes: totalMinutes,
     night_owl_sessions: nightOwlCount,
+    early_bird_sessions: earlyBirdCount,
     marathon_sessions: marathonCount,
+    speed_reader_sessions: speedReaderCount,
+    highlight_count: highlightCountResult.count ?? 0,
+    note_count: noteCountResult.count ?? 0,
+    flashcard_reviews: flashcardReviews,
+    ai_message_count: aiMessageCountResult.count ?? 0,
+    distinct_genres: allGenres.size,
   };
 
   const alreadyEarned = (alreadyEarnedResult.data ?? []).map(
@@ -92,9 +142,6 @@ export async function POST(): Promise<NextResponse> {
   const newBadges = checkEligibleBadges(input, alreadyEarned);
 
   if (newBadges.length > 0) {
-    // upsert with ignoreDuplicates handles concurrent POST races cleanly —
-    // concurrent calls may both compute the same newBadges, and the second
-    // upsert will no-op on the unique(user_id, badge_id) constraint.
     const { error } = await supabase.from("ch_achievements").upsert(
       newBadges.map((badge_id) => ({
         user_id: user.id,

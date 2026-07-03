@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Plus, X, Save, Loader2, Sparkles } from "lucide-react";
 import type { JoEntry, JoObjectiveWithMilestones } from "@/lib/journal/types";
 import { ENERGY_LABELS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
@@ -31,30 +31,13 @@ interface Props {
   onSaved?: (entry: JoEntry) => void;
 }
 
-interface SectionHeaderProps {
-  num: string;
-  label: string;
-  actions?: React.ReactNode;
-}
-
-function SectionHeader({ num, label, actions }: SectionHeaderProps): React.ReactElement {
+function SectionLabel({ children }: { children: React.ReactNode }): React.ReactElement {
   return (
-    <div className="flex items-center justify-between mb-[14px]">
-      <div className="flex items-center gap-[10px]">
-        <span
-          className="font-mono text-[9px] tracking-[0.18em] uppercase px-[7px] py-[2px] rounded-full font-semibold"
-          style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
-        >
-          {num}
-        </span>
-        <span
-          className="font-mono text-[10px] tracking-[0.14em] uppercase"
-          style={{ color: "var(--ink-3)" }}
-        >
-          {label}
-        </span>
-      </div>
-      {actions}
+    <div
+      className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[12px]"
+      style={{ color: "var(--ink-3)" }}
+    >
+      {children}
     </div>
   );
 }
@@ -84,7 +67,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
     const randomPrompt = REFLECTION_PROMPTS[Math.floor(Math.random() * REFLECTION_PROMPTS.length)];
     setNotes((prev) => {
       const spacing = prev.trim() ? "\n\n" : "";
-      return prev + spacing + `Prompt: ${randomPrompt}\n> `;
+      return prev + spacing + `${randomPrompt}\n\n`;
     });
   };
 
@@ -145,29 +128,38 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
 
   const activeObjectives = objectives.filter((o) => o.status === "active");
 
+  const inputClass =
+    "flex-1 h-[40px] px-[12px] rounded-[8px] text-[14px] outline-none transition-colors";
+  const inputStyle = {
+    border: "1.5px solid var(--rule)",
+    background: "var(--bg)",
+    color: "var(--ink)",
+  };
+  const textareaClass =
+    "w-full px-[12px] py-[10px] rounded-[8px] text-[14px] leading-[1.65] outline-none transition-colors resize-none";
+
   return (
     <>
-      {/* Slide-in save toast */}
       <SaveToast
         visible={toastVisible}
         message="Entry saved"
         onDismiss={() => setToastVisible(false)}
       />
 
-      <div className="space-y-[40px]">
+      <div className="space-y-[36px]">
 
-        {/* ── 01 Priorities ── */}
-        <section>
-          <SectionHeader num="01" label="Today's Priorities" />
-          <div className="space-y-[8px]">
+        {/* Priorities */}
+        <section id="priorities" style={{ scrollMarginTop: "24px" }}>
+          <SectionLabel>Today&apos;s Priorities</SectionLabel>
+          <div className="space-y-[6px]">
             {priorities.map((p, i) => (
               <div
                 key={i}
-                className="flex items-center gap-[10px] group px-[14px] py-[11px] rounded-[10px] transition-all"
+                className="flex items-center gap-[10px] group px-[12px] py-[10px] rounded-[8px]"
                 style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
               >
                 <span
-                  className="w-[20px] h-[20px] rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0"
+                  className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0"
                   style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
                 >
                   {i + 1}
@@ -175,7 +167,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
                 <span className="flex-1 text-[14px] text-[var(--ink)]">{p}</span>
                 <button
                   onClick={() => removeItem(priorities, setPriorities, i)}
-                  className="w-[22px] h-[22px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="w-[20px] h-[20px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ color: "var(--ink-3)" }}
                   aria-label="Remove"
                 >
@@ -196,41 +188,36 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
                   }
                 }}
                 placeholder="Add a priority and press Enter…"
-                className="flex-1 h-[42px] px-[14px] rounded-[10px] text-[14px] outline-none transition-colors"
-                style={{
-                  border: "1.5px solid var(--rule)",
-                  background: "var(--bg)",
-                  color: "var(--ink)",
-                }}
+                className={inputClass}
+                style={inputStyle}
               />
               <button
                 onClick={() => addItem(priorities, setPriorities, newPriority, setNewPriority)}
                 disabled={!newPriority.trim()}
-                className="w-[42px] h-[42px] flex items-center justify-center rounded-[10px] border-none cursor-pointer disabled:opacity-40 transition-opacity"
+                className="w-[40px] h-[40px] flex items-center justify-center rounded-[8px] border-none cursor-pointer disabled:opacity-40 transition-opacity"
                 style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
                 aria-label="Add priority"
               >
-                <Plus size={16} />
+                <Plus size={15} />
               </button>
             </div>
           </div>
         </section>
 
-        {/* Divider */}
         <div className="h-[1px]" style={{ background: "var(--rule)" }} />
 
-        {/* ── 02 Accomplished ── */}
-        <section>
-          <SectionHeader num="02" label="What Got Done" />
-          <div className="space-y-[8px]">
+        {/* Accomplished — start of the "log the day" wrap-up flow */}
+        <section id="log-today" style={{ scrollMarginTop: "24px" }}>
+          <SectionLabel>What Got Done</SectionLabel>
+          <div className="space-y-[6px]">
             {accomplished.map((a, i) => (
               <div
                 key={i}
-                className="flex items-center gap-[10px] group px-[14px] py-[11px] rounded-[10px] transition-all"
+                className="flex items-center gap-[10px] group px-[12px] py-[10px] rounded-[8px]"
                 style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
               >
                 <span
-                  className="text-[14px] flex-shrink-0 font-bold"
+                  className="text-[13px] flex-shrink-0 font-semibold"
                   style={{ color: "#16A34A" }}
                 >
                   ✓
@@ -238,7 +225,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
                 <span className="flex-1 text-[14px] text-[var(--ink)]">{a}</span>
                 <button
                   onClick={() => removeItem(accomplished, setAccomplished, i)}
-                  className="w-[22px] h-[22px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="w-[20px] h-[20px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ color: "var(--ink-3)" }}
                   aria-label="Remove"
                 >
@@ -259,107 +246,89 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
                   }
                 }}
                 placeholder="What did you actually finish today?"
-                className="flex-1 h-[42px] px-[14px] rounded-[10px] text-[14px] outline-none transition-colors"
-                style={{
-                  border: "1.5px solid var(--rule)",
-                  background: "var(--bg)",
-                  color: "var(--ink)",
-                }}
+                className={inputClass}
+                style={inputStyle}
               />
               <button
                 onClick={() =>
                   addItem(accomplished, setAccomplished, newAccomplished, setNewAccomplished)
                 }
                 disabled={!newAccomplished.trim()}
-                className="w-[42px] h-[42px] flex items-center justify-center rounded-[10px] border-none cursor-pointer disabled:opacity-40 transition-opacity"
+                className="w-[40px] h-[40px] flex items-center justify-center rounded-[8px] border-none cursor-pointer disabled:opacity-40 transition-opacity"
                 style={{ background: "rgba(22,163,74,0.10)", color: "#16A34A" }}
                 aria-label="Add"
               >
-                <Plus size={16} />
+                <Plus size={15} />
               </button>
             </div>
           </div>
         </section>
 
-        {/* Divider */}
         <div className="h-[1px]" style={{ background: "var(--rule)" }} />
 
-        {/* ── 03 Blockers ── */}
+        {/* Blockers */}
         <section>
-          <SectionHeader num="03" label="Blockers & Friction" />
+          <SectionLabel>Blockers &amp; Friction</SectionLabel>
           <textarea
             id="blockers"
             value={blockers}
             onChange={(e) => setBlockers(e.target.value)}
             placeholder="What got in the way? What would you remove if you could?"
             rows={3}
-            className="w-full px-[14px] py-[12px] rounded-[10px] text-[14px] leading-[1.6] outline-none transition-colors resize-none"
-            style={{
-              border: "1.5px solid var(--rule)",
-              background: "var(--bg)",
-              color: "var(--ink)",
-            }}
+            className={textareaClass}
+            style={{ ...inputStyle, height: "auto" }}
           />
         </section>
 
-        {/* Divider */}
         <div className="h-[1px]" style={{ background: "var(--rule)" }} />
 
-        {/* ── 04 Notes & Reflection ── */}
+        {/* Reflection */}
         <section>
-          <SectionHeader
-            num="04"
-            label="Reflection & Notes"
-            actions={
-              <button
-                type="button"
-                onClick={generatePrompt}
-                className="font-mono text-[8px] tracking-[0.08em] uppercase px-[9px] py-[4px] rounded-[6px] border cursor-pointer transition-all flex items-center gap-[5px]"
-                style={{
-                  borderColor: "var(--rule)",
-                  background: "transparent",
-                  color: "var(--ink-3)",
-                }}
-              >
-                <Sparkles size={8} style={{ color: VELA_ACCENT }} />
-                Spark Reflection
-              </button>
-            }
-          />
+          <div className="flex items-center justify-between mb-[12px]">
+            <SectionLabel>Reflection &amp; Notes</SectionLabel>
+            <button
+              type="button"
+              onClick={generatePrompt}
+              className="font-mono text-[8px] tracking-[0.1em] uppercase px-[9px] py-[4px] rounded-[6px] border cursor-pointer transition-all flex items-center gap-[5px] -mt-[12px]"
+              style={{
+                borderColor: "var(--rule)",
+                background: "transparent",
+                color: "var(--ink-3)",
+              }}
+            >
+              <Sparkles size={8} style={{ color: VELA_ACCENT }} />
+              Prompt
+            </button>
+          </div>
           <textarea
             id="notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="What did you learn? What would you do differently? Free write here…"
             rows={5}
-            className="w-full px-[14px] py-[12px] rounded-[10px] text-[14px] leading-[1.6] outline-none transition-colors resize-none"
-            style={{
-              border: "1.5px solid var(--rule)",
-              background: "var(--bg)",
-              color: "var(--ink)",
-            }}
+            className={textareaClass}
+            style={{ ...inputStyle, height: "auto" }}
           />
         </section>
 
-        {/* Divider */}
         <div className="h-[1px]" style={{ background: "var(--rule)" }} />
 
-        {/* ── 05 Energy level ── */}
+        {/* Energy */}
         <section>
-          <SectionHeader num="05" label="Energy Level" />
+          <SectionLabel>Energy Level</SectionLabel>
           <div className="flex gap-[8px]">
             {[1, 2, 3, 4, 5].map((level) => (
               <button
                 key={level}
                 onClick={() => setEnergy(energy === level ? null : level)}
-                className="flex-1 py-[12px] rounded-[10px] text-[12px] font-medium border transition-all cursor-pointer"
+                className="flex-1 py-[10px] rounded-[8px] text-[12px] font-medium border transition-all cursor-pointer"
                 style={
                   energy === level
                     ? {
                         background: VELA_ACCENT,
                         color: "#fff",
                         borderColor: VELA_ACCENT,
-                        boxShadow: `0 4px 16px rgba(124,58,237,0.35)`,
+                        boxShadow: `0 2px 12px rgba(124,58,237,0.3)`,
                       }
                     : {
                         background: "var(--bg-2)",
@@ -369,8 +338,8 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
                 }
                 title={ENERGY_LABELS[level]}
               >
-                <div className="text-[16px] mb-[3px]">{"⚡".repeat(level)}</div>
-                <div className="font-mono text-[9px] tracking-[0.06em] hidden min-[480px]:block" style={{ opacity: 0.8 }}>
+                <div className="text-[15px] mb-[2px]">{"⚡".repeat(level)}</div>
+                <div className="font-mono text-[9px] tracking-[0.04em] hidden min-[480px]:block opacity-70">
                   {ENERGY_LABELS[level]}
                 </div>
               </button>
@@ -378,12 +347,12 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
           </div>
         </section>
 
-        {/* ── 06 Linked objectives ── */}
+        {/* Linked objectives */}
         {activeObjectives.length > 0 && (
           <>
             <div className="h-[1px]" style={{ background: "var(--rule)" }} />
             <section>
-              <SectionHeader num="06" label="Objectives Touched Today" />
+              <SectionLabel>Objectives Touched Today</SectionLabel>
               <div className="flex flex-wrap gap-[8px]">
                 {activeObjectives.map((obj) => {
                   const active = linkedObjectiveIds.includes(obj.id);
@@ -391,13 +360,13 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
                     <button
                       key={obj.id}
                       onClick={() => toggleObjective(obj.id)}
-                      className="flex items-center gap-[7px] px-[12px] py-[8px] rounded-[10px] text-[13px] font-medium border transition-all cursor-pointer"
+                      className="flex items-center gap-[6px] px-[12px] py-[7px] rounded-[8px] text-[13px] font-medium border transition-all cursor-pointer"
                       style={
                         active
                           ? {
-                              background: `${obj.color}18`,
+                              background: `${obj.color}15`,
                               color: obj.color,
-                              borderColor: `${obj.color}40`,
+                              borderColor: `${obj.color}35`,
                             }
                           : {
                               background: "var(--bg-2)",
@@ -416,54 +385,43 @@ export function EntryForm({ date, initialEntry, objectives, onSaved }: Props): R
           </>
         )}
 
-        {/* ── Error ── */}
+        {/* Error */}
         {error && (
           <div
-            className="rounded-[10px] px-[14px] py-[11px] text-[13px] font-mono"
+            className="rounded-[8px] px-[14px] py-[10px] text-[13px] font-mono"
             style={{
-              background: "rgba(220,38,38,0.08)",
+              background: "rgba(220,38,38,0.07)",
               color: "#DC2626",
-              border: "1px solid rgba(220,38,38,0.2)",
+              border: "1px solid rgba(220,38,38,0.18)",
             }}
           >
             {error}
           </div>
         )}
 
-        {/* ── Save button ── */}
+        {/* Save */}
         <button
           onClick={() => void handleSave()}
           disabled={saving}
-          className="flex items-center justify-center gap-[8px] w-full h-[52px] rounded-[12px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 transition-all"
+          className="flex items-center justify-center gap-[8px] w-full h-[48px] rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 transition-all"
           style={{
             background: saved ? "#16A34A" : VELA_ACCENT,
             boxShadow: isComplete && !saved
-              ? `0 4px 28px rgba(124,58,237,0.4), 0 0 0 1px rgba(124,58,237,0.2)`
+              ? `0 4px 24px rgba(124,58,237,0.35)`
               : "none",
-            transform: isComplete && !saved ? "translateY(-1px)" : "none",
           }}
         >
           {saving ? (
-            <Loader2 size={15} className="animate-spin" />
+            <Loader2 size={14} className="animate-spin" />
           ) : saved ? (
             <>Saved ✓</>
           ) : (
             <>
-              <Save size={14} />
+              <Save size={13} />
               Save Entry
             </>
           )}
         </button>
-
-        {/* Completion hint */}
-        {isComplete && !saved && (
-          <p
-            className="text-center font-mono text-[10px] tracking-[0.08em] -mt-[24px]"
-            style={{ color: VELA_ACCENT, opacity: 0.7 }}
-          >
-            All sections complete — looking great!
-          </p>
-        )}
       </div>
     </>
   );

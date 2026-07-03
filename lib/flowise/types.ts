@@ -171,3 +171,43 @@ export interface DashboardData {
 export const FREE_ACCOUNT_LIMIT = 3;
 export const FREE_TRANSACTION_MONTHLY_LIMIT = 100;
 export const FREE_GOAL_LIMIT = 3;
+
+export const FINANCIAL_PERSONAS = [
+  "saver",
+  "spender",
+  "planner",
+  "avoider",
+  "hustler",
+] as const;
+export type FinancialPersona = (typeof FINANCIAL_PERSONAS)[number];
+
+export const PERSONA_CONFIG: Record<FinancialPersona, { label: string; blurb: string; icon: string }> = {
+  saver: { label: "The Saver", blurb: "You'd rather stash it than spend it — we'll help you find the best home for it.", icon: "🐷" },
+  spender: { label: "The Spender", blurb: "Money flows freely — we'll help you keep enough guardrails to hit your goals.", icon: "💳" },
+  planner: { label: "The Planner", blurb: "You like a clear budget and a plan for every naira — we'll keep it structured.", icon: "🗂️" },
+  avoider: { label: "The Avoider", blurb: "Finances feel overwhelming — we'll keep things simple and low-pressure.", icon: "🙈" },
+  hustler: { label: "The Hustler", blurb: "Income is irregular and comes from multiple places — we'll help you smooth it out.", icon: "🚀" },
+};
+
+export interface FwProfile {
+  user_id: string;
+  persona: FinancialPersona | null;
+  primary_goal: string | null;
+  income_type: string | null;
+  monthly_income_range: string | null;
+  currency: Currency;
+  onboarded: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SuggestedBudget {
+  category_id: SystemCategoryId;
+  amount: number;
+}
+
+export interface SuggestedGoal {
+  name: string;
+  target_amount: number;
+  deadline: string | null;
+}

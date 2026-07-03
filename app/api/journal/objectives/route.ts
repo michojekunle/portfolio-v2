@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireJournalAuth } from "@/lib/journal/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
-import type { JoObjective, JoMilestone } from "@/lib/journal/types";
-
-type ObjectiveRow = JoObjective & { jo_milestones?: JoMilestone[] };
+import type { JoMilestone } from "@/lib/journal/types";
 
 const CreateSchema = z.object({
   title: z.string().min(1).max(200),
@@ -23,21 +21,48 @@ export async function GET(): Promise<NextResponse> {
   const rl = checkRateLimit(`journal:objectives:get:${user.id}`, { limit: 120, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
-  const { data, error } = await supabase
+  const { data: objectiveRows, error: objectivesError } = await supabase
     .from("jo_objectives")
-    .select("*, jo_milestones(*)")
+    .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("[journal/objectives] GET error:", error);
+  if (objectivesError) {
+    console.error("[journal/objectives] GET objectives error:", objectivesError);
     return NextResponse.json({ error: "Failed to fetch objectives" }, { status: 500 });
   }
 
-  const objectives = (data ?? []).map((obj) => {
-    const row = obj as ObjectiveRow;
-    return { ...obj, milestones: row.jo_milestones ?? [] };
-  });
+  const objectiveIds = (objectiveRows ?? []).map((o) => o.id as string);
+
+  // Fetched as a flat query and joined in JS rather than a PostgREST embedded
+  // select (`jo_objectives(*, jo_milestones(*))`) — the embed depends on the
+  // FK being present in PostgREST's schema cache and 500s otherwise.
+  let milestoneRows: JoMilestone[] = [];
+  if (objectiveIds.length > 0) {
+    const { data, error: milestonesError } = await supabase
+      .from("jo_milestones")
+      .select("*")
+      .eq("user_id", user.id)
+      .in("objective_id", objectiveIds);
+
+    if (milestonesError) {
+      console.error("[journal/objectives] GET milestones error:", milestonesError);
+      return NextResponse.json({ error: "Failed to fetch objectives" }, { status: 500 });
+    }
+    milestoneRows = data ?? [];
+  }
+
+  const milestonesByObjective = new Map<string, JoMilestone[]>();
+  for (const m of milestoneRows) {
+    const list = milestonesByObjective.get(m.objective_id) ?? [];
+    list.push(m);
+    milestonesByObjective.set(m.objective_id, list);
+  }
+
+  const objectives = (objectiveRows ?? []).map((obj) => ({
+    ...obj,
+    milestones: milestonesByObjective.get(obj.id as string) ?? [],
+  }));
 
   return NextResponse.json({ objectives });
 }

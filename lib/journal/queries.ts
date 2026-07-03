@@ -1,16 +1,32 @@
 import { createClient } from "@/lib/supabase/server";
-import type { JoEntry, JoObjectiveWithMilestones } from "./types";
+import type { JoEntry, JoMilestone, JoObjectiveWithMilestones } from "./types";
 
+// Flat queries joined in JS rather than a PostgREST embedded select
+// (`jo_objectives(*, jo_milestones(*))`) — the embed depends on the FK
+// being present in PostgREST's schema cache and 500s otherwise.
 export async function getObjectivesWithMilestones(): Promise<JoObjectiveWithMilestones[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data: objectives } = await supabase
     .from("jo_objectives")
-    .select("*, jo_milestones(*)")
+    .select("*")
     .order("created_at", { ascending: false });
-  if (!data) return [];
-  return data.map((obj) => ({
+  if (!objectives || objectives.length === 0) return [];
+
+  const { data: milestones } = await supabase
+    .from("jo_milestones")
+    .select("*")
+    .in("objective_id", objectives.map((o) => o.id as string));
+
+  const milestonesByObjective = new Map<string, JoMilestone[]>();
+  for (const m of (milestones ?? []) as JoMilestone[]) {
+    const list = milestonesByObjective.get(m.objective_id) ?? [];
+    list.push(m);
+    milestonesByObjective.set(m.objective_id, list);
+  }
+
+  return objectives.map((obj) => ({
     ...obj,
-    milestones: (obj.jo_milestones ?? []),
+    milestones: milestonesByObjective.get(obj.id as string) ?? [],
   })) as JoObjectiveWithMilestones[];
 }
 

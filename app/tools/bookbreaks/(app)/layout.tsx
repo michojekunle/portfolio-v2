@@ -2,6 +2,20 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BBSidebarNav } from "@/components/bookbreaks/SidebarNav";
 import { ThemeTweaker } from "@/components/bookbreaks/ThemeTweaker";
+import { PwaRegistrar } from "@/components/PwaRegistrar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  manifest: "/manifests/bookbreaks.json",
+  appleWebApp: {
+    capable: true,
+    title: "BookBreaks",
+    statusBarStyle: "black-translucent",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+};
 
 export default async function BookBreaksLayout({
   children,
@@ -24,6 +38,7 @@ export default async function BookBreaksLayout({
         <main className="flex-1 min-h-screen">{children}</main>
         <ThemeTweaker />
       </div>
+      <PwaRegistrar toolId="bookbreaks" />
     </div>
   );
 }

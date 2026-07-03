@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getUserAccounts, getUserCategories } from "@/lib/flowise/queries";
+import { getUserAccounts, getUserCategories, getProfile } from "@/lib/flowise/queries";
 import { syncAccountBalance } from "@/lib/flowise/balance";
-import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
+import { SYSTEM_CATEGORIES, PERSONA_CONFIG } from "@/lib/flowise/types";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
@@ -65,11 +65,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "messages array is required" }, { status: 400 });
   }
 
-  // Fetch context (accounts and categories) to inject into the system prompt
-  const [accounts, categories] = await Promise.all([
+  // Fetch context (accounts, categories, persona) to inject into the system prompt
+  const [accounts, categories, profile] = await Promise.all([
     getUserAccounts(),
     getUserCategories(),
+    getProfile(),
   ]);
+
+  const personaCtx = profile?.persona
+    ? `The user's financial persona is "${PERSONA_CONFIG[profile.persona].label}" — ${PERSONA_CONFIG[profile.persona].blurb} Tailor your tone and suggestions accordingly (e.g. be extra encouraging and low-pressure with an Avoider, keep it structured for a Planner).`
+    : "";
 
   const accountsCtx = accounts.length > 0
     ? accounts.map((a) => `- ${a.name} (ID: ${a.id}, Type: ${a.type}, Currency: ${a.currency}, Balance: ${a.current_balance})`).join("\n")
@@ -79,6 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const systemPrompt = `You are Flowy, the friendly and extremely smart AI Voice & Chat Assistant for Flowise, a personal finance management app.
 Your goal is to help the user manage their money effortlessly using voice or text commands.
+${personaCtx}
 
 Current Local Date: ${localDate}
 User Timezone: ${timezone}

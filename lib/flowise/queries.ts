@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { FwAccount, FwTransaction, FwCategory, FwGoal, FwBudget } from "./types";
+import type { FwAccount, FwTransaction, FwCategory, FwGoal, FwBudget, FwProfile } from "./types";
 import { SYSTEM_CATEGORIES } from "./types";
 import { getMonthRange } from "./calculator";
 
@@ -124,4 +124,23 @@ export async function getBudgets(month: string): Promise<FwBudget[]> {
     return [];
   }
   return (data ?? []) as FwBudget[];
+}
+
+/** Returns the user's onboarding profile, or null if they haven't started onboarding yet. */
+export async function getProfile(): Promise<FwProfile | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("fw_profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("[flowise] getProfile error:", error);
+    return null;
+  }
+  return (data ?? null) as FwProfile | null;
 }

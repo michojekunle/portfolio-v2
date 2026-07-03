@@ -1,7 +1,22 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { JournalSidebarNav } from "@/components/journal/SidebarNav";
-import { getRecentEntries } from "@/lib/journal/queries";
+import { AssistantWidget } from "@/components/journal/AssistantWidget";
+import { getRecentEntries, getObjectivesWithMilestones } from "@/lib/journal/queries";
+import { PwaRegistrar } from "@/components/PwaRegistrar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  manifest: "/manifests/vela.json",
+  appleWebApp: {
+    capable: true,
+    title: "Vela Journal",
+    statusBarStyle: "black-translucent",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+};
 
 export default async function JournalLayout({
   children,
@@ -16,7 +31,10 @@ export default async function JournalLayout({
   }
 
   // Compute current streak for sidebar widget
-  const recentEntries = await getRecentEntries(60);
+  const [recentEntries, objectives] = await Promise.all([
+    getRecentEntries(60),
+    getObjectivesWithMilestones(),
+  ]);
   const streakCount = (() => {
     let count = 0;
     const cursor = new Date();
@@ -36,6 +54,8 @@ export default async function JournalLayout({
       <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-[240px] flex flex-col relative">
         <main className="flex-1 min-h-screen max-[1024px]:pt-[52px]">{children}</main>
       </div>
+      <AssistantWidget hasObjectives={objectives.length > 0} />
+      <PwaRegistrar toolId="journal" />
     </div>
   );
 }

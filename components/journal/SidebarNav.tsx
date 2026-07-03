@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
-import { Home, Target, BookOpen, LogOut, Menu, X, Compass } from "lucide-react";
+import { Home, Target, BookOpen, LogOut, Menu, X, Compass, CalendarDays } from "lucide-react";
 import { VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 
 const NAV_LINKS = [
-  { href: "/tools/journal",            label: "Dashboard",   icon: <Home size={16} /> },
-  { href: "/tools/journal/log",        label: "Today's Log", icon: <BookOpen size={16} /> },
-  { href: "/tools/journal/objectives", label: "Objectives",  icon: <Target size={16} /> },
+  { href: "/tools/journal",             label: "Dashboard",   icon: <Home size={16} /> },
+  { href: "/tools/journal/log",         label: "Today's Log", icon: <BookOpen size={16} /> },
+  { href: "/tools/journal/log/history", label: "History",     icon: <CalendarDays size={16} /> },
+  { href: "/tools/journal/objectives",  label: "Objectives",  icon: <Target size={16} /> },
 ];
 
 const TAGLINES = [
@@ -72,7 +73,6 @@ function SidebarContent({
             </div>
           </div>
         </div>
-        {/* Motivational tagline */}
         <p
           className="font-mono text-[9px] tracking-[0.08em] leading-[1.5] mt-[14px] mb-0 italic"
           style={{ color: VELA_ACCENT, opacity: 0.75 }}
@@ -98,7 +98,6 @@ function SidebarContent({
             >
               <span style={{ color: active ? VELA_ACCENT : "var(--ink-3)" }}>{link.icon}</span>
               {link.label}
-              {/* Active right-side indicator */}
               {active && (
                 <span
                   className="absolute right-0 top-[50%] -translate-y-[50%] w-[3px] h-[60%] rounded-l-full"
@@ -112,7 +111,6 @@ function SidebarContent({
 
       {/* Footer */}
       <div className="px-[16px] pb-[24px] border-t border-[var(--rule)] pt-[16px] space-y-[10px]">
-        {/* Streak mini-widget */}
         {streakCount > 0 && (
           <div
             className="px-[12px] py-[10px] rounded-[10px] flex items-center gap-[10px]"
@@ -136,14 +134,12 @@ function SidebarContent({
           </div>
         )}
 
-        {/* Email */}
         <div className="px-[12px] py-[8px]">
           <div className="font-mono text-[10px] tracking-[0.08em] truncate text-[var(--ink-3)]">
             {shortEmail}
           </div>
         </div>
 
-        {/* Sign out */}
         <button
           onClick={onSignOut}
           disabled={signingOut}

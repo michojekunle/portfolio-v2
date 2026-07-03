@@ -7,7 +7,6 @@ import { useState } from "react";
 import {
   Home,
   Library,
-  BookOpen,
   BarChart2,
   Settings,
   LogOut,
@@ -15,15 +14,20 @@ import {
   X,
   Flame,
   BookMarked,
+  BookOpen,
   Brain,
+  Compass,
+  Trophy,
 } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/tools/chapterly",             label: "Home",       icon: <Home size={16} /> },
   { href: "/tools/chapterly/library",     label: "Library",    icon: <Library size={16} /> },
-  { href: "/tools/chapterly/flashcards",  label: "Flashcards", icon: <Brain size={16} /> },
-  { href: "/tools/chapterly/stats",       label: "Stats",      icon: <BarChart2 size={16} /> },
-  { href: "/tools/chapterly/settings",    label: "Settings",   icon: <Settings size={16} /> },
+  { href: "/tools/chapterly/discover",    label: "Discover",    icon: <Compass size={16} /> },
+  { href: "/tools/chapterly/flashcards",  label: "Flashcards",  icon: <Brain size={16} /> },
+  { href: "/tools/chapterly/challenges",  label: "Challenges",  icon: <Trophy size={16} /> },
+  { href: "/tools/chapterly/stats",       label: "Stats",       icon: <BarChart2 size={16} /> },
+  { href: "/tools/chapterly/settings",    label: "Settings",    icon: <Settings size={16} /> },
 ];
 
 interface Props {

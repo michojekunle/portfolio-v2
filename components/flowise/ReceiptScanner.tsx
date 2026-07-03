@@ -19,7 +19,7 @@ interface Props {
   accounts: FwAccount[];
   categories: FwCategory[];
   onClose: () => void;
-  onTransactionAdded: () => void;
+  onTransactionAdded: (tx: FwTransaction) => void;
 }
 
 export function ReceiptScanner({ accounts, categories, onClose, onTransactionAdded }: Props): React.ReactElement {
@@ -98,7 +98,7 @@ export function ReceiptScanner({ accounts, categories, onClose, onTransactionAdd
               categories={categories}
               prefill={prefill}
               onClose={onClose}
-              onCreated={(_tx: FwTransaction) => { onTransactionAdded(); onClose(); }}
+              onCreated={(tx: FwTransaction) => { onTransactionAdded(tx); onClose(); }}
               embedded
             />
           </div>

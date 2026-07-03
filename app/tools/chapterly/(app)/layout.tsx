@@ -3,6 +3,21 @@ import { createClient } from "@/lib/supabase/server";
 import { ChSidebarNav } from "@/components/chapterly/SidebarNav";
 import { ChapterlyThemeTweaker } from "@/components/chapterly/ThemeTweaker";
 import { getOrCreateGoal } from "@/lib/chapterly/queries";
+import { PwaRegistrar } from "@/components/PwaRegistrar";
+import { BadgeUnlockToast } from "@/components/chapterly/BadgeUnlockToast";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  manifest: "/manifests/chapterly.json",
+  appleWebApp: {
+    capable: true,
+    title: "Chapterly",
+    statusBarStyle: "black-translucent",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+};
 
 export default async function ChapterlyLayout({
   children,
@@ -28,6 +43,8 @@ export default async function ChapterlyLayout({
         <main className="flex-1 min-h-screen">{children}</main>
       </div>
       <ChapterlyThemeTweaker />
+      <PwaRegistrar toolId="chapterly" />
+      <BadgeUnlockToast />
     </div>
   );
 }

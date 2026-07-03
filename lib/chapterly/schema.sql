@@ -78,6 +78,9 @@ create table if not exists ch_goals (
   streak_count        int not null default 0,
   longest_streak      int not null default 0,
   streak_freeze_count int not null default 0,
+  streak_freeze_until timestamptz,
+  onboarded           boolean not null default false,
+  learning_plan       jsonb not null default '[]',
   last_read_date      date,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
@@ -160,3 +163,17 @@ $$;
 create trigger ch_books_updated_at  before update on ch_books  for each row execute function update_ch_updated_at();
 create trigger ch_notes_updated_at  before update on ch_notes  for each row execute function update_ch_updated_at();
 create trigger ch_goals_updated_at  before update on ch_goals  for each row execute function update_ch_updated_at();
+
+-- ============================================================
+-- Schema Migrations & Alterations (Chapterly Headway Update)
+-- Run these statements to add new columns to your live database
+-- ============================================================
+
+-- Add onboarding status and learning plan storage
+alter table ch_goals add column if not exists onboarded boolean not null default false;
+alter table ch_goals add column if not exists learning_plan jsonb not null default '[]';
+
+-- Add streak freeze capabilities
+alter table ch_goals add column if not exists streak_freeze_until timestamptz;
+alter table ch_goals add column if not exists streak_freeze_count int not null default 0;
+

@@ -84,6 +84,17 @@ export interface ChNote {
   updated_at: string;
 }
 
+export interface RecommendedBookPlanItem {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  cover_url: string;
+  category: string;
+  read_time_minutes: number;
+  is_added: boolean;
+}
+
 export interface ChGoal {
   id: string;
   user_id: string;
@@ -92,22 +103,40 @@ export interface ChGoal {
   streak_count: number;
   longest_streak: number;
   streak_freeze_count: number;
+  streak_freeze_until: string | null;
+  onboarded: boolean;
+  learning_plan: RecommendedBookPlanItem[];
   last_read_date: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export type BadgeId =
+  // Milestones
   | "first_book"
-  | "night_owl"
-  | "marathon"
+  | "completionist_1"
   | "completionist_10"
   | "completionist_50"
+  | "book_whisperer"
+  // Streaks
+  | "streak_3"
   | "streak_7"
   | "streak_30"
   | "streak_100"
-  | "speed_demon"
-  | "book_whisperer";
+  // Sessions
+  | "night_owl"
+  | "early_bird"
+  | "marathon"
+  | "speed_reader"
+  // Engagement
+  | "highlight_hero"
+  | "note_keeper"
+  | "flashcard_master"
+  | "ai_explorer"
+  // Depth
+  | "polymath"
+  | "deep_reader"
+  | "speed_demon";
 
 export interface ChAchievement {
   id: string;

@@ -4,7 +4,8 @@ import { useState, useCallback } from "react";
 import type { FwAccount, FwTransaction, FwCategory, MonthlyStats } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
 import { TransactionForm } from "./TransactionForm";
-import { TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, ChevronRight } from "lucide-react";
+import { ReceiptScanner } from "./ReceiptScanner";
+import { TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, ChevronRight, Camera } from "lucide-react";
 import Link from "next/link";
 
 const ACCENT = "#16A34A";
@@ -29,6 +30,7 @@ export function FwDashboardClient({
   const [accounts, setAccounts] = useState(initialAccounts);
   const [transactions, setTransactions] = useState(initialTransactions);
   const [showForm, setShowForm] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const [stats, setStats] = useState({ thisMonth, lastMonth });
   const netWorth = accounts.filter(a => !a.is_archived)
     .reduce((s, a) => s + a.current_balance, 0);
@@ -87,14 +89,25 @@ export function FwDashboardClient({
             Dashboard
           </h1>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-200 hover:opacity-90 border-none cursor-pointer"
-          style={{ background: ACCENT }}
-        >
-          <Plus size={14} />
-          Add Transaction
-        </button>
+        <div className="flex items-center gap-[8px]">
+          <button
+            onClick={() => setShowScanner(true)}
+            className="inline-flex items-center gap-[6px] h-[44px] px-[16px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 hover:bg-[var(--bg-3)] cursor-pointer"
+            style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }}
+            title="Scan a receipt or bank alert"
+          >
+            <Camera size={14} />
+            Scan
+          </button>
+          <button
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-200 hover:opacity-90 border-none cursor-pointer"
+            style={{ background: ACCENT }}
+          >
+            <Plus size={14} />
+            Add Transaction
+          </button>
+        </div>
       </div>
 
       {/* Summary cards */}
@@ -221,6 +234,16 @@ export function FwDashboardClient({
           categories={categories}
           onCreated={handleTransactionCreated}
           onClose={() => setShowForm(false)}
+        />
+      )}
+
+      {/* Receipt / bank alert scanner modal */}
+      {showScanner && (
+        <ReceiptScanner
+          accounts={accounts}
+          categories={categories}
+          onClose={() => setShowScanner(false)}
+          onTransactionAdded={handleTransactionCreated}
         />
       )}
     </div>
