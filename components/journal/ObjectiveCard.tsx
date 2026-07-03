@@ -28,6 +28,8 @@ export function ObjectiveCard({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [statusBusy, setStatusBusy] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   const milestones = objective.milestones ?? [];
   const doneMilestones = milestones.filter((m) => m.is_done).length;
@@ -48,7 +50,12 @@ export function ObjectiveCard({
       completed: "active",
       dropped: "active",
     };
-    await onUpdate(objective.id, { status: next[objective.status] });
+    setStatusBusy(true);
+    try {
+      await onUpdate(objective.id, { status: next[objective.status] });
+    } finally {
+      setStatusBusy(false);
+    }
   };
 
   const handleAddMilestone = async (): Promise<void> => {
@@ -67,7 +74,12 @@ export function ObjectiveCard({
       setTimeout(() => setConfirmDelete(false), 3000);
       return;
     }
-    await onDelete(objective.id);
+    setDeleteBusy(true);
+    try {
+      await onDelete(objective.id);
+    } finally {
+      setDeleteBusy(false);
+    }
   };
 
   const handleMilestoneToggle = async (milestoneId: string, isDone: boolean): Promise<void> => {
@@ -110,11 +122,12 @@ export function ObjectiveCard({
               </h3>
               <button
                 onClick={() => void handleStatusCycle()}
-                className="flex-shrink-0 font-mono text-[8px] tracking-[0.1em] uppercase px-[7px] py-[2px] rounded-full border-none cursor-pointer transition-opacity hover:opacity-70"
+                disabled={statusBusy}
+                className="flex-shrink-0 font-mono text-[8px] tracking-[0.1em] uppercase px-[7px] py-[2px] rounded-full border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-50"
                 style={{ background: `${statusCfg.color}15`, color: statusCfg.color }}
                 title="Click to toggle status"
               >
-                {statusCfg.label}
+                {statusBusy ? "…" : statusCfg.label}
               </button>
               <span
                 className="flex-shrink-0 font-mono text-[8px] tracking-[0.1em] uppercase px-[7px] py-[2px] rounded-full"
@@ -180,11 +193,12 @@ export function ObjectiveCard({
           <div className="flex items-center gap-[1px] flex-shrink-0">
             <button
               onClick={() => void handleDelete()}
-              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent"
+              disabled={deleteBusy}
+              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent disabled:opacity-50"
               style={{ color: confirmDelete ? "#DC2626" : "var(--ink-4)" }}
               title={confirmDelete ? "Click again to confirm" : "Delete objective"}
             >
-              <Trash2 size={12} />
+              <Trash2 size={12} className={deleteBusy ? "animate-pulse" : ""} />
             </button>
             <button
               onClick={() => setExpanded((e) => !e)}

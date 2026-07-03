@@ -240,9 +240,9 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
           className="hidden max-[1024px]:block fixed inset-0 z-40"
           onClick={() => setMobileOpen(false)}
         >
-          <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
+          <div className="absolute inset-0 bg-black/40" style={{ top: "52px" }} aria-hidden="true" />
           <aside
-            className="absolute top-0 left-0 h-full w-[240px] border-r border-[var(--rule)]"
+            className="absolute top-[52px] left-0 h-[calc(100vh-52px)] w-[240px] border-r border-[var(--rule)]"
             style={{ background: "var(--bg)" }}
             onClick={(e) => e.stopPropagation()}
           >
