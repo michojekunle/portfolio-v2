@@ -35,7 +35,8 @@ const AESTHETIC_MOODS = [
   "Minimalist",
   "Maximalist",
   "Brutalist",
-  "Premium Editorial (Zamir)"
+  "Premium Editorial (Zamir)",
+  "Light Editorial (Zamir Light)"
 ] as const;
 type AestheticMood = (typeof AESTHETIC_MOODS)[number];
 
@@ -116,6 +117,20 @@ const MOOD_STYLES: Record<AestheticMood, MoodStyle> = {
     accent: "#C5A880",
     subtext: "#a1a1aa",
     border: "#27272a",
+    borderWidth: 1,
+    borderRadius: 24,
+    fontTitle: "Georgia, serif",
+    fontBody: "Inter, sans-serif",
+    isItalicTitle: true,
+    showDivider: true,
+    shadow: "none",
+  },
+  "Light Editorial (Zamir Light)": {
+    bg: "#faf8f5",
+    text: "#1c1917",
+    accent: "#855f2f",
+    subtext: "#57534e",
+    border: "#e7e2d8",
     borderWidth: 1,
     borderRadius: 24,
     fontTitle: "Georgia, serif",
