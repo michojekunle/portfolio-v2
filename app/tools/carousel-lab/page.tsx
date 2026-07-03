@@ -831,40 +831,7 @@ export default function CarouselLabPage(): React.ReactElement {
             </div>
           )}
 
-          <div className="space-y-[10px]">
-            <label className="block font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
-              Select Aesthetic Mood Style
-            </label>
-            <div className="grid grid-cols-5 max-[720px]:grid-cols-2 gap-[12px]">
-              {AESTHETIC_MOODS.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => {
-                    setAesthetic(t);
-                    setCustomBg("");
-                    setCustomText("");
-                    setCustomAccent("");
-                  }}
-                  className="flex flex-col items-center justify-between p-[12px] rounded-[12px] border text-center cursor-pointer transition-all h-[96px]"
-                  style={{
-                    background: aesthetic === t ? "var(--bg)" : "transparent",
-                    borderColor: aesthetic === t ? ACCENT : "var(--rule)",
-                  }}
-                >
-                  <div
-                    className="w-[26px] h-[26px] rounded-full border border-white/20 shadow-sm"
-                    style={{ background: MOOD_STYLES[t].bg }}
-                  />
-                  <div>
-                    <div className="font-mono text-[9px] tracking-[0.05em] uppercase font-semibold text-[var(--ink)] line-clamp-2">
-                      {t}
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+
 
           {inputMode === "manual" ? (
             <button
@@ -963,10 +930,33 @@ export default function CarouselLabPage(): React.ReactElement {
                 )}
               </div>
 
-              {/* Design settings */}
               <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[20px]">
                 <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
                   Canvas Customizer
+                </div>
+
+                {/* Aesthetic Mood Selector */}
+                <div>
+                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                    Aesthetic Mood Style
+                  </label>
+                  <select
+                    value={aesthetic}
+                    onChange={(e) => {
+                      const t = e.target.value as AestheticMood;
+                      setAesthetic(t);
+                      setCustomBg("");
+                      setCustomText("");
+                      setCustomAccent("");
+                    }}
+                    className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none focus:border-[var(--ink-3)]"
+                  >
+                    {AESTHETIC_MOODS.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Aspect Ratio */}
