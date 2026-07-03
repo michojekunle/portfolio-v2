@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireJournalAuth } from "@/lib/journal/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -20,18 +21,27 @@ export async function GET(
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:entries:get:${user.id}`, { limit: 120, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const { date } = await params;
 
   if (!DATE_RE.test(date)) {
     return NextResponse.json({ error: "Invalid date format — expected YYYY-MM-DD" }, { status: 400 });
   }
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("jo_entries")
     .select("*")
     .eq("date", date)
     .eq("user_id", user.id)
     .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.error("[journal/entries/[date]] GET error:", error);
+    return NextResponse.json({ error: "Failed to fetch entry" }, { status: 500 });
+  }
 
   return NextResponse.json({ entry: data ?? null });
 }
@@ -43,6 +53,10 @@ export async function PUT(
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:entries:put:${user.id}`, { limit: 60, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const { date } = await params;
 
   if (!DATE_RE.test(date)) {

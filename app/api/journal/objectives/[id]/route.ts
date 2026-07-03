@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireJournalAuth } from "@/lib/journal/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
+import type { JoObjective, JoMilestone } from "@/lib/journal/types";
+
+type ObjectiveRow = JoObjective & { jo_milestones?: JoMilestone[] };
 
 const UpdateSchema = z.object({
   title: z.string().min(1).max(200).optional(),
@@ -19,6 +23,10 @@ export async function PATCH(
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:objectives:patch:${user.id}`, { limit: 60, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const { id } = await params;
 
   let body: unknown;
@@ -45,13 +53,21 @@ export async function PATCH(
     .select("*, jo_milestones(*)")
     .single();
 
-  if (error || !data) {
+  if (error) {
     console.error("[journal/objectives/[id]] PATCH error:", error);
-    return NextResponse.json({ error: "Objective not found or update failed" }, { status: 404 });
+    if (error.code === "PGRST116") {
+      return NextResponse.json({ error: "Objective not found" }, { status: 404 });
+    }
+    return NextResponse.json({ error: "Failed to update objective" }, { status: 500 });
   }
 
+  if (!data) {
+    return NextResponse.json({ error: "Objective not found" }, { status: 404 });
+  }
+
+  const row = data as ObjectiveRow;
   return NextResponse.json({
-    objective: { ...data, milestones: (data as any).jo_milestones ?? [] },
+    objective: { ...data, milestones: row.jo_milestones ?? [] },
   });
 }
 
@@ -62,17 +78,26 @@ export async function DELETE(
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:objectives:delete:${user.id}`, { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
   const { id } = await params;
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("jo_objectives")
     .delete()
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("id");
 
   if (error) {
     console.error("[journal/objectives/[id]] DELETE error:", error);
     return NextResponse.json({ error: "Failed to delete objective" }, { status: 500 });
+  }
+
+  if (!data || data.length === 0) {
+    return NextResponse.json({ error: "Objective not found" }, { status: 404 });
   }
 
   return NextResponse.json({ success: true });

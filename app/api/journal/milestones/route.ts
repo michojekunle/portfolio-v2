@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireJournalAuth } from "@/lib/journal/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const CreateSchema = z.object({
   objective_id: z.string().uuid(),
@@ -12,6 +13,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:milestones:post:${user.id}`, { limit: 60, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   let body: unknown;
   try {

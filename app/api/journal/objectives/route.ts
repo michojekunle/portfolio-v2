@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireJournalAuth } from "@/lib/journal/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
+import type { JoObjective, JoMilestone } from "@/lib/journal/types";
+
+type ObjectiveRow = JoObjective & { jo_milestones?: JoMilestone[] };
 
 const CreateSchema = z.object({
   title: z.string().min(1).max(200),
@@ -14,11 +18,15 @@ const CreateSchema = z.object({
 export async function GET(): Promise<NextResponse> {
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { supabase } = auth;
+  const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:objectives:get:${user.id}`, { limit: 120, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { data, error } = await supabase
     .from("jo_objectives")
     .select("*, jo_milestones(*)")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -26,10 +34,10 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to fetch objectives" }, { status: 500 });
   }
 
-  const objectives = (data ?? []).map((obj) => ({
-    ...obj,
-    milestones: (obj as any).jo_milestones ?? [],
-  }));
+  const objectives = (data ?? []).map((obj) => {
+    const row = obj as ObjectiveRow;
+    return { ...obj, milestones: row.jo_milestones ?? [] };
+  });
 
   return NextResponse.json({ objectives });
 }
@@ -38,6 +46,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const auth = await requireJournalAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
+
+  const rl = checkRateLimit(`journal:objectives:post:${user.id}`, { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   let body: unknown;
   try {

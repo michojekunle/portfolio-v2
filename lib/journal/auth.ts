@@ -7,9 +7,11 @@ type AuthResult =
 
 export async function requireJournalAuth(): Promise<AuthResult> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error("[journal/auth] getUser error:", error.message);
+    return { supabase: null, user: null, unauthorized: true };
+  }
   if (!user) return { supabase: null, user: null, unauthorized: true };
   return { supabase, user, unauthorized: false };
 }
