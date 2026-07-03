@@ -4,9 +4,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 
 const RequestSchema = z.object({
-  topic: z.string().min(1).max(500),
-  slideCount: z.number().int().min(3).max(6),
+  topic: z.string().min(1).max(5000),
+  slideCount: z.number().int().min(3).max(8), // support 3-8 slides
   theme: z.enum(["Minimal", "Dark", "Bold", "Earthy"]),
+  mode: z.enum(["topic", "refine"]).default("topic").optional(),
 });
 
 export type Slide = {
@@ -22,10 +23,19 @@ const THEME_INSTRUCTIONS: Record<string, string> = {
   Earthy: "Use warm, grounded language. Natural analogies. Community-focused tone.",
 };
 
-function buildPrompt(topic: string, slideCount: number, theme: string): string {
+function buildPrompt(topic: string, slideCount: number, theme: string, mode: "topic" | "refine" = "topic"): string {
   const toneInstruction = THEME_INSTRUCTIONS[theme] ?? THEME_INSTRUCTIONS.Minimal;
-  return `Create a ${slideCount}-slide carousel presentation about: ${topic}
+  const coreInstruction = mode === "refine"
+    ? `Take the following rough notes, draft outline, or raw text ideas and refine/structure them into a highly engaging presentation:
+---
+${topic}
+---
+`
+    : `Create a carousel presentation about the following topic: ${topic}`;
 
+  return `${coreInstruction}
+
+Slide count: ${slideCount}
 Tone: ${toneInstruction}
 
 Each slide needs a short title (under 60 chars), main content (2-3 punchy sentences, under 200 chars total), and an optional single emoji that represents the slide.
@@ -75,14 +85,19 @@ function parseSlides(raw: string): Slide[] {
   return slides;
 }
 
-async function generateWithGroq(topic: string, slideCount: number, theme: string): Promise<Slide[]> {
+async function generateWithGroq(
+  topic: string,
+  slideCount: number,
+  theme: string,
+  mode: "topic" | "refine"
+): Promise<Slide[]> {
   if (!process.env.GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY is not configured");
   }
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const completion = await groq.chat.completions.create({
     model: "llama-3.1-8b-instant",
-    messages: [{ role: "user", content: buildPrompt(topic, slideCount, theme) }],
+    messages: [{ role: "user", content: buildPrompt(topic, slideCount, theme, mode) }],
     temperature: 0.75,
     max_tokens: 1024,
   });
@@ -91,13 +106,18 @@ async function generateWithGroq(topic: string, slideCount: number, theme: string
   return parseSlides(content);
 }
 
-async function generateWithGemini(topic: string, slideCount: number, theme: string): Promise<Slide[]> {
+async function generateWithGemini(
+  topic: string,
+  slideCount: number,
+  theme: string,
+  mode: "topic" | "refine"
+): Promise<Slide[]> {
   if (!process.env.GEMINI_API_KEY) {
     throw new Error("GEMINI_API_KEY is not configured");
   }
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-  const result = await model.generateContent(buildPrompt(topic, slideCount, theme));
+  const result = await model.generateContent(buildPrompt(topic, slideCount, theme, mode));
   const content = result.response.text();
   return parseSlides(content);
 }
@@ -118,11 +138,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const { topic, slideCount, theme } = parsed.data;
+  const { topic, slideCount, theme, mode } = parsed.data;
   const errors: string[] = [];
+  const activeMode = mode || "topic";
 
   try {
-    const slides = await generateWithGroq(topic, slideCount, theme);
+    const slides = await generateWithGroq(topic, slideCount, theme, activeMode);
     return NextResponse.json({ slides });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -131,7 +152,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const slides = await generateWithGemini(topic, slideCount, theme);
+    const slides = await generateWithGemini(topic, slideCount, theme, activeMode);
     return NextResponse.json({ slides });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

@@ -152,7 +152,9 @@ const FONTS_LIST = [
 ];
 
 export default function CarouselLabPage(): React.ReactElement {
+  const [inputMode, setInputMode] = useState<"topic" | "refine" | "manual">("topic");
   const [topic, setTopic] = useState("");
+  const [roughNotes, setRoughNotes] = useState("");
   const [slideCount, setSlideCount] = useState(5);
   const [slides, setSlides] = useState<Slide[]>([]);
   const [loading, setLoading] = useState(false);
@@ -182,7 +184,8 @@ export default function CarouselLabPage(): React.ReactElement {
   const activeSlide = slides[activeSlideIndex] ?? null;
 
   const generate = useCallback(async (): Promise<void> => {
-    if (!topic.trim()) return;
+    const activeTextSource = inputMode === "refine" ? roughNotes.trim() : topic.trim();
+    if (!activeTextSource) return;
     setLoading(true);
     setError(null);
     setSlides([]);
@@ -191,12 +194,12 @@ export default function CarouselLabPage(): React.ReactElement {
     try {
       const res = await fetch("/api/carousel-lab/generate", {
         method: "POST",
-        // Fallback default theme Minimal/Dark mapping for generator routing
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic: topic.trim(),
+          topic: activeTextSource,
           slideCount,
           theme: aesthetic === "Premium Editorial (Zamir)" ? "Dark" : "Minimal",
+          mode: inputMode === "refine" ? "refine" : "topic",
         }),
       });
 
@@ -227,7 +230,30 @@ export default function CarouselLabPage(): React.ReactElement {
     } finally {
       setLoading(false);
     }
-  }, [topic, slideCount, aesthetic]);
+  }, [topic, roughNotes, inputMode, slideCount, aesthetic]);
+
+  const startManualDeck = (): void => {
+    setError(null);
+    const manualSlides: Slide[] = [
+      {
+        title: "The Ultimate Hook Title",
+        content: "Tap 'Edit Slide Content' in the sidebar below to customize this text directly.",
+        layout: "hook",
+      },
+      {
+        title: "Key Point 01",
+        content: "Illustrate your first concept or instruction in 2-3 clean, punchy sentences.",
+        layout: "default",
+      },
+      {
+        title: "Let's connect!",
+        content: "Customize this call to action layout to redirect swipers to your personal brand site.",
+        layout: "cta",
+      }
+    ];
+    setSlides(manualSlides);
+    setActiveSlideIndex(0);
+  };
 
   const activeMoodStyle = MOOD_STYLES[aesthetic];
 
@@ -658,69 +684,158 @@ export default function CarouselLabPage(): React.ReactElement {
           className="rounded-[16px] p-[32px] max-[720px]:p-[20px] mb-[40px] space-y-[24px]"
           style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
         >
-          <div className="flex gap-[16px] max-[720px]:flex-col">
-            <div className="flex-1">
-              <label
-                htmlFor="carousel-topic"
-                className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
-                style={{ color: "var(--ink-3)" }}
-              >
-                Topic or Content Pitch
-              </label>
-              <input
-                id="carousel-topic"
-                type="text"
-                placeholder="e.g. 5 Rules for Deep Focus, How to Write Copy that Sells..."
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") void generate();
-                }}
-                className="w-full rounded-[10px] px-[16px] h-[52px] text-[15px] outline-none transition-colors duration-150"
+          {/* Creation Mode Tabs */}
+          <div className="flex border-b border-[var(--rule)] pb-[1px] gap-[24px] overflow-x-auto">
+            {[
+              { id: "topic", label: "From Topic" },
+              { id: "refine", label: "Refine Raw Draft" },
+              { id: "manual", label: "Start Manually" }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setInputMode(tab.id as "topic" | "refine" | "manual")}
+                className="pb-[12px] font-mono text-[10px] uppercase tracking-[0.14em] font-semibold cursor-pointer border-b-2 transition-colors duration-150 shrink-0"
                 style={{
-                  background: "var(--bg)",
-                  border: "1px solid var(--rule)",
-                  color: "var(--ink)",
+                  color: inputMode === tab.id ? ACCENT : "var(--ink-3)",
+                  borderColor: inputMode === tab.id ? ACCENT : "transparent",
                 }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = ACCENT;
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "var(--rule)";
-                }}
-              />
-            </div>
-
-            <div className="w-[200px] max-[720px]:w-full">
-              <label
-                className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
-                style={{ color: "var(--ink-3)" }}
               >
-                Slides ({slideCount})
-              </label>
-              <div className="flex items-center gap-[12px] h-[52px] px-[12px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)]">
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {inputMode === "topic" && (
+            <div className="flex gap-[16px] max-[720px]:flex-col">
+              <div className="flex-1">
+                <label
+                  htmlFor="carousel-topic"
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  style={{ color: "var(--ink-3)" }}
+                >
+                  Topic or Content Pitch
+                </label>
                 <input
-                  type="range"
-                  min={3}
-                  max={8}
-                  value={slideCount}
-                  onChange={(e) => setSlideCount(Number(e.target.value))}
-                  className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
-                  style={{ accentColor: ACCENT }}
-                  aria-label="Number of slides"
+                  id="carousel-topic"
+                  type="text"
+                  placeholder="e.g. 5 Rules for Focus, How to Write Copy that Sells..."
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") void generate();
+                  }}
+                  className="w-full rounded-[10px] px-[16px] h-[52px] text-[15px] outline-none transition-colors duration-150"
+                  style={{
+                    background: "var(--bg)",
+                    border: "1px solid var(--rule)",
+                    color: "var(--ink)",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = ACCENT;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "var(--rule)";
+                  }}
                 />
-                <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
-                  {slideCount}
-                </span>
+              </div>
+
+              <div className="w-[200px] max-[720px]:w-full">
+                <label
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  style={{ color: "var(--ink-3)" }}
+                >
+                  Slides ({slideCount})
+                </label>
+                <div className="flex items-center gap-[12px] h-[52px] px-[12px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)]">
+                  <input
+                    type="range"
+                    min={3}
+                    max={8}
+                    value={slideCount}
+                    onChange={(e) => setSlideCount(Number(e.target.value))}
+                    className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
+                    style={{ accentColor: ACCENT }}
+                    aria-label="Number of slides"
+                  />
+                  <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
+                    {slideCount}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {inputMode === "refine" && (
+            <div className="flex gap-[16px] max-[720px]:flex-col">
+              <div className="flex-1">
+                <label
+                  htmlFor="carousel-notes"
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  style={{ color: "var(--ink-3)" }}
+                >
+                  Rough Notes / Copy Draft / Ideas Outline
+                </label>
+                <textarea
+                  id="carousel-notes"
+                  placeholder="Paste your rough outline, outline points, draft notes, or bullet lists here for AI to clean up..."
+                  value={roughNotes}
+                  onChange={(e) => setRoughNotes(e.target.value)}
+                  rows={4}
+                  className="w-full rounded-[10px] p-[16px] text-[14px] outline-none transition-colors duration-150 resize-none font-sans"
+                  style={{
+                    background: "var(--bg)",
+                    border: "1px solid var(--rule)",
+                    color: "var(--ink)",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = ACCENT;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "var(--rule)";
+                  }}
+                />
+              </div>
+
+              <div className="w-[200px] max-[720px]:w-full">
+                <label
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  style={{ color: "var(--ink-3)" }}
+                >
+                  Slides ({slideCount})
+                </label>
+                <div className="flex items-center gap-[12px] h-[96px] px-[12px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)]">
+                  <input
+                    type="range"
+                    min={3}
+                    max={8}
+                    value={slideCount}
+                    onChange={(e) => setSlideCount(Number(e.target.value))}
+                    className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
+                    style={{ accentColor: ACCENT }}
+                    aria-label="Number of slides"
+                  />
+                  <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
+                    {slideCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {inputMode === "manual" && (
+            <div className="p-[24px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)] text-center">
+              <p className="text-[13px] leading-[1.65] text-[var(--ink-2)] m-0">
+                🚀 Skip AI generation entirely! Start with a default empty 3-slide template (Hook Cover, Body Point, Brand CTA Card) and craft your layout parameters, brand initials logo, and custom content slides directly in the sidebar design panels.
+              </p>
+            </div>
+          )}
 
           <div className="space-y-[10px]">
             <label className="block font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
               Select Aesthetic Mood Style
             </label>
-            <div className="grid grid-cols-4 max-[720px]:grid-cols-2 gap-[12px]">
+            <div className="grid grid-cols-5 max-[720px]:grid-cols-2 gap-[12px]">
               {AESTHETIC_MOODS.map((t) => (
                 <button
                   key={t}
@@ -731,7 +846,7 @@ export default function CarouselLabPage(): React.ReactElement {
                     setCustomText("");
                     setCustomAccent("");
                   }}
-                  className="flex flex-col items-center justify-between p-[14px] rounded-[12px] border text-center cursor-pointer transition-all h-[96px]"
+                  className="flex flex-col items-center justify-between p-[12px] rounded-[12px] border text-center cursor-pointer transition-all h-[96px]"
                   style={{
                     background: aesthetic === t ? "var(--bg)" : "transparent",
                     borderColor: aesthetic === t ? ACCENT : "var(--rule)",
@@ -742,7 +857,7 @@ export default function CarouselLabPage(): React.ReactElement {
                     style={{ background: MOOD_STYLES[t].bg }}
                   />
                   <div>
-                    <div className="font-mono text-[10px] tracking-[0.05em] uppercase font-semibold text-[var(--ink)]">
+                    <div className="font-mono text-[9px] tracking-[0.05em] uppercase font-semibold text-[var(--ink)] line-clamp-2">
                       {t}
                     </div>
                   </div>
@@ -751,18 +866,29 @@ export default function CarouselLabPage(): React.ReactElement {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => void generate()}
-            disabled={loading || !topic.trim()}
-            className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center gap-[8px]"
-            style={{
-              background: topic.trim() && !loading ? ACCENT : "var(--rule)",
-            }}
-          >
-            <Sparkles size={14} />
-            {loading ? "Generating slides..." : "Generate carousel"}
-          </button>
+          {inputMode === "manual" ? (
+            <button
+              type="button"
+              onClick={startManualDeck}
+              className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 text-white flex items-center justify-center gap-[8px] cursor-pointer"
+              style={{ background: ACCENT }}
+            >
+              <Plus size={14} /> Start Designer Canvas
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => void generate()}
+              disabled={loading || (inputMode === "topic" ? !topic.trim() : !roughNotes.trim())}
+              className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center gap-[8px] cursor-pointer"
+              style={{
+                background: (inputMode === "topic" ? topic.trim() : roughNotes.trim()) && !loading ? ACCENT : "var(--rule)",
+              }}
+            >
+              <Sparkles size={14} />
+              {loading ? "Generating slides..." : "Generate carousel"}
+            </button>
+          )}
         </div>
 
         {/* Customization Workspace */}
