@@ -989,7 +989,7 @@ export default function CarouselLabPage(): React.ReactElement {
           <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-[32px]">
             
             {/* Left Controls Panel */}
-            <div className="space-y-[24px] max-[800px]:order-2">
+            <div className="space-y-[24px] max-[800px]:order-2 overflow-y-auto max-h-[calc(100vh-140px)] max-[800px]:max-h-none pr-[2px]">
               
               {/* Creator Branding */}
               <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">

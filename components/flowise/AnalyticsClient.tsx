@@ -29,6 +29,7 @@ export function AnalyticsClient(): React.ReactElement {
   const [loading, setLoading] = useState(true);
   const [insight, setInsight] = useState<Insight | null>(null);
   const [insightLoading, setInsightLoading] = useState(false);
+  const [insightError, setInsightError] = useState<string | null>(null);
 
   const fetchData = useCallback(async (m: number): Promise<void> => {
     setLoading(true);
@@ -55,14 +56,19 @@ export function AnalyticsClient(): React.ReactElement {
 
   const generateInsights = async (): Promise<void> => {
     setInsightLoading(true);
+    setInsightError(null);
     try {
       const res = await fetch("/api/flowise/insights", { method: "POST" });
       if (res.ok) {
         const d = await res.json() as Insight;
         setInsight(d);
+      } else {
+        const body = await res.json().catch(() => ({})) as { error?: string };
+        setInsightError(body.error ?? "Failed to generate insights. Please try again.");
       }
     } catch (err) {
       console.error("[analytics] insights error:", err);
+      setInsightError("Connection error. Please check your network and retry.");
     } finally {
       setInsightLoading(false);
     }
@@ -215,7 +221,16 @@ export function AnalyticsClient(): React.ReactElement {
               </div>
             )}
 
-            {!insightLoading && !insight && (
+            {!insightLoading && insightError && (
+              <div className="rounded-[10px] px-[16px] py-[12px] flex items-center justify-between gap-[12px]" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                <p className="text-[12px] leading-[1.5] m-0" style={{ color: "#dc2626" }}>{insightError}</p>
+                <button onClick={() => void generateInsights()} className="shrink-0 font-mono text-[10px] uppercase tracking-[0.06em] border-none cursor-pointer bg-transparent" style={{ color: ACCENT }}>
+                  <RefreshCw size={10} className="inline mr-[4px]" />Retry
+                </button>
+              </div>
+            )}
+
+            {!insightLoading && !insight && !insightError && (
               <div className="rounded-[10px] py-[32px] text-center" style={{ border: "1px dashed var(--rule)" }}>
                 <Sparkles size={24} className="mx-auto mb-[8px] text-[var(--ink-4)]" />
                 <div className="text-[13px] text-[var(--ink-3)] mb-[4px]">No insights yet</div>

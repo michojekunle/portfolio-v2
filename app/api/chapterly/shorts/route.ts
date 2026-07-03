@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { DEFAULT_MODEL_CHAIN } from "../chat/route";
+import { z } from "zod";
 
 export interface ConceptCard {
   title: string;
@@ -34,10 +35,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { book_id, book_title, book_author } = body;
-  if (!book_id || !book_title) {
-    return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+  const rawBody: unknown = body;
+  const schema = z.object({
+    book_id: z.string().uuid(),
+    book_title: z.string().min(1).max(300),
+    book_author: z.string().max(200).nullable().optional(),
+  });
+  const parsed = schema.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid parameters", details: parsed.error.issues }, { status: 400 });
   }
+
+  const { book_id, book_title, book_author } = parsed.data;
 
   // Verify this book belongs to the user
   const { data: book } = await supabase

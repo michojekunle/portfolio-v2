@@ -107,6 +107,12 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
   };
 
   const handleSave = useCallback(async (): Promise<void> => {
+    // Guard: require at least minimal content before saving
+    const hasContent = priorities.length > 0 || accomplished.length > 0 || energy !== null || blockers.trim() || notes.trim();
+    if (!hasContent) {
+      setError("Please add at least one priority, accomplishment, or energy level before saving.");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
