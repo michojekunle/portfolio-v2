@@ -26,7 +26,10 @@ import {
   Camera,
   Save,
   Check,
+  FileText,
 } from "lucide-react";
+import { SummaryDrawer } from "./SummaryDrawer";
+import type { SummaryBook } from "./SummaryDrawer";
 
 const ACCENT = "#4F6D7A";
 
@@ -632,6 +635,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
   const [showUpload, setShowUpload] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [editingBook, setEditingBook] = useState<ChBookWithStats | null>(null);
+  const [summaryBook, setSummaryBook] = useState<SummaryBook | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const DAILY_PICK = getDailyPick();
@@ -869,14 +873,31 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           </div>
         </div>
 
-        <button
-          onClick={importDailyPick}
-          disabled={importingPick}
-          className="shrink-0 font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 text-[var(--ink-2)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] bg-transparent"
-          style={{ borderColor: "var(--rule)" }}
-        >
-          {importingPick ? "Importing…" : "Read Summary"}
-        </button>
+        <div className="flex items-center gap-[8px] shrink-0 flex-wrap">
+          <button
+            onClick={() =>
+              setSummaryBook({
+                title: DAILY_PICK.title,
+                author: DAILY_PICK.author,
+                cover_url: DAILY_PICK.cover_url,
+                previewContent: DAILY_PICK.content,
+              })
+            }
+            className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+            style={{ background: ACCENT }}
+          >
+            <FileText size={13} />
+            Read Summary
+          </button>
+          <button
+            onClick={importDailyPick}
+            disabled={importingPick}
+            className="font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 text-[var(--ink-2)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] bg-transparent"
+            style={{ borderColor: "var(--rule)" }}
+          >
+            {importingPick ? "Importing…" : "Add to Library"}
+          </button>
+        </div>
       </div>
 
       {/* ── Filters ── */}
@@ -933,6 +954,14 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               key={book.id}
               book={book}
               onEdit={() => setEditingBook(book)}
+              onSummary={() =>
+                setSummaryBook({
+                  id: book.id,
+                  title: book.title,
+                  author: book.author,
+                  cover_url: book.cover_url,
+                })
+              }
             />
           ))}
         </div>
@@ -947,26 +976,44 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           onDeleted={handleBookDeleted}
         />
       )}
+
+      {/* ── Summary Drawer ── */}
+      {summaryBook && (
+        <SummaryDrawer
+          book={summaryBook}
+          onClose={() => setSummaryBook(null)}
+        />
+      )}
     </>
   );
 }
 
 // ─── Book Card ────────────────────────────────────────────────────────────────
 
-function BookCard({ book, onEdit }: { book: ChBookWithStats; onEdit: () => void }): React.ReactElement {
+function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: () => void; onSummary: () => void }): React.ReactElement {
   const cfg = STATUS_CONFIG[book.status] ?? STATUS_CONFIG.unread;
 
   return (
     <div className="group relative block rounded-[14px] border border-[var(--rule)] bg-[var(--bg-2)] hover:border-[var(--ink-3)] hover:shadow-md transition-all duration-200 overflow-hidden">
-      {/* Edit button — appears on hover */}
-      <button
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(); }}
-        className="absolute top-[8px] right-[8px] z-10 w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-        style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}
-        title="Edit book"
-      >
-        <Pencil size={12} />
-      </button>
+      {/* Action buttons — appear on hover */}
+      <div className="absolute top-[8px] right-[8px] z-10 flex items-center gap-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummary(); }}
+          className="w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
+          style={{ background: "rgba(79,109,122,0.9)", color: "#fff" }}
+          title="View summary"
+        >
+          <FileText size={12} />
+        </button>
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(); }}
+          className="w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
+          style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}
+          title="Edit book"
+        >
+          <Pencil size={12} />
+        </button>
+      </div>
 
       {/* Card is a link for reading */}
       <Link href={`/tools/chapterly/read/${book.id}`} className="block no-underline">

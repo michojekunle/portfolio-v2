@@ -1480,33 +1480,239 @@ interface ConceptShareModalProps {
   onClose: () => void;
 }
 
+const CH_ACCENT = "#4F6D7A";
+
+function renderConceptToCanvas(card: ConceptCard, book: ChBook): HTMLCanvasElement {
+  const SIZE = 1080;
+  const PAD = 80;
+  const canvas = document.createElement("canvas");
+  canvas.width = SIZE;
+  canvas.height = SIZE;
+  const ctx = canvas.getContext("2d")!;
+
+  // Background
+  ctx.fillStyle = "#F4F7F8";
+  ctx.fillRect(0, 0, SIZE, SIZE);
+
+  // Subtle mesh glows
+  const g1 = ctx.createRadialGradient(SIZE * 0.15, SIZE * 0.15, 40, SIZE * 0.15, SIZE * 0.15, SIZE * 0.55);
+  g1.addColorStop(0, `${CH_ACCENT}18`);
+  g1.addColorStop(1, "transparent");
+  ctx.fillStyle = g1;
+  ctx.fillRect(0, 0, SIZE, SIZE);
+
+  // Top accent bar
+  ctx.fillStyle = CH_ACCENT;
+  ctx.fillRect(0, 0, SIZE, 6);
+
+  // Wrap text helper
+  const wrap = (text: string, maxW: number, font: string): string[] => {
+    ctx.font = font;
+    const words = text.split(" ");
+    const lines: string[] = [];
+    let line = "";
+    for (const w of words) {
+      const test = line ? line + " " + w : w;
+      if (ctx.measureText(test).width > maxW && line) {
+        lines.push(line);
+        line = w;
+      } else {
+        line = test;
+      }
+    }
+    if (line) lines.push(line);
+    return lines;
+  };
+
+  const drawLines = (lines: string[], x: number, y: number, lh: number): number => {
+    for (const l of lines) { ctx.fillText(l, x, y); y += lh; }
+    return y;
+  };
+
+  let y = PAD + 32;
+
+  // Logo badge background
+  ctx.fillStyle = `${CH_ACCENT}18`;
+  ctx.beginPath();
+  ctx.roundRect(PAD, y, 180, 32, 16);
+  ctx.fill();
+  ctx.fillStyle = CH_ACCENT;
+  ctx.font = "bold 14px 'Courier New', monospace";
+  ctx.textAlign = "left";
+  ctx.fillText("⚡  CHAPTERLY", PAD + 16, y + 21);
+
+  y += 56;
+
+  // Concept short label
+  ctx.fillStyle = `${CH_ACCENT}99`;
+  ctx.font = "13px 'Courier New', monospace";
+  ctx.fillText("💡 CONCEPT SHORT", PAD, y);
+  y += 28;
+
+  // Book title label
+  const bookLabel = `from "${book.title}"${book.author ? ` · ${book.author}` : ""}`;
+  ctx.fillStyle = `${CH_ACCENT}88`;
+  ctx.font = "12px 'Courier New', monospace";
+  const maxBookW = SIZE - PAD * 2;
+  const bookLabelText = ctx.measureText(bookLabel).width > maxBookW
+    ? bookLabel.slice(0, Math.floor(bookLabel.length * (maxBookW / ctx.measureText(bookLabel).width))) + "…"
+    : bookLabel;
+  ctx.fillText(bookLabelText, PAD, y);
+  y += 40;
+
+  // Divider
+  ctx.strokeStyle = `${CH_ACCENT}30`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD, y);
+  ctx.lineTo(SIZE - PAD, y);
+  ctx.stroke();
+  y += 36;
+
+  // Title
+  const titleFont = "bold 52px Georgia, serif";
+  const titleLines = wrap(card.title, SIZE - PAD * 2, titleFont);
+  ctx.fillStyle = "#1a2a30";
+  ctx.font = titleFont;
+  y = drawLines(titleLines, PAD, y, 62);
+  y += 28;
+
+  // Concept text
+  const conceptFont = "500 30px 'Inter', system-ui, sans-serif";
+  const conceptLines = wrap(card.concept, SIZE - PAD * 2, conceptFont);
+  ctx.fillStyle = "#2d4a55";
+  ctx.font = conceptFont;
+  y = drawLines(conceptLines, PAD, y, 42);
+  y += 24;
+
+  // Insight text
+  if (card.insight) {
+    const insightFont = "italic 24px Georgia, serif";
+    const insightLines = wrap(card.insight, SIZE - PAD * 2 - 20, insightFont);
+    ctx.fillStyle = `${CH_ACCENT}cc`;
+    ctx.font = insightFont;
+    y = drawLines(insightLines, PAD + 10, y, 34);
+    y += 20;
+  }
+
+  // Quote block
+  if (card.quote) {
+    const quoteFont = "italic 22px Georgia, serif";
+    const quoteLines = wrap(`"${card.quote}"`, SIZE - PAD * 2 - 48, quoteFont);
+    const quoteH = quoteLines.length * 32 + 28;
+    ctx.fillStyle = `${CH_ACCENT}12`;
+    ctx.beginPath();
+    ctx.roundRect(PAD, y, SIZE - PAD * 2, quoteH, 12);
+    ctx.fill();
+    ctx.fillStyle = CH_ACCENT;
+    ctx.font = quoteFont;
+    y = drawLines(quoteLines, PAD + 24, y + 22, 32);
+    y += 22;
+  }
+
+  // Bottom CTA bar
+  const barY = SIZE - PAD - 48;
+  ctx.strokeStyle = `${CH_ACCENT}25`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD, barY);
+  ctx.lineTo(SIZE - PAD, barY);
+  ctx.stroke();
+
+  ctx.fillStyle = `${CH_ACCENT}66`;
+  ctx.font = "13px 'Courier New', monospace";
+  ctx.textAlign = "left";
+  ctx.fillText("Read & grow with Chapterly", PAD, barY + 32);
+
+  // CTA pill
+  const ctaText = "Try Chapterly →";
+  ctx.font = "bold 13px 'Courier New', monospace";
+  const ctaW = ctx.measureText(ctaText).width + 28;
+  ctx.fillStyle = CH_ACCENT;
+  ctx.beginPath();
+  ctx.roundRect(SIZE - PAD - ctaW, barY + 14, ctaW, 28, 14);
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "right";
+  ctx.fillText(ctaText, SIZE - PAD - 14, barY + 32);
+
+  return canvas;
+}
+
 function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): React.ReactElement {
   const [copied, setCopied] = useState(false);
-  const CH_ACCENT = "#4F6D7A";
+  const [imgLoading, setImgLoading] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
-  const shareText = `💡 ${card.title}\n\n${card.concept}\n\n"${card.insight}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & learn with Chapterly 📖`;
+  const shareText = `💡 ${card.title}\n\n${card.concept}\n\n"${card.insight}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & grow with Chapterly 📖`;
+  const twitterText = encodeURIComponent(`💡 ${card.title}\n\n${card.concept}\n\n— From "${book.title}"\n\nRead & grow with Chapterly 📖`);
+  const whatsappText = encodeURIComponent(shareText);
+
+  const getBlob = (): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      const canvas = renderConceptToCanvas(card, book);
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png");
+    });
+
+  const handleDownload = async (): Promise<void> => {
+    setImgLoading(true);
+    try {
+      const blob = await getBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${card.title.slice(0, 30).replace(/\s+/g, "-").toLowerCase()}-chapterly.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("[concept-share] download error:", err);
+    } finally {
+      setImgLoading(false);
+    }
+  };
+
+  const handleNativeShare = async (): Promise<void> => {
+    setSharing(true);
+    try {
+      const blob = await getBlob();
+      const file = new File([blob], "concept-chapterly.png", { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], text: shareText });
+      } else {
+        await navigator.share({ text: shareText });
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name !== "AbortError") {
+        console.error("[concept-share] share error:", err);
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
 
   const handleCopy = async (): Promise<void> => {
     try {
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    } catch {
-      // fallback silently
+    } catch (err) {
+      console.error("[concept-share] clipboard error:", err);
     }
   };
+
+  const canNativeShare = typeof navigator !== "undefined" && "share" in navigator;
 
   return (
     <>
       <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-[20px] pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-[16px] pointer-events-none">
         <div
-          className="w-full max-w-[480px] rounded-[24px] border border-[var(--rule)] shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
+          className="w-full max-w-[500px] max-h-[90vh] rounded-[24px] border border-[var(--rule)] shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
           style={{ background: "var(--bg)" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)]">
+          <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)] shrink-0">
             <div>
               <div className="font-semibold text-[15px] text-[var(--ink)]">Share Concept</div>
               <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mt-[2px]">
@@ -1514,6 +1720,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
               </div>
             </div>
             <button
+              type="button"
               onClick={onClose}
               className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none cursor-pointer bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
               aria-label="Close"
@@ -1522,65 +1729,170 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
             </button>
           </div>
 
-          {/* Card preview */}
-          <div className="px-[24px] py-[20px]">
-            <div
-              className="rounded-[16px] p-[24px] flex flex-col gap-[10px]"
-              style={{ background: `${CH_ACCENT}08`, border: `1px solid ${CH_ACCENT}20` }}
-            >
-              <div className="font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: CH_ACCENT }}>
-                💡 concept short · {book.title}
-              </div>
-              <h3 className="text-[17px] font-bold text-[var(--ink)] m-0 leading-[1.3]">{card.title}</h3>
-              <p className="text-[13px] font-medium text-[var(--ink-2)] m-0 leading-[1.5]">{card.concept}</p>
-              <p className="text-[12px] text-[var(--ink-3)] m-0 leading-[1.6]">{card.insight}</p>
+          {/* Scrollable body */}
+          <div className="overflow-y-auto flex-1">
+            {/* Card preview */}
+            <div className="px-[24px] pt-[20px]">
               <div
-                className="mt-[8px] pt-[12px] flex items-center justify-between"
-                style={{ borderTop: `1px solid ${CH_ACCENT}20` }}
+                className="rounded-[16px] p-[20px] flex flex-col gap-[10px] relative overflow-hidden"
+                style={{ background: "#F4F7F8", borderTop: `3px solid ${CH_ACCENT}` }}
               >
-                <span className="font-mono text-[9px] tracking-[0.08em] text-[var(--ink-3)]">
-                  {book.author ? `by ${book.author}` : book.title}
-                </span>
-                <span
-                  className="font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
-                  style={{ background: `${CH_ACCENT}15`, color: CH_ACCENT }}
+                <div className="flex items-center gap-[6px]">
+                  <span
+                    className="font-mono text-[9px] tracking-[0.12em] uppercase px-[10px] py-[3px] rounded-full font-semibold"
+                    style={{ background: `${CH_ACCENT}18`, color: CH_ACCENT }}
+                  >
+                    ⚡ CHAPTERLY
+                  </span>
+                  <span className="font-mono text-[9px] text-[var(--ink-3)]">💡 Concept Short</span>
+                </div>
+                <h3 className="text-[16px] font-bold m-0 leading-[1.3]" style={{ color: "#1a2a30" }}>
+                  {card.title}
+                </h3>
+                <p className="text-[13px] font-medium m-0 leading-[1.5]" style={{ color: "#2d4a55" }}>
+                  {card.concept}
+                </p>
+                {card.insight && (
+                  <p className="text-[12px] italic m-0 leading-[1.6]" style={{ color: `${CH_ACCENT}cc` }}>
+                    {card.insight}
+                  </p>
+                )}
+                {card.quote && (
+                  <div
+                    className="text-[11px] italic leading-[1.6] px-[12px] py-[8px] rounded-[8px]"
+                    style={{ background: `${CH_ACCENT}10`, color: CH_ACCENT }}
+                  >
+                    &ldquo;{card.quote}&rdquo;
+                  </div>
+                )}
+                <div
+                  className="flex items-center justify-between pt-[10px] mt-[4px]"
+                  style={{ borderTop: `1px solid ${CH_ACCENT}20` }}
                 >
-                  Try Chapterly →
-                </span>
+                  <span className="font-mono text-[9px] tracking-[0.06em]" style={{ color: `${CH_ACCENT}88` }}>
+                    {book.author ? `by ${book.author}` : book.title}
+                  </span>
+                  <span
+                    className="font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full text-white"
+                    style={{ background: CH_ACCENT }}
+                  >
+                    Try Chapterly →
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Copy text share */}
-          <div className="px-[24px] pb-[20px] flex flex-col gap-[10px]">
-            <p className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)] m-0">Copy text to share on Twitter, LinkedIn, or Stories:</p>
-            <div
-              className="rounded-[10px] p-[14px] text-[12px] leading-[1.7] text-[var(--ink-2)] whitespace-pre-wrap font-mono"
-              style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
-            >
-              {shareText}
-            </div>
-            <div className="flex gap-[8px]">
+            {/* Export & Share actions */}
+            <div className="px-[24px] pt-[16px] pb-[4px] flex flex-col gap-[10px]">
+              {/* Primary: Save image */}
               <button
+                type="button"
+                onClick={() => void handleDownload()}
+                disabled={imgLoading}
+                className="w-full h-[44px] flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold rounded-[12px] border-none cursor-pointer transition-all text-white disabled:opacity-60"
+                style={{ background: CH_ACCENT }}
+              >
+                <Download size={13} />
+                {imgLoading ? "Rendering…" : "Save as Image"}
+              </button>
+
+              {/* Platform share row */}
+              <div className="grid grid-cols-3 gap-[8px]">
+                {/* X / Twitter */}
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${twitterText}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all no-underline"
+                  style={{
+                    background: "#000000",
+                    color: "#ffffff",
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.731-8.835L1.254 2.25H8.08l4.259 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+                  </svg>
+                  Post to X
+                </a>
+
+                {/* WhatsApp */}
+                <a
+                  href={`https://wa.me/?text=${whatsappText}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all no-underline"
+                  style={{ background: "#25D366", color: "#ffffff" }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  WhatsApp
+                </a>
+
+                {/* Native Share (mobile) or Copy Image */}
+                {canNativeShare ? (
+                  <button
+                    type="button"
+                    onClick={() => void handleNativeShare()}
+                    disabled={sharing}
+                    className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border disabled:opacity-60"
+                    style={{
+                      background: "var(--bg-2)",
+                      borderColor: "var(--rule)",
+                      color: "var(--ink)",
+                    }}
+                  >
+                    <Share2 size={12} />
+                    {sharing ? "…" : "More"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void handleDownload()}
+                    disabled={imgLoading}
+                    className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border disabled:opacity-60"
+                    style={{
+                      background: "var(--bg-2)",
+                      borderColor: "var(--rule)",
+                      color: "var(--ink)",
+                    }}
+                  >
+                    <Download size={12} />
+                    PNG
+                  </button>
+                )}
+              </div>
+
+              {/* Copy text */}
+              <button
+                type="button"
                 onClick={() => void handleCopy()}
-                className="flex-1 h-[40px] flex items-center justify-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold rounded-[10px] border-none cursor-pointer transition-all text-white"
-                style={{ background: copied ? "#16A34A" : CH_ACCENT }}
+                className="w-full h-[36px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border"
+                style={{
+                  background: copied ? "#16A34A08" : "transparent",
+                  borderColor: copied ? "#16A34A40" : "var(--rule)",
+                  color: copied ? "#16A34A" : "var(--ink-3)",
+                }}
               >
-                {copied ? <><Check size={12} /> Copied!</> : <><Share2 size={12} /> Copy Text</>}
-              </button>
-              <button
-                onClick={onClose}
-                className="h-[40px] px-[16px] rounded-[10px] border border-[var(--rule)] bg-transparent font-mono text-[10px] tracking-[0.1em] uppercase cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-all"
-              >
-                Close
+                {copied ? <><Check size={11} /> Text Copied!</> : <><Share2 size={11} /> Copy Text</>}
               </button>
             </div>
-          </div>
 
-          <div className="px-[24px] pb-[16px]">
-            <p className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.08em] m-0">
-              Share your reading insights · Powered by Chapterly
-            </p>
+            {/* Text preview (collapsed) */}
+            <div className="px-[24px] pb-[20px] pt-[4px]">
+              <details className="group">
+                <summary className="font-mono text-[9px] tracking-[0.08em] text-[var(--ink-4)] cursor-pointer list-none flex items-center gap-[4px] pb-[8px]">
+                  <ChevronRight size={10} className="group-open:rotate-90 transition-transform" />
+                  Preview share text
+                </summary>
+                <div
+                  className="rounded-[10px] p-[12px] text-[11px] leading-[1.7] whitespace-pre-wrap font-mono"
+                  style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}
+                >
+                  {shareText}
+                </div>
+              </details>
+            </div>
           </div>
         </div>
       </div>

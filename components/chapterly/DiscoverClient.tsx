@@ -171,7 +171,7 @@ export function DiscoverClient({ books, categories }: Props): React.ReactElement
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-[28px] py-[24px]">
+            <div className="flex-1 min-h-0 overflow-y-auto px-[28px] py-[24px]">
               <p className="text-[13px] leading-[1.7] text-[var(--ink-2)] mb-[24px]">
                 {selected.description}
               </p>

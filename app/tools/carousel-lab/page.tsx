@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import JSZip from "jszip";
 import {
   Sparkles,
   Plus,
@@ -182,6 +183,7 @@ export default function CarouselLabPage(): React.ReactElement {
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const activeSlide = slides[activeSlideIndex] ?? null;
+  const [exportLoading, setExportLoading] = useState<"png" | "zip" | "pdf" | null>(null);
 
   const generate = useCallback(async (): Promise<void> => {
     const activeTextSource = inputMode === "refine" ? roughNotes.trim() : topic.trim();
@@ -677,66 +679,99 @@ export default function CarouselLabPage(): React.ReactElement {
     ctx.textAlign = "left"; // reset
   };
 
-  const exportSlideAsPNG = (index: number): void => {
-    const slide = slides[index];
+  const exportSlideAsPNG = (): void => {
+    const slide = slides[activeSlideIndex];
     if (!slide) return;
+    setExportLoading("png");
 
     const width = 1080;
     const height = aspectRatio === "square" ? 1080 : 1350;
-
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) { setExportLoading(null); return; }
 
-    drawSlideToCanvas(ctx, index, width, height);
-
-    // Trigger download
+    drawSlideToCanvas(ctx, activeSlideIndex, width, height);
     const link = document.createElement("a");
-    link.download = `slide-${index + 1}.png`;
+    link.download = `slide-${activeSlideIndex + 1}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
+    setExportLoading(null);
   };
 
-  const exportAllAsPNG = (): void => {
-    slides.forEach((_, idx) => {
-      setTimeout(() => {
-        exportSlideAsPNG(idx);
-      }, idx * 300);
-    });
+  const exportAllAsZip = async (): Promise<void> => {
+    if (exportLoading) return;
+    setExportLoading("zip");
+    try {
+      const zip = new JSZip();
+      const width = 1080;
+      const height = aspectRatio === "square" ? 1080 : 1350;
+
+      for (let idx = 0; idx < slides.length; idx++) {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) continue;
+        drawSlideToCanvas(ctx, idx, width, height);
+        const blob = await new Promise<Blob>((resolve, reject) => {
+          canvas.toBlob((b) => {
+            if (b) resolve(b);
+            else reject(new Error("canvas.toBlob failed"));
+          }, "image/png");
+        });
+        zip.file(`slide-${idx + 1}.png`, blob);
+      }
+
+      const content = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(content);
+      const link = document.createElement("a");
+      link.download = `${topic.slice(0, 20) || "carousel"}-slides.zip`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("[carousel-lab] ZIP export failed:", err);
+    } finally {
+      setExportLoading(null);
+    }
   };
 
   // LinkedIn Multi-page PDF compiler
   const exportAsPDF = async (): Promise<void> => {
-    const { jsPDF } = (await import("jspdf")) as any;
-    
-    const width = 1080;
-    const height = aspectRatio === "square" ? 1080 : 1350;
-    
-    const pdf = new jsPDF({
-      orientation: "p",
-      unit: "px",
-      format: [width, height],
-    });
+    if (exportLoading) return;
+    setExportLoading("pdf");
+    try {
+      const { jsPDF } = await import("jspdf");
+      const width = 1080;
+      const height = aspectRatio === "square" ? 1080 : 1350;
 
-    for (let idx = 0; idx < slides.length; idx++) {
-      if (idx > 0) {
-        pdf.addPage([width, height]);
+      const pdf = new jsPDF({
+        orientation: "p",
+        unit: "px",
+        format: [width, height],
+      });
+
+      for (let idx = 0; idx < slides.length; idx++) {
+        if (idx > 0) pdf.addPage([width, height]);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          drawSlideToCanvas(ctx, idx, width, height);
+          const imgData = canvas.toDataURL("image/jpeg", 0.95);
+          pdf.addImage(imgData, "JPEG", 0, 0, width, height);
+        }
       }
-      
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        drawSlideToCanvas(ctx, idx, width, height);
-        const imgData = canvas.toDataURL("image/jpeg", 0.95);
-        pdf.addImage(imgData, "JPEG", 0, 0, width, height);
-      }
+
+      pdf.save(`${topic.slice(0, 16) || "carousel-lab"}-swipe.pdf`);
+    } catch (err) {
+      console.error("[carousel-lab] PDF export failed:", err);
+    } finally {
+      setExportLoading(null);
     }
-
-    pdf.save(`${topic.slice(0, 16) || "carousel-lab"}-swipe.pdf`);
   };
 
   return (
@@ -989,7 +1024,7 @@ export default function CarouselLabPage(): React.ReactElement {
           <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-[32px]">
             
             {/* Left Controls Panel */}
-            <div className="space-y-[24px] max-[800px]:order-2 overflow-y-auto max-h-[calc(100vh-140px)] max-[800px]:max-h-none pr-[2px]">
+            <div className="space-y-[24px] max-[800px]:order-2 overflow-y-auto max-h-[calc(100vh-160px)] max-[800px]:max-h-none pr-[2px] sticky top-[80px] self-start max-[800px]:static">
               
               {/* Creator Branding */}
               <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">
@@ -1069,11 +1104,9 @@ export default function CarouselLabPage(): React.ReactElement {
                   <select
                     value={aesthetic}
                     onChange={(e) => {
-                      const t = e.target.value as AestheticMood;
-                      setAesthetic(t);
-                      setCustomBg("");
-                      setCustomText("");
-                      setCustomAccent("");
+                      setAesthetic(e.target.value as AestheticMood);
+                      // Custom colors intentionally kept — they override the new aesthetic
+                      // until cleared by the user in the color inputs below
                     }}
                     className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none focus:border-[var(--ink-3)]"
                   >
@@ -1222,19 +1255,34 @@ export default function CarouselLabPage(): React.ReactElement {
                     Slide {activeSlideIndex + 1} of {slides.length}
                   </span>
                 </div>
-                <div className="flex items-center gap-[8px]">
+                <div className="flex items-center gap-[8px] flex-wrap">
                   <button
-                    onClick={() => exportSlideAsPNG(activeSlideIndex)}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)]"
+                    type="button"
+                    onClick={exportSlideAsPNG}
+                    disabled={!!exportLoading}
+                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Download size={11} /> Export PNG
+                    <Download size={11} />
+                    {exportLoading === "png" ? "Saving…" : "This Slide PNG"}
                   </button>
                   <button
-                    onClick={exportAsPDF}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none text-white cursor-pointer hover:opacity-90"
+                    type="button"
+                    onClick={() => void exportAllAsZip()}
+                    disabled={!!exportLoading}
+                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Layers size={11} />
+                    {exportLoading === "zip" ? "Zipping…" : "All Slides ZIP"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void exportAsPDF()}
+                    disabled={!!exportLoading}
+                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none text-white cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ background: ACCENT }}
                   >
-                    <FileText size={11} /> LinkedIn PDF
+                    <FileText size={11} />
+                    {exportLoading === "pdf" ? "Building PDF…" : "LinkedIn PDF"}
                   </button>
                 </div>
               </div>

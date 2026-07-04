@@ -33,8 +33,10 @@ import {
   Sparkles,
   Headphones,
   BookOpen,
+  Layers,
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
+import { ChapterCanvas } from "./ChapterCanvas";
 
 const ACCENT = "#4F6D7A";
 
@@ -267,11 +269,16 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   const [showSummaryTts, setShowSummaryTts] = useState(false);
 
   // Phase 3: text selection → highlight
+  const [showChapterCanvas, setShowChapterCanvas] = useState(false);
+
   const [textSelection, setTextSelection] = useState<TextSelection | null>(
     null
   );
 
   const [liveProgress, setLiveProgress] = useState<number>(book.progress_pct ?? 0);
+
+  // Swipe gesture for text-format page scrolling
+  const swipeTouchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const sessionStartRef = useRef<number>(Date.now());
   // Prevents double-firing: visibilitychange (hidden) + cleanup can both call
@@ -449,7 +456,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   }, [book.id, book.title, book.author, book.cover_url]);
 
   // ── Text selection → highlight ────────────────────────────────
-  const handleTextMouseUp = (): void => {
+  const handleTextSelectionEnd = (): void => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed || !sel.toString().trim()) {
       setTextSelection(null);
@@ -457,10 +464,11 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     }
     const range = sel.getRangeAt(0);
     const rect = range.getBoundingClientRect();
+    // rect.top is already viewport-relative — no scrollY adjustment needed for position:fixed toolbar
     setTextSelection({
       text: sel.toString().trim().slice(0, 2000),
       x: rect.left + rect.width / 2,
-      y: rect.top + window.scrollY - 52,
+      y: rect.top - 56,
     });
   };
 
@@ -743,6 +751,22 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           >
             <Sparkles size={14} />
           </button>
+
+          {/* Chapter Canvas — only available when text content is loaded */}
+          {isTextFormat && docContent && (
+            <button
+              onClick={() => setShowChapterCanvas(true)}
+              className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+              style={{
+                background: showChapterCanvas ? ACCENT + "30" : current.text + "12",
+                color: showChapterCanvas ? ACCENT : current.text,
+              }}
+              aria-label="Chapter canvas"
+              title="Chapter canvas"
+            >
+              <Layers size={14} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -842,7 +866,28 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             id="reader-content"
             className="max-w-[72ch] mx-auto px-[32px] py-[64px] leading-[1.75] min-h-[calc(100vh-56px)]"
             style={{ fontSize: `${fontSize}px`, color: current.text }}
-            onMouseUp={handleTextMouseUp}
+            onMouseUp={handleTextSelectionEnd}
+            onTouchStart={(e) => {
+              swipeTouchStartRef.current = {
+                x: e.touches[0]?.clientX ?? 0,
+                y: e.touches[0]?.clientY ?? 0,
+              };
+            }}
+            onTouchEnd={(e) => {
+              const start = swipeTouchStartRef.current;
+              if (start) {
+                const dx = (e.changedTouches[0]?.clientX ?? 0) - start.x;
+                const dy = (e.changedTouches[0]?.clientY ?? 0) - start.y;
+                if (Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                  // Horizontal swipe: scroll one viewport height
+                  window.scrollBy({ top: dx < 0 ? window.innerHeight * 0.85 : -window.innerHeight * 0.85, behavior: "smooth" });
+                  swipeTouchStartRef.current = null;
+                  return;
+                }
+              }
+              swipeTouchStartRef.current = null;
+              handleTextSelectionEnd();
+            }}
           >
             {docLoading ? (
               <div
@@ -1018,7 +1063,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             aria-hidden="true"
           />
           <div
-            className="fixed top-[56px] right-0 bottom-0 z-50 w-[360px] max-[480px]:w-full flex flex-col shadow-2xl border-l"
+            className="fixed top-[56px] max-[1024px]:top-[116px] right-0 bottom-0 z-50 w-[360px] max-[480px]:w-full flex flex-col shadow-2xl border-l"
             style={{ background: current.bg, borderColor: current.text + "20" }}
           >
             <div
@@ -1137,7 +1182,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             aria-hidden="true"
           />
           <div
-            className="fixed top-[56px] max-[1024px]:top-[60px] right-0 bottom-0 z-50 w-[420px] max-[560px]:w-full flex flex-col shadow-2xl border-l overflow-hidden"
+            className="fixed top-[56px] max-[1024px]:top-[116px] right-0 bottom-0 z-50 w-[420px] max-[560px]:w-full flex flex-col shadow-2xl border-l overflow-hidden"
             style={{ background: current.bg, borderColor: current.text + "20" }}
           >
             <div
@@ -1169,7 +1214,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-[20px] py-[20px]">
+            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px]">
               {summaryLoading ? (
                 <div
                   className="flex items-center justify-center py-[60px] gap-[10px]"
@@ -1301,6 +1346,17 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           style={{ width: `${liveProgress}%`, background: ACCENT }}
         />
       </div>
+
+      {/* ── Chapter Canvas overlay ── */}
+      {showChapterCanvas && docContent && (
+        <ChapterCanvas
+          bookId={book.id}
+          bookTitle={book.title}
+          docContent={docContent}
+          onClose={() => setShowChapterCanvas(false)}
+          onSaveFlashcard={saveHighlightAsFlashcard}
+        />
+      )}
     </div>
   );
 }

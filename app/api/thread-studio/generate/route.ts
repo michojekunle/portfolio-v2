@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const RequestSchema = z.object({
   topic: z.string().min(1).max(5000),
@@ -110,6 +111,15 @@ function parseJsonArray(raw: string): string[] {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anon";
+  const rl = checkRateLimit(`thread-studio:${ip}`, { limit: 5, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment before generating again." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

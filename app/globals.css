@@ -190,7 +190,7 @@ body {
   --ink: #14130f;
   --ink-2: #3a3731;
   --ink-3: #6b6456;
-  --ink-4: #9c9486;
+  --ink-4: #857c6e;
   --rule: #d4ccb6;
   --rule-2: #e0d9c4;
   --v3-accent: #b8842b;
@@ -200,6 +200,8 @@ body {
   --maxw: 1320px;
   --gutter: 48px;
   --display-font: var(--font-fraunces), Georgia, serif;
+  /* Chapterly accent — WCAG AA compliant in each mode */
+  --ch-accent: #3d5662;
 }
 
 .dark {
@@ -209,12 +211,14 @@ body {
   --ink: #f0ebdd;
   --ink-2: #d6cfb8;
   --ink-3: #a89e8a;
-  --ink-4: #6a6050;
+  --ink-4: #7d7264;
   --rule: #2a2620;
   --rule-2: #1f1c17;
   --v3-accent: #d9a64f;
   --v3-accent-2: #f0c87a;
   --v3-accent-soft: #423314;
+  /* Chapterly accent — lighter in dark mode for contrast */
+  --ch-accent: #6b98a8;
 }
 
 /* ── Typography helpers ───────────────────────────────────────────────────── */

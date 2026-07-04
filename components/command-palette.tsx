@@ -283,7 +283,7 @@ export function CommandPaletteTrigger(): React.ReactElement {
       aria-label="Open command palette"
     >
       <span className="font-mono">Search</span>
-      <kbd className="text-[10px] bg-[var(--bg-2)] px-1.5 py-0.5 rounded font-mono text-[var(--ink-4)] border border-[var(--rule)] transition-colors group-hover:border-[var(--v3-accent-soft)] group-hover:text-[var(--v3-accent)]">
+      <kbd className="text-[10px] bg-[var(--bg-2)] px-1.5 py-0.5 rounded font-mono text-[var(--ink-3)] border border-[var(--rule)] transition-colors group-hover:border-[var(--v3-accent-soft)] group-hover:text-[var(--v3-accent)]">
         ⌘K
       </kbd>
     </button>

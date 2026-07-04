@@ -45,7 +45,7 @@ export function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
           {note.content}
         </blockquote>
         {note.page_ref && (
-          <span className="inline-block font-mono text-[10px] text-[var(--ink-4)] tracking-[0.06em] uppercase relative z-10">
+          <span className="inline-block font-mono text-[10px] text-[var(--ink-3)] tracking-[0.06em] uppercase relative z-10">
             p. {note.page_ref}
           </span>
         )}
@@ -57,7 +57,7 @@ export function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
     <div className={wrapperClass}>
       <span
         className={`text-[14px] mt-[2px] leading-[1.5] ${
-          isTakeaway ? "text-[var(--v3-accent)]" : "text-[var(--ink-4)]"
+          isTakeaway ? "text-[var(--v3-accent)]" : "text-[var(--ink-3)]"
         }`}
         aria-hidden="true"
       >
@@ -72,7 +72,7 @@ export function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
           {note.content}
         </p>
         {note.page_ref && (
-          <span className="inline-block mt-[8px] font-mono text-[10px] text-[var(--ink-4)] tracking-[0.06em]">
+          <span className="inline-block mt-[8px] font-mono text-[10px] text-[var(--ink-3)] tracking-[0.06em]">
             p. {note.page_ref}
           </span>
         )}
@@ -141,7 +141,7 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
                 <div className="flex flex-col gap-[56px]">
                   {quotes.length > 0 && (
                     <div className="flex flex-col gap-[24px]">
-                      <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--ink-4)] font-medium flex items-center gap-[12px]">
+                      <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--ink-3)] font-medium flex items-center gap-[12px]">
                         <div className="w-[12px] h-[1px] bg-[var(--v3-accent)]" />
                         Notable Quotes
                       </div>
@@ -154,7 +154,7 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
                   )}
                   {takeaways.length > 0 && (
                     <div className="flex flex-col gap-[24px]">
-                      <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--ink-4)] font-medium flex items-center gap-[12px]">
+                      <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--ink-3)] font-medium flex items-center gap-[12px]">
                         <div className="w-[12px] h-[1px] bg-[var(--v3-accent)]" />
                         Key Takeaways
                       </div>
@@ -167,7 +167,7 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
                   )}
                   {notes.length > 0 && (
                     <div className="flex flex-col gap-[24px]">
-                      <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--ink-4)] font-medium flex items-center gap-[12px]">
+                      <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--ink-3)] font-medium flex items-center gap-[12px]">
                         <div className="w-[12px] h-[1px] bg-[var(--ink-4)]" />
                         Reading Notes
                       </div>
