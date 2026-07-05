@@ -17,6 +17,8 @@ import {
   SkipBack,
   SkipForward,
   ChevronDown,
+  Plus,
+  Check,
 } from "lucide-react";
 
 const ACCENT = "#4F6D7A";
@@ -36,6 +38,10 @@ export interface SummaryBook {
 interface Props {
   book: SummaryBook;
   onClose: () => void;
+  /** Optional: saves this summary into the user's library as "Summary: <title>" */
+  onAddToLibrary?: () => Promise<void>;
+  /** Whether the summary is already saved in the library */
+  isAdded?: boolean;
 }
 
 // ── Markdown section parser ──────────────────────────────────────────────────
@@ -610,7 +616,7 @@ function LoadingPulse(): React.ReactElement {
 
 // ── Drawer ────────────────────────────────────────────────────────────────────
 
-export function SummaryDrawer({ book, onClose }: Props): React.ReactElement {
+export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props): React.ReactElement {
   const [activeTab, setActiveTab] = useState<"read" | "listen">("read");
   const [loading, setLoading] = useState(!book.previewContent);
   const [error, setError] = useState<string | null>(null);
@@ -618,6 +624,19 @@ export function SummaryDrawer({ book, onClose }: Props): React.ReactElement {
   const [summary, setSummary] = useState<ParsedSummary | null>(
     book.previewContent ? parseSummary(book.previewContent) : null
   );
+  const [addState, setAddState] = useState<"idle" | "adding" | "added">(isAdded ? "added" : "idle");
+
+  const handleAddToLibrary = async (): Promise<void> => {
+    if (!onAddToLibrary || addState !== "idle") return;
+    setAddState("adding");
+    try {
+      await onAddToLibrary();
+      setAddState("added");
+    } catch (err) {
+      console.error("[summary-drawer] add to library error:", err);
+      setAddState("idle");
+    }
+  };
 
   // Stream summary from API if no preview content
   useEffect(() => {
@@ -733,7 +752,7 @@ export function SummaryDrawer({ book, onClose }: Props): React.ReactElement {
                 {book.author}
               </div>
             )}
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[8px] flex-wrap">
               <div
                 className="inline-flex items-center gap-[5px] font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
                 style={{ background: `${ACCENT}14`, color: ACCENT }}
@@ -741,6 +760,28 @@ export function SummaryDrawer({ book, onClose }: Props): React.ReactElement {
                 <Lightbulb size={9} />
                 AI Summary
               </div>
+              {onAddToLibrary && (
+                <button
+                  onClick={() => void handleAddToLibrary()}
+                  disabled={addState !== "idle"}
+                  className="inline-flex items-center gap-[5px] font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full border cursor-pointer transition-all disabled:cursor-default"
+                  style={
+                    addState === "added"
+                      ? { background: "#16A34A14", color: "#16A34A", borderColor: "#16A34A40" }
+                      : { background: "transparent", color: ACCENT, borderColor: `${ACCENT}50` }
+                  }
+                  title={addState === "added" ? "Saved to your library" : "Save this summary to your library"}
+                >
+                  {addState === "adding" ? (
+                    <Loader2 size={9} className="animate-spin" />
+                  ) : addState === "added" ? (
+                    <Check size={9} />
+                  ) : (
+                    <Plus size={9} />
+                  )}
+                  {addState === "added" ? "In Library" : "Save to Library"}
+                </button>
+              )}
             </div>
           </div>
         </div>

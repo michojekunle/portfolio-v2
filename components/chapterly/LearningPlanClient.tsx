@@ -3,7 +3,8 @@
 import { useState } from "react";
 import type { RecommendedBookPlanItem } from "@/lib/chapterly/types";
 import { BookOpen, Plus, Loader2, Check, Sparkles } from "lucide-react";
-import { CURATED_BOOKS } from "@/lib/chapterly/curated";
+import { CURATED_BOOKS, type CuratedBookSummary } from "@/lib/chapterly/curated";
+import { SummaryDrawer } from "./SummaryDrawer";
 
 const ACCENT = "#4F6D7A";
 
@@ -22,8 +23,9 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
   );
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [readingBook, setReadingBook] = useState<CuratedBookSummary | null>(null);
 
-  const handleImport = async (item: RecommendedBookPlanItem): Promise<void> => {
+  const handleImport = async (item: RecommendedBookPlanItem): Promise<boolean> => {
     setLoadingId(item.id);
     setError(null);
     try {
@@ -55,8 +57,10 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
       setPlan((prev) =>
         prev.map((p) => (p.id === item.id ? { ...p, is_added: true } : p))
       );
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to import");
+      return false;
     } finally {
       setLoadingId(null);
     }
@@ -136,13 +140,24 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
                   </div>
                 </div>
 
-                {/* Import/Action button */}
-                <div className="shrink-0">
+                {/* Actions: Read Summary (primary) + Add to Library (secondary) */}
+                <div className="shrink-0 flex items-center gap-[6px]">
+                  <button
+                    onClick={() => {
+                      const summary = CURATED_BOOKS.find((c) => c.id === item.id);
+                      if (summary) setReadingBook(summary);
+                    }}
+                    className="h-[28px] px-[12px] rounded-[6px] font-mono text-[8px] tracking-[0.08em] uppercase font-semibold text-white cursor-pointer border-none flex items-center gap-[4px] transition-all hover:opacity-90"
+                    style={{ background: ACCENT }}
+                    title="Read this summary"
+                  >
+                    <BookOpen size={10} /> Read Summary
+                  </button>
                   {item.is_added ? (
                     <div
                       className="w-[28px] h-[28px] rounded-full flex items-center justify-center"
                       style={{ background: "#16A34A15", color: "#16A34A" }}
-                      title="Added to Library"
+                      title="Saved in your library"
                     >
                       <Check size={14} />
                     </div>
@@ -150,16 +165,14 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
                     <button
                       onClick={() => void handleImport(item)}
                       disabled={isLoading}
-                      className="h-[28px] px-[12px] rounded-[6px] font-mono text-[8px] tracking-[0.08em] uppercase font-semibold text-(--bg) cursor-pointer border-none flex items-center gap-[4px] transition-all hover:opacity-90 disabled:opacity-50"
-                      style={{ background: ACCENT }}
-                      title="Add to Library"
+                      className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center cursor-pointer border transition-all hover:opacity-80 disabled:opacity-50 bg-transparent"
+                      style={{ borderColor: `${ACCENT}50`, color: ACCENT }}
+                      title="Save summary to library"
                     >
                       {isLoading ? (
-                        <Loader2 size={10} className="animate-spin" />
+                        <Loader2 size={12} className="animate-spin" />
                       ) : (
-                        <>
-                          <Plus size={10} /> Add
-                        </>
+                        <Plus size={12} />
                       )}
                     </button>
                   )}
@@ -169,6 +182,26 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
           );
         })}
       </div>
+
+      {/* Headway-style summary drawer */}
+      {readingBook && (
+        <SummaryDrawer
+          book={{
+            title: readingBook.title,
+            author: readingBook.author,
+            cover_url: readingBook.cover_url,
+            previewContent: readingBook.content,
+          }}
+          onClose={() => setReadingBook(null)}
+          onAddToLibrary={async () => {
+            const item = plan.find((p) => p.id === readingBook.id);
+            if (!item) throw new Error("Plan item not found");
+            const ok = await handleImport(item);
+            if (!ok) throw new Error("Failed to save summary to library");
+          }}
+          isAdded={plan.find((p) => p.id === readingBook.id)?.is_added ?? false}
+        />
+      )}
     </div>
   );
 }

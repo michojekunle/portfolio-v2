@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, X, ChevronRight, BookOpen } from "lucide-react";
+import { Clock, BookOpen } from "lucide-react";
 import type { CuratedBookSummary } from "@/lib/chapterly/curated";
+import { SummaryDrawer } from "./SummaryDrawer";
 
 const ACCENT = "#4F6D7A";
 
@@ -16,13 +17,43 @@ const CATEGORY_COLORS: Record<string, string> = {
 interface Props {
   books: CuratedBookSummary[];
   categories: string[];
+  userBookTitles: string[];
 }
 
-export function DiscoverClient({ books, categories }: Props): React.ReactElement {
+export function DiscoverClient({ books, categories, userBookTitles }: Props): React.ReactElement {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [selected, setSelected] = useState<CuratedBookSummary | null>(null);
+  const [addedIds, setAddedIds] = useState<Set<string>>(() => {
+    const lowerTitles = userBookTitles.map((t) => t.toLowerCase());
+    return new Set(
+      books
+        .filter((b) => lowerTitles.includes(`summary: ${b.title}`.toLowerCase()))
+        .map((b) => b.id)
+    );
+  });
 
   const filtered = activeCategory ? books.filter((b) => b.category === activeCategory) : books;
+
+  const addToLibrary = async (book: CuratedBookSummary): Promise<void> => {
+    const dataUrl = `data:text/markdown;charset=utf-8,${encodeURIComponent(book.content)}`;
+    const res = await fetch("/api/chapterly/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: `Summary: ${book.title}`,
+        author: book.author,
+        cover_url: book.cover_url,
+        file_url: dataUrl,
+        file_format: "md",
+        file_size_bytes: book.content.length,
+      }),
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({})) as { error?: string };
+      throw new Error(d.error ?? "Failed to save summary to library");
+    }
+    setAddedIds((prev) => new Set(prev).add(book.id));
+  };
 
   return (
     <>
@@ -108,10 +139,10 @@ export function DiscoverClient({ books, categories }: Props): React.ReactElement
                   {book.read_time_minutes} min read
                 </div>
                 <div
-                  className="flex items-center gap-[4px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold transition-opacity group-hover:opacity-100 opacity-50"
+                  className="flex items-center gap-[4px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold transition-opacity group-hover:opacity-100 opacity-60"
                   style={{ color: ACCENT }}
                 >
-                  Read <ChevronRight size={12} />
+                  <BookOpen size={11} /> Read Summary
                 </div>
               </div>
             </button>
@@ -119,85 +150,19 @@ export function DiscoverClient({ books, categories }: Props): React.ReactElement
         })}
       </div>
 
-      {/* Summary drawer */}
+      {/* Headway-style summary drawer: chapter cards + Listen tab */}
       {selected && (
-        <>
-          <div
-            className="fixed inset-0 z-40 bg-black/50"
-            onClick={() => setSelected(null)}
-            aria-hidden="true"
-          />
-          <div
-            className="fixed top-0 right-0 bottom-0 z-50 w-[540px] max-[600px]:w-full flex flex-col shadow-2xl border-l border-[var(--rule)] overflow-hidden"
-            style={{ background: "var(--bg)" }}
-          >
-            {/* Drawer header */}
-            <div className="shrink-0 px-[28px] py-[20px] border-b border-[var(--rule)] flex items-start justify-between gap-[16px]">
-              <div className="min-w-0">
-                <div
-                  className="font-mono text-[8px] tracking-[0.14em] uppercase mb-[4px]"
-                  style={{ color: CATEGORY_COLORS[selected.category] ?? ACCENT }}
-                >
-                  {selected.category} · {selected.read_time_minutes} min read
-                </div>
-                <h2 className="text-[18px] font-semibold text-[var(--ink)] leading-[1.3] m-0 line-clamp-2">
-                  {selected.title}
-                </h2>
-                <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[2px]">
-                  {selected.author}
-                </div>
-              </div>
-              <button
-                onClick={() => setSelected(null)}
-                className="shrink-0 w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
-                style={{ color: "var(--ink-3)" }}
-                aria-label="Close"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Tagline */}
-            <div
-              className="shrink-0 px-[28px] py-[14px] border-b border-[var(--rule)]"
-              style={{ background: (CATEGORY_COLORS[selected.category] ?? ACCENT) + "08" }}
-            >
-              <p
-                className="text-[13px] leading-[1.6] m-0 italic"
-                style={{ color: CATEGORY_COLORS[selected.category] ?? ACCENT }}
-              >
-                &ldquo;{selected.tagline}&rdquo;
-              </p>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-[28px] py-[24px]">
-              <p className="text-[13px] leading-[1.7] text-[var(--ink-2)] mb-[24px]">
-                {selected.description}
-              </p>
-              <div
-                className="text-[13px] leading-[1.8] text-[var(--ink)] whitespace-pre-wrap"
-                style={{ fontFamily: "inherit" }}
-              >
-                {selected.content}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="shrink-0 px-[28px] py-[16px] border-t border-[var(--rule)] flex items-center justify-between">
-              <span className="font-mono text-[9px] text-[var(--ink-3)] tracking-[0.08em]">
-                Curated summary
-              </span>
-              <button
-                onClick={() => setSelected(null)}
-                className="font-mono text-[9px] tracking-[0.12em] uppercase border-none cursor-pointer bg-transparent transition-opacity hover:opacity-70"
-                style={{ color: ACCENT }}
-              >
-                Done reading →
-              </button>
-            </div>
-          </div>
-        </>
+        <SummaryDrawer
+          book={{
+            title: selected.title,
+            author: selected.author,
+            cover_url: selected.cover_url,
+            previewContent: selected.content,
+          }}
+          onClose={() => setSelected(null)}
+          onAddToLibrary={() => addToLibrary(selected)}
+          isAdded={addedIds.has(selected.id)}
+        />
       )}
     </>
   );

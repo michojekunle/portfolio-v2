@@ -1,11 +1,13 @@
 import { CURATED_BOOKS } from "@/lib/chapterly/curated";
+import { getUserBooks } from "@/lib/chapterly/queries";
 import { DiscoverClient } from "@/components/chapterly/DiscoverClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Chapterly — Discover" };
 
-export default function DiscoverPage(): React.ReactElement {
+export default async function DiscoverPage(): Promise<React.ReactElement> {
   const categories = Array.from(new Set(CURATED_BOOKS.map((b) => b.category))).sort();
+  const userBooks = await getUserBooks();
 
   return (
     <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px] max-w-[1200px]">
@@ -17,7 +19,11 @@ export default function DiscoverPage(): React.ReactElement {
           Discover Books
         </h1>
       </div>
-      <DiscoverClient books={CURATED_BOOKS} categories={categories} />
+      <DiscoverClient
+        books={CURATED_BOOKS}
+        categories={categories}
+        userBookTitles={userBooks.map((b) => b.title)}
+      />
     </div>
   );
 }

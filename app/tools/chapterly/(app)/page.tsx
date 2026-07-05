@@ -10,6 +10,7 @@ import {
   goalProgressPct,
   formatReadingTime,
   isStreakAlive,
+  isStreakFrozen,
 } from "@/lib/chapterly/streak";
 import { FREE_BOOK_LIMIT } from "@/lib/chapterly/types";
 import {
@@ -25,6 +26,7 @@ import {
 import type { Metadata } from "next";
 import { ChLearningPlanClient } from "@/components/chapterly/LearningPlanClient";
 import { DailyInsightCard } from "@/components/chapterly/DailyInsightCard";
+import { FreezeStreakButton } from "@/components/chapterly/FreezeStreakButton";
 
 export const metadata: Metadata = {
   title: "Chapterly — Home",
@@ -62,6 +64,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
     ? goalProgressPct(stats.reading_time_today, goal.daily_minutes)
     : 0;
   const streakActive = goal ? isStreakAlive(goal) : false;
+  const streakFrozen = goal ? isStreakFrozen(goal) : false;
   const isFreeAtLimit = books.length >= FREE_BOOK_LIMIT;
 
   return (
@@ -100,8 +103,8 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
           icon={<Flame size={18} />}
           label="Streak"
           value={`${stats.current_streak}`}
-          sub={streakActive ? "active" : "start today"}
-          color="#EA580C"
+          sub={streakFrozen ? "frozen" : streakActive ? "active" : "start today"}
+          color={streakFrozen ? "#0EA5E9" : "#EA580C"}
           highlight={streakActive && stats.current_streak > 0}
         />
         <StatCard
@@ -112,6 +115,17 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
           color={ACCENT}
         />
       </div>
+
+      {/* ── Streak freeze ── */}
+      {goal && stats.current_streak > 0 && (
+        <div className="mb-[40px] -mt-[24px]">
+          <FreezeStreakButton
+            frozenUntil={goal.streak_freeze_until}
+            freezesUsed={goal.streak_freeze_count ?? 0}
+            freezesMax={4}
+          />
+        </div>
+      )}
 
       {/* ── Daily goal ring + current book ── */}
       <div className="grid grid-cols-[1fr_1fr] max-[900px]:grid-cols-1 gap-[24px] mb-[40px] items-start">

@@ -1,8 +1,18 @@
 import type { ChGoal } from "./types";
 
+export function isStreakFrozen(goal: ChGoal): boolean {
+  if (!goal.streak_freeze_until) return false;
+  const freezeUntil = String(goal.streak_freeze_until).slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  return today <= freezeUntil;
+}
+
 export function isStreakAlive(goal: ChGoal): boolean {
+  // An active freeze protects the streak regardless of last read date
+  if (isStreakFrozen(goal)) return true;
+
   if (!goal.last_read_date) return false;
-  
+
   const lastReadStr = String(goal.last_read_date).slice(0, 10);
 
   // Client side (browser) uses the device's actual local timezone
