@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { getPublicBooks } from "@/lib/supabase/reading"
-import { BookCard } from "@/components/book-card"
-import { StackedCards } from "@/components/stacked-cards"
+import { BookTeaserCard } from "@/components/book-card"
 
 export const revalidate = 300
 
@@ -16,6 +15,7 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
   const books = await getPublicBooks()
   const currentlyReading = books.filter((b) => b.status === "reading")
   const completed = books.filter((b) => b.status === "completed")
+  const totalNotes = books.reduce((sum, b) => sum + b.notes.length, 0)
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
@@ -30,49 +30,67 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
             A dynamic archive of notes, quotes, and insights from the books I&apos;m currently exploring. Distilled for clarity and recall.
           </p>
         </div>
-        
+
         <div className="flex justify-start min-[900px]:justify-end w-full">
           <ReadingHeroWidget />
         </div>
       </section>
 
-      {/* Book list */}
-      <section className="py-[80px] pb-[160px] max-[720px]:py-[56px] max-[720px]:pb-[120px]">
-        {books.length === 0 && (
-          <p className="text-[var(--ink-3)] text-[16px] py-[80px] text-center font-serif italic">
-            Nothing tracked yet — check back soon.
-          </p>
-        )}
+      {/* Stats strip */}
+      {books.length > 0 && (
+        <section className="border-b border-[var(--rule)]">
+          <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[28px] grid grid-cols-4 max-[600px]:grid-cols-2 gap-[24px]">
+            <div>
+              <div className="font-display text-[28px] font-normal text-[var(--ink)] fvs-text leading-none">{books.length}</div>
+              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mt-[6px]">Books logged</div>
+            </div>
+            <div>
+              <div className="font-display text-[28px] font-normal text-[var(--ink)] fvs-text leading-none">{currentlyReading.length}</div>
+              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mt-[6px]">Currently reading</div>
+            </div>
+            <div>
+              <div className="font-display text-[28px] font-normal text-[var(--ink)] fvs-text leading-none">{completed.length}</div>
+              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mt-[6px]">Finished</div>
+            </div>
+            <div>
+              <div className="font-display text-[28px] font-normal text-[var(--ink)] fvs-text leading-none">{totalNotes}</div>
+              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mt-[6px]">Notes & quotes</div>
+            </div>
+          </div>
+        </section>
+      )}
 
-        {currentlyReading.length > 0 && (
-          <StackedCards
-            title={
-              <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[16px] items-baseline relative z-20">
-                <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] uppercase pt-[8px]">Active</div>
-                <h2 className="m-0 font-display font-normal text-[clamp(44px,6vw,64px)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)] fvs-display">
-                  Currently <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">reading.</em>
-                </h2>
-              </div>
-            }
-          >
-            {currentlyReading.map((b) => <BookCard key={b.id} book={b} />)}
-          </StackedCards>
-        )}
+      {/* Bookshelf */}
+      <section className="py-[80px] max-[720px]:py-[56px]">
+        <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
+          {books.length === 0 && (
+            <p className="text-[var(--ink-3)] text-[16px] py-[80px] text-center font-serif italic">
+              Nothing tracked yet — check back soon.
+            </p>
+          )}
 
-        {completed.length > 0 && (
-          <StackedCards
-            title={
-              <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[16px] items-baseline relative z-20">
-                <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] uppercase pt-[8px]">Archive</div>
-                <h2 className="m-0 font-display font-normal text-[clamp(44px,6vw,64px)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)] fvs-display">
-                  Finished <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">reading.</em>
-                </h2>
+          {currentlyReading.length > 0 && (
+            <div className="mb-[64px]">
+              <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-3)] mb-[24px]">
+                Currently reading
               </div>
-            }
-          >
-            {completed.map((b) => <BookCard key={b.id} book={b} />)}
-          </StackedCards>
-        )}
+              <div className="grid grid-cols-4 max-[1100px]:grid-cols-3 max-[820px]:grid-cols-2 max-[480px]:grid-cols-1 gap-[20px]">
+                {currentlyReading.map((b) => <BookTeaserCard key={b.id} book={b} />)}
+              </div>
+            </div>
+          )}
+
+          {completed.length > 0 && (
+            <div>
+              <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-3)] mb-[24px]">
+                Archive
+              </div>
+              <div className="grid grid-cols-4 max-[1100px]:grid-cols-3 max-[820px]:grid-cols-2 max-[480px]:grid-cols-1 gap-[20px]">
+                {completed.map((b) => <BookTeaserCard key={b.id} book={b} />)}
+              </div>
+            </div>
+          )}
+        </div>
       </section>
     </main>
   )

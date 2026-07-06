@@ -40,3 +40,26 @@ export async function getPublicBooks(): Promise<PublicBook[]> {
     notes: (Array.isArray(b.book_notes) ? b.book_notes : []) as BookNote[],
   }))
 }
+
+export async function getPublicBookById(id: string): Promise<PublicBook | null> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("books")
+    .select("id, title, author, cover_url, progress, status, book_notes(id, type, content, page_ref)")
+    .eq("id", id)
+    .in("status", ["reading", "completed"])
+    .maybeSingle()
+
+  if (error || !data) return null
+
+  return {
+    id: data.id as string,
+    title: data.title as string,
+    author: data.author as string,
+    cover_url: data.cover_url as string | null,
+    progress: (data.progress as number | null) ?? 0,
+    status: data.status as "reading" | "completed" | "queued",
+    notes: (Array.isArray(data.book_notes) ? data.book_notes : []) as BookNote[],
+  }
+}
