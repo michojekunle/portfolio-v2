@@ -8,6 +8,8 @@ import { useState, useEffect } from "react"
 import { TiltCard } from "./tilt-card"
 import { MagneticWrapper } from "./magnetic-wrapper"
 
+import { AboutHeroWidget } from "./about-hero-widget"
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
@@ -37,33 +39,44 @@ export function AboutClientContent() {
   return (
     <div ref={containerRef} className="overflow-x-hidden">
       {/* Hero */}
-      <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-[48px] items-center pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+        <div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+          >
+            02 — ABOUT · BACKGROUND
+          </motion.div>
+          
+          <h1 className="m-0 font-display font-light text-[clamp(36px,7vw,90px)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[12px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
+            {titleWords.map((word, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1],
+                  delay: i * 0.1
+                }}
+                className={i === 0 || i === titleWords.length - 1 ? "italic text-[var(--v3-accent)] fvs-soft" : ""}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </h1>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="flex justify-start min-[900px]:justify-end w-full"
         >
-          02 — ABOUT · BACKGROUND
+          <AboutHeroWidget />
         </motion.div>
-        
-        <h1 className="m-0 font-display font-light text-[clamp(36px,9vw,140px)] leading-[0.9] tracking-[-0.03em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[12px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
-          {titleWords.map((word, i) => (
-            <motion.span
-              key={i}
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{
-                duration: 0.8,
-                ease: [0.16, 1, 0.3, 1],
-                delay: i * 0.1
-              }}
-              className={i === 0 || i === titleWords.length - 1 ? "italic text-[var(--v3-accent)] fvs-soft" : ""}
-            >
-              {word}
-            </motion.span>
-          ))}
-        </h1>
       </section>
 
       {/* Main Content */}
