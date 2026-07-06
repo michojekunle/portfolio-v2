@@ -58,50 +58,63 @@ const categories: ToolCategory[] = [
   },
 ]
 
+import { UsesHeroWidget } from "./uses-hero-widget"
+
 export function UsesClient() {
   const titleWords = "What I actually use.".split(" ")
 
   return (
     <>
-      <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-[48px] items-center pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+        <div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+          >
+            /USES · SETUP
+          </motion.div>
+          
+          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.9] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] max-[720px]:gap-x-[10px]">
+            {titleWords.map((word, i) => {
+              const isActually = word === "actually"
+              return (
+                <motion.span
+                  key={i}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: i * 0.1
+                  }}
+                  className={isActually ? "italic text-[var(--v3-accent)] fvs-soft" : ""}
+                >
+                  {word}
+                </motion.span>
+              )
+            })}
+          </h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0"
+          >
+            Updated when something meaningful changes. Affiliate-free — these are the tools that survived.
+          </motion.p>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex justify-start min-[900px]:justify-end w-full"
         >
-          /USES · SETUP
+          <UsesHeroWidget />
         </motion.div>
-        
-        <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,120px)] leading-[0.85] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] max-[720px]:gap-x-[10px]">
-          {titleWords.map((word, i) => {
-            const isActually = word === "actually"
-            return (
-              <motion.span
-                key={i}
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: "0%", opacity: 1 }}
-                transition={{
-                  duration: 0.8,
-                  ease: [0.16, 1, 0.3, 1],
-                  delay: i * 0.1
-                }}
-                className={isActually ? "italic text-[var(--v3-accent)] fvs-soft" : ""}
-              >
-                {word}
-              </motion.span>
-            )
-          })}
-        </h1>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0"
-        >
-          Updated when something meaningful changes. Affiliate-free — these are the tools that survived.
-        </motion.p>
       </section>
 
       <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
