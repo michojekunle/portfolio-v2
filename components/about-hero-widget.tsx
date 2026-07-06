@@ -4,7 +4,25 @@ import { useState, useEffect } from "react"
 import { Clock, Play, BookOpen, GraduationCap } from "lucide-react"
 
 export function AboutHeroWidget() {
-  const [lagosTime, setLagosTime] = useState("")
+  const [lagosTime, setLagosTime] = useState("");
+  const [status, setStatus] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch("/api/profile/status");
+        if (res.ok) {
+          const data = await res.json();
+          setStatus(data);
+        }
+      } catch (e) {
+        console.warn("Failed to fetch profile status:", e);
+      }
+    };
+    void fetchStatus();
+    const interval = setInterval(fetchStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -51,7 +69,7 @@ export function AboutHeroWidget() {
           </div>
           <div className="font-mono text-[11px] font-semibold text-[var(--v3-accent)] uppercase tracking-wider flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-[var(--v3-accent)] animate-ping" />
-            Available
+            {status?.status || "Available"}
           </div>
         </div>
       </div>
@@ -65,20 +83,20 @@ export function AboutHeroWidget() {
         <div className="flex flex-col gap-2">
           <div>
             <div className="flex justify-between text-[11px] mb-1 font-mono text-[var(--ink-2)]">
-              <span>zk-SNARKs & Circuits</span>
-              <span>85%</span>
+              <span>{status?.focus1_name || "zk-SNARKs & Circuits"}</span>
+              <span>{status?.focus1_pct ?? 85}%</span>
             </div>
             <div className="h-[4px] bg-[var(--rule)] rounded-full overflow-hidden">
-              <div className="h-full bg-[var(--ink)] rounded-full transition-all duration-500" style={{ width: "85%" }} />
+              <div className="h-full bg-[var(--ink)] rounded-full transition-all duration-500" style={{ width: `${status?.focus1_pct ?? 85}%` }} />
             </div>
           </div>
           <div>
             <div className="flex justify-between text-[11px] mb-1 font-mono text-[var(--ink-2)]">
-              <span>Rust Systems & WebAssembly</span>
-              <span>60%</span>
+              <span>{status?.focus2_name || "Rust Systems & WebAssembly"}</span>
+              <span>{status?.focus2_pct ?? 60}%</span>
             </div>
             <div className="h-[4px] bg-[var(--rule)] rounded-full overflow-hidden">
-              <div className="h-full bg-[var(--ink)] rounded-full transition-all duration-500" style={{ width: "60%" }} />
+              <div className="h-full bg-[var(--ink)] rounded-full transition-all duration-500" style={{ width: `${status?.focus2_pct ?? 60}%` }} />
             </div>
           </div>
         </div>
@@ -92,20 +110,44 @@ export function AboutHeroWidget() {
         <div className="w-10 h-10 rounded-[8px] bg-[var(--rule)] flex items-center justify-center relative overflow-hidden flex-shrink-0">
           {/* Animated bars */}
           <div className="flex gap-[3px] items-end h-[16px]">
-            <div className="w-[3px] bg-[var(--v3-accent)] rounded-full animate-[music-bar_0.8s_ease-in-out_infinite]" style={{ height: "40%" }} />
-            <div className="w-[3px] bg-[var(--v3-accent)] rounded-full animate-[music-bar_1.2s_ease-in-out_infinite_delay-200]" style={{ height: "80%" }} />
-            <div className="w-[3px] bg-[var(--v3-accent)] rounded-full animate-[music-bar_1.0s_ease-in-out_infinite_delay-100]" style={{ height: "60%" }} />
+            <div
+              className="w-[3px] bg-[var(--v3-accent)] rounded-full"
+              style={{
+                height: "40%",
+                animation: status?.spotify_override_active !== false
+                  ? "music-bar 0.8s ease-in-out infinite"
+                  : "none",
+              }}
+            />
+            <div
+              className="w-[3px] bg-[var(--v3-accent)] rounded-full"
+              style={{
+                height: "80%",
+                animation: status?.spotify_override_active !== false
+                  ? "music-bar 1.2s ease-in-out infinite 0.2s"
+                  : "none",
+              }}
+            />
+            <div
+              className="w-[3px] bg-[var(--v3-accent)] rounded-full"
+              style={{
+                height: "60%",
+                animation: status?.spotify_override_active !== false
+                  ? "music-bar 1.0s ease-in-out infinite 0.1s"
+                  : "none",
+              }}
+            />
           </div>
         </div>
         <div className="flex-grow flex flex-col gap-0.5 overflow-hidden">
           <span className="font-mono text-[8px] uppercase tracking-widest text-[var(--v3-accent)] font-semibold flex items-center gap-1">
-            <Play className="w-2.5 h-2.5 fill-current" /> Spotify Track
+            <Play className="w-2.5 h-2.5 fill-current" /> {status?.spotify_override_playlist || "Spotify Track"}
           </span>
           <span className="text-[12px] font-semibold text-[var(--ink)] line-clamp-1 leading-[1.3]">
-            Metanoia (feat. Lofi Chill)
+            {status?.spotify_override_title || "Metanoia (feat. Lofi Chill)"}
           </span>
           <span className="text-[10px] text-[var(--ink-3)] line-clamp-1">
-            Michael&apos;s Focus Mix
+            {status?.spotify_override_artist || "Michael's Focus Mix"}
           </span>
         </div>
       </div>
@@ -118,5 +160,5 @@ export function AboutHeroWidget() {
         }
       `}</style>
     </div>
-  )
+  );
 }

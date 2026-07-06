@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { BooksManager } from "./books-manager";
 import { LearningManager } from "./learning-manager";
 import { BuildingManager } from "./building-manager";
+import { StatusManager } from "./status-manager";
+import { getProfileStatus } from "@/lib/profile-status";
 
 export default async function AdminNowPage(): Promise<React.ReactElement> {
   const supabase = await createClient();
@@ -11,11 +13,13 @@ export default async function AdminNowPage(): Promise<React.ReactElement> {
     { data: learning },
     { data: building },
     { data: bookNotes },
+    profileStatus,
   ] = await Promise.all([
     supabase.from("books").select("*").order("sort_order"),
     supabase.from("learning_items").select("*").order("sort_order"),
     supabase.from("building_projects").select("*").order("sort_order"),
     supabase.from("book_notes").select("*").order("created_at"),
+    getProfileStatus(),
   ]);
 
   return (
@@ -26,6 +30,11 @@ export default async function AdminNowPage(): Promise<React.ReactElement> {
           Books, learning progress, and active projects
         </p>
       </div>
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Availability & Focuses</h2>
+        <StatusManager initialStatus={profileStatus} />
+      </section>
 
       <section>
         <h2 className="text-sm font-medium mb-4">Books</h2>

@@ -1,8 +1,26 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { BookOpen, Sparkles, TrendingUp } from "lucide-react"
 
 export function BlogHeroWidget() {
+  const [status, setStatus] = useState<any>(null)
+  
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch("/api/profile/status")
+        if (res.ok) {
+          const data = await res.json()
+          setStatus(data)
+        }
+      } catch (e) {
+        console.warn("Failed to fetch profile status:", e)
+      }
+    }
+    void fetchStatus()
+  }, [])
+
   const trendingTags = [
     { name: "Web3", count: 8 },
     { name: "Technical", count: 5 },
@@ -63,7 +81,7 @@ export function BlogHeroWidget() {
         <div className="flex flex-col gap-0.5">
           <span className="font-mono text-[8px] uppercase tracking-wider text-[var(--ink-3)]">Currently Reading</span>
           <span className="text-[12px] font-medium text-[var(--ink)] line-clamp-1 leading-[1.3]">
-            Zero to One by Peter Thiel
+            {status?.currently_reading || "Zero to One by Peter Thiel"}
           </span>
         </div>
       </div>
