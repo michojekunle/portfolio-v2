@@ -74,7 +74,7 @@ export async function POST(request: Request): Promise<Response> {
       body = await request.json();
     } catch {
       return NextResponse.json(
-        { success: false, message: "Invalid request body" },
+        { success: false, message: "Invalid request body", error: "Invalid request body" },
         { status: 400 }
       );
     }
@@ -82,7 +82,7 @@ export async function POST(request: Request): Promise<Response> {
     const result = contactSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { success: false, errors: result.error.flatten().fieldErrors },
+        { success: false, errors: result.error.flatten().fieldErrors, error: "Validation failed" },
         { status: 400 }
       );
     }
@@ -92,7 +92,7 @@ export async function POST(request: Request): Promise<Response> {
     if (hasInjectionPattern(input)) {
       console.warn("[contact] Suspicious input pattern detected");
       return NextResponse.json(
-        { success: false, message: "Invalid input detected" },
+        { success: false, message: "Invalid input detected", error: "Invalid input detected" },
         { status: 400 }
       );
     }
@@ -170,13 +170,13 @@ export async function POST(request: Request): Promise<Response> {
     if (error instanceof ContactError) {
       console.error(`[contact] ${error.message}`);
       return NextResponse.json(
-        { success: false, message: error.userMessage },
+        { success: false, message: error.userMessage, error: error.userMessage },
         { status: error.statusCode }
       );
     }
     console.error("[contact] Unexpected error:", error);
     return NextResponse.json(
-      { success: false, message: "An unexpected error occurred" },
+      { success: false, message: "An unexpected error occurred", error: "An unexpected error occurred" },
       { status: 500 }
     );
   }
