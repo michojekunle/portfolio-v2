@@ -29,6 +29,7 @@ import {
   Youtube,
   Instagram,
   Video,
+  Library,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
@@ -45,13 +46,14 @@ export function CommandPalette(): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [books, setBooks] = useState<any[]>([]);
   const router = useRouter();
   const { setTheme, theme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
       const supabase = createClient();
-      
+
       const { data: blogData } = await supabase
         .from("blog_posts")
         .select("id, title, slug, category")
@@ -64,8 +66,15 @@ export function CommandPalette(): React.ReactElement {
         .eq("is_hidden", false)
         .order("sort_order", { ascending: true });
 
+      const { data: bookData } = await supabase
+        .from("books")
+        .select("id, title, author, status")
+        .in("status", ["reading", "completed"])
+        .order("sort_order", { ascending: true });
+
       if (blogData) setBlogs(blogData);
       if (projectData) setProjects(projectData);
+      if (bookData) setBooks(bookData);
     };
 
     fetchData();
@@ -160,6 +169,15 @@ export function CommandPalette(): React.ReactElement {
       keywords: b.category
     })),
 
+    // Dynamic Books (Reading Log)
+    ...books.map(b => ({
+      label: b.title,
+      icon: <Library className="h-4 w-4 text-primary/60" />,
+      action: () => navigate(`/reading/${b.id}`),
+      group: "Reading Log",
+      keywords: `${b.author} ${b.status === "reading" ? "currently reading" : "finished"}`
+    })),
+
     // Static Uses (Tools & Gear)
     ...[
       { name: "VS Code", desc: "Primary editor. Vim keybindings, minimal extensions." },
@@ -204,6 +222,7 @@ export function CommandPalette(): React.ReactElement {
     { label: "Changelog", icon: <BookOpen className="h-4 w-4" />, action: () => navigate("/changelog"), group: "Pages", keywords: "activity updates commits" },
     { label: "RSS Feed", icon: <Rss className="h-4 w-4" />, action: () => navigate("/feed.xml"), group: "Pages" },
     { label: "Videos", icon: <Video className="h-4 w-4" />, action: () => navigate("/videos"), group: "Pages", keywords: "youtube instagram tiktok x watch" },
+    { label: "Reading Log", icon: <Library className="h-4 w-4" />, action: () => navigate("/reading"), group: "Pages", keywords: "books notes quotes takeaways" },
 
     // Theme
     {

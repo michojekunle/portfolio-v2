@@ -1258,20 +1258,6 @@ h1, h2, h3, h4, h5 {
 
 .v3-about-hero h1 em { font-style: italic; color: var(--v3-accent); font-variation-settings: "opsz" 144, "SOFT" 100; }
 
-.v3-about-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 80px; align-items: start; }
-@media (max-width: 920px) { .v3-about-grid { grid-template-columns: 1fr; gap: 40px; } }
-
-.v3-about-prose p {
-  font-family: var(--display-font); font-variation-settings: "opsz" 96;
-  font-size: 22px; line-height: 1.55; color: var(--ink); margin: 0 0 24px; max-width: 32ch;
-}
-
-.v3-about-prose p.body {
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 17px; line-height: 1.7; color: var(--ink-2); max-width: 60ch;
-}
-
-.v3-about-prose p em { font-style: italic; color: var(--v3-accent); font-variation-settings: "opsz" 144, "SOFT" 100; }
 
 .v3-about-aside {
   background: var(--paper); border: 1px solid var(--rule);
