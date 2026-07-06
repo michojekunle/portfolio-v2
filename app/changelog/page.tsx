@@ -93,21 +93,30 @@ function groupByDate(entries: ChangelogEntry[]): Map<string, ChangelogEntry[]> {
   return groups
 }
 
+import { ChangelogHeroWidget } from "@/components/changelog-hero-widget"
+
 export default async function ChangelogPage(): Promise<React.ReactElement> {
   const entries = await fetchChangelog()
   const grouped = groupByDate(entries)
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+      {/* Hero */}
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-[48px] items-center pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+        <div>
           <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">/CHANGELOG · ACTIVITY</div>
-          <h1 className="m-0 font-display font-normal text-[clamp(64px,10vw,120px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
+          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
             Site <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">changelog.</em>
           </h1>
           <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
             The portfolio is a product. Here&apos;s what&apos;s changed and when. Built in public.
           </p>
-        </section>
+        </div>
+
+        <div className="flex justify-start min-[900px]:justify-end w-full">
+          <ChangelogHeroWidget />
+        </div>
+      </section>
 
         <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
           {entries.length === 0 ? (
