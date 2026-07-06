@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "Books I'm reading and what I'm taking from them — notes, quotes, and key takeaways.",
 }
 
+import { ReadingHeroWidget } from "@/components/reading-hero-widget"
+
 export default async function ReadingPage(): Promise<React.ReactElement> {
   const books = await getPublicBooks()
   const currentlyReading = books.filter((b) => b.status === "reading")
@@ -18,14 +20,20 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
       {/* Hero */}
-      <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">03 — READING LOG</div>
-        <h1 className="m-0 font-display font-light text-[clamp(64px,10vw,120px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
-          Curated <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">takeaways.</em>
-        </h1>
-        <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
-          A dynamic archive of notes, quotes, and insights from the books I&apos;m currently exploring. Distilled for clarity and recall.
-        </p>
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-[48px] items-center pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+        <div>
+          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">03 — READING LOG</div>
+          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
+            Curated <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">takeaways.</em>
+          </h1>
+          <p className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0">
+            A dynamic archive of notes, quotes, and insights from the books I&apos;m currently exploring. Distilled for clarity and recall.
+          </p>
+        </div>
+        
+        <div className="flex justify-start min-[900px]:justify-end w-full">
+          <ReadingHeroWidget />
+        </div>
       </section>
 
       {/* Book list */}
