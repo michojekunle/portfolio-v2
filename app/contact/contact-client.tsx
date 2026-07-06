@@ -21,6 +21,8 @@ const FAQS = [
   { q: "What's your response time?", a: "Usually within 24 hours on weekdays. Faster if it's interesting." },
 ]
 
+import { ContactHeroWidget } from "@/components/contact-hero-widget"
+
 export function ContactPage(): React.ReactElement {
   const [meetingType, setMeetingType] = useState("30")
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -50,7 +52,9 @@ export function ContactPage(): React.ReactElement {
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+      {/* Hero */}
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-[48px] items-center pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+        <div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -59,7 +63,7 @@ export function ContactPage(): React.ReactElement {
           >
             05 — CONTACT · BOOKING
           </motion.div>
-          <h1 className="m-0 font-display font-light text-[clamp(64px,10vw,120px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[16px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
+          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[16px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
             <motion.span
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
@@ -85,7 +89,17 @@ export function ContactPage(): React.ReactElement {
             Pick a slot below or send a note. Open to contract work, full-time roles in
             protocol-adjacent teams, and conversations that aren&apos;t either.
           </motion.p>
-        </section>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="flex justify-start min-[900px]:justify-end w-full"
+        >
+          <ContactHeroWidget />
+        </motion.div>
+      </section>
 
         <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
           <div className="v3-booking-section">
