@@ -34,6 +34,7 @@ import {
   Headphones,
   BookOpen,
   Layers,
+  WifiOff,
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
 import { ChapterCanvas } from "./ChapterCanvas";
@@ -236,6 +237,78 @@ interface Props {
 export function ChReaderClient({ book }: Props): React.ReactElement {
   const [theme, setTheme] = useState<ReaderTheme>("white");
   const [fontSize, setFontSize] = useState(17);
+  const [isOffline, setIsOffline] = useState(
+    typeof window !== "undefined" ? !navigator.onLine : false
+  );
+
+  // Track online/offline status
+  useEffect(() => {
+    const handleOnline = (): void => setIsOffline(false);
+    const handleOffline = (): void => setIsOffline(true);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Offline highlight queueing
+  const queueHighlightOffline = useCallback((highlight: { text: string; cfi_range?: string; color: string }): void => {
+    try {
+      const key = `chapterly_queued_highlights_${book.id}`;
+      const existing = localStorage.getItem(key);
+      const list = existing ? JSON.parse(existing) : [];
+      list.push(highlight);
+      localStorage.setItem(key, JSON.stringify(list));
+      console.info("[pwa] Queued highlight offline:", highlight);
+    } catch (e) {
+      console.error("[pwa] Failed to queue highlight:", e);
+    }
+  }, [book.id]);
+
+  // Sync queued progress and highlights when coming back online
+  useEffect(() => {
+    if (isOffline) return;
+
+    const syncQueued = async (): Promise<void> => {
+      try {
+        // 1. Sync Highlights
+        const hKey = `chapterly_queued_highlights_${book.id}`;
+        const queuedH = localStorage.getItem(hKey);
+        if (queuedH) {
+          const list = JSON.parse(queuedH) as { text: string; cfi_range?: string; color: string }[];
+          for (const h of list) {
+            await fetch("/api/chapterly/highlights", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ book_id: book.id, ...h }),
+            });
+          }
+          localStorage.removeItem(hKey);
+          console.info("[pwa] Successfully synced offline highlights.");
+        }
+
+        // 2. Sync Progress
+        const pKey = `chapterly_queued_progress_${book.id}`;
+        const queuedP = localStorage.getItem(pKey);
+        if (queuedP) {
+          const updates = JSON.parse(queuedP);
+          await fetch(`/api/chapterly/books/${book.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updates),
+          });
+          localStorage.removeItem(pKey);
+          console.info("[pwa] Successfully synced offline progress.");
+        }
+      } catch (e) {
+        console.error("[pwa] Syncing queued data failed:", e);
+      }
+    };
+
+    void syncQueued();
+  }, [isOffline, book.id]);
   const [showControls, setShowControls] = useState(true);
   const [showTtsPlayer, setShowTtsPlayer] = useState(false);
   const [chapterText, setChapterText] = useState("");
@@ -394,11 +467,23 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       if (progressTimerRef.current) clearTimeout(progressTimerRef.current);
       progressTimerRef.current = setTimeout(() => {
         pendingProgressRef.current = null;
-        void fetch(`/api/chapterly/books/${book.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updates),
-        }).catch((err: unknown) => console.error("[reader] progress save error:", err));
+        if (navigator.onLine) {
+          void fetch(`/api/chapterly/books/${book.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updates),
+          }).catch((err: unknown) => console.error("[reader] progress save error:", err));
+        } else {
+          try {
+            const key = `chapterly_queued_progress_${book.id}`;
+            const existing = localStorage.getItem(key);
+            const merged = existing ? { ...JSON.parse(existing), ...updates } : updates;
+            localStorage.setItem(key, JSON.stringify(merged));
+            console.info("[pwa] Queued progress offline:", merged);
+          } catch (e) {
+            console.error("[pwa] Failed to queue progress:", e);
+          }
+        }
       }, 2000);
     },
     [book.id]
@@ -411,11 +496,20 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       if (pending) {
         // Flush on unmount (in-app navigation). fetch may not complete on full tab close
         // but survives normal Next.js client-side route changes.
-        void fetch(`/api/chapterly/books/${book.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(pending),
-        }).catch(() => undefined);
+        if (navigator.onLine) {
+          void fetch(`/api/chapterly/books/${book.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(pending),
+          }).catch(() => undefined);
+        } else {
+          try {
+            const key = `chapterly_queued_progress_${book.id}`;
+            const existing = localStorage.getItem(key);
+            const merged = existing ? { ...JSON.parse(existing), ...pending } : pending;
+            localStorage.setItem(key, JSON.stringify(merged));
+          } catch {}
+        }
       }
     };
   }, [book.id]);
@@ -643,6 +737,16 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           >
             {book.title}
           </span>
+          {isOffline && (
+            <span
+              className="font-mono text-[8px] tracking-[0.1em] uppercase font-bold px-[8px] py-[3px] rounded-full inline-flex items-center gap-[4px] shrink-0"
+              style={{ background: "#EF44441F", color: "#EF4444" }}
+              title="You are currently reading offline"
+            >
+              <WifiOff size={10} />
+              Offline
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-[6px]">
@@ -812,11 +916,16 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               }}
               onMetadata={handleMetadata}
               onHighlight={async (text, cfi, color) => {
+                const highlight = { text, cfi_range: cfi, color };
+                if (!navigator.onLine) {
+                  queueHighlightOffline(highlight);
+                  return;
+                }
                 try {
                   const res = await fetch("/api/chapterly/highlights", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ book_id: book.id, text, cfi_range: cfi, color }),
+                    body: JSON.stringify({ book_id: book.id, ...highlight }),
                   });
                   if (!res.ok) throw new Error("Highlight save failed");
                 } catch (err) {
@@ -838,11 +947,16 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               }}
               onMetadata={handleMetadata}
               onHighlight={async (text, color) => {
+                const highlight = { text, color };
+                if (!navigator.onLine) {
+                  queueHighlightOffline(highlight);
+                  return;
+                }
                 try {
                   const res = await fetch("/api/chapterly/highlights", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ book_id: book.id, text, color }),
+                    body: JSON.stringify({ book_id: book.id, ...highlight }),
                   });
                   if (!res.ok) throw new Error("Highlight save failed");
                 } catch (err) {

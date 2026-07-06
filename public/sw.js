@@ -38,9 +38,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
+  const isSupabaseStorage = url.hostname.includes("supabase.co") && url.pathname.includes("/storage/");
 
-  // Only handle same-origin requests
-  if (url.origin !== self.location.origin) return;
+  // Only handle same-origin requests + Supabase Storage objects
+  if (url.origin !== self.location.origin && !isSupabaseStorage) return;
 
   // API calls: network-first, no cache
   if (url.pathname.startsWith("/api/")) {
@@ -81,8 +82,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Static assets (fonts, images): stale-while-revalidate
-  if (/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf)$/.test(url.pathname)) {
+  // Static assets & Ebooks (fonts, images, PDFs, EPUBs, etc.): stale-while-revalidate
+  if (/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf|pdf|epub|docx|txt|md)$/i.test(url.pathname)) {
     event.respondWith(
       caches.match(event.request).then((cached) => {
         const network = fetch(event.request).then((res) => {

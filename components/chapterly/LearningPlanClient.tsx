@@ -140,8 +140,8 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
                   </div>
                 </div>
 
-                {/* Actions: Read Summary (primary) + Add to Library (secondary) */}
-                <div className="shrink-0 flex items-center gap-[6px]">
+                {/* Actions: Read Summary */}
+                <div className="shrink-0">
                   <button
                     onClick={() => {
                       const summary = CURATED_BOOKS.find((c) => c.id === item.id);
@@ -153,29 +153,6 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
                   >
                     <BookOpen size={10} /> Read Summary
                   </button>
-                  {item.is_added ? (
-                    <div
-                      className="w-[28px] h-[28px] rounded-full flex items-center justify-center"
-                      style={{ background: "#16A34A15", color: "#16A34A" }}
-                      title="Saved in your library"
-                    >
-                      <Check size={14} />
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => void handleImport(item)}
-                      disabled={isLoading}
-                      className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center cursor-pointer border transition-all hover:opacity-80 disabled:opacity-50 bg-transparent"
-                      style={{ borderColor: `${ACCENT}50`, color: ACCENT }}
-                      title="Save summary to library"
-                    >
-                      {isLoading ? (
-                        <Loader2 size={12} className="animate-spin" />
-                      ) : (
-                        <Plus size={12} />
-                      )}
-                    </button>
-                  )}
                 </div>
               </div>
             </div>

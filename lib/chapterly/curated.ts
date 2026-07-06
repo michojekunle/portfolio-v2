@@ -22,14 +22,38 @@ export const CURATED_BOOKS: CuratedBookSummary[] = [
     read_time_minutes: 15,
     content: `# Summary of Atomic Habits by James Clear
 
-## Core Idea
+## Core Premise
 Success is the product of daily habits—not once-in-a-lifetime transformations. Small 1% improvements accumulate into massive differences over time.
 
-## The 4 Laws of Behavior Change
-1. **First Law (Cue)**: Make it obvious. Design your environment so cues are visible.
-2. **Second Law (Craving)**: Make it attractive. Use temptation bundling.
-3. **Third Law (Response)**: Make it easy. Reduce friction, prime the environment.
-4. **Fourth Law (Reward)**: Make it satisfying. Use immediate rewards and habit trackers.
+## Why This Book Matters
+Building better habits is the ultimate multiplier for life outcomes. Clear offers a framework based on cognitive and behavioral science to make habit creation easy and sustainable.
+
+## Key Insights
+1. **The Compounding Power of 1%**: Small daily improvements grow exponentially. Improving by 1% each day makes you 37 times better by year-end.
+> "Success is the product of daily habits—not once-in-a-lifetime transformations."
+2. **Focus on Systems, Not Goals**: Goals are about the results you want to achieve. Systems are about the processes that lead to those results. Winners and losers have the same goals; their systems set them apart.
+> "You do not rise to the level of your goals. You fall to the level of your systems."
+3. **Identity-Based Habit Change**: True behavior change starts with changing who you believe you are, not what you want to achieve. Focus on becoming the type of person who achieves the result.
+> "Every action you take is a vote for the type of person you wish to become."
+4. **Make It Obvious (Cue)**: Design your environment so that visual cues of good habits are impossible to ignore. Use habit stacking to connect new habits to existing ones.
+5. **Make It Attractive (Craving)**: Use temptation bundling by linking an action you want to do with an action you need to do. Join a culture where your desired behavior is normal.
+6. **Make It Easy (Response)**: Reduce friction for good habits and increase it for bad ones. Use the Two-Minute Rule: downscale new habits so they take under two minutes to start.
+7. **Make It Satisfying (Reward)**: Use immediate rewards to reinforce positive behavior. Track your habits visually and never miss twice in a row.
+
+## Memorable Quotes
+> "You do not rise to the level of your goals. You fall to the level of your systems."
+> "Every action you take is a vote for the type of person you wish to become."
+> "Professionals stick to the schedule; amateurs let life get in the way."
+
+## Action Steps
+1. Write down your current daily habits to make yourself aware of your current routines.
+2. Formulate a habit stack: "After [Current Habit], I will [New Habit]".
+3. Redesign your physical workspace to make the cues of your desired habits highly visible.
+4. Scale down a new habit to under two minutes to ensure consistency.
+5. Setup a habit tracker calendar and cross off days you successfully complete your habit.
+
+## One-Line Takeaway
+Change your habits, change your identity, change your life.
 `
   },
   {
@@ -43,15 +67,39 @@ Success is the product of daily habits—not once-in-a-lifetime transformations.
     read_time_minutes: 15,
     content: `# Summary of Think and Grow Rich by Napoleon Hill
 
-## Core Idea
-All achievement, all earned riches, have their beginning in an idea. Thoughts are things, and when combined with purpose, persistence, and desire, they are powerful tools for success.
+## Core Premise
+All achievement, all earned riches, have their beginning in a definite idea. Thoughts are things, and when combined with purpose and persistence, they translate into physical abundance.
 
-## Key Steps to Riches
-1. **Desire**: The starting point of all achievement. You must want it with obsession.
-2. **Faith**: Visualizing and believing in the attainment of your desire.
-3. **Auto-Suggestion**: The medium for influencing the subconscious mind.
-4. **Specialized Knowledge**: Directing your mind towards a specific, actionable purpose.
-5. **Persistence**: The sustained effort necessary to induce faith.
+## Why This Book Matters
+Written during the Great Depression, Hill's masterwork consolidates interviews with 500 millionaires to provide a timeless, step-by-step formula for transforming thoughts into physical reality.
+
+## Key Insights
+1. **Definite Major Purpose**: All wealth begins with a burning desire for a definite target. Vague wishes yield zero results; you must define the exact amount of money you want.
+> "There are no limitations to the mind except those we acknowledge."
+2. **The Role of Faith**: Faith is a state of mind that can be induced through auto-suggestion. You must believe you will acquire the riches you visualize.
+> "Faith is the head chemist of the mind."
+3. **Auto-Suggestion**: The subconscious mind behaves like a garden; auto-suggestion is the tool for planting positive thoughts and removing negative weeds.
+4. **Specialized Knowledge**: General knowledge is cheap and abundant. You must acquire specialized knowledge relative to the service or product you intend to offer.
+5. **The Master Mind Group**: Surround yourself with a alliance of people who share your vision and push you to execute your plans.
+> "No individual may have great power without availing himself of the 'Master Mind'."
+6. **Organized Planning**: Create a concrete plan of action. Riches do not respond to wishes; they respond only to definite plans backed by definite desires.
+7. **The Transmutation of Sex**: Transmute basic sexual energies into creative, high-frequency intellectual and professional pursuits.
+8. **Overcoming Hesitation**: Indecision is the sibling of fear. High achievers make decisions quickly and change them slowly, if at all.
+
+## Memorable Quotes
+> "What the mind of man can conceive and believe, it can achieve."
+> "A quitter never wins and a winner never quits."
+> "Every adversity carries with it the seed of an equivalent benefit."
+
+## Action Steps
+1. Write down the exact amount of money you desire to acquire.
+2. Determine exactly what you intend to give in return for this money.
+3. Establish a definite date by which you intend to possess this sum.
+4. Create a definite plan for carrying out your desire and begin at once to execute it.
+5. Read your written statement aloud twice daily, once before sleeping and once upon waking.
+
+## One-Line Takeaway
+Definiteness of purpose is the starting point of all financial achievement.
 `
   },
   {
@@ -65,15 +113,38 @@ All achievement, all earned riches, have their beginning in an idea. Thoughts ar
     read_time_minutes: 15,
     content: `# Summary of How to Win Friends & Influence People
 
-## Core Idea
-The secret to dealing with people is making them feel important and appreciated. Influence is not about manipulation; it is about genuine interest and active listening.
+## Core Premise
+The secret to dealing with people is making them feel important, appreciated, and understood. Genuine empathy and active listening are the keys to influence.
 
-## Golden Rules
-1. **Be genuinely interested in other people.**
-2. **Smile.** It costs nothing but creates much.
-3. **Remember that a person's name is to that person the sweetest sound.**
-4. **Be a good listener.** Encourage others to talk about themselves.
-5. **Talk in terms of the other person's interests.**
+## Why This Book Matters
+Carnegie's classic is the ultimate handbook for social interactions. By shifting focus from self-promotion to showing sincere interest in others, you can build deep trust and influence.
+
+## Key Insights
+1. **Sincere Appreciation**: People crave feeling important. Offer honest, sincere appreciation rather than empty flattery.
+> "The deepest urge in human nature is the desire to be important."
+2. **Talk in Terms of Other Interests**: The only way to influence someone is to talk about what they want and show them how to get it.
+> "Talk to someone about themselves and they'll listen for hours."
+3. **Be Sincerity Personified**: Show a genuine interest in other people. People are not interested in you; they are interested in themselves.
+4. **Use Their Name**: A person's name is to them the sweetest and most important sound in any language. Always remember and use names in conversation.
+5. **Listen Actively**: Encourage others to talk about themselves and their achievements. Listening is one of the highest compliments you can pay.
+6. **Avoid Arguments**: You cannot win an argument. The only way to get the best of an argument is to avoid it entirely.
+7. **Admit Errors Quickly**: If you are wrong, admit it quickly and emphatically. This disarms opponents and invites cooperation.
+8. **Begin in a Friendly Way**: A drop of honey catches more flies than a gallon of gall. Gentle, friendly approaches succeed where anger fails.
+
+## Memorable Quotes
+> "You can make more friends in two months by becoming interested in other people than you can in two years by trying to get other people interested in you."
+> "Any fool can criticize, condemn and complain - and most fools do."
+> "The only way to get the best of an argument is to avoid it."
+
+## Action Steps
+1. Commit to going a full day without criticizing, complaining, or condemning anyone.
+2. Write down the names of three colleagues and note a sincere compliment for each next time you speak.
+3. In your next meeting, practice letting the other person do 70% of the talking.
+4. If you make a mistake today, admit it immediately and take responsibility.
+5. Smile consciously before entering any social or business conversation.
+
+## One-Line Takeaway
+To influence others, make them feel valued, heard, and important.
 `
   },
   {
@@ -87,17 +158,37 @@ The secret to dealing with people is making them feel important and appreciated.
     read_time_minutes: 15,
     content: `# Summary of The 7 Habits of Highly Effective People
 
-## Core Idea
-Real effectiveness is character-based, not personality-based. Align your habits with universal principles for long-term growth and success.
+## Core Premise
+True effectiveness is character-based, not personality-based. Aligning your daily habits with universal, timeless principles is the key to lasting success.
 
-## The 7 Habits
-1. **Habit 1: Be Proactive**: Take responsibility for your life.
-2. **Habit 2: Begin with the End in Mind**: Define your mission and goals.
-3. **Habit 3: Put First Things First**: Prioritize important, non-urgent tasks.
-4. **Habit 4: Think Win/Win**: Seek mutually beneficial solutions.
-5. **Habit 5: Seek First to Understand, Then to Be Understood**: Listen empathetically.
-6. **Habit 6: Synergize**: Combine strengths of people through teamwork.
-7. **Habit 7: Sharpen the Saw**: Balance and renew your resources.
+## Why This Book Matters
+Covey presents a holistic, integrated, principle-centered approach to solving personal and professional problems, providing a path from dependence to interdependence.
+
+## Key Insights
+1. **Be Proactive (Habit 1)**: Take responsibility for your reactions. Focus your energy on your Circle of Influence (things you can control) rather than your Circle of Concern.
+> "I am not a product of my circumstances. I am a product of my decisions."
+2. **Begin with the End in Mind (Habit 2)**: Define your personal mission statement. Know where you want to go so you can align daily actions with your core values.
+> "If your ladder is not leaning against the right wall, every step you take just gets you to the wrong place faster."
+3. **Put First Things First (Habit 3)**: Organize and execute around priority items. Focus on Quadrant II tasks—things that are important but not urgent.
+4. **Think Win/Win (Habit 4)**: Commit to relationships where all parties benefit. Frame all agreements as mutually cooperative.
+5. **Seek First to Understand (Habit 5)**: Practice empathetic listening. Listen with the intent to understand the other person's perspective before trying to explain your own.
+6. **Synergize (Habit 6)**: The whole is greater than the sum of its parts. Value difference and leverage diversity to solve complex problems.
+7. **Sharpen the Saw (Habit 7)**: Regularly renew yourself physically, mentally, emotionally, and spiritually to keep all habits sharp.
+
+## Memorable Quotes
+> "I am not a product of my circumstances. I am a product of my decisions."
+> "Most people do not listen with the intent to understand; they listen with the intent to reply."
+> "To touch the soul of another human being is to walk on holy ground."
+
+## Action Steps
+1. Identify a problem where you've been reacting like a victim, and choose one proactive action to take.
+2. Write a draft of your personal mission statement outlining your core values and lifetime goals.
+3. List your Quadrant II tasks for the week and block dedicated time for them in your calendar.
+4. Identify a conflict in your life and commit to seeking a Win/Win solution.
+5. Dedicate 30 minutes daily to physical exercise, reading, or meditation to renew your energy.
+
+## One-Line Takeaway
+True victory is won from the inside out, starting with your own character.
 `
   },
   {
@@ -111,30 +202,37 @@ Real effectiveness is character-based, not personality-based. Align your habits 
     read_time_minutes: 13,
     content: `# Summary of Deep Work by Cal Newport
 
-## Core Idea
-Deep Work — professional activity performed in a state of distraction-free concentration that pushes your cognitive abilities to their limit — is the skill of the 21st century. Those who can cultivate it will thrive.
+## Core Premise
+The ability to concentrate without distraction on cognitively demanding tasks is a rare and highly valuable superpower in our modern, distracted economy.
 
-## The Deep Work Hypothesis
-The ability to perform deep work is becoming increasingly rare, while simultaneously becoming increasingly valuable. Those who develop this skill will produce at an elite level.
+## Why This Book Matters
+In a world full of social media and constant notifications, Newport offers actionable rules to escape shallow work and achieve elite cognitive performance.
 
-## 4 Rules for Deep Work
+## Key Insights
+1. **The Deep Work Hypothesis**: Deep work is becoming increasingly rare while simultaneously becoming increasingly valuable. Those who master it will thrive.
+> "Deep work is not some nostalgic affectation of writers; it is a crucial skill."
+2. **High-Quality Work Equation**: High-Quality Work Produced = (Time Spent) x (Intensity of Focus). Multi-tasking destroys focus intensity through attention residue.
+> "Attention residue remains behind when you switch tasks, lowering your cognitive capacity."
+3. **Four Depth Philosophies**: Choose a strategy that fits your lifestyle: Monastic (total isolation), Bimodal (days of isolation), Rhythmic (daily blocks), or Journalistic (opportunistic).
+4. **Embrace Boredom**: Practice resisting the urge to check notifications. Training your focus muscles requires getting comfortable with having nothing to occupy your mind.
+5. **Quit Social Media**: Evaluate tools like a craftsman. Use a tool only if its benefits substantially outweigh its negatives relative to your goals.
+6. **Drain the Shallows**: Identify and aggressively minimize shallow work (email, meetings, admin). Schedule every minute of your workday.
+7. **The Shutdown Ritual**: End your workday with a strict shutdown ritual. Clear your mind of unfinished tasks to allow deep mental recovery.
 
-### Rule 1: Work Deeply
-Schedule deep work sessions like meetings. Use rituals and routines to minimize friction. Choose a depth philosophy: Monastic, Bimodal, Rhythmic, or Journalistic.
-
-### Rule 2: Embrace Boredom
-Resist the urge to switch to distraction at the first sign of boredom. Productive meditation, scheduled internet use, and memory training sharpen your concentration muscles.
-
-### Rule 3: Quit Social Media
-Apply the craftsman approach to tool selection: a tool is only worth using if its positives substantially outweigh its negatives relative to your professional goals.
-
-### Rule 4: Drain the Shallows
-Identify and minimize shallow work (email, meetings, admin). Schedule every minute of your workday. Finish work by 5:30pm.
+## Memorable Quotes
+> "If you don't produce, you won't thrive—no matter how skilled or talented you are."
+> "To produce at your peak level you need to work for extended periods with full concentration."
+> "Clarity about what matters provides clarity about what does not."
 
 ## Action Steps
-1. Block 90-minute deep work sessions in your calendar for the next week
-2. Identify your "depth philosophy" and commit to it for 30 days
-3. Eliminate or batch all shallow tasks to a 2-hour window each day
+1. Block out a 90-minute distraction-free deep work session in your calendar for tomorrow.
+2. Put your phone in another room or on Do Not Disturb during focus blocks.
+3. Designate specific times to check and reply to email twice a day.
+4. Establish a clear "work shutdown ritual" and say a phrase (like "Shutdown complete") to end your workday.
+5. Delete one distracting social media app from your phone for a one-week trial.
+
+## One-Line Takeaway
+Focus deeply, eliminate distraction, and produce at an elite level.
 `
   },
   {
@@ -148,32 +246,37 @@ Identify and minimize shallow work (email, meetings, admin). Schedule every minu
     read_time_minutes: 12,
     content: `# Summary of The Power of Habit by Charles Duhigg
 
-## Core Idea
-Every habit operates through a neurological loop: Cue → Routine → Reward. Identify the cue and reward, and you can change the routine — and therefore the habit.
+## Core Premise
+All habits operate through a simple neurological loop: Cue, Routine, and Reward. Understanding and modifying this loop is the key to changing any behavior.
 
-## The Habit Loop
-
-### Cue
-A trigger that tells your brain to go into automatic mode. It can be a time, place, emotion, other people, or an immediately preceding action.
-
-### Routine
-The physical, mental, or emotional behaviour that follows the cue. This is the habit itself.
-
-### Reward
-The positive reinforcement that tells your brain the loop is worth remembering. Without a reward, no habit forms.
+## Why This Book Matters
+Duhigg details the science of habits in individuals, organizations, and societies. By identifying the triggers and rewards of our patterns, we can consciously rewrite them.
 
 ## Key Insights
+1. **The Habit Loop**: Habits are formed by three elements: a Cue (trigger), a Routine (behavior), and a Reward (positive reinforcement).
+> "The brain is constantly looking for ways to save effort."
+2. **The Golden Rule of Habit Change**: You cannot extinguish a bad habit; you can only change it. Keep the same cue and reward, but insert a new routine.
+> "To change a habit, you must keep the old cue, and deliver the old reward, but insert a new routine."
+3. **Keystone Habits**: Some habits have the power to start chain reactions, changing other habits in their wake. Exercise and family dinners are classic keystone habits.
+4. **The Power of Belief**: Believing that change is possible is critical for permanent habit modification, especially during stressful periods.
+5. **Willpower is a Muscle**: Willpower is not a fixed trait; it is a resource that gets tired with use. Exercise it to make it stronger over time.
+6. **Organizational Habits**: Successful companies build safety and cooperation habits that define their culture and prevent systemic failures.
+7. **Creating Craving**: Cues must become linked with a strong craving for the reward to lock the habit loop into place.
 
-**The Golden Rule of Habit Change**: You can't extinguish a bad habit — you can only change it. Keep the same cue and reward, but insert a new routine.
-
-**Keystone Habits**: Some habits create chain reactions that shift other patterns. Exercise is a classic keystone habit — it tends to improve diet, sleep, and productivity automatically.
-
-**Belief**: For habits to permanently change, you must believe change is possible. Groups and communities make this easier.
+## Memorable Quotes
+> "Change might not be fast and it isn't always easy. But with time and effort, almost any habit can be reshaped."
+> "Willpower isn't just a skill. It's a muscle, like the muscles in your arms or legs."
+> "If you believe you can change - if you make it a habit - the change becomes real."
 
 ## Action Steps
-1. Pick one habit to change. Write down the cue, routine, and reward for it
-2. Keep the cue and reward the same — experiment with 3 new routines
-3. Identify one keystone habit to build that will cascade positively
+1. Identify a habit you want to change and write down its cue, routine, and reward.
+2. Experiment with three different routines to see if they satisfy the same cue and reward.
+3. Focus on building one keystone habit (like making your bed or exercising) this month.
+4. Plan for temptation: write down a clear "If [Temptation occurs], then I will [Action]" strategy.
+5. Join a group or community related to your goal to strengthen your belief in change.
+
+## One-Line Takeaway
+Identify the cue, change the routine, keep the reward, and you can reshape any habit.
 `
   },
   {
@@ -187,34 +290,37 @@ The positive reinforcement that tells your brain the loop is worth remembering. 
     read_time_minutes: 14,
     content: `# Summary of Rich Dad Poor Dad by Robert Kiyosaki
 
-## Core Idea
-Financial intelligence — not a high salary — is the key to wealth. The rich don't work for money; they make money work for them.
+## Core Premise
+Financial intelligence and asset accumulation—not a high salary—are the keys to building lasting wealth and escaping the rat race.
 
-## The Two Dads
-- **Poor Dad**: "Study hard, get good grades, find a safe job." Believed in job security, salary, and conventional thinking.
-- **Rich Dad**: "Mind your own business. Build or buy assets that generate income." Believed in financial education and ownership.
+## Why This Book Matters
+Kiyosaki uses stories of his two fathers to challenge conventional beliefs about money, explaining the difference between working for money and making money work for you.
 
-## Key Lessons
+## Key Insights
+1. **The Rich Don't Work for Money**: The middle class works for paychecks to pay bills. The rich focus on acquiring income-generating assets that work for them.
+> "The poor and the middle class work for money. The rich have money work for them."
+2. **Assets vs. Liabilities**: Assets put money in your pocket; liabilities take money out. Most people buy liabilities they think are assets (like a primary home).
+> "An asset puts money in my pocket. A liability takes money out of my pocket."
+3. **Mind Your Own Business**: Your profession is not your business. Your business is your asset column—investments in stocks, bonds, real estate, or IP.
+4. **The Power of Corporations**: The rich use corporate structures to pay expenses before taxes, while employees pay taxes before expenses.
+5. **Work to Learn, Not to Earn**: Seek jobs that teach you essential skills like sales, marketing, and leadership, rather than jobs that simply pay a high salary.
+6. **Overcoming Obstacles**: The primary obstacles to financial success are fear, cynicism, laziness, and bad habits. Learn to manage risk instead of avoiding it.
+7. **Pay Yourself First**: Prioritize saving and investing before paying bills. Use the pressure of paying bills to spark creative ways to make money.
 
-### 1. The Rich Don't Work for Money
-The rat race keeps people working for a paycheck to pay bills. The wealthy build assets that generate cash flow while they sleep.
-
-### 2. The Importance of Financial Literacy
-Income statement vs. balance sheet. Assets put money in your pocket; liabilities take money out. Most people buy liabilities they think are assets (like a primary home).
-
-### 3. Mind Your Own Business
-Your profession is not your business. Your business is your asset column: stocks, bonds, real estate, businesses, intellectual property.
-
-### 4. Taxes and Corporations
-The rich use legal corporate structures to protect their assets and reduce tax liability — financial education makes the difference.
-
-### 5. The Rich Invent Money
-Financial intelligence creates opportunities. Practice makes perfect: start small, take calculated risks, learn from failures.
+## Memorable Quotes
+> "The poor and the middle class work for money. The rich have money work for them."
+> "It's not how much money you make. It's how much money you keep."
+> "An asset puts money in my pocket. A liability takes money out of my pocket."
 
 ## Action Steps
-1. List your assets (things that put money in your pocket) vs. liabilities (things that take it out)
-2. Choose one asset class to study deeply this month: stocks, real estate, or starting a side business
-3. Track every naira/dollar you spend for 30 days to reveal where it actually goes
+1. Draw a simple balance sheet listing all your assets vs. liabilities.
+2. List three skills you want to learn that will increase your financial intelligence.
+3. Start a small side project or study an asset class (like index funds or real estate) for 15 minutes daily.
+4. Automate your savings to pay yourself first before bills are paid.
+5. Consult a tax professional to learn about the benefits of using a corporation.
+
+## One-Line Takeaway
+Buy assets, avoid liabilities, and make your money work for you.
 `
   },
   {
@@ -228,33 +334,37 @@ Financial intelligence creates opportunities. Practice makes perfect: start smal
     read_time_minutes: 11,
     content: `# Summary of The Psychology of Money by Morgan Housel
 
-## Core Idea
-Financial success is not a hard science. It's a soft skill where how you behave matters more than what you know. Your personal history and psychology shape your financial decisions far more than facts and spreadsheets.
+## Core Premise
+Doing well with money has less to do with intelligence and formulas, and more to do with behavior, emotions, and personal history.
 
-## Key Ideas
+## Why This Book Matters
+Housel presents 19 short stories highlighting the strange ways humans behave around money, showing how behavior shapes financial security more than finance spreadsheets.
 
-### No One is Crazy
-Everyone's financial decisions make sense to them given the unique experiences they've had. The poor person who plays the lottery isn't irrational — it may be their only realistic shot at wealth.
+## Key Insights
+1. **No One is Crazy**: Everyone's financial decisions make sense to them based on their personal history and when they grew up.
+> "Your personal experiences with money make up maybe 0.00000001% of what’s happened in the world, but check for 80% of how you think the world works."
+2. **Luck and Risk**: Success is not solely the result of hard work. Luck and risk are constant, powerful forces that shape financial outcomes.
+> "Nothing is as good or as bad as it seems."
+3. **Never Enough**: The hardest financial skill is getting the goalpost to stop moving. Comparing yourself to others is a battle you cannot win.
+4. **Confounding Compounding**: The secret to investing is not finding high returns, but finding good returns you can sustain over the longest period.
+5. **Getting Rich vs. Staying Rich**: Getting rich requires taking risks and being optimistic. Staying rich requires humility, caution, and a margin of safety.
+6. **Tail Events**: A tiny percentage of events drive the majority of outcomes. Most of Warren Buffett's wealth comes from a few successful investments.
+7. **Control Over Time**: The highest form of wealth is the ability to wake up every morning and say, "I can do whatever I want today."
 
-### Luck and Risk
-Bill Gates went to one of the only high schools in the world with a computer. His success is partly luck. Risk means good decisions can lead to bad outcomes. Judge strategies, not just outcomes.
-
-### Never Enough
-The hardest financial skill is getting the goalpost to stop moving. Enough is realizing that the opposite of "enough" is not "more" — it's a race you can never win.
-
-### Compounding is the Most Powerful Force
-Warren Buffett's fortune is mostly explained by time, not genius. He started at age 10 and never stopped. Most wealth is made in the last years of a long investing journey.
-
-### Save Like a Pessimist, Invest Like an Optimist
-Pessimism sounds smart and optimism sounds naïve, but the world gets better over time. Save with a margin of safety; invest with long-term conviction.
-
-### The Price of Investing
-Volatility is the admission fee to long-term returns. Investors who view it as a fee get the reward. Those who view it as a fine try to avoid it and miss out.
+## Memorable Quotes
+> "Doing well with money has a little to do with how smart you are and a lot to do with how you behave."
+> "The hardest financial skill is getting the goalpost to stop moving."
+> "Using your money to buy time and options has a lifestyle benefit that few luxury goods can compete with."
 
 ## Action Steps
-1. Write down your "enough" number — what would you need to feel financially secure?
-2. Automate savings so behaviour doesn't get in the way of intention
-3. Extend your investment time horizon by 10 years — compounding does the work
+1. Write down your "enough" goal—what target is sufficient for your happiness?
+2. Increase your cash savings to build a margin of safety against unexpected events.
+3. Review your investments and evaluate if you can leave them untouched for 10 years.
+4. Avoid comparing your lifestyle with friends and neighbors on social media.
+5. Focus your financial planning on buying back control over your daily schedule.
+
+## One-Line Takeaway
+Humility, patience, and behavior are the true pillars of wealth.
 `
   },
   {
@@ -268,39 +378,37 @@ Volatility is the admission fee to long-term returns. Investors who view it as a
     read_time_minutes: 16,
     content: `# Summary of Thinking, Fast and Slow by Daniel Kahneman
 
-## Core Idea
-Our minds operate using two systems. System 1 is fast, automatic, and emotional — it runs most of your life. System 2 is slow, deliberate, and logical — it kicks in only when you truly engage. Most of our mistakes happen when System 1 operates where System 2 should.
+## Core Premise
+Our decisions are shaped by two cognitive systems: System 1 (fast, automatic, intuitive) and System 2 (slow, effortful, logical). Biases arise when we rely on System 1 shortcuts where System 2 deliberation is needed.
 
-## System 1 vs. System 2
+## Why This Book Matters
+Nobel laureate Kahneman synthesizes decades of psychological research to expose the systematic errors, heuristics, and blind spots that govern human judgment.
 
-**System 1 (Fast Thinking)**
-- Automatic, emotional, rapid
-- Uses mental shortcuts (heuristics)
-- Susceptible to cognitive biases
-- Controls 95% of our decisions
+## Key Insights
+1. **System 1 (Fast Thinking)**: Operates automatically, quickly, and with little or no effort. It handles 95% of our actions but is highly prone to cognitive errors.
+> "System 1 is designed to jump to conclusions from little evidence."
+2. **System 2 (Slow Thinking)**: Allocates attention to effortful mental operations. It is logical and deliberate but lazy, often accepting System 1 judgments without verification.
+> "System 2 is activated when we detect an event that violates the model of the world that System 1 maintains."
+3. **The Anchoring Effect**: The tendency to rely heavily on the first piece of information offered. Initial numbers influence all subsequent estimates.
+4. **Availability Heuristic**: The ease with which examples come to mind distorts our judgment of probability. Vivid news makes rare events seem common.
+5. **Loss Aversion**: The pain of losing is psychologically twice as powerful as the pleasure of gaining. This drives excessive risk aversion.
+6. **The Planning Fallacy**: Humans systematically underestimate the time, budget, and risks required to complete future projects.
+7. **Substitution**: When faced with a hard question, System 1 automatically answers an easier, related question instead.
 
-**System 2 (Slow Thinking)**
-- Deliberate, rational, effortful
-- Can override System 1 when engaged
-- Limited capacity — gets tired
-- Only activates when consciously engaged
-
-## Key Cognitive Biases
-
-**Anchoring Effect**: The first number you hear influences all subsequent judgments. Negotiators use this deliberately.
-
-**Availability Heuristic**: We judge probability by how easily examples come to mind. Vivid events (plane crashes) seem more common than they are.
-
-**Overconfidence**: People systematically overestimate their knowledge and underestimate their ignorance. "I knew it all along" is a memory distortion.
-
-**Loss Aversion**: Losses feel roughly twice as painful as gains feel good. This explains risk aversion and the endowment effect.
-
-**The Planning Fallacy**: People chronically underestimate time, cost, and risks of future actions. Reference class forecasting corrects this.
+## Memorable Quotes
+> "Nothing in life is as important as you think it is, while you are thinking about it."
+> "We can be blind to the obvious, and we are also blind to our blindness."
+> "Loss aversion is a powerful engine of stability."
 
 ## Action Steps
-1. Before any major decision, ask "What would System 2 say?" — slow down and list pros/cons
-2. When you feel very certain about something, immediately question that certainty
-3. Use checklists to engage System 2 in repetitive, high-stakes tasks
+1. Slow down and activate System 2 before making any major financial or career decisions.
+2. When negotiating, establish your own anchor number before hearing the other party's offer.
+3. Add a 50% buffer to your time and budget estimates for all personal projects.
+4. Write down checklist procedures for repetitive tasks to override intuitive errors.
+5. Ask a cynical friend to critique your plans to combat overconfidence.
+
+## One-Line Takeaway
+Recognize your mental shortcuts, engage slow thinking, and make better decisions.
 `
   },
   {
@@ -314,32 +422,37 @@ Our minds operate using two systems. System 1 is fast, automatic, and emotional 
     read_time_minutes: 10,
     content: `# Summary of Man's Search for Meaning by Viktor Frankl
 
-## Core Idea
-Those who have a "why" to live for can bear almost any "how." The primary human drive is not pleasure or power — it is the pursuit of meaning.
+## Core Premise
+The primary human drive is not pleasure or power, but the pursuit of meaning. We cannot avoid suffering, but we can choose how to cope with it.
 
-## Part 1: Life in the Concentration Camp
+## Why This Book Matters
+Frankl consolidates his experiences in Nazi concentration camps to explain Logotherapy. His message is a testament to the strength of the human spirit.
 
-Frankl describes the psychological stages of concentration camp prisoners: admission shock, apathy and emotional dulling, and the psychology of liberation. He observed that prisoners who had a reason to survive — a manuscript to complete, a loved one to find — lasted longer.
+## Key Insights
+1. **The Ultimate Freedom**: No matter the environment, the last human freedom is the ability to choose your own attitude in any given circumstance.
+> "Everything can be taken from a man but one thing: the last of the human freedoms—to choose one's attitude in any given set of circumstances."
+2. **He Who Has a Why**: Those who have a reason to live (a child, a work, a partner) can endure almost any conditions.
+> "He who has a why to live for can bear with almost any how."
+3. **Three Paths to Meaning**: Meaning can be found in three ways: by creating a work, by experiencing love or nature, or by the attitude we take toward suffering.
+4. **The Existential Vacuum**: When meaning is absent, it leads to boredom, depression, and aggression. People often chase power and pleasure to fill the void.
+5. **Tragic Optimism**: The capacity to remain optimistic in the face of the "tragic triad" of life: pain, guilt, and death.
+6. **Love is the Ultimate Goal**: Love is the highest goal to which humans can aspire. Salvation is through love and in love.
+7. **Focus Externally**: Do not aim at success or happiness. The more you target them, the more you miss. They must ensue as unintended side-effects of dedication.
 
-**The Last Human Freedom**: Between stimulus and response, there is a space. In that space lies our freedom to choose our response, and in our response lies our growth and freedom. No one can take this from you.
-
-## Part 2: Logotherapy
-
-Logotherapy is therapy through meaning. The central principle: humans are driven above all by the search for meaning.
-
-**Three Sources of Meaning**:
-1. **Creative values** — what we give to the world (work, creations, deeds)
-2. **Experiential values** — what we receive from the world (love, truth, beauty)
-3. **Attitudinal values** — the stance we take toward unavoidable suffering
-
-**The Existential Vacuum**: The feeling of emptiness that arises when people lose meaning — often manifests as boredom, depression, or the pursuit of power and pleasure as substitutes.
-
-**Tragic Optimism**: Maintaining optimism in spite of the "tragic triad" — pain, guilt, and death. Finding meaning in suffering transforms it.
+## Memorable Quotes
+> "He who has a why to live for can bear with almost any how."
+> "When we are no longer able to change a situation, we are challenged to change ourselves."
+> "Between stimulus and response there is a space. In that space is our power to choose our response."
 
 ## Action Steps
-1. Write a "meaning statement" — what gives your life purpose right now?
-2. When facing unavoidable suffering, ask: "What attitude can I choose in this situation?"
-3. Identify one creative project you could dedicate yourself to this month
+1. Write down what currently gives you a sense of purpose or duty in your life.
+2. Next time you face a frustrating situation, pause for 5 seconds before choosing your reaction.
+3. Commit to one creative project or deed that will outlast your current efforts.
+4. Dedicate time to deeply appreciate a natural environment or a conversation with a loved one.
+5. Reframe one unavoidable challenge in your life as an opportunity for character growth.
+
+## One-Line Takeaway
+We do not ask what the meaning of life is; we are the ones being asked.
 `
   }
 ];

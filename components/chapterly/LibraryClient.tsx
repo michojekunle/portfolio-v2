@@ -889,14 +889,6 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
             <FileText size={13} />
             Read Summary
           </button>
-          <button
-            onClick={importDailyPick}
-            disabled={importingPick}
-            className="font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 text-[var(--ink-2)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] bg-transparent"
-            style={{ borderColor: "var(--rule)" }}
-          >
-            {importingPick ? "Importing…" : "Add to Library"}
-          </button>
         </div>
       </div>
 

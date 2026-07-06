@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import JSZip from "jszip";
 import {
   Sparkles,
@@ -179,6 +179,40 @@ export default function CarouselLabPage(): React.ReactElement {
   const [customBg, setCustomBg] = useState("");
   const [customText, setCustomText] = useState("");
   const [customAccent, setCustomAccent] = useState("");
+
+  // Load custom colors from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedBg = localStorage.getItem("carousel_lab_custom_bg");
+      const savedText = localStorage.getItem("carousel_lab_custom_text");
+      const savedAccent = localStorage.getItem("carousel_lab_custom_accent");
+      if (savedBg) setCustomBg(savedBg);
+      if (savedText) setCustomText(savedText);
+      if (savedAccent) setCustomAccent(savedAccent);
+    } catch {}
+  }, []);
+
+  // Save to localStorage when changed
+  const handleSetCustomBg = (color: string): void => {
+    setCustomBg(color);
+    try {
+      localStorage.setItem("carousel_lab_custom_bg", color);
+    } catch {}
+  };
+
+  const handleSetCustomText = (color: string): void => {
+    setCustomText(color);
+    try {
+      localStorage.setItem("carousel_lab_custom_text", color);
+    } catch {}
+  };
+
+  const handleSetCustomAccent = (color: string): void => {
+    setCustomAccent(color);
+    try {
+      localStorage.setItem("carousel_lab_custom_accent", color);
+    } catch {}
+  };
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const activeSlide = slides[activeSlideIndex] ?? null;
@@ -1218,7 +1252,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <input
                         type="color"
                         value={activeBg}
-                        onChange={(e) => setCustomBg(e.target.value)}
+                        onChange={(e) => handleSetCustomBg(e.target.value)}
                         className="w-full h-[32px] rounded-[6px] border-none bg-transparent cursor-pointer"
                       />
                     </div>
@@ -1227,7 +1261,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <input
                         type="color"
                         value={activeText}
-                        onChange={(e) => setCustomText(e.target.value)}
+                        onChange={(e) => handleSetCustomText(e.target.value)}
                         className="w-full h-[32px] rounded-[6px] border-none bg-transparent cursor-pointer"
                       />
                     </div>
@@ -1236,11 +1270,29 @@ export default function CarouselLabPage(): React.ReactElement {
                       <input
                         type="color"
                         value={activeAccent}
-                        onChange={(e) => setCustomAccent(e.target.value)}
+                        onChange={(e) => handleSetCustomAccent(e.target.value)}
                         className="w-full h-[32px] rounded-[6px] border-none bg-transparent cursor-pointer"
                       />
                     </div>
                   </div>
+                  {(customBg || customText || customAccent) && (
+                    <button
+                      onClick={() => {
+                        setCustomBg("");
+                        setCustomText("");
+                        setCustomAccent("");
+                        try {
+                          localStorage.removeItem("carousel_lab_custom_bg");
+                          localStorage.removeItem("carousel_lab_custom_text");
+                          localStorage.removeItem("carousel_lab_custom_accent");
+                        } catch {}
+                      }}
+                      className="mt-[8px] w-full h-[28px] rounded-[6px] font-mono text-[8px] tracking-[0.08em] uppercase font-semibold border border-dashed transition-all hover:bg-[var(--bg)] cursor-pointer"
+                      style={{ borderColor: "var(--rule)", color: "var(--ink-3)" }}
+                    >
+                      Reset to Mood Defaults
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
