@@ -15,12 +15,10 @@ export function ProgressBar({ value }: { value: number }): React.ReactElement {
         className="h-[4px] rounded-full bg-[var(--rule)] overflow-hidden w-[160px]"
         aria-label={`${pct}% complete`}
       >
-        <MagneticWrapper strength={10}>
-          <div
-            className="h-full rounded-full bg-[var(--v3-accent)] transition-all duration-700 ease-out"
-            style={{ width: `${pct}%` }}
-          />
-        </MagneticWrapper>
+        <div
+          className="h-full rounded-full bg-[var(--v3-accent)] transition-all duration-700 ease-out"
+          style={{ width: `${pct}%` }}
+        />
       </div>
       <span className="font-mono text-[10px] text-[var(--ink-3)] tracking-[0.06em]">
         {pct}%
