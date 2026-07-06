@@ -4,6 +4,23 @@ import { FwSidebarNav } from "@/components/flowise/SidebarNav";
 import { getUserAccounts } from "@/lib/flowise/queries";
 import { computeNetWorth } from "@/lib/flowise/calculator";
 import { AssistantWidget } from "@/components/flowise/AssistantWidget";
+import { PwaRegistrar } from "@/components/PwaRegistrar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Flowise — Your money, mapped",
+  description:
+    "A personal finance OS. Log transactions, set budgets and savings goals, and get plain-language AI insights into where your money goes.",
+  manifest: "/manifests/flowise.json",
+  appleWebApp: {
+    capable: true,
+    title: "Flowise",
+    statusBarStyle: "black-translucent",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+};
 
 export default async function FlowiseLayout({
   children,
@@ -31,6 +48,7 @@ export default async function FlowiseLayout({
         <main className="flex-1 min-h-screen">{children}</main>
       </div>
       <AssistantWidget />
+      <PwaRegistrar toolId="flowise" />
     </div>
   );
 }

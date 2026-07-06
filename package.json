@@ -57,6 +57,8 @@
     "@tiptap/pm": "^3.22.3",
     "@tiptap/react": "^3.22.3",
     "@tiptap/starter-kit": "^3.22.3",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",

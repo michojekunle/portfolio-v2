@@ -27,10 +27,9 @@ import {
   Flame,
   Award
 } from "lucide-react";
+import { TOOL_COLORS } from "@/lib/tool-colors";
 
-const ACCENT = "#FF6B35";
-const ACCENT_SOFT = "rgba(255,107,53,0.12)";
-const ACCENT_BORDER = "rgba(255,107,53,0.25)";
+const { accent: ACCENT, accentSoft: ACCENT_SOFT, accentBorder: ACCENT_BORDER } = TOOL_COLORS["carousel-lab"];
 
 const AESTHETIC_MOODS = [
   "Minimalist",

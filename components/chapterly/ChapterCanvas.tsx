@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { X, BookOpen, Bookmark, Share2, ChevronLeft, ChevronRight, Check, Loader2 } from "lucide-react";
+import { stripMarkdown } from "@/components/ui/Markdown";
 
 const ACCENT = "#4F6D7A";
 const ACCENT_SOFT = "rgba(79,109,122,0.10)";
@@ -51,7 +52,7 @@ function parseChapters(text: string): Chapter[] {
         .replace(/^chapter\s+\d+[\.\:—\s]*/i, "")
         .replace(/^\d+[\.\)]\s+/, "")
         .trim();
-      const title = rawTitle || `Chapter ${s + 1}`;
+      const title = stripMarkdown(rawTitle) || `Chapter ${s + 1}`;
       const body = sectionLines.slice(1).join(" ").trim();
       const quote = extractQuote(body);
       const takeaway = extractTakeaway(body);
@@ -80,10 +81,10 @@ function parseChapters(text: string): Chapter[] {
 function extractQuote(text: string): string {
   // Prefer blockquote-style lines
   const quoted = text.match(/[""]([^"""]{20,200})[""]|^>\s*(.{20,200})/m);
-  if (quoted) return (quoted[1] ?? quoted[2] ?? "").trim();
+  if (quoted) return stripMarkdown((quoted[1] ?? quoted[2] ?? "").trim());
   // First full sentence that reads like a key statement
   const sentences = text.match(/[A-Z][^.!?]{30,200}[.!?]/g) ?? [];
-  return sentences[0]?.trim() ?? text.slice(0, 180).trim();
+  return stripMarkdown(sentences[0]?.trim() ?? text.slice(0, 180).trim());
 }
 
 function extractTakeaway(text: string): string {
@@ -91,11 +92,11 @@ function extractTakeaway(text: string): string {
   const match = text.match(
     /(?:key takeaway|takeaway|lesson|remember|in summary|conclusion)[:\s—]+([^.!?]{20,220}[.!?])/i
   );
-  if (match) return match[1]?.trim() ?? "";
+  if (match) return stripMarkdown(match[1]?.trim() ?? "");
   // Last substantive sentence
   const sentences = text.match(/[A-Z][^.!?]{30,200}[.!?]/g) ?? [];
   const last = sentences[sentences.length - 1];
-  return last?.trim() ?? text.slice(-180).trim();
+  return stripMarkdown(last?.trim() ?? text.slice(-180).trim());
 }
 
 export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFlashcard }: Props): React.ReactElement {

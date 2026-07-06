@@ -43,7 +43,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const rl = checkRateLimit(`flowise:assistant:${user.id}`, { limit: 60, windowMs: 60_000 });
+  const rl = await checkRateLimit(`flowise:assistant:${user.id}`, { limit: 60, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
   }
@@ -200,7 +200,7 @@ JSON Response Schema:
       reply: string;
       action?: {
         type: "ADD_TRANSACTION" | "SET_BUDGET" | "CREATE_GOAL" | "NONE";
-        data: any;
+        data: unknown;
       };
     };
 

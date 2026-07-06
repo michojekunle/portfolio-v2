@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { ChFlashcardClient } from "@/components/chapterly/FlashcardClient";
+import { ChFlashcardClient, type FlashcardWithBook } from "@/components/chapterly/FlashcardClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ export default async function FlashcardsPage({
 
   return (
     <ChFlashcardClient
-      initialCards={(data ?? []) as any}
+      initialCards={(data ?? []) as FlashcardWithBook[]}
       totalCount={totalCount ?? 0}
       studyAll={studyAll}
     />

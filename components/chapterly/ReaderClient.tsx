@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
 import { ChapterCanvas } from "./ChapterCanvas";
+import { stripMarkdown } from "@/components/ui/Markdown";
 
 const ACCENT = "#4F6D7A";
 
@@ -209,16 +210,6 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
   }
 
   return <div className="space-y-[6px]">{elements}</div>;
-}
-
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/#{1,6}\s+/g, "")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/^[-*]\s+/gm, "")
-    .replace(/^>\s*/gm, "")
-    .replace(/^\d+\.\s+/gm, "")
-    .trim();
 }
 
 type ReaderTheme = "white" | "sepia" | "dark" | "oled";

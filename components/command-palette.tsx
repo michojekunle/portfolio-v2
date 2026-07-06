@@ -26,6 +26,9 @@ import {
   Github,
   Twitter,
   Activity,
+  Youtube,
+  Instagram,
+  Video,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
@@ -200,6 +203,7 @@ export function CommandPalette(): React.ReactElement {
     { label: "Guestbook", icon: <MessageSquare className="h-4 w-4" />, action: () => navigate("/guestbook"), group: "Pages", keywords: "sign message" },
     { label: "Changelog", icon: <BookOpen className="h-4 w-4" />, action: () => navigate("/changelog"), group: "Pages", keywords: "activity updates commits" },
     { label: "RSS Feed", icon: <Rss className="h-4 w-4" />, action: () => navigate("/feed.xml"), group: "Pages" },
+    { label: "Videos", icon: <Video className="h-4 w-4" />, action: () => navigate("/videos"), group: "Pages", keywords: "youtube instagram tiktok x watch" },
 
     // Theme
     {
@@ -220,6 +224,8 @@ export function CommandPalette(): React.ReactElement {
     // Social
     { label: "GitHub", icon: <Github className="h-4 w-4" />, action: () => navigate("https://github.com/michojekunle"), group: "Social" },
     { label: "Twitter / X", icon: <Twitter className="h-4 w-4" />, action: () => navigate("https://x.com/devvmichael"), group: "Social" },
+    { label: "YouTube", icon: <Youtube className="h-4 w-4" />, action: () => navigate("https://www.youtube.com/@devvmichael"), group: "Social" },
+    { label: "Instagram", icon: <Instagram className="h-4 w-4" />, action: () => navigate("https://instagram.com/devvmichaell/"), group: "Social" },
   ];
 
   // Filter out current theme option

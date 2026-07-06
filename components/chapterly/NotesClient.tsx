@@ -9,6 +9,7 @@ import type {
   HighlightColor,
 } from "@/lib/chapterly/types";
 import type { ConceptCard } from "@/app/api/chapterly/shorts/route";
+import { Markdown, MarkdownInline, stripMarkdown } from "@/components/ui/Markdown";
 import {
   ArrowLeft,
   Plus,
@@ -55,33 +56,11 @@ function formatDate(iso: string): string {
 }
 
 function renderNoteContent(md: string): React.ReactElement {
-  const lines = md.split("\n");
-  const nodes: React.ReactNode[] = [];
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i];
-    if (!line.trim()) { i++; continue; }
-    if (line.startsWith("> ")) {
-      nodes.push(
-        <blockquote
-          key={i}
-          className="pl-[12px] py-[8px] italic text-[13px] text-[var(--ink-3)] my-[8px]"
-          style={{ borderTop: "1px solid var(--rule)", borderBottom: "1px solid var(--rule)" }}
-        >
-          {line.slice(2)}
-        </blockquote>
-      );
-    } else {
-      const parts = line.split(/(\*\*[^*]+\*\*)/g).map((part, pi) =>
-        part.startsWith("**") && part.endsWith("**")
-          ? <strong key={pi} className="font-semibold text-[var(--ink)]">{part.slice(2, -2)}</strong>
-          : part
-      );
-      nodes.push(<p key={i} className="text-[14px] leading-[1.7] text-[var(--ink)] m-0 mb-[6px]">{parts}</p>);
-    }
-    i++;
-  }
-  return <div className="flex flex-col gap-[2px]">{nodes}</div>;
+  return (
+    <div className="text-[14px] leading-[1.7] text-[var(--ink)]">
+      <Markdown text={md} accent="var(--ch-accent, #4F6D7A)" />
+    </div>
+  );
 }
 
 // ── NoteEditor ────────────────────────────────────────────────
@@ -1007,10 +986,10 @@ export function ChNotesClient({
                         {card.title}
                       </h2>
                       <p className="text-[13px] font-medium text-[var(--ink-2)] leading-[1.5] m-0 mb-[14px]">
-                        {card.concept}
+                        <MarkdownInline text={card.concept} />
                       </p>
                       <p className="text-[13px] leading-[1.7] text-[var(--ink-3)] m-0 flex-1">
-                        {card.insight}
+                        <MarkdownInline text={card.insight} />
                       </p>
                       {card.quote && (
                         <blockquote
@@ -1579,7 +1558,7 @@ function renderConceptToCanvas(card: ConceptCard, book: ChBook): HTMLCanvasEleme
 
   // Concept text
   const conceptFont = "500 30px 'Inter', system-ui, sans-serif";
-  const conceptLines = wrap(card.concept, SIZE - PAD * 2, conceptFont);
+  const conceptLines = wrap(stripMarkdown(card.concept), SIZE - PAD * 2, conceptFont);
   ctx.fillStyle = "#2d4a55";
   ctx.font = conceptFont;
   y = drawLines(conceptLines, PAD, y, 42);
@@ -1588,7 +1567,7 @@ function renderConceptToCanvas(card: ConceptCard, book: ChBook): HTMLCanvasEleme
   // Insight text
   if (card.insight) {
     const insightFont = "italic 24px Georgia, serif";
-    const insightLines = wrap(card.insight, SIZE - PAD * 2 - 20, insightFont);
+    const insightLines = wrap(stripMarkdown(card.insight), SIZE - PAD * 2 - 20, insightFont);
     ctx.fillStyle = `${CH_ACCENT}cc`;
     ctx.font = insightFont;
     y = drawLines(insightLines, PAD + 10, y, 34);
@@ -1644,8 +1623,8 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
   const [imgLoading, setImgLoading] = useState(false);
   const [sharing, setSharing] = useState(false);
 
-  const shareText = `💡 ${card.title}\n\n${card.concept}\n\n"${card.insight}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & grow with Chapterly 📖`;
-  const twitterText = encodeURIComponent(`💡 ${card.title}\n\n${card.concept}\n\n— From "${book.title}"\n\nRead & grow with Chapterly 📖`);
+  const shareText = `💡 ${card.title}\n\n${stripMarkdown(card.concept)}\n\n"${stripMarkdown(card.insight)}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & grow with Chapterly 📖`;
+  const twitterText = encodeURIComponent(`💡 ${card.title}\n\n${stripMarkdown(card.concept)}\n\n— From "${book.title}"\n\nRead & grow with Chapterly 📖`);
   const whatsappText = encodeURIComponent(shareText);
 
   const getBlob = (): Promise<Blob> =>
@@ -1750,11 +1729,11 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                   {card.title}
                 </h3>
                 <p className="text-[13px] font-medium m-0 leading-[1.5]" style={{ color: "#2d4a55" }}>
-                  {card.concept}
+                  <MarkdownInline text={card.concept} />
                 </p>
                 {card.insight && (
                   <p className="text-[12px] italic m-0 leading-[1.6]" style={{ color: `${CH_ACCENT}cc` }}>
-                    {card.insight}
+                    <MarkdownInline text={card.insight} />
                   </p>
                 )}
                 {card.quote && (

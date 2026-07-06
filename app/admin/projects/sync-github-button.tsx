@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -9,23 +9,36 @@ export function SyncGitHubButton(): React.ReactElement {
   const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
+  const messageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) clearTimeout(messageTimeoutRef.current);
+    };
+  }, []);
 
   const handleSync = async (): Promise<void> => {
     setSyncing(true);
     setMessage(null);
 
-    const res = await fetch("/api/admin/sync-github", { method: "POST" });
-    const json = (await res.json()) as { message?: string; error?: string };
+    try {
+      const res = await fetch("/api/admin/sync-github", { method: "POST" });
+      const json = (await res.json()) as { message?: string; error?: string };
 
-    if (!res.ok) {
-      setMessage(json.error ?? "Sync failed");
-    } else {
-      setMessage(json.message ?? "Synced");
-      router.refresh();
+      if (!res.ok) {
+        setMessage(json.error ?? "Sync failed");
+      } else {
+        setMessage(json.message ?? "Synced");
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("[sync-github-button] sync failed:", err);
+      setMessage("Sync failed — check your connection.");
+    } finally {
+      setSyncing(false);
+      if (messageTimeoutRef.current) clearTimeout(messageTimeoutRef.current);
+      messageTimeoutRef.current = setTimeout(() => setMessage(null), 3000);
     }
-
-    setSyncing(false);
-    setTimeout(() => setMessage(null), 3000);
   };
 
   return (

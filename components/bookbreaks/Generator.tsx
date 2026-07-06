@@ -11,6 +11,7 @@ import {
 } from "@/lib/bookbreaks/constants";
 import type { BBBookWithContent, ContentType } from "@/lib/bookbreaks/types";
 import { CarouselPreview } from "@/components/bookbreaks/CarouselPreview";
+import { Markdown } from "@/components/ui/Markdown";
 import {
   Sparkles,
   BookOpen,
@@ -458,11 +459,8 @@ export function BBGenerator({
                 className="p-[24px] max-[480px]:p-[16px]"
                 style={{ background: "var(--bg-2)" }}
               >
-                <pre
-                  className="whitespace-pre-wrap text-[14px] leading-[1.75] font-[inherit] m-0 text-[var(--ink)] overflow-x-auto"
-                  style={{ fontFamily: "inherit" }}
-                >
-                  {generated}
+                <div className="text-[14px] leading-[1.75] text-[var(--ink)]">
+                  <Markdown text={generated} accent="var(--v3-accent)" />
                   {generating && (
                     <span
                       className="inline-block w-[2px] h-[18px] ml-[2px] align-middle bg-[var(--v3-accent)]"
@@ -470,7 +468,7 @@ export function BBGenerator({
                       aria-hidden="true"
                     />
                   )}
-                </pre>
+                </div>
               </div>
             )}
 

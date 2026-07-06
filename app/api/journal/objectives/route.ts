@@ -18,7 +18,7 @@ export async function GET(): Promise<NextResponse> {
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:objectives:get:${user.id}`, { limit: 120, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:objectives:get:${user.id}`, { limit: 120, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { data: objectiveRows, error: objectivesError } = await supabase
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:objectives:post:${user.id}`, { limit: 30, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:objectives:post:${user.id}`, { limit: 30, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   let body: unknown;

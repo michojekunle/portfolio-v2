@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import type { ChBook } from "@/lib/chapterly/types";
 import { ArrowLeft, Send, Loader2, BookMarked, Mic, MicOff, Volume2, Phone, PhoneOff } from "lucide-react";
+import { Markdown, stripMarkdown } from "@/components/ui/Markdown";
 
 // SpeechRecognition is not in lib.dom.d.ts for all targets — declare what we need.
 interface SpeechRecognitionAlternative { readonly transcript: string; readonly confidence: number; }
@@ -363,7 +364,10 @@ export function ChChatClient({ book }: Props): React.ReactElement {
               <div className="rounded-[10px] px-[14px] py-[10px]" style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}>
                 <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink-3)] mb-[4px]">AI</div>
                 <div className="text-[13px] text-[var(--ink)] leading-[1.6]">
-                  {lastAI.content.length > 200 ? `${lastAI.content.slice(0, 200)}…` : lastAI.content}
+                  {(() => {
+                    const plain = stripMarkdown(lastAI.content);
+                    return plain.length > 200 ? `${plain.slice(0, 200)}…` : plain;
+                  })()}
                 </div>
               </div>
             )}
@@ -447,9 +451,15 @@ export function ChChatClient({ book }: Props): React.ReactElement {
                   : { background: "var(--bg-2)", color: "var(--ink)", border: "1px solid var(--rule)" }
               }
             >
-              {msg.content || (loading && i === messages.length - 1
-                ? <Loader2 size={16} className="animate-spin" style={{ color: ACCENT }} />
-                : null)}
+              {msg.content ? (
+                msg.role === "assistant" ? (
+                  <Markdown text={msg.content} accent={ACCENT} />
+                ) : (
+                  msg.content
+                )
+              ) : loading && i === messages.length - 1 ? (
+                <Loader2 size={16} className="animate-spin" style={{ color: ACCENT }} />
+              ) : null}
             </div>
           </div>
         ))}

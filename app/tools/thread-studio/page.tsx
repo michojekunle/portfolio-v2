@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Sparkles, Trash, Plus, Copy, Check, ArrowUp, ArrowDown, Smartphone, ChevronRight } from "lucide-react";
+import { TOOL_COLORS } from "@/lib/tool-colors";
 
-const ACCENT = "#6366F1";
-const ACCENT_SOFT = "rgba(99,102,241,0.12)";
-const ACCENT_BORDER = "rgba(99,102,241,0.25)";
+const { accent: ACCENT, accentSoft: ACCENT_SOFT, accentBorder: ACCENT_BORDER } = TOOL_COLORS["thread-studio"];
 
 const TONES = ["Educational", "Storytelling", "Controversial", "Technical"] as const;
 type Tone = (typeof TONES)[number];
@@ -153,11 +152,22 @@ export default function ThreadStudioPage(): React.ReactElement {
     setEditedTweets(blank);
   };
 
+  const copiedIndexTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copiedAllTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copiedIndexTimeoutRef.current) clearTimeout(copiedIndexTimeoutRef.current);
+      if (copiedAllTimeoutRef.current) clearTimeout(copiedAllTimeoutRef.current);
+    };
+  }, []);
+
   const copyTweet = async (index: number, text: string): Promise<void> => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedIndex(index);
-      setTimeout(() => setCopiedIndex(null), 2000);
+      if (copiedIndexTimeoutRef.current) clearTimeout(copiedIndexTimeoutRef.current);
+      copiedIndexTimeoutRef.current = setTimeout(() => setCopiedIndex(null), 2000);
     } catch {
       setError("Could not copy tweet — please copy manually.");
     }
@@ -168,7 +178,8 @@ export default function ThreadStudioPage(): React.ReactElement {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      if (copiedAllTimeoutRef.current) clearTimeout(copiedAllTimeoutRef.current);
+      copiedAllTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       setError("Could not copy to clipboard — please select and copy manually.");
     }

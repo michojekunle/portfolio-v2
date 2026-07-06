@@ -3,10 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_KEY;
+  if (!url || !key) {
+    throw new Error("Missing Supabase configuration for guestbook route");
+  }
+  return createClient(url, key);
 }
 
 const guestbookSchema = z.object({
@@ -23,25 +25,30 @@ const guestbookSchema = z.object({
 });
 
 export async function GET(): Promise<Response> {
-  const { data, error } = await getSupabase()
-    .from("guestbook")
-    .select("id, name, message, created_at")
-    .order("created_at", { ascending: false })
-    .limit(100);
+  try {
+    const { data, error } = await getSupabase()
+      .from("guestbook")
+      .select("id, name, message, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
 
-  if (error) {
-    console.error("[guestbook] Fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to load entries" },
-      { status: 500 }
-    );
+    if (error) {
+      console.error("[guestbook] Fetch error:", error);
+      return NextResponse.json(
+        { error: "Failed to load entries" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+      },
+    });
+  } catch (err) {
+    console.error("[guestbook] Config error:", err);
+    return NextResponse.json({ error: "Failed to load entries" }, { status: 500 });
   }
-
-  return NextResponse.json(data, {
-    headers: {
-      "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
-    },
-  });
 }
 
 export async function POST(request: NextRequest): Promise<Response> {

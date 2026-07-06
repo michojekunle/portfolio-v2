@@ -18,8 +18,8 @@ export function CodeBlock({ children, className }: CodeBlockProps): React.ReactE
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard API not available
+    } catch (err) {
+      console.error("[code-block] clipboard write failed:", err);
     }
   };
 
@@ -29,9 +29,9 @@ export function CodeBlock({ children, className }: CodeBlockProps): React.ReactE
         {children}
       </pre>
       <button
-        onClick={handleCopy}
+        onClick={() => void handleCopy()}
         aria-label={copied ? "Copied" : "Copy code"}
-        className="absolute top-2 right-2 p-1.5 rounded bg-muted/80 border border-border/60 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+        className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center rounded bg-muted/80 border border-border/60 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
       >
         {copied ? (
           <Check className="h-3.5 w-3.5 text-green-500" />
@@ -39,6 +39,9 @@ export function CodeBlock({ children, className }: CodeBlockProps): React.ReactE
           <Copy className="h-3.5 w-3.5" />
         )}
       </button>
+      <span role="status" aria-live="polite" className="sr-only">
+        {copied ? "Code copied to clipboard" : ""}
+      </span>
     </div>
   );
 }

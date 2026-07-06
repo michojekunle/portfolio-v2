@@ -24,7 +24,7 @@ const RATINGS: { rating: Rating; label: string; color: string; hotkey: string }[
   { rating: 3, label: "Easy",   color: "#16A34A", hotkey: "4" },
 ];
 
-interface FlashcardWithBook extends ChFlashcard {
+export interface FlashcardWithBook extends ChFlashcard {
   ch_books: { title: string; author: string | null } | null;
 }
 

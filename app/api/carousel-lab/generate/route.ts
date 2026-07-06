@@ -131,7 +131,7 @@ async function generateWithGemini(
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anon";
-  const rl = checkRateLimit(`carousel-lab:${ip}`, { limit: 5, windowMs: 60_000 });
+  const rl = await checkRateLimit(`carousel-lab:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Please wait a moment before generating again." },

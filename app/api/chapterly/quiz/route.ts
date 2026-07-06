@@ -3,7 +3,15 @@ import { createClient } from "@/lib/supabase/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getBBSettings } from "@/lib/bookbreaks/queries";
 import { DEFAULT_MODEL_CHAIN } from "../chat/route";
+import { checkRateLimit } from "@/lib/rate-limit";
 import Groq from "groq-sdk";
+import { z } from "zod";
+
+const RequestSchema = z.object({
+  book_id: z.string().uuid("Invalid book ID"),
+  book_title: z.string().min(1).max(300),
+  book_author: z.string().max(200).nullable().optional(),
+});
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const supabase = await createClient();
@@ -15,16 +23,35 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { book_id: string; book_title: string; book_author?: string | null };
+  const rl = await checkRateLimit(`chapterly:quiz:${user.id}`, { limit: 5, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many quiz requests. Please wait a minute." }, { status: 429 });
+  }
+
+  let body: unknown;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { book_id, book_title, book_author } = body;
-  if (!book_id || !book_title) {
-    return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+  const parsed = RequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
+  }
+
+  const { book_id, book_title, book_author } = parsed.data;
+
+  // Verify the book belongs to the requesting user before generating anything.
+  const { data: book, error: bookError } = await supabase
+    .from("ch_books")
+    .select("id")
+    .eq("id", book_id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (bookError || !book) {
+    return NextResponse.json({ error: "Book not found" }, { status: 404 });
   }
 
   const systemPrompt = `You are a professional reading comprehension instructor.

@@ -7,11 +7,11 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0d0d0d",
-  "theme_color": "#6B7280",
+  "theme_color": "#7C3AED",
   "categories": ["lifestyle", "productivity"],
   "icons": [
-    { "src": "/icons/vela-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icons/vela-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/api/tool-icon?tool=vela&size=192", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/api/tool-icon?tool=vela&size=512", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "screenshots": [],
   "prefer_related_applications": false

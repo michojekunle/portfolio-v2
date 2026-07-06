@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Sparkles, Send, X, Loader2, CornerDownLeft, Check, Plus } from "lucide-react";
 import { VELA_ACCENT } from "@/lib/journal/types";
+import { Markdown } from "@/components/ui/Markdown";
 
 const ACCENT = VELA_ACCENT;
 const ACCENT_BG = "rgba(124,58,237,0.08)";
@@ -174,7 +175,7 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
                         : { border: "1px solid var(--rule)", borderRadius: "14px 14px 14px 2px" }
                     }
                   >
-                    {m.content}
+                    {m.role === "assistant" ? <Markdown text={m.content} accent={ACCENT} /> : m.content}
                   </div>
 
                   {m.draft && (

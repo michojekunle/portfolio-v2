@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Sparkles, RefreshCw, Loader2 } from "lucide-react";
 import type { DailyInsightPayload } from "@/app/api/chapterly/daily-insight/route";
+import { MarkdownInline } from "@/components/ui/Markdown";
 
 const ACCENT = "#4F6D7A";
 const CACHE_KEY = "chapterly_daily_insight_v2";
@@ -109,7 +110,9 @@ export function DailyInsightCard(): React.ReactElement {
       <div className="h-[2px]" style={{ background: `linear-gradient(90deg, ${ACCENT}, transparent)` }} />
       <div className="px-[18px] py-[14px] flex items-start gap-[10px]">
         <Sparkles size={13} className="shrink-0 mt-[2px]" style={{ color: ACCENT, opacity: 0.7 }} />
-        <p className="flex-1 text-[13px] leading-[1.65] m-0 text-[var(--ink-2)]">{insight}</p>
+        <p className="flex-1 text-[13px] leading-[1.65] m-0 text-[var(--ink-2)]">
+          {insight && <MarkdownInline text={insight} />}
+        </p>
         <button
           onClick={() => void fetchInsight(true)}
           disabled={refreshing}

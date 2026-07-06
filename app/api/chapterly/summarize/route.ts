@@ -172,7 +172,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const rl = checkRateLimit(`chapterly:summarize:${user.id}`, { limit: 5, windowMs: 60_000 });
+  const rl = await checkRateLimit(`chapterly:summarize:${user.id}`, { limit: 5, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many summary requests. Please wait a minute." }, { status: 429 });
   }

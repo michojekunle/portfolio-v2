@@ -22,7 +22,7 @@ export async function GET(
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:entries:get:${user.id}`, { limit: 120, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:entries:get:${user.id}`, { limit: 120, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { date } = await params;
@@ -54,7 +54,7 @@ export async function PUT(
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:entries:put:${user.id}`, { limit: 60, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:entries:put:${user.id}`, { limit: 60, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { date } = await params;

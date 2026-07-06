@@ -7,6 +7,7 @@ import { getBBBook, getBBSettings } from "@/lib/bookbreaks/queries";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/bookbreaks/prompts";
 import type { ContentType } from "@/lib/bookbreaks/types";
 import { SEED_CONTENT } from "@/lib/bookbreaks/seed-data";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const DEFAULT_MODEL_CHAIN = [
   "google:gemini-3.5-flash",
@@ -184,6 +185,11 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rl = await checkRateLimit(`bookbreaks:generate:${user.id}`, { limit: 5, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please wait a minute." }, { status: 429 });
   }
 
   const body: unknown = await req.json();

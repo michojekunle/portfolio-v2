@@ -21,6 +21,8 @@ import {
   Check,
 } from "lucide-react";
 
+import { stripMarkdown } from "@/components/ui/Markdown";
+
 const ACCENT = "#4F6D7A";
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 type Speed = (typeof SPEEDS)[number];
@@ -817,7 +819,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
             </div>
           )}
           {summary && activeTab === "read" && <ReadTab summary={summary} />}
-          {activeTab === "listen" && rawContent && <ListenTab text={rawContent} />}
+          {activeTab === "listen" && rawContent && <ListenTab text={stripMarkdown(rawContent)} />}
           {activeTab === "listen" && !rawContent && !loading && (
             <p className="text-[13px] text-[var(--ink-3)] text-center py-[40px]">
               Summary is still loading — switch to Read tab and come back.

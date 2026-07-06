@@ -7,6 +7,7 @@ import { CashFlowChart } from "./CashFlowChart";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
 import { Sparkles, RefreshCw } from "lucide-react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { MarkdownInline } from "@/components/ui/Markdown";
 
 const ACCENT = "#16A34A";
 
@@ -211,7 +212,7 @@ export function AnalyticsClient(): React.ReactElement {
                 {insight.insights.map((text, i) => (
                   <div key={i} className="flex items-start gap-[10px] rounded-[10px] px-[14px] py-[10px]" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
                     <Sparkles size={12} className="shrink-0 mt-[2px]" style={{ color: ACCENT }} />
-                    <p className="text-[13px] leading-[1.6] text-[var(--ink-2)] m-0">{text}</p>
+                    <p className="text-[13px] leading-[1.6] text-[var(--ink-2)] m-0"><MarkdownInline text={text} /></p>
                   </div>
                 ))}
                 <div className="font-mono text-[9px] text-[var(--ink-4)] text-right">

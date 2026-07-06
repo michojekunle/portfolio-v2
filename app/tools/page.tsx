@@ -156,6 +156,26 @@ export default function CreatorSuitePage(): React.ReactElement {
                     <span className="text-[14px]" aria-hidden="true">→</span>
                   </Link>
                 </MagneticWrapper>
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/thread-studio"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    style={{ background: "rgba(99,102,241,0.12)", color: "#6366F1", border: "1px solid rgba(99,102,241,0.25)" }}
+                  >
+                    Try Thread Studio{" "}
+                    <span className="text-[14px]" aria-hidden="true">→</span>
+                  </Link>
+                </MagneticWrapper>
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/carousel-lab"
+                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    style={{ background: "rgba(255,107,53,0.12)", color: "#FF6B35", border: "1px solid rgba(255,107,53,0.25)" }}
+                  >
+                    Try Carousel Lab{" "}
+                    <span className="text-[14px]" aria-hidden="true">→</span>
+                  </Link>
+                </MagneticWrapper>
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ export async function PATCH(
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:objectives:patch:${user.id}`, { limit: 60, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:objectives:patch:${user.id}`, { limit: 60, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { id } = await params;
@@ -79,7 +79,7 @@ export async function DELETE(
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:objectives:delete:${user.id}`, { limit: 30, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:objectives:delete:${user.id}`, { limit: 30, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { id } = await params;

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase, user } = auth;
 
-  const rl = checkRateLimit(`journal:milestones:post:${user.id}`, { limit: 60, windowMs: 60_000 });
+  const rl = await checkRateLimit(`journal:milestones:post:${user.id}`, { limit: 60, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   let body: unknown;

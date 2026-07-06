@@ -7,11 +7,11 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0d0d0d",
-  "theme_color": "#1D9BF0",
+  "theme_color": "#6366F1",
   "categories": ["social", "productivity"],
   "icons": [
-    { "src": "/icons/thread-studio-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icons/thread-studio-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/api/tool-icon?tool=thread-studio&size=192", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/api/tool-icon?tool=thread-studio&size=512", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "screenshots": [],
   "prefer_related_applications": false

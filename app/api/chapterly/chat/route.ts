@@ -185,7 +185,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const rl = checkRateLimit(`chapterly:chat:${user.id}`, { limit: 30, windowMs: 60_000 });
+  const rl = await checkRateLimit(`chapterly:chat:${user.id}`, { limit: 30, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
   }

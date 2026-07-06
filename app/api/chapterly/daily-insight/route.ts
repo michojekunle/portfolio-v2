@@ -31,7 +31,7 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const rl = checkRateLimit(`chapterly:daily-insight:${user.id}`, {
+  const rl = await checkRateLimit(`chapterly:daily-insight:${user.id}`, {
     limit: 20,
     windowMs: 86_400_000,
   });

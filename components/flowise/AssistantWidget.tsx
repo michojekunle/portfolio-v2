@@ -14,6 +14,7 @@ import {
   Loader2,
   CornerDownLeft,
 } from "lucide-react";
+import { Markdown } from "@/components/ui/Markdown";
 
 const ACCENT = "#16A34A";
 const ACCENT_BG = "rgba(22,163,74,0.08)";
@@ -317,7 +318,7 @@ export function AssistantWidget(): React.ReactElement {
                         : { border: "1px solid var(--rule)", borderRadius: "14px 14px 14px 2px" }
                     }
                   >
-                    {m.content}
+                    {m.role === "assistant" ? <Markdown text={m.content} accent={ACCENT} /> : m.content}
                   </div>
                 </div>
               ))}

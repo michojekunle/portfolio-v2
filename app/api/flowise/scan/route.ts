@@ -23,7 +23,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const rl = checkRateLimit(`flowise:scan:${user.id}`, { limit: 20, windowMs: 60_000 });
+  const rl = await checkRateLimit(`flowise:scan:${user.id}`, { limit: 20, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
   }

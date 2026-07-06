@@ -100,6 +100,16 @@ export function Footer(): React.ReactElement {
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
                   <Link
+                    href="/videos"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    Videos
+                  </Link>
+                </MagneticWrapper>
+              </li>
+              <li>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
                     href="/feed.xml"
                     className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
                   >
@@ -204,6 +214,18 @@ export function Footer(): React.ReactElement {
                     className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
                   >
                     LinkedIn <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                  </a>
+                </MagneticWrapper>
+              </li>
+              <li>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <a
+                    href="https://www.youtube.com/@devvmichael"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--ink-2)] no-underline hover:text-[var(--v3-accent)] transition-colors inline-block"
+                  >
+                    YouTube <ArrowUpRight className="inline w-3 h-3 ml-1" />
                   </a>
                 </MagneticWrapper>
               </li>
