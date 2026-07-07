@@ -12,6 +12,34 @@ const CreateSchema = z.object({
   cfi_range: z.string().max(500).optional(),
 });
 
+/** GET /api/chapterly/highlights?book_id=… — all highlights for one book */
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const bookId = new URL(request.url).searchParams.get("book_id");
+  if (!bookId || !z.string().uuid().safeParse(bookId).success) {
+    return NextResponse.json({ error: "Valid book_id is required" }, { status: 400 });
+  }
+
+  const { data, error } = await supabase
+    .from("ch_highlights")
+    .select("id, text, color, note, page_number, cfi_range, created_at")
+    .eq("user_id", user.id)
+    .eq("book_id", bookId)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("[chapterly/highlights] GET error:", error);
+    return NextResponse.json({ error: "Failed to fetch highlights" }, { status: 500 });
+  }
+
+  return NextResponse.json({ highlights: data ?? [] });
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const supabase = await createClient();
   const {

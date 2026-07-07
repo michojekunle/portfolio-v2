@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ChSidebarNav } from "@/components/chapterly/SidebarNav";
-import { ChapterlyThemeTweaker } from "@/components/chapterly/ThemeTweaker";
 import { getOrCreateGoal } from "@/lib/chapterly/queries";
 import { PwaRegistrar } from "@/components/PwaRegistrar";
 import { BadgeUnlockToast } from "@/components/chapterly/BadgeUnlockToast";
@@ -42,7 +41,6 @@ export default async function ChapterlyLayout({
       <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-[260px] flex flex-col relative">
         <main className="flex-1 min-h-screen">{children}</main>
       </div>
-      <ChapterlyThemeTweaker />
       <PwaRegistrar toolId="chapterly" />
       <BadgeUnlockToast />
     </div>

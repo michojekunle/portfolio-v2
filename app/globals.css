@@ -2284,3 +2284,9 @@ h1, h2, h3, h4, h5 {
 .v3-sleek-scrollbar:hover::-webkit-scrollbar-thumb {
   background-color: var(--ink-3);
 }
+
+/* ── Chapterly reader highlights (CSS Custom Highlight API) ─────────────── */
+::highlight(ch-yellow) { background-color: rgba(254, 240, 138, 0.55); }
+::highlight(ch-green)  { background-color: rgba(187, 247, 208, 0.55); }
+::highlight(ch-blue)   { background-color: rgba(191, 219, 254, 0.55); }
+::highlight(ch-pink)   { background-color: rgba(251, 207, 232, 0.55); }

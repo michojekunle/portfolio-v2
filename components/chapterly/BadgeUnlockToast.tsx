@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import type { ChAchievement } from "@/lib/chapterly/types";
 import { BADGE_DEFS } from "@/lib/chapterly/achievements";
 import { Award } from "lucide-react";
@@ -71,6 +71,12 @@ export function BadgeUnlockToast(): React.ReactElement {
   const [current, setCurrent] = useState<ChAchievement | null>(null);
   const [visible, setVisible] = useState(false);
 
+  // Swipe-to-dismiss: the toast follows the finger horizontally and flies
+  // off once dragged past the threshold.
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragStartXRef = useRef(0);
+
   // Check for unseen badges on mount
   useEffect(() => {
     const run = async (): Promise<void> => {
@@ -117,13 +123,46 @@ export function BadgeUnlockToast(): React.ReactElement {
   const def = BADGE_DEFS[current.badge_id as keyof typeof BADGE_DEFS];
   const ACCENT = "#4F6D7A";
 
+  const handleTouchStart = (e: React.TouchEvent): void => {
+    dragStartXRef.current = e.touches[0]?.clientX ?? 0;
+    setDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent): void => {
+    if (!dragging) return;
+    setDragX((e.touches[0]?.clientX ?? 0) - dragStartXRef.current);
+  };
+
+  const handleTouchEnd = (): void => {
+    setDragging(false);
+    if (Math.abs(dragX) > 90) {
+      // Fly off in the drag direction, then advance the queue
+      setDragX(dragX > 0 ? 480 : -480);
+      setVisible(false);
+      setTimeout(() => {
+        setDragX(0);
+        setCurrent(null);
+        setQueue((prev) => prev.slice(1));
+      }, 300);
+    } else {
+      setDragX(0); // spring back
+    }
+  };
+
   return (
     <div
-      className="fixed bottom-[24px] right-[24px] z-[100] max-[480px]:left-[24px] max-[480px]:right-[24px] transition-all duration-400"
+      className="fixed bottom-[24px] right-[24px] z-[100] max-[480px]:left-[24px] max-[480px]:right-[24px]"
       style={{
-        transform: visible ? "translateY(0) scale(1)" : "translateY(24px) scale(0.95)",
-        opacity: visible ? 1 : 0,
+        transform: visible
+          ? `translateX(${dragX}px) translateY(0) scale(1)`
+          : `translateX(${dragX}px) translateY(${dragX === 0 ? 24 : 0}px) scale(0.95)`,
+        opacity: visible ? Math.max(0, 1 - Math.abs(dragX) / 260) : 0,
+        transition: dragging ? "none" : "transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease",
+        touchAction: "pan-y",
       }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <div
         className="relative w-[320px] max-[480px]:w-full rounded-[16px] border border-[var(--rule)] shadow-2xl overflow-hidden"
