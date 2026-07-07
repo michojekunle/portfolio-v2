@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import type { Rendition, Location } from "epubjs";
+import type { Rendition, Location, Contents } from "epubjs";
 import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { HighlightColor } from "@/lib/chapterly/types";
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
@@ -13,19 +13,38 @@ interface EpubTheme {
   text: string;
 }
 
+export interface SavedEpubHighlight {
+  cfi_range: string;
+  color: HighlightColor;
+}
+
 interface Props {
   url: string;
   theme: EpubTheme;
   fontSize: number;
   /** Reading progress 0-100 to resume from on open. */
   initialProgress?: number;
+  /** Previously saved highlights, re-painted onto the book on load. */
+  savedHighlights?: SavedEpubHighlight[];
   onHighlight: (text: string, cfiRange: string, color: HighlightColor) => Promise<void>;
   /** Called with the plain text of each newly rendered chapter, for TTS. */
   onChapterText?: (text: string) => void;
-  /** Called on every chapter navigation with the current progress percentage (0-100). */
-  onProgress?: (pct: number) => void;
+  /** Called on every page/chapter navigation with progress percentage (0-100). */
+  onProgress?: (pct: number, saveToDb?: boolean) => void;
   /** Called when book metadata (title, creator, cover base64) is parsed on mount. */
   onMetadata?: (meta: { title?: string; author?: string; coverUrl?: string }) => void;
+}
+
+const HIGHLIGHT_FILL: Record<HighlightColor, string> = Object.fromEntries(
+  HIGHLIGHT_COLORS.map((c) => [c.id, c.bg])
+) as Record<HighlightColor, string>;
+
+function annotationStyles(color: HighlightColor): Record<string, string> {
+  return {
+    fill: HIGHLIGHT_FILL[color] ?? "#FEF08A",
+    "fill-opacity": "0.45",
+    "mix-blend-mode": "multiply",
+  };
 }
 
 function compressCoverToDataUrl(blob: Blob, maxW = 240, maxH = 360): Promise<string> {
@@ -54,13 +73,49 @@ function compressCoverToDataUrl(blob: Blob, maxW = 240, maxH = 360): Promise<str
   });
 }
 
-export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight, onChapterText, onProgress, onMetadata }: Props): React.ReactElement {
+export function EpubReader({
+  url,
+  theme,
+  fontSize,
+  initialProgress,
+  savedHighlights,
+  onHighlight,
+  onChapterText,
+  onProgress,
+  onMetadata,
+}: Props): React.ReactElement {
   const viewerRef = useRef<HTMLDivElement>(null);
   const renditionRef = useRef<Rendition | null>(null);
+  const appliedCfisRef = useRef<Set<string>>(new Set());
+  const savedHighlightsRef = useRef<SavedEpubHighlight[]>(savedHighlights ?? []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [pendingSelection, setPendingSelection] = useState<{ cfi: string; text: string } | null>(null);
+
+  // Keep the latest saved highlights available to the rendition callbacks
+  useEffect(() => {
+    savedHighlightsRef.current = savedHighlights ?? [];
+    // Paint any highlights that arrived after the book finished loading
+    const rendition = renditionRef.current;
+    if (!rendition) return;
+    for (const h of savedHighlightsRef.current) {
+      if (appliedCfisRef.current.has(h.cfi_range)) continue;
+      try {
+        rendition.annotations.highlight(
+          h.cfi_range,
+          {},
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          undefined as any,
+          "ch-highlight",
+          annotationStyles(h.color)
+        );
+        appliedCfisRef.current.add(h.cfi_range);
+      } catch {
+        // A CFI from another epub build of the same book can fail — skip it
+      }
+    }
+  }, [savedHighlights]);
 
   useEffect(() => {
     if (!viewerRef.current) return;
@@ -72,11 +127,14 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const book = (ePub as any)(url);
 
+        // Paginated flow: real page turns instead of one endless scroll —
+        // "read a page, move to the next" like a physical book.
         const rendition: Rendition = book.renderTo(viewerRef.current!, {
           width: "100%",
           height: "100%",
-          flow: "scrolled",
-          manager: "continuous",
+          flow: "paginated",
+          spread: "none",
+          allowScriptedContent: false,
         });
 
         if (destroyed) {
@@ -89,11 +147,43 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
         rendition.themes.register("reader", buildTheme(theme, fontSize));
         rendition.themes.select("reader");
 
+        // Inject the reading font + swipe handlers into every chapter document.
+        // epub.js renders chapters in iframes, so fonts and touch events must
+        // be wired inside each document as it loads.
+        rendition.hooks.content.register((contents: Contents) => {
+          const doc = contents.document;
+
+          const fontLink = doc.createElement("link");
+          fontLink.rel = "stylesheet";
+          fontLink.href = "https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&display=swap";
+          doc.head.appendChild(fontLink);
+
+          // Swipe left/right → next/previous page
+          let touchStartX = 0;
+          let touchStartY = 0;
+          doc.addEventListener("touchstart", (e: TouchEvent) => {
+            touchStartX = e.changedTouches[0]?.clientX ?? 0;
+            touchStartY = e.changedTouches[0]?.clientY ?? 0;
+          }, { passive: true });
+          doc.addEventListener("touchend", (e: TouchEvent) => {
+            // Don't page-turn while the user is selecting text to highlight
+            const sel = contents.window.getSelection();
+            if (sel && !sel.isCollapsed) return;
+            const dx = (e.changedTouches[0]?.clientX ?? 0) - touchStartX;
+            const dy = (e.changedTouches[0]?.clientY ?? 0) - touchStartY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+              if (dx < 0) void rendition.next();
+              else void rendition.prev();
+            }
+          }, { passive: true });
+        });
+
         // Parse and report metadata & cover image
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         book.loaded.metadata.then((meta: any) => {
           const author = meta.creator || null;
           const title = meta.title || null;
-          
+
           book.coverUrl().then((coverUrl: string | null) => {
             if (coverUrl && onMetadata) {
               fetch(coverUrl)
@@ -120,13 +210,11 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
         // before generate() completes (which can take 3-6 s on large EPUBs).
         let locationsReady = false;
 
-        // Generate locations to enable CFI-based navigation and progress tracking
         book.ready.then(() => {
           return book.locations.generate(1024);
         }).then(() => {
           if (destroyed) return;
           locationsReady = true;
-          // Resume from saved position if provided (and meaningfully non-zero)
           if (initialProgress != null && initialProgress > 0) {
             const resumeCfi = book.locations.cfiFromPercentage(initialProgress / 100);
             if (resumeCfi) {
@@ -134,36 +222,53 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
               return;
             }
           }
-          // Locations just ready — report the current position now
           if (rendition.location?.start?.cfi) {
             const progressVal = book.locations.percentageFromCfi(rendition.location.start.cfi);
             const pct = Math.round((progressVal ?? 0) * 100);
             setProgress(pct);
-            onProgress?.(pct);
+            onProgress?.(pct, true);
           }
         }).catch(() => undefined);
 
         rendition.on("relocated", (location: Location) => {
-          // Only compute/report progress once locations are generated — before that,
-          // percentageFromCfi returns 0 and would overwrite real saved progress.
           if (locationsReady && book.locations && location.start?.cfi) {
             const progressVal = book.locations.percentageFromCfi(location.start.cfi);
             const pct = Math.round((progressVal ?? 0) * 100);
             setProgress(pct);
-            onProgress?.(pct);
+            onProgress?.(pct, true);
           } else if (!locationsReady && location.start?.percentage !== undefined) {
-            // Show approximate progress visually (without saving) while locations load
             const pct = Math.round(location.start.percentage * 100);
             setProgress(pct);
+            onProgress?.(pct, false);
           }
           if (onChapterText) {
-            // Extract plain text of the current viewport content for TTS
             const contents = rendition.getContents();
             const text = contents
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .map((c: any) => c.document?.body?.innerText ?? "")
               .join("\n")
               .trim();
             if (text) onChapterText(text);
+          }
+        });
+
+        // Re-paint saved highlights once the first chapter renders
+        rendition.on("rendered", () => {
+          for (const h of savedHighlightsRef.current) {
+            if (appliedCfisRef.current.has(h.cfi_range)) continue;
+            try {
+              rendition.annotations.highlight(
+                h.cfi_range,
+                {},
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                undefined as any,
+                "ch-highlight",
+                annotationStyles(h.color)
+              );
+              appliedCfisRef.current.add(h.cfi_range);
+            } catch {
+              // Invalid/foreign CFI — skip
+            }
           }
         });
 
@@ -194,6 +299,7 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
 
     return () => {
       destroyed = true;
+      appliedCfisRef.current.clear();
       renditionRef.current?.destroy?.();
       renditionRef.current = null;
     };
@@ -209,6 +315,16 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme.bg, theme.text, fontSize]);
 
+  // Arrow-key page turns when focus is outside the epub iframe
+  useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if (e.key === "ArrowRight") void renditionRef.current?.next();
+      if (e.key === "ArrowLeft") void renditionRef.current?.prev();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
+
   const prev = useCallback((): void => {
     void renditionRef.current?.prev();
   }, []);
@@ -221,13 +337,19 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
     if (!pendingSelection) return;
     const { cfi, text } = pendingSelection;
     setPendingSelection(null);
-    renditionRef.current?.annotations.highlight(
-      cfi,
-      {},
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      undefined as any,
-      "ch-highlight"
-    );
+    try {
+      renditionRef.current?.annotations.highlight(
+        cfi,
+        {},
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        undefined as any,
+        "ch-highlight",
+        annotationStyles(color)
+      );
+      appliedCfisRef.current.add(cfi);
+    } catch (err) {
+      console.error("[epub] annotation paint error:", err);
+    }
     await onHighlight(text, cfi, color);
   }, [pendingSelection, onHighlight]);
 
@@ -275,8 +397,8 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
         <ChevronRight size={22} style={{ color: theme.text, opacity: 0.5 }} />
       </button>
 
-      {/* epubjs render target */}
-      <div ref={viewerRef} className="flex-1 overflow-y-auto" data-lenis-prevent="true" />
+      {/* epubjs render target — paginated, no internal scroll */}
+      <div ref={viewerRef} className="flex-1 overflow-hidden" />
 
       {/* Bottom navigation strip */}
       <div
@@ -346,18 +468,48 @@ function buildTheme(
   theme: EpubTheme,
   fontSize: number
 ): Record<string, Record<string, string>> {
+  const serif = `"Literata", "Iowan Old Style", "Palatino Linotype", Georgia, serif`;
   return {
     html: { "background-color": theme.bg },
     body: {
       "background-color": `${theme.bg} !important`,
       color: `${theme.text} !important`,
+      "font-family": `${serif} !important`,
       "font-size": `${fontSize}px !important`,
-      "line-height": "1.75 !important",
-      padding: "0 !important",
+      "line-height": "1.7 !important",
+      padding: "0 6% !important",
+      "text-rendering": "optimizeLegibility",
+      "-webkit-font-smoothing": "antialiased",
+      hyphens: "auto",
     },
-    "p, div, span, li, td, th, blockquote, h1, h2, h3, h4, h5, h6": {
+    "p, div, span, li, td, th, blockquote": {
       color: `${theme.text} !important`,
+      "font-family": `${serif} !important`,
+    },
+    p: {
+      "margin": "0 0 0.9em !important",
+      "text-align": "justify",
+      "text-justify": "inter-word",
+    },
+    "h1, h2, h3, h4, h5, h6": {
+      color: `${theme.text} !important`,
+      "font-family": `${serif} !important`,
+      "font-weight": "600 !important",
+      "line-height": "1.3 !important",
+      "margin": "1.4em 0 0.6em !important",
+    },
+    blockquote: {
+      "font-style": "italic",
+      opacity: "0.88",
+      margin: "1em 0 1em 1em !important",
+    },
+    img: {
+      "max-width": "100% !important",
+      height: "auto !important",
     },
     a: { color: "#4F6D7A !important" },
+    "::selection": {
+      background: "rgba(79,109,122,0.28)",
+    },
   };
 }

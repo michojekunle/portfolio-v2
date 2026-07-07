@@ -252,7 +252,7 @@ export default function ThreadStudioPage(): React.ReactElement {
               style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
             >
               {/* Modes Tabs */}
-              <div className="flex border-b border-[var(--rule)] pb-[1px] gap-[24px] overflow-x-auto">
+              <div className="flex border-b border-[var(--rule)] pb-[1px] gap-[24px] overflow-x-auto" data-lenis-prevent="true">
                 {[
                   { id: "topic", label: "From Topic" },
                   { id: "refine", label: "Refine Raw Draft" },
@@ -532,7 +532,7 @@ export default function ThreadStudioPage(): React.ReactElement {
               </div>
 
               {/* X Feed scroll container */}
-              <div className="max-h-[520px] overflow-y-auto pr-[4px] space-y-0 relative scrollbar-custom">
+              <div className="max-h-[520px] overflow-y-auto pr-[4px] space-y-0 relative scrollbar-custom" data-lenis-prevent="true">
                 {/* Loading skeleton during generation */}
                 {loading && (
                   <div className="space-y-[24px] py-[8px]">

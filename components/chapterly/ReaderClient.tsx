@@ -213,14 +213,89 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
   return <div className="space-y-[6px]">{elements}</div>;
 }
 
+// Finds the first occurrence of `snippet` across the container's text nodes
+// and returns a Range spanning it (which may cross node boundaries).
+// Whitespace runs are normalized on both sides so snippets saved from a
+// selection still match after markdown re-rendering collapses whitespace.
+function findTextRange(container: HTMLElement, snippet: string): Range | null {
+  const needle = snippet.replace(/\s+/g, " ").trim();
+  if (!needle) return null;
+
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const nodes: Text[] = [];
+  let fullText = "";
+  const nodeStarts: number[] = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode as Text;
+    nodeStarts.push(fullText.length);
+    nodes.push(node);
+    fullText += node.data;
+  }
+
+  // Build a normalized copy plus an index map back to raw offsets
+  const rawToNorm: number[] = [];
+  let norm = "";
+  let lastWasSpace = true;
+  for (let i = 0; i < fullText.length; i++) {
+    const ch = fullText[i];
+    if (/\s/.test(ch)) {
+      if (!lastWasSpace) {
+        rawToNorm.push(i);
+        norm += " ";
+        lastWasSpace = true;
+      }
+    } else {
+      rawToNorm.push(i);
+      norm += ch;
+      lastWasSpace = false;
+    }
+  }
+
+  const idx = norm.indexOf(needle);
+  if (idx === -1) return null;
+  const rawStart = rawToNorm[idx];
+  const rawEnd = rawToNorm[idx + needle.length - 1] + 1;
+  if (rawStart === undefined || rawEnd === undefined || isNaN(rawEnd)) return null;
+
+  const locate = (rawOffset: number, isEnd: boolean): { node: Text; offset: number } | null => {
+    for (let n = nodes.length - 1; n >= 0; n--) {
+      const start = nodeStarts[n];
+      const len = nodes[n].data.length;
+      if (rawOffset >= start && rawOffset <= start + len) {
+        // For the end boundary prefer staying inside this node
+        if (!isEnd && rawOffset === start + len && n + 1 < nodes.length) {
+          return { node: nodes[n + 1], offset: 0 };
+        }
+        return { node: nodes[n], offset: rawOffset - start };
+      }
+    }
+    return null;
+  };
+
+  const startPos = locate(rawStart, false);
+  const endPos = locate(rawEnd, true);
+  if (!startPos || !endPos) return null;
+
+  const range = document.createRange();
+  try {
+    range.setStart(startPos.node, startPos.offset);
+    range.setEnd(endPos.node, endPos.offset);
+  } catch {
+    return null;
+  }
+  return range;
+}
+
 type ReaderTheme = "white" | "sepia" | "dark" | "oled";
 
+// Warm, print-like palettes — pure white/black backgrounds are harsh over
+// long reading sessions, so every theme is tinted slightly toward paper.
 const THEMES: Record<ReaderTheme, { bg: string; text: string; label: string }> =
   {
-    white: { bg: "#FFFFFF", text: "#1A1A1A", label: "White" },
-    sepia: { bg: "#F5ECD7", text: "#3B2F1E", label: "Sepia" },
-    dark: { bg: "#1E1E1E", text: "#E8E4DE", label: "Dark" },
-    oled: { bg: "#000000", text: "#E8E4DE", label: "OLED" },
+    white: { bg: "#FBF9F4", text: "#211E19", label: "Paper" },
+    sepia: { bg: "#F5EBD6", text: "#3B2F1E", label: "Sepia" },
+    dark: { bg: "#1B1A17", text: "#E8E3DA", label: "Dark" },
+    oled: { bg: "#000000", text: "#D9D4CB", label: "OLED" },
   };
 
 
@@ -339,6 +414,12 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     null
   );
 
+  // Saved highlights for this book — painted onto epub pages (via annotations)
+  // and text-format content (via the CSS Custom Highlight API).
+  const [savedHighlights, setSavedHighlights] = useState<
+    { id: string; text: string; color: HighlightColor; cfi_range: string | null }[]
+  >([]);
+
   const [liveProgress, setLiveProgress] = useState<number>(book.progress_pct ?? 0);
 
   // Swipe gesture for text-format page scrolling
@@ -398,6 +479,57 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       logSession();
     };
   }, [book.id]);
+
+  // ── Load saved highlights for this book ───────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/chapterly/highlights?book_id=${book.id}`);
+        if (!res.ok) return;
+        const data = await res.json() as {
+          highlights: { id: string; text: string; color: HighlightColor; cfi_range: string | null }[];
+        };
+        if (!cancelled) setSavedHighlights(data.highlights);
+      } catch (err) {
+        console.error("[reader] highlights fetch error:", err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [book.id]);
+
+  // ── Paint saved highlights onto text-format content ───────────
+  // Uses the CSS Custom Highlight API (Chrome 105+, Safari 17.2+, FF 140+):
+  // finds each saved snippet in the rendered text nodes and registers a
+  // styled Range — no DOM mutation, survives re-renders.
+  useEffect(() => {
+    if (!isTextFormat || !docContent) return;
+    const registry = (CSS as unknown as { highlights?: Map<string, unknown> }).highlights;
+    const HighlightCtor = (window as unknown as { Highlight?: new (...ranges: Range[]) => unknown }).Highlight;
+    if (!registry || !HighlightCtor) return; // unsupported browser — highlights still save, just aren't painted
+
+    const raf = requestAnimationFrame(() => {
+      const container = document.getElementById("reader-content");
+      if (!container) return;
+
+      const byColor = new Map<HighlightColor, Range[]>();
+      for (const h of savedHighlights) {
+        const range = findTextRange(container, h.text);
+        if (!range) continue;
+        const list = byColor.get(h.color) ?? [];
+        list.push(range);
+        byColor.set(h.color, list);
+      }
+
+      for (const { id } of HIGHLIGHT_COLORS) {
+        const ranges = byColor.get(id) ?? [];
+        if (ranges.length > 0) registry.set(`ch-${id}`, new HighlightCtor(...ranges));
+        else registry.delete(`ch-${id}`);
+      }
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, [isTextFormat, docContent, savedHighlights]);
 
   // ── Document loading for text-based formats ───────────────────
   useEffect(() => {
@@ -540,6 +672,47 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     }
   }, [book.id, book.title, book.author, book.cover_url]);
 
+  // ── Scroll progress tracking for text-based formats ───────────
+  useEffect(() => {
+    if (!isTextFormat || docLoading || !docContent) return;
+
+    const handleScroll = (): void => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) {
+        setLiveProgress(100);
+        saveProgress({ progress_pct: 100 });
+        return;
+      }
+      const pct = Math.min(100, Math.max(0, Math.round((scrollTop / scrollHeight) * 100)));
+      setLiveProgress(pct);
+      saveProgress({ progress_pct: pct });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Run once on load/render to compute current scroll/progress
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isTextFormat, docLoading, docContent, saveProgress]);
+
+  // ── Restore scroll position for text-based formats ────────────
+  useEffect(() => {
+    if (!isTextFormat || docLoading || !docContent) return;
+    const pct = book.progress_pct ?? 0;
+    if (pct > 0) {
+      const timer = setTimeout(() => {
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollHeight > 0) {
+          window.scrollTo(0, Math.round((pct / 100) * scrollHeight));
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isTextFormat, docLoading, docContent, book.progress_pct]);
+
   // ── Text selection → highlight ────────────────────────────────
   const handleTextSelectionEnd = (): void => {
     const sel = window.getSelection();
@@ -573,6 +746,12 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         }),
       });
       if (!res.ok) throw new Error("Highlight save failed");
+      const { highlight } = await res.json() as { highlight: { id: string } };
+      // Paint immediately — the highlight effect re-runs off this state
+      setSavedHighlights((prev) => [
+        ...prev,
+        { id: highlight.id, text: selectionText, color, cfi_range: null },
+      ]);
     } catch (err) {
       console.error("[reader] highlight error:", err);
     }
@@ -909,10 +1088,15 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               theme={current}
               fontSize={fontSize}
               initialProgress={book.progress_pct}
+              savedHighlights={savedHighlights
+                .filter((h): h is typeof h & { cfi_range: string } => h.cfi_range !== null)
+                .map((h) => ({ cfi_range: h.cfi_range, color: h.color }))}
               onChapterText={setChapterText}
-              onProgress={(pct) => {
+              onProgress={(pct, saveToDb = true) => {
                 setLiveProgress(pct);
-                saveProgress({ progress_pct: pct });
+                if (saveToDb) {
+                  saveProgress({ progress_pct: pct });
+                }
               }}
               onMetadata={handleMetadata}
               onHighlight={async (text, cfi, color) => {
