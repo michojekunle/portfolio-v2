@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { FwAccount, FwCategory } from "@/lib/flowise/types";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
 import { Download, FileText, AlertCircle, Check } from "lucide-react";
+import { BotLinkCard } from "./BotLinkCard";
 
 const ACCENT = "#16A34A";
 
@@ -93,6 +94,12 @@ export function SettingsClient({ accounts, categories }: Props): React.ReactElem
             {exporting ? <><span className="w-[12px] h-[12px] rounded-full border-[1.5px] border-white/30 border-t-white animate-spin" /> Exporting...</> : <><FileText size={12} /> Download CSV</>}
           </button>
         </div>
+      </section>
+
+      {/* Chat bots — Telegram / WhatsApp receipt ingestion */}
+      <section className="mb-[40px]">
+        <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-[var(--ink-3)] mb-[16px]">Chat Bots</h2>
+        <BotLinkCard />
       </section>
 
       {/* Accounts Overview */}
