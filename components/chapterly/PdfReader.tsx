@@ -263,7 +263,7 @@ export function PdfReader({
   return (
     <>
       <style>{TEXT_LAYER_CSS}</style>
-      <div className="flex flex-col items-center pb-[88px] pt-[32px]">
+      <div className="flex flex-col items-center pb-[88px] pt-[32px]" data-lenis-prevent="true">
         {/* Page canvas + text layer */}
         <div className="relative shadow-lg" onMouseUp={handleMouseUp}>
           <canvas ref={canvasRef} className="block" />

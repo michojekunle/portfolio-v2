@@ -903,7 +903,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       {/* ── Reader area ── */}
       <div className="flex-1 pt-[56px]">
         {isEpub ? (
-          <div className="h-[calc(100vh-56px)]">
+          <div className="h-[calc(100vh-56px)]" data-lenis-prevent="true">
             <EpubReader
               url={book.file_url}
               theme={current}
@@ -935,7 +935,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             />
           </div>
         ) : isPdf ? (
-          <div className="overflow-auto h-[calc(100vh-56px)]" style={{ background: current.bg }}>
+          <div className="overflow-auto h-[calc(100vh-56px)]" style={{ background: current.bg }} data-lenis-prevent="true">
             <PdfReader
               url={book.file_url}
               initialPage={book.current_page > 0 ? book.current_page : undefined}

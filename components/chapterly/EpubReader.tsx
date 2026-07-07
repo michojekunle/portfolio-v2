@@ -75,8 +75,8 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
         const rendition: Rendition = book.renderTo(viewerRef.current!, {
           width: "100%",
           height: "100%",
-          flow: "paginated",
-          spread: "none",
+          flow: "scrolled",
+          manager: "continuous",
         });
 
         if (destroyed) {
@@ -276,7 +276,7 @@ export function EpubReader({ url, theme, fontSize, initialProgress, onHighlight,
       </button>
 
       {/* epubjs render target */}
-      <div ref={viewerRef} className="flex-1 overflow-hidden" />
+      <div ref={viewerRef} className="flex-1 overflow-y-auto" data-lenis-prevent="true" />
 
       {/* Bottom navigation strip */}
       <div
