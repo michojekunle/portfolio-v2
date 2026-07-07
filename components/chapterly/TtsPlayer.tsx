@@ -396,6 +396,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
             <div
               className="absolute bottom-[calc(100%-8px)] left-[14px] right-[14px] rounded-[8px] border shadow-xl overflow-y-auto max-h-[180px] z-[9999]"
               style={{ background: bg, borderColor: `${fg}18` }}
+              data-lenis-prevent="true"
             >
               {voices.map((v, i) => (
                 <button

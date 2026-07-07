@@ -432,7 +432,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[24px] space-y-[20px]">
+      <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[24px] space-y-[20px]" data-lenis-prevent="true">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             {msg.role === "assistant" && (

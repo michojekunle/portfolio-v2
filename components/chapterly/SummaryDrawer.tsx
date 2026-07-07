@@ -575,7 +575,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
               <ChevronDown size={11} className="opacity-50 shrink-0" style={{ transform: showVoices ? "rotate(180deg)" : undefined, transition: "transform 0.15s" }} />
             </button>
             {showVoices && (
-              <div className="absolute bottom-[calc(100%+4px)] left-0 right-0 rounded-[8px] border border-[var(--rule)] shadow-xl overflow-y-auto max-h-[160px] z-10 bg-[var(--bg)]">
+              <div className="absolute bottom-[calc(100%+4px)] left-0 right-0 rounded-[8px] border border-[var(--rule)] shadow-xl overflow-y-auto max-h-[160px] z-10 bg-[var(--bg)]" data-lenis-prevent="true">
                 {voices.map((v, i) => (
                   <button
                     key={v.name}
@@ -808,7 +808,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
         </div>
 
         {/* ── Tab content (scrollable) ── */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[24px]">
+        <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[24px]" data-lenis-prevent="true">
           {loading && !summary && <LoadingPulse />}
           {error && (
             <div

@@ -1319,7 +1319,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               </button>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px]">
+            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px]" data-lenis-prevent="true">
               {summaryLoading ? (
                 <div
                   className="flex items-center justify-center py-[60px] gap-[10px]"

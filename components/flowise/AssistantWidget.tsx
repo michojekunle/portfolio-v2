@@ -300,7 +300,7 @@ export function AssistantWidget(): React.ReactElement {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px] space-y-[16px] scrollbar-thin">
+            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px] space-y-[16px] scrollbar-thin" data-lenis-prevent="true">
               {messages.map((m, idx) => (
                 <div
                   key={idx}
