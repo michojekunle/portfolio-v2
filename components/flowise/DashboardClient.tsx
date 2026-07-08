@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { FwAccount, FwTransaction, FwCategory, MonthlyStats } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { TransactionForm } from "./TransactionForm";
 import { ReceiptScanner } from "./ReceiptScanner";
 import { TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, ChevronRight, Camera } from "lucide-react";
@@ -28,7 +29,8 @@ export function FwDashboardClient({
   lastMonth,
   netWorth: initialNetWorth,
 }: Props): React.ReactElement {
-  const router = useRouter();
+  const { hidden } = usePrivacy();
+const router = useRouter();
   const [accounts, setAccounts] = useState(initialAccounts);
   const [transactions, setTransactions] = useState(initialTransactions);
   const [showForm, setShowForm] = useState(false);
@@ -132,13 +134,13 @@ export function FwDashboardClient({
       <div className="grid grid-cols-3 max-[900px]:grid-cols-1 gap-[16px] mb-[40px]">
         <SummaryCard
           label="Net Worth"
-          value={formatCurrency(netWorth, "NGN")}
+          value={(hidden ? "****" : formatCurrency(netWorth, "NGN"))}
           sub={accounts.length === 0 ? "No accounts yet" : `${accounts.length} account${accounts.length !== 1 ? "s" : ""}`}
           accent={netWorth >= 0 ? ACCENT : "#DC2626"}
         />
         <SummaryCard
           label="Income this month"
-          value={formatCurrency(stats.thisMonth.income, "NGN")}
+          value={(hidden ? "****" : formatCurrency(stats.thisMonth.income, "NGN"))}
           change={incomeChange}
           sub={incomeChange !== 0 ? `vs last month` : "vs last month"}
           accent={ACCENT}
@@ -146,7 +148,7 @@ export function FwDashboardClient({
         />
         <SummaryCard
           label="Expenses this month"
-          value={formatCurrency(stats.thisMonth.expenses, "NGN")}
+          value={(hidden ? "****" : formatCurrency(stats.thisMonth.expenses, "NGN"))}
           change={expenseChange}
           sub={expenseChange !== 0 ? `vs last month` : "vs last month"}
           accent="#DC2626"
@@ -238,7 +240,7 @@ export function FwDashboardClient({
                 {stats.thisMonth.savingsRate}%
               </div>
               <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[2px]">
-                {formatCurrency(stats.thisMonth.net, "NGN")} saved this month
+                {(hidden ? "****" : formatCurrency(stats.thisMonth.net, "NGN"))} saved this month
               </div>
             </div>
           )}
@@ -283,6 +285,8 @@ function SummaryCard({
   accent: string;
   positive?: boolean;
 }): React.ReactElement {
+  const { hidden, toggle } = usePrivacy();
+
   const isUp = (change ?? 0) > 0;
   const isDown = (change ?? 0) < 0;
   const changeColor =
@@ -301,7 +305,8 @@ function SummaryCard({
         {label}
       </div>
       <div
-        className="font-display text-[28px] max-[720px]:text-[22px] font-normal tracking-[-0.02em] fvs-text leading-[1]"
+        onClick={toggle}
+        className="font-display text-[28px] max-[720px]:text-[22px] font-normal tracking-[-0.02em] fvs-text leading-[1] cursor-pointer hover:opacity-80 transition-opacity"
         style={{ color: accent }}
       >
         {value}
@@ -332,6 +337,8 @@ function TransactionRow({
   last: boolean;
   categories: FwCategory[];
 }): React.ReactElement {
+  const { hidden } = usePrivacy();
+
   const cat = tx.category
     ? tx.category
     : categories.find((c) => c.id === tx.category_id);
@@ -361,7 +368,7 @@ function TransactionRow({
           className="text-[15px] font-semibold tabular-nums"
           style={{ color: isIncome ? "#16A34A" : "var(--ink)" }}
         >
-          {isIncome ? "+" : "−"}{formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
+          {isIncome ? "+" : "−"}{hidden ? "****" : formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
         </div>
         {tx.account && (
           <div className="font-mono text-[9px] text-[var(--ink-4)] mt-[1px]">
@@ -374,6 +381,8 @@ function TransactionRow({
 }
 
 function AccountSummaryCard({ account }: { account: FwAccount }): React.ReactElement {
+  const { hidden, toggle } = usePrivacy();
+
   const currencySymbols: Record<string, string> = {
     NGN: "₦", USD: "$", GBP: "£", EUR: "€", GHS: "₵", KES: "KSh",
   };
@@ -396,10 +405,11 @@ function AccountSummaryCard({ account }: { account: FwAccount }): React.ReactEle
         <div className="font-mono text-[10px] text-[var(--ink-3)] capitalize">{account.type}</div>
       </div>
       <div
-        className="font-display text-[18px] font-normal tracking-[-0.01em] fvs-text tabular-nums shrink-0"
+        onClick={toggle}
+        className="font-display text-[18px] font-normal tracking-[-0.01em] fvs-text tabular-nums shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
         style={{ color: isPositive ? "var(--ink)" : "#DC2626" }}
       >
-        {symbol}{Math.abs(account.current_balance).toLocaleString("en-NG")}
+        <Amount value={account.current_balance} currency={account.currency} />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import type { FwAccount, FwCategory } from "@/lib/flowise/types";
 import { NIGERIAN_PROVIDERS, FREE_ACCOUNT_LIMIT } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { Plus, X, Check, Landmark, Wallet, Coins, TrendingUp, CreditCard } from "lucide-react";
 
 const ACCENT = "#16A34A";
@@ -19,7 +20,8 @@ interface Props {
 }
 
 export function AccountsClient({ accounts: initialAccounts }: Props): React.ReactElement {
-  const [accounts, setAccounts] = useState(initialAccounts);
+  const { hidden } = usePrivacy();
+const [accounts, setAccounts] = useState(initialAccounts);
   const [showForm, setShowForm] = useState(false);
 
   const handleCreated = useCallback((account: FwAccount): void => {
@@ -77,6 +79,8 @@ export function AccountsClient({ accounts: initialAccounts }: Props): React.Reac
 }
 
 function AccountCard({ account }: { account: FwAccount }): React.ReactElement {
+  const { hidden } = usePrivacy();
+
   const currencySymbols: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€", GHS: "₵", KES: "KSh" };
   const symbol = currencySymbols[account.currency] ?? account.currency;
   const isPositive = account.current_balance >= 0;
@@ -94,7 +98,7 @@ function AccountCard({ account }: { account: FwAccount }): React.ReactElement {
       <div className="text-[16px] font-medium text-[var(--ink)] mb-[2px]">{account.name}</div>
       {account.provider && <div className="font-mono text-[10px] text-[var(--ink-3)] mb-[16px]">{account.provider}</div>}
       <div className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text" style={{ color: isPositive ? "var(--ink)" : "#DC2626" }}>
-        {symbol}{Math.abs(account.current_balance).toLocaleString("en-NG")}
+        <Amount value={account.current_balance} currency={account.currency} />
       </div>
       <div className="font-mono text-[10px] text-[var(--ink-4)] mt-[4px]">{account.currency} · current balance</div>
     </div>

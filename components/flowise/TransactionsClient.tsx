@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import type { FwAccount, FwCategory, FwTransaction } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { TransactionForm } from "./TransactionForm";
 import { CSVImportWizard } from "./CSVImportWizard";
 import { ReceiptScanner } from "./ReceiptScanner";
@@ -19,7 +20,8 @@ interface Props {
 }
 
 export function TransactionsClient({ accounts, categories, initialTransactions, initialMonth }: Props): React.ReactElement {
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const { hidden } = usePrivacy();
+const [transactions, setTransactions] = useState(initialTransactions);
   const [month, setMonth] = useState(initialMonth);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -132,10 +134,10 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
 
         <div className="flex gap-[12px] ml-auto">
           <span className="font-mono text-[11px] text-[var(--ink-3)]">
-            In: <span style={{ color: ACCENT }}>+{formatCurrency(income, "NGN", true)}</span>
+            In: <span style={{ color: ACCENT }}>+{(hidden ? "****" : formatCurrency(income, "NGN", true))}</span>
           </span>
           <span className="font-mono text-[11px] text-[var(--ink-3)]">
-            Out: <span style={{ color: "#DC2626" }}>−{formatCurrency(expenses, "NGN", true)}</span>
+            Out: <span style={{ color: "#DC2626" }}>−{(hidden ? "****" : formatCurrency(expenses, "NGN", true))}</span>
           </span>
         </div>
       </div>
@@ -176,7 +178,7 @@ export function TransactionsClient({ accounts, categories, initialTransactions, 
                 <div className="shrink-0 text-right flex items-center gap-[12px]">
                   <div className="text-right">
                     <div className="text-[15px] font-semibold tabular-nums" style={{ color: isIncome ? "#16A34A" : "var(--ink)" }}>
-                      {isIncome ? "+" : "−"}{formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
+                      {isIncome ? "+" : "−"}{hidden ? "****" : formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
                     </div>
                   </div>
                   {confirmDeleteId === tx.id ? (
