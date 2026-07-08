@@ -33,7 +33,7 @@ export default async function ChapterlyLayout({
   const goal = await getOrCreateGoal();
 
   return (
-    <div className="min-h-screen flex bg-[var(--bg)] text-[var(--ink)]">
+    <div className="chapterly-root min-h-screen flex">
       <ChSidebarNav
         userEmail={user.email ?? ""}
         streak={goal?.streak_count ?? 0}

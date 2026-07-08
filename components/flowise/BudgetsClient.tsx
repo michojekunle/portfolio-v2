@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
 import type { FwCategory } from "@/lib/flowise/types";
 import { Plus, X, Check, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
@@ -25,7 +26,8 @@ interface Props {
 }
 
 export function BudgetsClient({ initialBudgets, initialMonth, categories }: Props): React.ReactElement {
-  const [month, setMonth] = useState(initialMonth);
+  const { hidden } = usePrivacy();
+const [month, setMonth] = useState(initialMonth);
   const [budgets, setBudgets] = useState(initialBudgets);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -51,6 +53,8 @@ export function BudgetsClient({ initialBudgets, initialMonth, categories }: Prop
   }, []);
 
   const shiftMonth = (delta: number): void => {
+  const { hidden } = usePrivacy();
+
     const [y, m] = month.split("-").map(Number);
     const d = new Date(y, m - 1 + delta, 1);
     fetchMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
@@ -127,9 +131,9 @@ export function BudgetsClient({ initialBudgets, initialMonth, categories }: Prop
       {/* Summary */}
       {budgets.length > 0 && (
         <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-[12px] mb-[28px]">
-          <SummaryPill label="Total Budgeted" value={formatCurrency(totalBudgeted, "NGN")} color="var(--ink)" />
-          <SummaryPill label="Total Spent" value={formatCurrency(totalSpent, "NGN")} color={totalSpent > totalBudgeted ? "#DC2626" : "var(--ink)"} />
-          <SummaryPill label="Remaining" value={formatCurrency(Math.max(0, totalBudgeted - totalSpent), "NGN")} color={ACCENT} />
+          <SummaryPill label="Total Budgeted" value={(hidden ? "****" : formatCurrency(totalBudgeted, "NGN"))} color="var(--ink)" />
+          <SummaryPill label="Total Spent" value={(hidden ? "****" : formatCurrency(totalSpent, "NGN"))} color={totalSpent > totalBudgeted ? "#DC2626" : "var(--ink)"} />
+          <SummaryPill label="Remaining" value={(hidden ? "****" : formatCurrency(Math.max(0, totalBudgeted - totalSpent)), "NGN")} color={ACCENT} />
         </div>
       )}
 
@@ -188,6 +192,8 @@ export function BudgetsClient({ initialBudgets, initialMonth, categories }: Prop
 }
 
 function SummaryPill({ label, value, color }: { label: string; value: string; color: string }): React.ReactElement {
+  const { hidden } = usePrivacy();
+
   return (
     <div className="rounded-[10px] px-[16px] py-[12px]" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
       <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-4)] mb-[4px]">{label}</div>
@@ -201,6 +207,7 @@ function BudgetBar({ catIcon, catName, catColor, amount, spent, pct, over, onEdi
   amount: number; spent: number; pct: number; over: boolean;
   onEdit: () => void; onDelete: () => void;
 }): React.ReactElement {
+  const { hidden } = usePrivacy();
   const barColor = over ? "#DC2626" : pct >= 80 ? "#F59E0B" : catColor;
   return (
     <div className="rounded-[12px] px-[20px] py-[16px] group" style={{ border: "1px solid var(--rule)", background: "var(--bg)" }}>
@@ -221,7 +228,7 @@ function BudgetBar({ catIcon, catName, catColor, amount, spent, pct, over, onEdi
         <div className="flex items-center gap-[12px]">
           <div className="text-right">
             <div className="text-[14px] font-semibold tabular-nums text-[var(--ink)]">
-              {formatCurrency(spent, "NGN", true)} <span className="font-normal text-[var(--ink-4)]">/ {formatCurrency(amount, "NGN", true)}</span>
+              {(hidden ? "****" : formatCurrency(spent, "NGN", true))} <span className="font-normal text-[var(--ink-4)]">/ {(hidden ? "****" : formatCurrency(amount, "NGN", true))}</span>
             </div>
           </div>
           <div className="flex gap-[4px] opacity-0 group-hover:opacity-100 transition-opacity">

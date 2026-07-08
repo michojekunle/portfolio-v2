@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 
 interface MonthData {
   income: number;
@@ -17,7 +18,8 @@ const H = 180;
 const PAD = { top: 16, right: 16, bottom: 40, left: 60 };
 
 export function CashFlowChart({ data }: Props): React.ReactElement {
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; income: number; expenses: number } | null>(null);
+  const { hidden } = usePrivacy();
+const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; income: number; expenses: number } | null>(null);
 
   const { points, xLabels, yMax, yStep } = useMemo(() => {
     const entries = Object.entries(data).sort(([a], [b]) => a.localeCompare(b));
@@ -47,6 +49,8 @@ export function CashFlowChart({ data }: Props): React.ReactElement {
   const chartH = H - PAD.top - PAD.bottom;
 
   const buildPath = (pts: typeof points, key: "incomeY" | "expenseY"): string => {
+  const { hidden } = usePrivacy();
+
     if (pts.length === 0) return "";
     return pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p[key]}`).join(" ");
   };
@@ -81,7 +85,7 @@ export function CashFlowChart({ data }: Props): React.ReactElement {
               <g key={i}>
                 <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="var(--rule)" strokeWidth={1} />
                 <text x={PAD.left - 6} y={y} textAnchor="end" style={{ fontSize: 8, fill: "var(--ink-4)", fontFamily: "monospace", dominantBaseline: "middle" }}>
-                  {formatCurrency(val, "NGN", true)}
+                  {(hidden ? "****" : formatCurrency(val, "NGN", true))}
                 </text>
               </g>
             );
@@ -140,8 +144,8 @@ export function CashFlowChart({ data }: Props): React.ReactElement {
                 strokeWidth={1}
               />
               <text x={Math.min(tooltip.x + 14, W - 130)} y={Math.max(tooltip.y - 15, PAD.top + 14)} style={{ fontSize: 9, fill: "var(--ink-3)", fontFamily: "monospace" }}>{tooltip.label}</text>
-              <text x={Math.min(tooltip.x + 14, W - 130)} y={Math.max(tooltip.y + 2, PAD.top + 28)} style={{ fontSize: 10, fill: "#16A34A", fontFamily: "monospace" }}>↑ {formatCurrency(tooltip.income, "NGN", true)}</text>
-              <text x={Math.min(tooltip.x + 14, W - 130)} y={Math.max(tooltip.y + 16, PAD.top + 42)} style={{ fontSize: 10, fill: "#EF4444", fontFamily: "monospace" }}>↓ {formatCurrency(tooltip.expenses, "NGN", true)}</text>
+              <text x={Math.min(tooltip.x + 14, W - 130)} y={Math.max(tooltip.y + 2, PAD.top + 28)} style={{ fontSize: 10, fill: "#16A34A", fontFamily: "monospace" }}>↑ {(hidden ? "****" : formatCurrency(tooltip.income, "NGN", true))}</text>
+              <text x={Math.min(tooltip.x + 14, W - 130)} y={Math.max(tooltip.y + 16, PAD.top + 42)} style={{ fontSize: 10, fill: "#EF4444", fontFamily: "monospace" }}>↓ {(hidden ? "****" : formatCurrency(tooltip.expenses, "NGN", true))}</text>
             </g>
           )}
         </svg>

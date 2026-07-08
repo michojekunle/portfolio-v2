@@ -28,7 +28,8 @@ const TOOL_NAMES: Record<string, string> = {
 };
 
 export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [showInstall, setShowInstall] = useState(false);
 
   useEffect(() => {
@@ -41,7 +42,10 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
           const worker = reg.installing;
           if (!worker) return;
           worker.addEventListener("statechange", () => {
-            if (worker.state === "installed" && navigator.serviceWorker.controller) {
+            if (
+              worker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
               console.info(`[pwa] ${toolId} update available`);
             }
           });
@@ -118,7 +122,7 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
         >
           {/* Subtle colored glow background */}
           <div
-            className="absolute -top-[30px] -right-[30px] w-[90px] h-[90px] rounded-full opacity-[0.08] blur-[15px]"
+            className="absolute -top-[30px] -right-[30px] w-[90px] h-[90px] rounded-full opacity-[0.08] blur-[15px] -z-40"
             style={{ background: brandColors.accent }}
             aria-hidden="true"
           />
@@ -155,8 +159,7 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
             </button>
             <button
               onClick={handleDismiss}
-              className="w-[28px] h-[28px] rounded-[8px] border border-transparent flex items-center justify-center cursor-pointer transition-colors hover:bg-[var(--bg)]"
-              style={{ color: "var(--ink-3)" }}
+              className="relative z-20 h-[28px] px-[12px] tracking-[0.08em] font-semibold cursor-pointer transition-transform hover:scale-[1.03] active:scale-[0.97]"
               aria-label="Dismiss install prompt"
             >
               <X size={14} />

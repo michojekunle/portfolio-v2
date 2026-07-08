@@ -401,6 +401,17 @@ Respond in valid JSON ONLY, matching:
       executed.push(await executeAction(supabase, user, action, objectives, today));
     }
 
+    // Persist this turn server-side — the client only ever sends the running
+    // conversation for prompting context, never writes to jo_chats directly,
+    // so history stays consistent even if the client is offline right after
+    // this response lands (the reply itself still made it to the DB).
+    const lastUserMsg = messages[messages.length - 1];
+    const { error: chatError } = await supabase.from("jo_chats").insert([
+      { user_id: user.id, role: "user", content: lastUserMsg.content, executed: null },
+      { user_id: user.id, role: "assistant", content: reply, executed: executed.length > 0 ? executed : null },
+    ]);
+    if (chatError) console.error("[journal/assistant] chat persistence error:", chatError);
+
     return NextResponse.json({ reply, executed });
   } catch (err) {
     console.error("[journal/assistant] parse error:", err, "rawResponse:", rawResponse);

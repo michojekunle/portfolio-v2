@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { FREE_BOOK_LIMIT } from "@/lib/chapterly/types";
 import type {
@@ -27,11 +27,14 @@ import {
   Save,
   Check,
   FileText,
+  Cloud,
+  HardDrive,
 } from "lucide-react";
+import { saveFileLocally } from "@/lib/chapterly/idb";
 import { SummaryDrawer } from "./SummaryDrawer";
 import type { SummaryBook } from "./SummaryDrawer";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const STATUS_CONFIG: Record<
   ReadingStatus,
@@ -359,6 +362,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const coverInputRef = useRef<HTMLInputElement>(null);
 
@@ -410,12 +414,66 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
     }
   };
 
+  const handleCloudSync = async (): Promise<void> => {
+    if (!book.file_url.startsWith("local://")) return;
+    setSyncing(true);
+    setError(null);
+    try {
+      const localId = book.file_url.replace("local://", "");
+      const { getLocalFile, deleteLocalFile } = await import("@/lib/chapterly/idb");
+      const blob = await getLocalFile(localId);
+      if (!blob) throw new Error("Local file not found on this device");
+
+      const file = new File([blob], `${book.title}.${book.file_format}`, { type: blob.type });
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("title", title.trim() || book.title);
+      formData.append("book_id", book.id); // Triggers update instead of insert
+
+      const res = await fetch("/api/chapterly/upload", { method: "POST", body: formData });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(d.error ?? "Failed to sync to cloud");
+      }
+
+      const { book: updated } = await res.json() as { book: ChBookWithStats };
+      
+      // Clean up local file
+      await deleteLocalFile(localId);
+
+      onSaved({ ...updated, total_reading_time_minutes: book.total_reading_time_minutes, highlight_count: book.highlight_count, note_count: book.note_count, session_count: book.session_count });
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const handleDelete = async (): Promise<void> => {
     setDeleting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/chapterly/books/${book.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete");
+      try {
+        const res = await fetch(`/api/chapterly/books/${book.id}`, { method: "DELETE" });
+        if (!res.ok && res.status !== 404) throw new Error("Failed to delete from server");
+      } catch (err) {
+        if (navigator.onLine) throw err;
+      }
+
+      if (book.file_url.startsWith("local://")) {
+        const localId = book.file_url.replace("local://", "");
+        const { deleteLocalFile } = await import("@/lib/chapterly/idb");
+        await deleteLocalFile(localId);
+      }
+
+      try {
+        const q = JSON.parse(localStorage.getItem("chapterly_queued_books") || "[]") as ChBookWithStats[];
+        const remaining = q.filter(b => b.id !== book.id);
+        localStorage.setItem("chapterly_queued_books", JSON.stringify(remaining));
+      } catch {}
+
       onDeleted(book.id);
       onClose();
     } catch (err) {
@@ -456,7 +514,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
             <div className="shrink-0">
               <div
                 className="w-[88px] h-[120px] rounded-[10px] relative overflow-hidden cursor-pointer group border border-[var(--rule)]"
-                style={{ background: ACCENT + "18" }}
+                style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)" }}
                 onClick={() => coverInputRef.current?.click()}
                 title="Change cover"
               >
@@ -573,7 +631,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
                   onClick={() => void handleDelete()}
                   disabled={deleting}
                   className="h-[36px] px-[14px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer border-none transition-all disabled:opacity-60"
-                  style={{ background: "#DC2626", color: "#fff" }}
+                  style={{ background: "#DC2626", color: "var(--ch-bg)" }}
                 >
                   {deleting ? <Loader2 size={13} className="animate-spin" /> : "Yes, delete"}
                 </button>
@@ -594,6 +652,18 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
               </button>
             )}
 
+            {/* Sync to Cloud */}
+            {book.file_url.startsWith("local://") && !confirmDelete && (
+              <button
+                onClick={() => void handleCloudSync()}
+                disabled={syncing || saving}
+                className="h-[36px] px-[12px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer flex items-center gap-[6px] border border-[var(--rule)] bg-transparent text-[#1D4ED8] hover:bg-[rgba(29,78,216,0.06)] transition-colors disabled:opacity-50"
+              >
+                {syncing ? <Loader2 size={13} className="animate-spin" /> : <Cloud size={13} />}
+                Sync to Cloud
+              </button>
+            )}
+
             <div className="flex-1" />
 
             <button
@@ -606,7 +676,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
               onClick={() => void handleSave()}
               disabled={saving || saved}
               className="h-[36px] px-[18px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer border-none flex items-center gap-[6px] transition-all disabled:opacity-70"
-              style={saved ? { background: "#16A34A", color: "#fff" } : { background: ACCENT, color: "#fff" }}
+              style={saved ? { background: "#16A34A", color: "var(--ch-bg)" } : { background: ACCENT, color: "var(--ch-bg)" }}
             >
               {saving ? (
                 <Loader2 size={13} className="animate-spin" />
@@ -636,7 +706,65 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
   const [dragOver, setDragOver] = useState(false);
   const [editingBook, setEditingBook] = useState<ChBookWithStats | null>(null);
   const [summaryBook, setSummaryBook] = useState<SummaryBook | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const syncOfflineBooks = async () => {
+      try {
+        const q = JSON.parse(localStorage.getItem("chapterly_queued_books") || "[]") as ChBookWithStats[];
+        if (!q.length) return;
+        const remaining = [];
+        let syncedCount = 0;
+        for (const b of q) {
+          try {
+            const res = await fetch("/api/chapterly/upload", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                title: b.title,
+                file_url: b.file_url,
+                file_format: b.file_format,
+                file_size_bytes: b.file_size_bytes,
+              }),
+            });
+            if (!res.ok) remaining.push(b);
+            else syncedCount++;
+          } catch {
+            remaining.push(b);
+          }
+        }
+        localStorage.setItem("chapterly_queued_books", JSON.stringify(remaining));
+        if (syncedCount > 0) {
+          // Ideally we refresh the book list here, but a window reload works too for simplicity on next visit
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    const handleOnline = () => {
+      void syncOfflineBooks();
+    };
+
+    window.addEventListener("online", handleOnline);
+    
+    if (navigator.onLine) {
+      void syncOfflineBooks();
+    } else {
+      try {
+        const q = JSON.parse(localStorage.getItem("chapterly_queued_books") || "[]") as ChBookWithStats[];
+        if (q.length > 0) {
+          setBooks((prev) => {
+            const newBooks = q.filter((bq) => !prev.some((p) => p.id === bq.id));
+            return [...newBooks, ...prev];
+          });
+        }
+      } catch {}
+    }
+
+    return () => window.removeEventListener("online", handleOnline);
+  }, []);
 
   const DAILY_PICK = getDailyPick();
 
@@ -697,21 +825,131 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
     return matchQuery && matchStatus;
   });
 
-  const handleFile = async (file: File): Promise<void> => {
-    if (books.length >= FREE_BOOK_LIMIT) {
-      setUploadError(`Free plan is limited to ${FREE_BOOK_LIMIT} books. Upgrade to add more.`);
-      return;
-    }
-
+  const handleFileSelection = (file: File): void => {
+    setUploadError(null);
     const sizeMB = file.size / 1024 / 1024;
     if (sizeMB > MAX_FILE_MB) {
       setUploadError(`File too large. Maximum is ${MAX_FILE_MB}MB.`);
       return;
     }
-
     const ext = file.name.toLowerCase().split(".").pop();
     if (!ALLOWED_EXTENSIONS.some((e) => e === `.${ext}`)) {
       setUploadError(`Unsupported format. Supported: ${ALLOWED_EXTENSIONS.join(", ")}`);
+      return;
+    }
+    setPendingFile(file);
+  };
+
+  const processLocalUpload = async (): Promise<void> => {
+    if (!pendingFile) return;
+    setUploading(true);
+    setUploadError(null);
+    try {
+      const titleGuess = pendingFile.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
+      const ext = pendingFile.name.toLowerCase().split(".").pop();
+      const localId = crypto.randomUUID();
+      
+      // Save file blob to IndexedDB
+      await saveFileLocally(localId, pendingFile);
+
+      // We still want to sync the DB record so progress and highlights are tracked
+      // We pass the local id as the file_url
+      const formData = new FormData();
+      formData.append("title", titleGuess);
+      formData.append("file", pendingFile); // API ignores file upload to cloud if we pass special metadata, wait, the API as written will upload it!
+      
+      // We need to change how we talk to the API. 
+      // If we use JSON body instead of FormData, the API won't try to upload the file to Supabase.
+      const dataUrl = `local://${localId}`;
+      let format = "other";
+      if (["pdf", "epub", "docx", "txt", "md", "html", "fb2", "cbz"].includes(ext || "")) {
+        format = ext || "other";
+      }
+
+      let newBook: ChBookWithStats | null = null;
+      let uploadErr: string | null = null;
+
+      if (navigator.onLine) {
+        try {
+          const res = await fetch("/api/chapterly/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: titleGuess,
+              file_url: dataUrl,
+              file_format: format,
+              file_size_bytes: pendingFile.size,
+            }),
+          });
+          if (!res.ok) {
+            const errData = (await res.json().catch(() => ({}))) as { error?: string };
+            uploadErr = errData.error || "Upload failed";
+          } else {
+            const { book } = (await res.json()) as { book: ChBookWithStats };
+            newBook = { ...book, total_reading_time_minutes: 0, highlight_count: 0, note_count: 0, session_count: 0 };
+          }
+        } catch (e) {
+          console.warn("Failed to reach server, falling back to offline", e);
+        }
+      }
+
+      if (!newBook && !uploadErr) {
+        newBook = {
+          id: `temp_${localId}`,
+          user_id: "local",
+          title: titleGuess,
+          author: null,
+          cover_url: null,
+          file_url: dataUrl,
+          file_format: format as any,
+          file_size_bytes: pendingFile.size,
+          status: "unread",
+          current_page: 0,
+          total_pages: null,
+          progress_pct: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          genres: [],
+          tags: [],
+          rating: null,
+          description: null,
+          language: null,
+          published_year: null,
+          is_private: true,
+          metadata: null,
+          total_reading_time_minutes: 0,
+          highlight_count: 0,
+          note_count: 0,
+          session_count: 0,
+        };
+        try {
+          const q = JSON.parse(localStorage.getItem("chapterly_queued_books") || "[]");
+          q.push(newBook);
+          localStorage.setItem("chapterly_queued_books", JSON.stringify(q));
+        } catch {}
+      }
+
+      if (uploadErr && !newBook) {
+        throw new Error(uploadErr);
+      }
+
+      if (newBook) {
+        setBooks((prev) => [newBook!, ...prev]);
+      }
+      setPendingFile(null);
+      setShowUpload(false);
+    } catch (err) {
+      console.error("[chapterly/library] local upload error:", err);
+      setUploadError(err instanceof Error ? err.message : "Local save failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const processCloudUpload = async (): Promise<void> => {
+    if (!pendingFile) return;
+    if (books.filter((b) => !b.file_url.startsWith("local://")).length >= FREE_BOOK_LIMIT) {
+      setUploadError(`Free plan is limited to ${FREE_BOOK_LIMIT} cloud books. Upgrade to add more.`);
       return;
     }
 
@@ -719,10 +957,10 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
     setUploadError(null);
 
     try {
-      const titleGuess = file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
+      const titleGuess = pendingFile.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
 
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", pendingFile);
       formData.append("title", titleGuess);
 
       const res = await fetch("/api/chapterly/upload", { method: "POST", body: formData });
@@ -737,6 +975,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
         { ...book, total_reading_time_minutes: 0, highlight_count: 0, note_count: 0, session_count: 0 },
         ...prev,
       ]);
+      setPendingFile(null);
       setShowUpload(false);
     } catch (err) {
       console.error("[chapterly/library] upload error:", err);
@@ -750,7 +989,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files[0];
-    if (file) void handleFile(file);
+    if (file) handleFileSelection(file);
   };
 
   return (
@@ -767,8 +1006,9 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
         </div>
         <button
           onClick={() => {
-            if (books.length < FREE_BOOK_LIMIT) setShowUpload(true);
-            else setUploadError(`Free plan limit: ${FREE_BOOK_LIMIT} books. Upgrade to add more.`);
+            setShowUpload(true);
+            setPendingFile(null);
+            setUploadError(null);
           }}
           className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[10px] text-(--bg) cursor-pointer border-none transition-all hover:opacity-90"
           style={{ background: ACCENT }}
@@ -785,40 +1025,37 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               Upload a book
             </div>
             <button
-              onClick={() => { setShowUpload(false); setUploadError(null); }}
+              onClick={() => { setShowUpload(false); setUploadError(null); setPendingFile(null); }}
               className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)]"
             >
               <X size={16} />
             </button>
           </div>
-          <div
-            className={`m-[20px] rounded-[12px] border-2 border-dashed flex flex-col items-center justify-center py-[48px] max-[480px]:py-[28px] px-[24px] text-center transition-all cursor-pointer ${
-              dragOver ? "border-[#4F6D7A] bg-[rgba(79,109,122,0.06)]" : "border-[var(--rule)]"
-            } ${uploading ? "pointer-events-none opacity-60" : ""}`}
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={onDrop}
-            onClick={() => fileRef.current?.click()}
-          >
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".pdf,.epub,.docx,.txt,.md,.html,.fb2,.cbz"
-              className="hidden"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); }}
-            />
-            {uploading ? (
-              <Loader2 size={36} className="animate-spin mb-[16px]" style={{ color: ACCENT }} />
-            ) : (
+
+          {!pendingFile ? (
+            <div
+              className={`m-[20px] rounded-[12px] border-2 border-dashed flex flex-col items-center justify-center py-[48px] max-[480px]:py-[28px] px-[24px] text-center transition-all cursor-pointer ${
+                dragOver ? "border-[var(--ch-accent)] bg-[color-mix(in oklab, var(--ch-accent) 6%, transparent)]" : "border-[var(--rule)]"
+              }`}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={onDrop}
+              onClick={() => fileRef.current?.click()}
+            >
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".pdf,.epub,.docx,.txt,.md,.html,.fb2,.cbz"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelection(f); }}
+              />
               <Upload size={36} className="mb-[16px] opacity-40 text-[var(--ink)]" />
-            )}
-            <div className="font-semibold text-[14px] text-[var(--ink)] mb-[6px]">
-              {uploading ? "Uploading…" : "Drop your book here"}
-            </div>
-            <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
-              PDF, EPUB, DOCX, TXT, MD, HTML, FB2, CBZ · Max {MAX_FILE_MB}MB
-            </div>
-            {!uploading && (
+              <div className="font-semibold text-[14px] text-[var(--ink)] mb-[6px]">
+                Drop your book here
+              </div>
+              <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                PDF, EPUB, DOCX, TXT, MD, HTML, FB2, CBZ · Max {MAX_FILE_MB}MB
+              </div>
               <button
                 type="button"
                 className="mt-[20px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all hover:opacity-90 text-(--bg)"
@@ -827,8 +1064,68 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               >
                 Browse files
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="p-[24px] flex flex-col items-center">
+              <div className="w-full p-[16px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)] flex items-center justify-between mb-[24px]">
+                <div className="flex items-center gap-[12px] overflow-hidden">
+                  <FileText size={20} style={{ color: ACCENT }} />
+                  <div className="truncate text-[14px] font-semibold text-[var(--ink)]">
+                    {pendingFile.name}
+                  </div>
+                </div>
+                <div className="font-mono text-[10px] text-[var(--ink-3)] shrink-0 ml-[12px]">
+                  {(pendingFile.size / 1024 / 1024).toFixed(1)}MB
+                </div>
+              </div>
+
+              {uploading ? (
+                <div className="flex flex-col items-center justify-center py-[20px]">
+                  <Loader2 size={32} className="animate-spin mb-[12px]" style={{ color: ACCENT }} />
+                  <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--ink-3)]">
+                    Saving...
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-[16px] w-full">
+                  <button
+                    onClick={() => void processLocalUpload()}
+                    className="flex flex-col items-center justify-center p-[20px] rounded-[12px] border border-[var(--rule)] bg-[var(--bg)] cursor-pointer transition-all hover:border-[#16A34A] hover:bg-[rgba(22,163,74,0.04)] group"
+                  >
+                    <div className="w-[40px] h-[40px] rounded-full bg-[rgba(22,163,74,0.1)] text-[#16A34A] flex items-center justify-center mb-[12px] group-hover:scale-110 transition-transform">
+                      <HardDrive size={20} />
+                    </div>
+                    <div className="font-semibold text-[14px] text-[var(--ink)] mb-[4px]">Local Device</div>
+                    <div className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.05em]">
+                      Unlimited books<br/>Stored on this device only
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => void processCloudUpload()}
+                    className="flex flex-col items-center justify-center p-[20px] rounded-[12px] border border-[var(--rule)] bg-[var(--bg)] cursor-pointer transition-all hover:border-[#1D4ED8] hover:bg-[rgba(29,78,216,0.04)] group"
+                  >
+                    <div className="w-[40px] h-[40px] rounded-full bg-[rgba(29,78,216,0.1)] text-[#1D4ED8] flex items-center justify-center mb-[12px] group-hover:scale-110 transition-transform">
+                      <Cloud size={20} />
+                    </div>
+                    <div className="font-semibold text-[14px] text-[var(--ink)] mb-[4px]">Cloud Sync</div>
+                    <div className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.05em]">
+                      Read across devices<br/>{books.filter((b) => !b.file_url.startsWith("local://")).length}/{FREE_BOOK_LIMIT} slots used
+                    </div>
+                  </button>
+                </div>
+              )}
+              
+              {!uploading && (
+                <button
+                  onClick={() => setPendingFile(null)}
+                  className="mt-[24px] font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] bg-transparent border-none cursor-pointer transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          )}
           {uploadError && (
             <div
               className="mx-[20px] mb-[20px] rounded-[8px] px-[16px] py-[12px] flex items-start gap-[10px] text-[13px]"
@@ -844,12 +1141,12 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
       {/* ── Daily Pick Banner ── */}
       <div
         className="mb-[32px] rounded-[16px] border p-[24px] flex items-center justify-between gap-[24px] max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-[16px]"
-        style={{ borderColor: "var(--rule)", background: "linear-gradient(135deg, rgba(79,109,122,0.08) 0%, rgba(79,109,122,0.02) 100%)" }}
+        style={{ borderColor: "var(--rule)", background: "linear-gradient(135deg, color-mix(in oklab, var(--ch-accent) 8%, transparent) 0%, color-mix(in oklab, var(--ch-accent) 2%, transparent) 100%)" }}
       >
         <div className="flex items-start gap-[16px]">
           <div
             className="w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0"
-            style={{ background: "rgba(79,109,122,0.12)" }}
+            style={{ background: "color-mix(in oklab, var(--ch-accent) 12%, transparent)" }}
           >
             <Sparkles size={20} style={{ color: ACCENT }} />
           </div>
@@ -859,7 +1156,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               Daily Summary Pick
               <span
                 className="font-mono text-[8px] tracking-[0.1em] uppercase px-[6px] py-[2px] rounded-[4px]"
-                style={{ background: "rgba(79,109,122,0.12)", color: ACCENT }}
+                style={{ background: "color-mix(in oklab, var(--ch-accent) 12%, transparent)", color: ACCENT }}
               >
                 {DAILY_PICK.category}
               </span>
@@ -883,7 +1180,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
                 previewContent: DAILY_PICK.content,
               })
             }
-            className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+            className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
             style={{ background: ACCENT }}
           >
             <FileText size={13} />
@@ -912,7 +1209,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               className="font-mono text-[9px] tracking-[0.1em] uppercase px-[10px] py-[6px] rounded-full border-none cursor-pointer transition-all whitespace-nowrap"
               style={
                 statusFilter === s
-                  ? { background: ACCENT, color: "#fff" }
+                  ? { background: ACCENT, color: "var(--ch-bg)" }
                   : { background: "var(--bg-2)", color: "var(--ink-3)", outline: "1px solid var(--rule)" }
               }
             >
@@ -992,7 +1289,7 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummary(); }}
           className="w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
-          style={{ background: "rgba(79,109,122,0.9)", color: "#fff" }}
+          style={{ background: "color-mix(in oklab, var(--ch-accent) 90%, transparent)", color: "var(--ch-bg)" }}
           title="View summary"
         >
           <FileText size={12} />
@@ -1000,7 +1297,7 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(); }}
           className="w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
-          style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}
+          style={{ background: "rgba(0,0,0,0.6)", color: "var(--ch-bg)" }}
           title="Edit book"
         >
           <Pencil size={12} />
@@ -1009,10 +1306,16 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
 
       {/* Card is a link for reading */}
       <Link href={`/tools/chapterly/read/${book.id}`} className="block no-underline">
+        {/* Local Indicator */}
+        {book.file_url.startsWith("local://") && (
+          <div className="absolute top-[10px] left-[10px] z-10 w-[24px] h-[24px] rounded-full flex items-center justify-center shadow-md bg-[rgba(22,163,74,0.9)] text-[#fff]" title="Stored on this device">
+            <HardDrive size={12} />
+          </div>
+        )}
         {/* Cover */}
         <div
           className="w-full aspect-[3/4] flex items-center justify-center relative overflow-hidden"
-          style={{ background: ACCENT + "18" }}
+          style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)" }}
         >
           {book.cover_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -1041,7 +1344,7 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
           <div className="mt-[10px] h-[3px] rounded-full bg-[var(--rule)]">
             <div
               className="h-full rounded-full transition-all"
-              style={{ width: `${book.progress_pct}%`, background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)` }}
+              style={{ width: `${book.progress_pct}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
             />
           </div>
 

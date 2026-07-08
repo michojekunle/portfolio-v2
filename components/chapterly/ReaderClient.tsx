@@ -38,9 +38,10 @@ import {
 } from "lucide-react";
 import { TtsPlayer } from "./TtsPlayer";
 import { ChapterCanvas } from "./ChapterCanvas";
+import { HighlightStyles } from "./HighlightStyles";
 import { stripMarkdown } from "@/components/ui/Markdown";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 // Lightweight inline markdown → JSX renderer (no external deps)
 function renderInline(text: string): React.ReactNode {
@@ -75,7 +76,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
           >
             {line.slice(3)}
           </div>
-          <div className="h-[1px] w-full" style={{ background: `${ACCENT}28` }} />
+          <div className="h-[1px] w-full" style={{ background: `color-mix(in srgb, var(--ch-accent) 16%, transparent)` }} />
         </div>
       );
       i++;
@@ -104,7 +105,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
         <div
           key={key++}
           className="my-[12px] px-[16px] py-[12px] rounded-[10px]"
-          style={{ background: `${ACCENT}12` }}
+          style={{ background: `color-mix(in srgb, var(--ch-accent) 7%, transparent)` }}
         >
           <p className="italic text-[13px] leading-[1.75] m-0" style={{ color: textColor, opacity: 0.9 }}>
             &ldquo;{renderInline(quoteLines.join(" "))}&rdquo;
@@ -159,11 +160,11 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
         <div
           key={key++}
           className="flex items-start gap-[14px] my-[18px] rounded-[12px] px-[14px] py-[14px]"
-          style={{ background: `${ACCENT}08` }}
+          style={{ background: `color-mix(in srgb, var(--ch-accent) 3%, transparent)` }}
         >
           <span
             className="shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center text-[11px] font-mono font-bold mt-[1px]"
-            style={{ background: ACCENT, color: "#fff" }}
+            style={{ background: ACCENT, color: "var(--ch-bg)" }}
           >
             {num}
           </span>
@@ -179,7 +180,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
             {quoteLines.length > 0 && (
               <div
                 className="mt-[10px] px-[12px] py-[8px] rounded-[8px]"
-                style={{ background: `${ACCENT}14` }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
               >
                 <p className="italic text-[12px] leading-[1.6] m-0" style={{ color: textColor, opacity: 0.8 }}>
                   &ldquo;{renderInline(quoteLines.join(" "))}&rdquo;
@@ -425,6 +426,33 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   // Swipe gesture for text-format page scrolling
   const swipeTouchStartRef = useRef<{ x: number; y: number } | null>(null);
 
+  const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let objUrl: string | null = null;
+    if (book.file_url.startsWith("local://")) {
+      const localId = book.file_url.replace("local://", "");
+      import("@/lib/chapterly/idb").then(({ getLocalFile }) => {
+        getLocalFile(localId).then((blob) => {
+          if (!active) return;
+          if (blob) {
+            objUrl = URL.createObjectURL(blob);
+            setResolvedUrl(objUrl);
+          } else {
+            console.error("[reader] Local file not found in IndexedDB");
+          }
+        });
+      });
+    } else {
+      setResolvedUrl(book.file_url);
+    }
+    return () => {
+      active = false;
+      if (objUrl) URL.revokeObjectURL(objUrl);
+    };
+  }, [book.file_url]);
+
   const sessionStartRef = useRef<number>(Date.now());
   // Prevents double-firing: visibilitychange (hidden) + cleanup can both call
   // logSession in the same navigation event. Track whether this session was
@@ -533,12 +561,12 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
   // ── Document loading for text-based formats ───────────────────
   useEffect(() => {
-    if (!isTextFormat) return;
+    if (!isTextFormat || !resolvedUrl) return;
     setDocLoading(true);
 
     (async () => {
       try {
-        const res = await fetch(book.file_url);
+        const res = await fetch(resolvedUrl);
         if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
 
         if (book.file_format === "docx") {
@@ -559,7 +587,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         setDocLoading(false);
       }
     })();
-  }, [book.file_url, book.file_format, isTextFormat]);
+  }, [resolvedUrl, book.file_format, isTextFormat]);
 
   // ── Controls auto-hide ────────────────────────────────────────
   useEffect(() => {
@@ -677,8 +705,10 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     if (!isTextFormat || docLoading || !docContent) return;
 
     const handleScroll = (): void => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const container = document.getElementById("reader-text-container");
+      if (!container) return;
+      const scrollTop = container.scrollTop;
+      const scrollHeight = container.scrollHeight - container.clientHeight;
       if (scrollHeight <= 0) {
         setLiveProgress(100);
         saveProgress({ progress_pct: 100 });
@@ -689,12 +719,18 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       saveProgress({ progress_pct: pct });
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    const container = document.getElementById("reader-text-container");
+    if (container) {
+      container.addEventListener("scroll", handleScroll, { passive: true });
+    }
     // Run once on load/render to compute current scroll/progress
     handleScroll();
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      const containerToClean = document.getElementById("reader-text-container");
+      if (containerToClean) {
+        containerToClean.removeEventListener("scroll", handleScroll);
+      }
     };
   }, [isTextFormat, docLoading, docContent, saveProgress]);
 
@@ -704,9 +740,12 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
     const pct = book.progress_pct ?? 0;
     if (pct > 0) {
       const timer = setTimeout(() => {
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        if (scrollHeight > 0) {
-          window.scrollTo(0, Math.round((pct / 100) * scrollHeight));
+        const container = document.getElementById("reader-text-container");
+        if (container) {
+          const scrollHeight = container.scrollHeight - container.clientHeight;
+          if (scrollHeight > 0) {
+            container.scrollTo({ top: Math.round((pct / 100) * scrollHeight), behavior: "instant" });
+          }
         }
       }, 300);
       return () => clearTimeout(timer);
@@ -884,6 +923,8 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       className="relative min-h-screen flex flex-col"
       style={{ background: current.bg, color: current.text }}
     >
+      <HighlightStyles />
+
       {/* ── Top bar ── */}
       <div
         className={`fixed top-0 max-[1024px]:top-[60px] left-0 right-0 z-50 flex items-center justify-between px-[16px] sm:px-[20px] h-[56px] transition-opacity duration-300 ${
@@ -974,7 +1015,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             onClick={() => setShowTtsPlayer((v) => !v)}
             className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
             style={{
-              background: showTtsPlayer ? ACCENT + "30" : current.text + "12",
+              background: showTtsPlayer ? "color-mix(in srgb, var(--ch-accent) 19%, transparent)" : current.text + "12",
               color: showTtsPlayer ? ACCENT : current.text,
             }}
             aria-label={showTtsPlayer ? "Close TTS player" : "Read aloud"}
@@ -1032,7 +1073,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               onClick={() => setShowChapterCanvas(true)}
               className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
               style={{
-                background: showChapterCanvas ? ACCENT + "30" : current.text + "12",
+                background: showChapterCanvas ? "color-mix(in srgb, var(--ch-accent) 19%, transparent)" : current.text + "12",
                 color: showChapterCanvas ? ACCENT : current.text,
               }}
               aria-label="Chapter canvas"
@@ -1082,10 +1123,11 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       {/* ── Reader area ── */}
       <div className="flex-1 pt-[56px]">
         {isEpub ? (
-          <div className="h-[calc(100vh-56px)]" data-lenis-prevent="true">
-            <EpubReader
-              url={book.file_url}
-              theme={current}
+          <div className="h-[calc(100vh-56px)] overflow-y-auto overscroll-contain" data-lenis-prevent="true">
+            {resolvedUrl ? (
+              <EpubReader
+                url={resolvedUrl}
+                theme={current}
               fontSize={fontSize}
               initialProgress={book.progress_pct}
               savedHighlights={savedHighlights
@@ -1117,12 +1159,18 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 }
               }}
             />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <Loader2 className="animate-spin text-[var(--ink-3)]" size={32} />
+              </div>
+            )}
           </div>
         ) : isPdf ? (
-          <div className="overflow-auto h-[calc(100vh-56px)]" style={{ background: current.bg }} data-lenis-prevent="true">
-            <PdfReader
-              url={book.file_url}
-              initialPage={book.current_page > 0 ? book.current_page : undefined}
+          <div className="overflow-auto h-[calc(100vh-56px)] overscroll-contain" style={{ background: current.bg }} data-lenis-prevent="true">
+            {resolvedUrl ? (
+              <PdfReader
+                url={resolvedUrl}
+                initialPage={book.current_page > 0 ? book.current_page : undefined}
               onChapterText={setChapterText}
               onProgress={(page, total) => {
                 const pct = Math.round((page / total) * 100);
@@ -1149,12 +1197,22 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               }}
               onMakeFlashcard={saveHighlightAsFlashcard}
             />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <Loader2 className="animate-spin text-[var(--ink-3)]" size={32} />
+              </div>
+            )}
           </div>
         ) : isTextFormat ? (
-          <div
-            id="reader-content"
-            className="max-w-[72ch] mx-auto px-[32px] py-[64px] leading-[1.75] min-h-[calc(100vh-56px)]"
-            style={{ fontSize: `${fontSize}px`, color: current.text }}
+          <div 
+            id="reader-text-container" 
+            className="overflow-y-auto overscroll-contain h-[calc(100vh-56px)]" 
+            data-lenis-prevent="true"
+          >
+            <div
+              id="reader-content"
+              className="max-w-[72ch] mx-auto px-[32px] py-[64px] leading-[1.75]"
+              style={{ fontSize: `${fontSize}px`, color: current.text }}
             onMouseUp={handleTextSelectionEnd}
             onTouchStart={(e) => {
               swipeTouchStartRef.current = {
@@ -1169,7 +1227,10 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 const dy = (e.changedTouches[0]?.clientY ?? 0) - start.y;
                 if (Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5) {
                   // Horizontal swipe: scroll one viewport height
-                  window.scrollBy({ top: dx < 0 ? window.innerHeight * 0.85 : -window.innerHeight * 0.85, behavior: "smooth" });
+                  const container = document.getElementById("reader-text-container");
+                  if (container) {
+                    container.scrollBy({ top: dx < 0 ? container.clientHeight * 0.85 : -container.clientHeight * 0.85, behavior: "smooth" });
+                  }
                   swipeTouchStartRef.current = null;
                   return;
                 }
@@ -1243,7 +1304,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-[20px] py-[12px] rounded-[8px] transition-opacity hover:opacity-80"
-                  style={{ background: ACCENT, color: "#fff" }}
+                  style={{ background: ACCENT, color: "var(--ch-bg)" }}
                 >
                   <ExternalLink size={14} />
                   Open in new tab
@@ -1251,6 +1312,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               </div>
             )}
           </div>
+        </div>
         ) : (
           <div
             id="reader-content"
@@ -1282,7 +1344,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-[20px] py-[12px] rounded-[8px] transition-opacity hover:opacity-80"
-                style={{ background: ACCENT, color: "#fff" }}
+                style={{ background: ACCENT, color: "var(--ch-bg)" }}
               >
                 <ExternalLink size={14} />
                 Open in new tab
@@ -1326,7 +1388,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           ))}
           <button
             onClick={() => void saveHighlightAsFlashcard()}
-            className="ml-[4px] px-[8px] py-[4px] rounded bg-[#4F6D7A] hover:bg-[#3D5661] text-white font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
+            className="ml-[4px] px-[8px] py-[4px] rounded bg-[var(--ch-accent)] hover:opacity-90 text-[var(--ch-bg)] font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
             title="Add to flashcards"
           >
             <Brain size={11} />
@@ -1335,7 +1397,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           <button
             onClick={() => setTextSelection(null)}
             className="ml-[2px] w-[18px] h-[18px] flex items-center justify-center rounded-full border-none cursor-pointer opacity-40 hover:opacity-80 bg-transparent"
-            style={{ color: "#fff" }}
+            style={{ color: "var(--ch-bg)" }}
             aria-label="Dismiss"
           >
             <X size={10} />
@@ -1405,7 +1467,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background: noteSaved ? "#16A34A" : ACCENT,
-                  color: "#fff",
+                  color: "var(--ch-bg)",
                 }}
               >
                 {noteSaving ? (
@@ -1447,7 +1509,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           <Link
             href={`/tools/chapterly/chat/${book.id}`}
             className="shrink-0 font-mono text-[9px] tracking-[0.1em] uppercase font-semibold no-underline px-[10px] py-[5px] rounded-[6px] transition-opacity hover:opacity-80"
-            style={{ background: ACCENT, color: "#fff" }}
+            style={{ background: ACCENT, color: "var(--ch-bg)" }}
           >
             AI chat
           </Link>
@@ -1557,7 +1619,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   <button
                     onClick={() => void startSummaryStream()}
                     className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[18px] py-[10px] rounded-[8px] border-none cursor-pointer transition-opacity hover:opacity-90"
-                    style={{ background: ACCENT, color: "#fff" }}
+                    style={{ background: ACCENT, color: "var(--ch-bg)" }}
                   >
                     <Sparkles size={13} />
                     Generate Summary
@@ -1587,8 +1649,8 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                     className="flex-1 inline-flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all"
                     style={
                       showSummaryTts
-                        ? { background: ACCENT, color: "#fff" }
-                        : { background: ACCENT + "15", color: ACCENT }
+                        ? { background: ACCENT, color: "var(--ch-bg)" }
+                        : { background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }
                     }
                   >
                     <Headphones size={11} />

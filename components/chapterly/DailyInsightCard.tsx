@@ -5,7 +5,7 @@ import { Sparkles, RefreshCw, Loader2 } from "lucide-react";
 import type { DailyInsightPayload } from "@/app/api/chapterly/daily-insight/route";
 import { MarkdownInline } from "@/components/ui/Markdown";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 const CACHE_KEY = "chapterly_daily_insight_v2";
 
 interface InsightCache {
@@ -68,7 +68,7 @@ export function DailyInsightCard(): React.ReactElement {
     return (
       <div
         className="rounded-[14px] px-[16px] py-[14px] mb-[24px] flex items-center gap-[10px]"
-        style={{ background: `${ACCENT}08`, border: `1px solid ${ACCENT}15` }}
+        style={{ background: `color-mix(in srgb, var(--ch-accent) 3%, transparent)`, border: `1px solid color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
       >
         <Loader2 size={12} className="animate-spin shrink-0" style={{ color: ACCENT, opacity: 0.5 }} />
         <span className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)]">
@@ -105,7 +105,7 @@ export function DailyInsightCard(): React.ReactElement {
   return (
     <div
       className="rounded-[14px] mb-[24px] overflow-hidden"
-      style={{ border: `1px solid ${ACCENT}1A`, background: `${ACCENT}06` }}
+      style={{ border: `1px solid color-mix(in srgb, var(--ch-accent) 10%, transparent)`, background: `color-mix(in srgb, var(--ch-accent) 2%, transparent)` }}
     >
       <div className="h-[2px]" style={{ background: `linear-gradient(90deg, ${ACCENT}, transparent)` }} />
       <div className="px-[18px] py-[14px] flex items-start gap-[10px]">

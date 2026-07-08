@@ -15,7 +15,7 @@ import {
   Check,
 } from "lucide-react";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const INTEREST_OPTIONS = [
   { id: "productivity", label: "Productivity & Habits", icon: "⚡" },
@@ -107,7 +107,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
   const progress = ((step + 1) / 5) * 100;
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col items-center justify-center p-[24px]">
+    <div className="chapterly-root min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col items-center justify-center p-[24px]">
       <div className="w-full max-w-[580px] bg-[var(--bg-2)] border border-[var(--rule)] rounded-[24px] p-[40px] max-[480px]:p-[24px] shadow-xl relative overflow-hidden">
         {/* Progress indicator */}
         <div className="absolute top-0 left-0 right-0 h-[4px] bg-[var(--rule)]">
@@ -157,7 +157,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                       className="h-[100px] rounded-[16px] border flex flex-col items-center justify-center gap-[8px] cursor-pointer transition-all text-center p-[12px] bg-[var(--bg)] hover:border-[var(--ink-3)]"
                       style={
                         selected
-                          ? { borderColor: ACCENT, background: ACCENT + "15", color: ACCENT }
+                          ? { borderColor: ACCENT, background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }
                           : { borderColor: "var(--rule)" }
                       }
                     >
@@ -200,7 +200,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                       className="w-full h-[54px] rounded-[12px] border px-[16px] flex items-center gap-[12px] cursor-pointer transition-all text-left bg-[var(--bg)] hover:border-[var(--ink-3)]"
                       style={
                         selected
-                          ? { borderColor: ACCENT, background: ACCENT + "15", color: ACCENT }
+                          ? { borderColor: ACCENT, background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }
                           : { borderColor: "var(--rule)" }
                       }
                     >
@@ -241,7 +241,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                       className="w-full rounded-[14px] border p-[16px] flex items-start gap-[12px] cursor-pointer transition-all text-left bg-[var(--bg)] hover:border-[var(--ink-3)]"
                       style={
                         selected
-                          ? { borderColor: ACCENT, background: ACCENT + "15" }
+                          ? { borderColor: ACCENT, background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)" }
                           : { borderColor: "var(--rule)" }
                       }
                     >

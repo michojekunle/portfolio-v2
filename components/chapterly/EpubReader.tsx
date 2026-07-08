@@ -6,7 +6,7 @@ import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
 import type { HighlightColor } from "@/lib/chapterly/types";
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 interface EpubTheme {
   bg: string;
@@ -362,7 +362,7 @@ export function EpubReader({
           target="_blank"
           rel="noopener noreferrer"
           className="font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] no-underline"
-          style={{ background: ACCENT, color: "#fff" }}
+          style={{ background: ACCENT, color: "var(--ch-bg)" }}
         >
           Open externally
         </a>
@@ -507,9 +507,9 @@ function buildTheme(
       "max-width": "100% !important",
       height: "auto !important",
     },
-    a: { color: "#4F6D7A !important" },
+    a: { color: "var(--ch-accent) !important" },
     "::selection": {
-      background: "rgba(79,109,122,0.28)",
+      background: "color-mix(in oklab, var(--ch-accent) 28.000000000000004%, transparent)",
     },
   };
 }

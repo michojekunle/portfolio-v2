@@ -15,7 +15,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Chapterly — Stats" };
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 export default async function StatsPage(): Promise<React.ReactElement> {
   const [stats, goal, heatmapData, achievements, monthlyTrends] = await Promise.all([
@@ -74,7 +74,7 @@ export default async function StatsPage(): Promise<React.ReactElement> {
           <div className="mt-[12px] h-[6px] rounded-full bg-[var(--rule)]">
             <div
               className="h-full rounded-full transition-all"
-              style={{ width: `${annualProgress}%`, background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)` }}
+              style={{ width: `${annualProgress}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
             />
           </div>
           <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[6px]">
@@ -165,7 +165,7 @@ export default async function StatsPage(): Promise<React.ReactElement> {
           </div>
           <span
             className="font-mono text-[9px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
-            style={{ background: ACCENT + "15", color: ACCENT }}
+            style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }}
           >
             {earnedCount} / {totalBadges}
           </span>

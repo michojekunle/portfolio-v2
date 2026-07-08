@@ -7,6 +7,7 @@ import { CashFlowChart } from "./CashFlowChart";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
 import { Sparkles, RefreshCw } from "lucide-react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { MarkdownInline } from "@/components/ui/Markdown";
 
 const ACCENT = "#16A34A";
@@ -25,7 +26,8 @@ interface Insight {
 const CAT_MAP = Object.fromEntries(SYSTEM_CATEGORIES.map((c) => [c.id, c]));
 
 export function AnalyticsClient(): React.ReactElement {
-  const [months, setMonths] = useState(3);
+  const { hidden } = usePrivacy();
+const [months, setMonths] = useState(3);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [insight, setInsight] = useState<Insight | null>(null);
@@ -52,6 +54,8 @@ export function AnalyticsClient(): React.ReactElement {
   }, [months, fetchData]);
 
   const handleMonthChange = (m: number): void => {
+  const { hidden } = usePrivacy();
+
     setMonths(m);
   };
 
@@ -157,7 +161,7 @@ export function AnalyticsClient(): React.ReactElement {
                   <div className="font-display text-[24px] font-normal tracking-[-0.02em] fvs-text" style={{ color }}>
                     {val === null ? "—" : isPercent
                       ? `${(val as number) > 0 ? "+" : ""}${Math.round(val as number)}%`
-                      : formatCurrency(val as number, "NGN", true)}
+                      : (hidden ? "****" : formatCurrency(val as number, "NGN", true))}
                   </div>
                 </div>
               ))}

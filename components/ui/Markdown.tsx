@@ -9,7 +9,7 @@
 // ── Inline: **bold**, *italic*, `code` ───────────────────────────────────────
 
 export function MarkdownInline({ text }: { text: string }): React.ReactElement {
-  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*\n]+\*|`[^`]+`)/g);
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*\n]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g);
   return (
     <>
       {parts.map((part, i) => {
@@ -30,6 +30,21 @@ export function MarkdownInline({ text }: { text: string }): React.ReactElement {
             </code>
           );
         }
+        if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
+          const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
+          if (match) {
+            return (
+              <a
+                key={i}
+                href={match[2]}
+                className="underline transition-opacity hover:opacity-70"
+                style={{ textDecorationColor: "color-mix(in srgb, currentColor 50%, transparent)" }}
+              >
+                {match[1]}
+              </a>
+            );
+          }
+        }
         return part;
       })}
     </>
@@ -43,6 +58,7 @@ export function stripMarkdown(text: string): string {
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/\*([^*\n]+)\*/g, "$1")
     .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/^>\s?/gm, "")
     .replace(/^[-*]\s+/gm, "")
     .trim();

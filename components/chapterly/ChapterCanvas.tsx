@@ -4,8 +4,8 @@ import { useState, useRef, useCallback } from "react";
 import { X, BookOpen, Bookmark, Share2, ChevronLeft, ChevronRight, Check, Loader2 } from "lucide-react";
 import { stripMarkdown } from "@/components/ui/Markdown";
 
-const ACCENT = "#4F6D7A";
-const ACCENT_SOFT = "rgba(79,109,122,0.10)";
+const ACCENT = "var(--ch-accent)";
+const ACCENT_SOFT = "color-mix(in srgb, var(--ch-accent) 10%, transparent)";
 
 interface Chapter {
   number: number;
@@ -163,7 +163,7 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
       const qY = wrapText(ctx, `"${chapter.quote}"`, 80, 340, W - 160, 46);
 
       // Divider
-      ctx.fillStyle = ACCENT + "60";
+      ctx.fillStyle = "color-mix(in srgb, var(--ch-accent) 38%, transparent)";
       ctx.fillRect(80, qY + 20, 200, 2);
 
       // Takeaway label
@@ -261,7 +261,7 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
               className="shrink-0 font-mono text-[9px] tracking-[0.08em] uppercase px-[10px] py-[4px] rounded-full border cursor-pointer transition-all"
               style={
                 i === current
-                  ? { background: ACCENT, color: "#fff", borderColor: ACCENT }
+                  ? { background: ACCENT, color: "var(--ch-bg)", borderColor: ACCENT }
                   : { background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }
               }
             >
@@ -358,7 +358,7 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
             <button
               onClick={() => void handleShare()}
               disabled={sharing}
-              className="flex items-center gap-[6px] h-[34px] px-[14px] rounded-[8px] border-none cursor-pointer font-mono text-[10px] tracking-[0.08em] uppercase text-white transition-all disabled:opacity-60"
+              className="flex items-center gap-[6px] h-[34px] px-[14px] rounded-[8px] border-none cursor-pointer font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ch-bg)] transition-all disabled:opacity-60"
               style={{ background: shared ? "#16A34A" : ACCENT }}
             >
               {sharing ? (

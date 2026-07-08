@@ -23,7 +23,7 @@ import {
 
 import { stripMarkdown } from "@/components/ui/Markdown";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 type Speed = (typeof SPEEDS)[number];
 const CHARS_PER_SECOND = (200 / 60) * 5;
@@ -262,7 +262,7 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
               <div>
                 <div
                   className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center mb-[12px] font-display text-[16px] font-bold"
-                  style={{ background: `${ACCENT}18`, color: ACCENT }}
+                  style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)`, color: ACCENT }}
                 >
                   {current.number}
                 </div>
@@ -326,7 +326,7 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
               <blockquote
                 key={i}
                 className="m-0 rounded-[10px] px-[16px] py-[12px] text-[13px] leading-[1.7] italic text-[var(--ink-2)]"
-                style={{ background: `${ACCENT}0d` }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 5%, transparent)` }}
               >
                 &ldquo;{q}&rdquo;
               </blockquote>
@@ -346,7 +346,7 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
               <li key={i} className="flex items-start gap-[12px]">
                 <span
                   className="shrink-0 w-[22px] h-[22px] rounded-full flex items-center justify-center font-mono text-[9px] font-bold mt-[1px]"
-                  style={{ background: `${ACCENT}18`, color: ACCENT }}
+                  style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)`, color: ACCENT }}
                 >
                   {i + 1}
                 </span>
@@ -363,7 +363,7 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
       {summary.takeaway && (
         <section
           className="rounded-[14px] px-[20px] py-[16px]"
-          style={{ background: `${ACCENT}10` }}
+          style={{ background: `color-mix(in srgb, var(--ch-accent) 6%, transparent)` }}
         >
           <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[8px]" style={{ color: "var(--ch-accent)" }}>
             One-Line Takeaway
@@ -493,7 +493,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
         <div className="h-[4px] rounded-full overflow-hidden" style={{ background: "var(--rule)" }}>
           <div
             className="h-full rounded-full transition-all duration-300"
-            style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)` }}
+            style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
           />
         </div>
       </div>
@@ -513,7 +513,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
         <button
           onClick={toggle}
           className="w-[56px] h-[56px] rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-85 shadow-lg"
-          style={{ background: ACCENT, color: "#fff" }}
+          style={{ background: ACCENT, color: "var(--ch-bg)" }}
           aria-label={playState === "playing" ? "Pause" : "Play"}
         >
           {playState === "playing" ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" />}
@@ -551,7 +551,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
               className="h-[32px] px-[9px] font-mono text-[9px] font-semibold border-none cursor-pointer transition-all"
               style={
                 speed === s
-                  ? { background: ACCENT, color: "#fff" }
+                  ? { background: ACCENT, color: "var(--ch-bg)" }
                   : { background: "transparent", color: "var(--ink-3)" }
               }
               aria-pressed={speed === s}
@@ -732,7 +732,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
         <div className="shrink-0 flex items-center gap-[16px] px-[20px] py-[20px] border-b border-[var(--rule)]">
           <div
             className="w-[72px] h-[96px] rounded-[10px] flex items-center justify-center overflow-hidden shrink-0 shadow-md"
-            style={{ background: `${ACCENT}20` }}
+            style={{ background: `color-mix(in srgb, var(--ch-accent) 13%, transparent)` }}
           >
             {book.cover_url ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -757,7 +757,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
             <div className="flex items-center gap-[8px] flex-wrap">
               <div
                 className="inline-flex items-center gap-[5px] font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
-                style={{ background: `${ACCENT}14`, color: ACCENT }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)`, color: ACCENT }}
               >
                 <Lightbulb size={9} />
                 AI Summary
@@ -770,7 +770,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
                   style={
                     addState === "added"
                       ? { background: "#16A34A14", color: "#16A34A", borderColor: "#16A34A40" }
-                      : { background: "transparent", color: ACCENT, borderColor: `${ACCENT}50` }
+                      : { background: "transparent", color: ACCENT, borderColor: `color-mix(in srgb, var(--ch-accent) 31%, transparent)` }
                   }
                   title={addState === "added" ? "Saved to your library" : "Save this summary to your library"}
                 >

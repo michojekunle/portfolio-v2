@@ -35,7 +35,7 @@ import {
   Share2,
 } from "lucide-react";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const HIGHLIGHT_STYLES: Record<
   HighlightColor,
@@ -58,7 +58,7 @@ function formatDate(iso: string): string {
 function renderNoteContent(md: string): React.ReactElement {
   return (
     <div className="text-[14px] leading-[1.7] text-[var(--ink)]">
-      <Markdown text={md} accent="var(--ch-accent, #4F6D7A)" />
+      <Markdown text={md} accent="var(--ch-accent, var(--ch-accent))" />
     </div>
   );
 }
@@ -92,7 +92,7 @@ function NoteEditor({
   return (
     <div
       className="rounded-[12px] border p-[16px] space-y-[12px]"
-      style={{ borderColor: ACCENT + "40", background: ACCENT + "06" }}
+      style={{ borderColor: "color-mix(in srgb, var(--ch-accent) 25%, transparent)", background: "color-mix(in srgb, var(--ch-accent) 2%, transparent)" }}
     >
       <input
         type="text"
@@ -554,8 +554,8 @@ export function ChNotesClient({
                 className="shrink-0 inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 style={
                   bridgeCopied
-                    ? { background: "#16A34A", color: "#fff" }
-                    : { background: "#C85A2C", color: "#fff" }
+                    ? { background: "#16A34A", color: "var(--ch-bg)" }
+                    : { background: "#C85A2C", color: "var(--ch-bg)" }
                 }
                 title="Copy your highlights as Markdown, then paste them into BookBreaks to generate threads or carousels from your reading"
               >
@@ -589,7 +589,7 @@ export function ChNotesClient({
             className="flex items-center gap-[7px] px-[14px] py-[8px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold border-none cursor-pointer transition-all"
             style={
               tab === t
-                ? { background: ACCENT, color: "#fff" }
+                ? { background: ACCENT, color: "var(--ch-bg)" }
                 : { background: "transparent", color: "var(--ink-3)" }
             }
           >
@@ -675,7 +675,7 @@ export function ChNotesClient({
                     {note.chapter_ref && (
                       <div
                         className="font-mono text-[9px] tracking-[0.12em] uppercase mb-[10px] px-[8px] py-[3px] rounded-full inline-block"
-                        style={{ background: ACCENT + "15", color: ACCENT }}
+                        style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }}
                       >
                         {note.chapter_ref}
                       </div>
@@ -782,7 +782,7 @@ export function ChNotesClient({
                         className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         style={
                           h.is_flashcard
-                            ? { color: ACCENT, borderColor: ACCENT + "40" }
+                            ? { color: ACCENT, borderColor: "color-mix(in srgb, var(--ch-accent) 25%, transparent)" }
                             : { color: "var(--ink-3)" }
                         }
                         aria-label={h.is_flashcard ? "Already a flashcard" : "Add to flashcards"}
@@ -823,7 +823,7 @@ export function ChNotesClient({
             <div className="text-center py-[64px] rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[480px] mx-auto">
               <div
                 className="w-[60px] h-[60px] rounded-[16px] flex items-center justify-center mx-auto mb-[20px]"
-                style={{ background: `${ACCENT}15` }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
               >
                 <Zap size={28} style={{ color: ACCENT }} />
               </div>
@@ -840,7 +840,7 @@ export function ChNotesClient({
               )}
               <button
                 onClick={() => void generateShorts()}
-                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
                 style={{ background: ACCENT }}
               >
                 <Sparkles size={13} />
@@ -1021,7 +1021,7 @@ export function ChNotesClient({
                           className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[7px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           style={
                             isSaved
-                              ? { background: "#16A34A", color: "#fff", borderColor: "#16A34A" }
+                              ? { background: "#16A34A", color: "var(--ch-bg)", borderColor: "#16A34A" }
                               : { background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }
                           }
                           title="Save as note"
@@ -1075,7 +1075,7 @@ export function ChNotesClient({
             <div className="text-center py-[64px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto">
               <div
                 className="w-[56px] h-[56px] rounded-full flex items-center justify-center mx-auto mb-[20px]"
-                style={{ background: `${ACCENT}18` }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)` }}
               >
                 <HelpCircle size={26} style={{ color: ACCENT }} />
               </div>
@@ -1087,7 +1087,7 @@ export function ChNotesClient({
               </p>
               <button
                 onClick={generateQuiz}
-                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
                 style={{ background: ACCENT }}
               >
                 <Sparkles size={13} />
@@ -1147,7 +1147,7 @@ export function ChNotesClient({
                     }
                   } else if (isSelected) {
                     optionBorder = ACCENT;
-                    optionBg = `${ACCENT}08`;
+                    optionBg = `color-mix(in srgb, var(--ch-accent) 3%, transparent)`;
                   }
 
                   return (
@@ -1179,7 +1179,7 @@ export function ChNotesClient({
                 <div
                   className="rounded-[10px] p-[16px] text-[13px] leading-[1.6]"
                   style={{
-                    background: "rgba(79,109,122,0.05)",
+                    background: "color-mix(in oklab, var(--ch-accent) 5%, transparent)",
                     borderLeft: `3px solid ${ACCENT}`,
                   }}
                 >
@@ -1198,7 +1198,7 @@ export function ChNotesClient({
                   <button
                     disabled={selectedOptionIndex === null}
                     onClick={handleAnswerSubmit}
-                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-[var(--ch-bg)] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ background: ACCENT }}
                   >
                     Submit Answer
@@ -1206,7 +1206,7 @@ export function ChNotesClient({
                 ) : (
                   <button
                     onClick={handleNextQuestion}
-                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-white transition-all"
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-[var(--ch-bg)] transition-all"
                     style={{ background: ACCENT }}
                   >
                     {currentQuestionIndex + 1 === quizQuestions.length ? "Finish Quiz" : "Next Question"}
@@ -1220,7 +1220,7 @@ export function ChNotesClient({
             <div className="text-center py-[64px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto space-y-[24px]">
               <div
                 className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto"
-                style={{ background: `${ACCENT}18` }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)` }}
               >
                 <Sparkles size={32} style={{ color: ACCENT }} />
               </div>
@@ -1249,7 +1249,7 @@ export function ChNotesClient({
                 </button>
                 <button
                   onClick={generateQuiz}
-                  className="inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-white"
+                  className="inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
                   style={{ background: ACCENT }}
                 >
                   <RefreshCw size={12} />
@@ -1374,11 +1374,11 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
               <div className="flex items-center gap-[8px] mb-[16px]">
                 <div
                   className="w-[22px] h-[22px] rounded-[5px] flex items-center justify-center font-bold text-[10px]"
-                  style={{ background: BB_ORANGE, color: "#fff" }}
+                  style={{ background: BB_ORANGE, color: "var(--ch-bg)" }}
                 >
                   B
                 </div>
-                <span className="font-semibold text-[12px]" style={{ color: "#fff" }}>BookBreaks</span>
+                <span className="font-semibold text-[12px]" style={{ color: "var(--ch-bg)" }}>BookBreaks</span>
                 <span className="font-mono text-[8px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.3)" }}>
                   × Chapterly
                 </span>
@@ -1400,7 +1400,7 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
               {/* Footer */}
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-[11px] font-semibold" style={{ color: "#fff" }}>{book.title}</div>
+                  <div className="text-[11px] font-semibold" style={{ color: "var(--ch-bg)" }}>{book.title}</div>
                   {book.author && (
                     <div className="text-[9px] font-mono mt-[2px]" style={{ color: "rgba(255,255,255,0.4)" }}>
                       by {book.author}
@@ -1459,7 +1459,7 @@ interface ConceptShareModalProps {
   onClose: () => void;
 }
 
-const CH_ACCENT = "#4F6D7A";
+const CH_ACCENT = "var(--ch-accent)";
 
 function renderConceptToCanvas(card: ConceptCard, book: ChBook): HTMLCanvasElement {
   const SIZE = 1080;
@@ -1752,7 +1752,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                     {book.author ? `by ${book.author}` : book.title}
                   </span>
                   <span
-                    className="font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full text-white"
+                    className="font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full text-[var(--ch-bg)]"
                     style={{ background: CH_ACCENT }}
                   >
                     Try Chapterly →
@@ -1768,7 +1768,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                 type="button"
                 onClick={() => void handleDownload()}
                 disabled={imgLoading}
-                className="w-full h-[44px] flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold rounded-[12px] border-none cursor-pointer transition-all text-white disabled:opacity-60"
+                className="w-full h-[44px] flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold rounded-[12px] border-none cursor-pointer transition-all text-[var(--ch-bg)] disabled:opacity-60"
                 style={{ background: CH_ACCENT }}
               >
                 <Download size={13} />

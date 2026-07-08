@@ -52,6 +52,43 @@
   }
 }
 
+/* ── Chapterly Themes ──────────────────────────────────────────────────────── */
+@layer base {
+  /* Light mode (Monochrome Light) */
+  :root {
+    --ch-bg: #FFFFFF;
+    --ch-surface: #F5F5F5;
+    --ch-border: #E5E5E5;
+    --ch-text: #171717;
+    --ch-text-muted: #737373;
+    --ch-accent: #171717;
+  }
+
+  /* Dark mode (Monochrome Glass) */
+  .dark {
+    --ch-bg: #000000;
+    --ch-surface: #0A0A0A;
+    --ch-border: #262626;
+    --ch-text: #FFFFFF;
+    --ch-text-muted: #A3A3A3;
+    --ch-accent: #FFFFFF;
+  }
+
+  .chapterly-root {
+    background-color: var(--ch-bg);
+    color: var(--ch-text);
+    
+    /* Override global variables specifically for Chapterly tools */
+    --bg: var(--ch-bg);
+    --bg-2: var(--ch-surface);
+    --ink: var(--ch-text);
+    --ink-2: var(--ch-text-muted);
+    --ink-3: color-mix(in oklab, var(--ch-text-muted) 60%, transparent);
+    --rule: var(--ch-border);
+    --v3-accent: var(--ch-accent);
+  }
+}
+
 /* ── Tailwind v4 theme — maps CSS vars to utility classes ────────────────── */
 @theme inline {
   /* Colors — Mapped to dynamic project variables */
@@ -200,8 +237,6 @@ body {
   --maxw: 1320px;
   --gutter: 48px;
   --display-font: var(--font-fraunces), Georgia, serif;
-  /* Chapterly accent — WCAG AA compliant in each mode */
-  --ch-accent: #3d5662;
 }
 
 .dark {
@@ -217,8 +252,6 @@ body {
   --v3-accent: #d9a64f;
   --v3-accent-2: #f0c87a;
   --v3-accent-soft: #423314;
-  /* Chapterly accent — lighter in dark mode for contrast */
-  --ch-accent: #6b98a8;
 }
 
 /* ── Typography helpers ───────────────────────────────────────────────────── */
@@ -2285,8 +2318,7 @@ h1, h2, h3, h4, h5 {
   background-color: var(--ink-3);
 }
 
-/* ── Chapterly reader highlights (CSS Custom Highlight API) ─────────────── */
-::highlight(ch-yellow) { background-color: rgba(254, 240, 138, 0.55); }
-::highlight(ch-green)  { background-color: rgba(187, 247, 208, 0.55); }
-::highlight(ch-blue)   { background-color: rgba(191, 219, 254, 0.55); }
-::highlight(ch-pink)   { background-color: rgba(251, 207, 232, 0.55); }
+/* Chapterly reader highlights (CSS Custom Highlight API) live in
+   components/chapterly/HighlightStyles.tsx, injected at runtime — Turbopack's
+   CSS parser (Lightning CSS) doesn't yet recognize the ::highlight()
+   pseudo-element and fails the whole stylesheet build if it's here. */

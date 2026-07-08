@@ -121,7 +121,7 @@ export function BadgeUnlockToast(): React.ReactElement {
   if (!current) return <></>;
 
   const def = BADGE_DEFS[current.badge_id as keyof typeof BADGE_DEFS];
-  const ACCENT = "#4F6D7A";
+  const ACCENT = "var(--ch-accent)";
 
   const handleTouchStart = (e: React.TouchEvent): void => {
     dragStartXRef.current = e.touches[0]?.clientX ?? 0;
@@ -173,7 +173,7 @@ export function BadgeUnlockToast(): React.ReactElement {
         {/* Top accent */}
         <div
           className="absolute top-0 left-0 right-0 h-[3px]"
-          style={{ background: `linear-gradient(90deg, ${ACCENT}, #8BA5B0)` }}
+          style={{ background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 40%, white))` }}
         />
 
         <div className="p-[20px] pt-[22px]">
@@ -186,7 +186,7 @@ export function BadgeUnlockToast(): React.ReactElement {
             {/* Badge icon */}
             <div
               className="w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0"
-              style={{ background: `${ACCENT}15` }}
+              style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
             >
               <Award size={24} style={{ color: ACCENT }} />
             </div>

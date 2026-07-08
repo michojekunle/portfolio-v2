@@ -185,6 +185,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         {/* Skip navigation — visible on focus for keyboard/screen-reader users */}
         <a

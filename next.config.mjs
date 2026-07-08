@@ -1,3 +1,5 @@
+import withSerwistInit from "@serwist/next";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Strip the X-Powered-By header — no information leakage.
@@ -37,10 +39,15 @@ const nextConfig = {
               "img-src 'self' blob: data: https:",
               // next/font serves fonts from same origin after build-time download
               "font-src 'self' data:",
-              // Only browser→API calls need to be listed here (server-side fetches are exempt)
+              // Only browser→API calls need to be listed here (server-side fetches are exempt).
+              // Instagram/TikTok's embed.js each fetch their own oEmbed endpoint client-side
+              // before they can render a video — without these, script-src/frame-src alone
+              // still leave the embed stuck on the placeholder blockquote.
               [
                 "connect-src 'self'",
                 "https://bible-api.com",
+                "https://*.instagram.com",
+                "https://*.tiktok.com",
                 `https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
                 // WebSocket for Supabase realtime (if ever enabled)
                 `wss://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
@@ -74,4 +81,9 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withSerwist = withSerwistInit({
+  swSrc: "app/sw.ts",
+  swDest: "public/sw.js",
+});
+
+export default withSerwist(nextConfig);

@@ -5,7 +5,7 @@ import { Clock, BookOpen } from "lucide-react";
 import type { CuratedBookSummary } from "@/lib/chapterly/curated";
 import { SummaryDrawer } from "./SummaryDrawer";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const CATEGORY_COLORS: Record<string, string> = {
   Productivity: "#EA580C",
@@ -64,7 +64,7 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
           className="font-mono text-[9px] tracking-[0.12em] uppercase px-[12px] py-[6px] rounded-full border cursor-pointer transition-all"
           style={
             activeCategory === null
-              ? { background: ACCENT, color: "#fff", borderColor: ACCENT }
+              ? { background: ACCENT, color: "var(--ch-bg)", borderColor: ACCENT }
               : { background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }
           }
         >
@@ -79,7 +79,7 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
               className="font-mono text-[9px] tracking-[0.12em] uppercase px-[12px] py-[6px] rounded-full border cursor-pointer transition-all"
               style={
                 activeCategory === cat
-                  ? { background: color, color: "#fff", borderColor: color }
+                  ? { background: color, color: "var(--ch-bg)", borderColor: color }
                   : { background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }
               }
             >
@@ -118,7 +118,7 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
                 </div>
                 <span
                   className="absolute top-[8px] right-[8px] font-mono text-[8px] tracking-[0.12em] uppercase px-[8px] py-[3px] rounded-full font-semibold"
-                  style={{ background: color, color: "#fff" }}
+                  style={{ background: color, color: "var(--ch-bg)" }}
                 >
                   {book.category}
                 </span>

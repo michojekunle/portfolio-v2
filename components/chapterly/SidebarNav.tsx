@@ -61,8 +61,8 @@ export function ChSidebarNav({ userEmail, streak = 0 }: Props): React.ReactEleme
 
   const shortEmail = userEmail.length > 22 ? `${userEmail.slice(0, 22)}…` : userEmail;
 
-  const ACCENT = "#4F6D7A";
-  const ACCENT_BG = "rgba(79,109,122,0.12)";
+  const ACCENT = "var(--ch-accent)";
+  const ACCENT_BG = "color-mix(in oklab, var(--ch-accent) 12%, transparent)";
 
   const SidebarContent = (): React.ReactElement => (
     <div className="flex flex-col h-full">

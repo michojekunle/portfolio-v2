@@ -532,7 +532,7 @@ export default function ThreadStudioPage(): React.ReactElement {
               </div>
 
               {/* X Feed scroll container */}
-              <div className="max-h-[520px] overflow-y-auto pr-[4px] space-y-0 relative scrollbar-custom" data-lenis-prevent="true">
+              <div className="max-h-[520px] overflow-y-auto pr-[4px] space-y-0 relative scrollbar-custom overscroll-contain" data-lenis-prevent="true">
                 {/* Loading skeleton during generation */}
                 {loading && (
                   <div className="space-y-[24px] py-[8px]">

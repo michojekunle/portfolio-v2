@@ -38,6 +38,20 @@ export interface JoEntry {
   updated_at: string;
 }
 
+export interface JoExecutedAction {
+  type: string;
+  summary: string;
+  ok: boolean;
+}
+
+export interface JoChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  executed: JoExecutedAction[] | null;
+  created_at: string;
+}
+
 export const OBJECTIVE_COLORS = [
   "#7C3AED", "#DB2777", "#D97706", "#16A34A",
   "#0284C7", "#DC2626", "#0891B2", "#9333EA",

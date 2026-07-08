@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   title: "Chapterly — Home",
 };
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 const STATUS_LABELS: Record<string, string> = {
   unread: "Unread",
   reading: "Reading",
@@ -210,7 +210,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                 {/* Cover placeholder */}
                 <div
                   className="w-[56px] h-[76px] rounded-[6px] shrink-0 flex items-center justify-center relative overflow-hidden"
-                  style={{ background: ACCENT + "22" }}
+                  style={{ background: "color-mix(in srgb, var(--ch-accent) 13%, transparent)" }}
                 >
                   {currentBook.cover_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -249,7 +249,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                         className="h-full rounded-full transition-all duration-500"
                         style={{
                           width: `${currentBook.progress_pct}%`,
-                          background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)`,
+                          background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))`,
                         }}
                       />
                     </div>
@@ -317,7 +317,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
               >
                 <div
                   className="w-full aspect-[3/4] rounded-[6px] flex items-center justify-center mb-[12px] relative overflow-hidden"
-                  style={{ background: ACCENT + "18" }}
+                  style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)" }}
                 >
                   {book.cover_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -347,14 +347,14 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                       className="h-full rounded-full transition-all"
                       style={{
                         width: `${book.progress_pct}%`,
-                        background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)`,
+                        background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))`,
                       }}
                     />
                   </div>
                   <div className="flex items-center justify-between mt-[6px]">
                     <span
                       className="font-mono text-[8px] tracking-[0.1em] uppercase px-[6px] py-[2px] rounded-full"
-                      style={{ background: ACCENT + "18", color: ACCENT }}
+                      style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)", color: ACCENT }}
                     >
                       {STATUS_LABELS[book.status]}
                     </span>
@@ -385,8 +385,8 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
             <div
               className="mt-[20px] rounded-[12px] px-[20px] py-[16px] flex items-center justify-between gap-[16px]"
               style={{
-                background: ACCENT + "10",
-                border: `1px solid ${ACCENT}30`,
+                background: "color-mix(in srgb, var(--ch-accent) 6%, transparent)",
+                border: `1px solid color-mix(in srgb, var(--ch-accent) 19%, transparent)`,
               }}
             >
               <div>

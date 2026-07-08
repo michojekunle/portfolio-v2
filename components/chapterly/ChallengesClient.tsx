@@ -18,7 +18,7 @@ import {
 import type { PrebuiltChallenge } from "@/lib/chapterly/challenges";
 import { PREBUILT_CHALLENGES, DIFFICULTY_STYLES } from "@/lib/chapterly/challenges";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const TYPE_ICONS: Record<PrebuiltChallenge["type"], React.ReactElement> = {
   streak:     <Flame size={16} />,
@@ -200,7 +200,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
             className="flex items-center gap-[7px] px-[14px] py-[8px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold border-none cursor-pointer transition-all"
             style={
               tab === t
-                ? { background: ACCENT, color: "#fff" }
+                ? { background: ACCENT, color: "var(--ch-bg)" }
                 : { background: "transparent", color: "var(--ink-3)" }
             }
           >
@@ -271,7 +271,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
                   <button
                     onClick={() => void joinPrebuilt(ch.id)}
                     disabled={isJoining || isPending}
-                    className="w-full h-[36px] rounded-[8px] border-none font-mono text-[9px] tracking-[0.1em] uppercase cursor-pointer transition-all disabled:opacity-40 flex items-center justify-center gap-[6px] font-semibold text-white hover:opacity-90"
+                    className="w-full h-[36px] rounded-[8px] border-none font-mono text-[9px] tracking-[0.1em] uppercase cursor-pointer transition-all disabled:opacity-40 flex items-center justify-center gap-[6px] font-semibold text-[var(--ch-bg)] hover:opacity-90"
                     style={{ background: ACCENT }}
                   >
                     {isJoining ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />}
@@ -298,7 +298,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
               </div>
               <button
                 onClick={() => setTab("browse")}
-                className="mt-[16px] inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[16px] py-[8px] rounded-[8px] border-none cursor-pointer text-white transition-all hover:opacity-90"
+                className="mt-[16px] inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[16px] py-[8px] rounded-[8px] border-none cursor-pointer text-[var(--ch-bg)] transition-all hover:opacity-90"
                 style={{ background: ACCENT }}
               >
                 <BookOpen size={11} />
@@ -354,7 +354,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
                 <div className="h-[6px] rounded-full bg-[var(--rule)]">
                   <div
                     className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)` }}
+                    style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
                   />
                 </div>
 
@@ -470,7 +470,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
             <button
               onClick={() => void createChallenge()}
               disabled={creating || !form.title.trim()}
-              className="w-full h-[44px] flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-40 text-white"
+              className="w-full h-[44px] flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-40 text-[var(--ch-bg)]"
               style={{ background: ACCENT }}
             >
               {creating ? (

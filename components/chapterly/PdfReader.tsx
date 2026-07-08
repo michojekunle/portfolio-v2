@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader2, X, Brain } from "l
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PDF_WORKER_URL = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url);
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const TEXT_LAYER_CSS = `
 .ch-pdf-text-layer {
@@ -31,7 +31,7 @@ const TEXT_LAYER_CSS = `
   pointer-events: all;
 }
 .ch-pdf-text-layer ::selection {
-  background: rgba(79, 109, 122, 0.35);
+  background: color-mix(in oklab, var(--ch-accent) 35%, transparent);
   color: transparent;
 }
 `;
@@ -309,7 +309,7 @@ export function PdfReader({
             {onMakeFlashcard && (
               <button
                 onClick={() => void saveAsFlashcard()}
-                className="ml-[4px] px-[8px] py-[4px] rounded bg-[#4F6D7A] hover:bg-[#3D5661] text-white font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
+                className="ml-[4px] px-[8px] py-[4px] rounded bg-[var(--ch-accent)] hover:opacity-90 text-[var(--ch-bg)] font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
                 title="Add to flashcards"
               >
                 <Brain size={11} />

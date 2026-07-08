@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp, Plus, Pencil, X, Check, Loader2 } from "lucide-react";
 import type { JoObjectiveWithMilestones, JoMilestone } from "@/lib/journal/types";
-import { PRIORITY_CONFIG, STATUS_CONFIG, VELA_ACCENT } from "@/lib/journal/types";
+import { PRIORITY_CONFIG, STATUS_CONFIG, OBJECTIVE_COLORS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
+
+const ICONS = ["🎯", "💡", "🚀", "📚", "💪", "🏆", "🌱", "✍️", "💰", "🎨", "🔬", "🤝"];
 
 interface Props {
   objective: JoObjectiveWithMilestones;
@@ -30,6 +32,45 @@ export function ObjectiveCard({
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [statusBusy, setStatusBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+
+  // Edit mode
+  const [editing, setEditing] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editTitle, setEditTitle] = useState(objective.title);
+  const [editDescription, setEditDescription] = useState(objective.description ?? "");
+  const [editTargetDate, setEditTargetDate] = useState(objective.target_date ?? "");
+  const [editPriority, setEditPriority] = useState(objective.priority);
+  const [editColor, setEditColor] = useState(objective.color);
+  const [editIcon, setEditIcon] = useState(objective.icon);
+
+  const startEdit = (): void => {
+    setEditTitle(objective.title);
+    setEditDescription(objective.description ?? "");
+    setEditTargetDate(objective.target_date ?? "");
+    setEditPriority(objective.priority);
+    setEditColor(objective.color);
+    setEditIcon(objective.icon);
+    setEditing(true);
+  };
+
+  const handleSaveEdit = async (): Promise<void> => {
+    const title = editTitle.trim();
+    if (!title) return;
+    setEditSaving(true);
+    try {
+      await onUpdate(objective.id, {
+        title,
+        description: editDescription.trim() || null,
+        target_date: editTargetDate || null,
+        priority: editPriority,
+        color: editColor,
+        icon: editIcon,
+      });
+      setEditing(false);
+    } finally {
+      setEditSaving(false);
+    }
+  };
 
   const milestones = objective.milestones ?? [];
   const doneMilestones = milestones.filter((m) => m.is_done).length;
@@ -100,7 +141,124 @@ export function ObjectiveCard({
       <div className="h-[3px]" style={{ background: objective.color }} />
 
       <div className="p-[18px]">
-        {/* Header row */}
+        {editing ? (
+          <div className="space-y-[14px]">
+            <div className="flex gap-[16px] flex-wrap">
+              <div>
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+                  Icon
+                </label>
+                <div className="flex flex-wrap gap-[6px]">
+                  {ICONS.map((ic) => (
+                    <button
+                      key={ic}
+                      onClick={() => setEditIcon(ic)}
+                      className="w-[30px] h-[30px] text-[16px] rounded-[6px] flex items-center justify-center border cursor-pointer transition-all"
+                      style={{
+                        background: editIcon === ic ? VELA_ACCENT_SOFT : "var(--bg)",
+                        borderColor: editIcon === ic ? VELA_ACCENT : "var(--rule)",
+                      }}
+                    >
+                      {ic}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+                  Colour
+                </label>
+                <div className="flex flex-wrap gap-[6px]">
+                  {OBJECTIVE_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setEditColor(c)}
+                      className="w-[22px] h-[22px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+                      style={{
+                        background: c,
+                        borderColor: editColor === c ? "var(--ink)" : "transparent",
+                      }}
+                      aria-label={c}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+                Title
+              </label>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") void handleSaveEdit(); if (e.key === "Escape") setEditing(false); }}
+                autoFocus
+                className="w-full h-[38px] px-[12px] rounded-[7px] text-[14px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+                Description
+              </label>
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                rows={2}
+                className="w-full px-[12px] py-[8px] rounded-[7px] text-[13px] leading-[1.5] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none resize-none"
+              />
+            </div>
+
+            <div className="flex gap-[12px] flex-wrap">
+              <div className="flex-1 min-w-[150px]">
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+                  Target Date
+                </label>
+                <input
+                  type="date"
+                  value={editTargetDate}
+                  onChange={(e) => setEditTargetDate(e.target.value)}
+                  className="w-full h-[38px] px-[12px] rounded-[7px] text-[13px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
+                />
+              </div>
+              <div className="flex-1 min-w-[150px]">
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+                  Priority
+                </label>
+                <select
+                  value={editPriority}
+                  onChange={(e) => setEditPriority(e.target.value as "high" | "medium" | "low")}
+                  className="w-full h-[38px] px-[12px] rounded-[7px] text-[13px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none cursor-pointer"
+                >
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-[8px] pt-[2px]">
+              <button
+                onClick={() => void handleSaveEdit()}
+                disabled={editSaving || !editTitle.trim()}
+                className="flex items-center gap-[6px] px-[16px] h-[34px] rounded-[7px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-50 transition-opacity hover:opacity-90"
+                style={{ background: VELA_ACCENT }}
+              >
+                {editSaving ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                Save
+              </button>
+              <button
+                onClick={() => setEditing(false)}
+                disabled={editSaving}
+                className="px-[14px] h-[34px] rounded-[7px] font-mono text-[9px] tracking-[0.1em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] transition-opacity hover:opacity-70"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
         <div className="flex items-start gap-[12px]">
 
           {/* Icon */}
@@ -192,6 +350,15 @@ export function ObjectiveCard({
           {/* Actions */}
           <div className="flex items-center gap-[1px] flex-shrink-0">
             <button
+              onClick={startEdit}
+              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent"
+              style={{ color: "var(--ink-4)" }}
+              title="Edit objective"
+              aria-label="Edit objective"
+            >
+              <Pencil size={12} />
+            </button>
+            <button
               onClick={() => void handleDelete()}
               disabled={deleteBusy}
               className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent disabled:opacity-50"
@@ -210,10 +377,11 @@ export function ObjectiveCard({
             </button>
           </div>
         </div>
+        )}
       </div>
 
       {/* Milestones */}
-      {expanded && (
+      {expanded && !editing && (
         <div
           className="border-t px-[18px] py-[16px]"
           style={{ borderColor: "var(--rule)", background: "var(--bg)" }}

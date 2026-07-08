@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 
 interface Props {
   dailySpend: Record<string, number>;
@@ -22,7 +23,8 @@ function intensityColor(intensity: number): string {
 }
 
 export function SpendingHeatmap({ dailySpend, months = 3 }: Props): React.ReactElement {
-  const { weeks, monthLabels, maxSpend } = useMemo(() => {
+  const { hidden } = usePrivacy();
+const { weeks, monthLabels, maxSpend } = useMemo(() => {
     const today = new Date();
     today.setHours(12, 0, 0, 0);
 
@@ -90,7 +92,7 @@ export function SpendingHeatmap({ dailySpend, months = 3 }: Props): React.ReactE
       <div className="flex items-center justify-between mb-[16px]">
         <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink-3)]">Spending Heatmap</div>
         <div className="flex items-center gap-[16px]">
-          <div className="font-mono text-[10px] text-[var(--ink-4)]">{activeDays} active days · {formatCurrency(totalSpend, "NGN", true)} total</div>
+          <div className="font-mono text-[10px] text-[var(--ink-4)]">{activeDays} active days · {(hidden ? "****" : formatCurrency(totalSpend, "NGN", true))} total</div>
           <div className="flex items-center gap-[4px]">
             <span className="font-mono text-[9px] text-[var(--ink-4)]">Less</span>
             {[0, 0.2, 0.5, 0.8, 1].map((v, i) => (
@@ -138,7 +140,7 @@ export function SpendingHeatmap({ dailySpend, months = 3 }: Props): React.ReactE
                   fill={intensityColor(intensity)}
                   style={{ cursor: "default" }}
                 >
-                  <title>{day.date}: {day.amount > 0 ? formatCurrency(day.amount, "NGN") : "No spending"}</title>
+                  <title>{day.date}: {day.amount > 0 ? (hidden ? "****" : formatCurrency(day.amount, "NGN")) : "No spending"}</title>
                 </rect>
               );
             })

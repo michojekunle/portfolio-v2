@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 
 interface CategorySlice {
   id: string;
@@ -17,7 +18,8 @@ interface Props {
 }
 
 export function CategoryDonut({ data, total }: Props): React.ReactElement {
-  const [hovered, setHovered] = useState<string | null>(null);
+  const { hidden } = usePrivacy();
+const [hovered, setHovered] = useState<string | null>(null);
 
   const sorted = [...data].sort((a, b) => b.amount - a.amount).slice(0, 8);
 
@@ -106,7 +108,7 @@ export function CategoryDonut({ data, total }: Props): React.ReactElement {
           >
             <div className="w-[8px] h-[8px] rounded-full shrink-0" style={{ background: s.color }} />
             <span className="text-[11px] text-[var(--ink-3)] mr-auto truncate">{s.icon} {s.name}</span>
-            <span className="font-mono text-[10px] font-semibold text-[var(--ink)] shrink-0">{formatCurrency(s.amount, "NGN", true)}</span>
+            <span className="font-mono text-[10px] font-semibold text-[var(--ink)] shrink-0">{(hidden ? "****" : formatCurrency(s.amount, "NGN", true))}</span>
             <span className="font-mono text-[9px] text-[var(--ink-4)] w-[30px] text-right shrink-0">{Math.round(s.pct * 100)}%</span>
           </div>
         ))}

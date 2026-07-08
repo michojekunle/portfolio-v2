@@ -126,10 +126,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const titleInput = formData.get("title");
   const authorInput = formData.get("author");
+  const bookIdInput = formData.get("book_id");
 
   const titleRaw = typeof titleInput === "string" ? titleInput.trim() : "";
   const title = titleRaw || file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
   const author = typeof authorInput === "string" ? authorInput.trim() || null : null;
+  const updateBookId = typeof bookIdInput === "string" ? bookIdInput : null;
 
   const format = detectFormat(file.name);
   const safeName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
@@ -155,19 +157,39 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to generate public URL for uploaded file" }, { status: 500 });
   }
 
-  const { data: book, error: dbError } = await supabase
-    .from("ch_books")
-    .insert({
-      user_id: user.id,
-      title,
-      author,
-      file_url: urlData.publicUrl,
-      file_format: format,
-      file_size_bytes: file.size,
-      status: "unread",
-    })
-    .select()
-    .single();
+  let book: any;
+  let dbError: any;
+
+  if (updateBookId) {
+    const res = await supabase
+      .from("ch_books")
+      .update({
+        file_url: urlData.publicUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", updateBookId)
+      .eq("user_id", user.id)
+      .select()
+      .single();
+    book = res.data;
+    dbError = res.error;
+  } else {
+    const res = await supabase
+      .from("ch_books")
+      .insert({
+        user_id: user.id,
+        title,
+        author,
+        file_url: urlData.publicUrl,
+        file_format: format,
+        file_size_bytes: file.size,
+        status: "unread",
+      })
+      .select()
+      .single();
+    book = res.data;
+    dbError = res.error;
+  }
 
   if (dbError) {
     // Attempt to clean up the uploaded file

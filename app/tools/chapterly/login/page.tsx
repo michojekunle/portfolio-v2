@@ -8,8 +8,8 @@ import { ArrowRight, ArrowLeft, BookMarked } from "lucide-react";
 
 type Mode = "signin" | "signup";
 
-const ACCENT = "#4F6D7A";
-const ACCENT_SOFT = "rgba(79,109,122,0.15)";
+const ACCENT = "var(--ch-accent)";
+const ACCENT_SOFT = "color-mix(in srgb, var(--ch-accent) 10%, transparent)";
 
 function LoginContent(): React.ReactElement {
   const [mode, setMode] = useState<Mode>("signin");
@@ -87,7 +87,7 @@ function LoginContent(): React.ReactElement {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-[24px] py-[80px]"
+      className="chapterly-root min-h-screen flex items-center justify-center px-[24px] py-[80px]"
       style={{ background: "var(--bg)" }}
     >
       <div className="w-full max-w-[420px]">
@@ -236,9 +236,9 @@ function LoginContent(): React.ReactElement {
             <div
               className="rounded-[8px] px-[16px] py-[12px] text-[13px] leading-[1.5]"
               style={{
-                background: "rgba(79,109,122,0.1)",
+                background: "color-mix(in oklab, var(--ch-accent) 10%, transparent)",
                 color: ACCENT,
-                border: `1px solid ${ACCENT}40`,
+                border: `1px solid color-mix(in srgb, var(--ch-accent) 25%, transparent)`,
                 fontFamily: "inherit",
               }}
             >

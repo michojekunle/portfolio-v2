@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Play, Pause, Square, X, Volume2, ChevronDown, SkipBack, SkipForward } from "lucide-react";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 type Speed = (typeof SPEEDS)[number];
 
@@ -211,7 +211,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         <button
           onClick={togglePause}
           className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-80"
-          style={{ background: ACCENT, color: "#fff" }}
+          style={{ background: ACCENT, color: "var(--ch-bg)" }}
           aria-label={playState === "playing" ? "Pause" : "Play"}
         >
           {playState === "playing" ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" />}
@@ -283,7 +283,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         >
           <div
             className="h-full rounded-full transition-all duration-300"
-            style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${ACCENT}, #6B8FA0)` }}
+            style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
           />
         </div>
         <div className="flex justify-between mt-[4px]">
@@ -314,7 +314,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         <button
           onClick={togglePause}
           className="w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-80"
-          style={{ background: ACCENT, color: "#fff" }}
+          style={{ background: ACCENT, color: "var(--ch-bg)" }}
           aria-label={playState === "playing" ? "Pause" : "Play"}
         >
           {playState === "playing" ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
@@ -356,7 +356,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
                 className="h-[28px] px-[7px] font-mono text-[9px] font-semibold border-none cursor-pointer transition-all"
                 style={
                   speed === s
-                    ? { background: ACCENT, color: "#fff" }
+                    ? { background: ACCENT, color: "var(--ch-bg)" }
                     : { background: "transparent", color: fg, opacity: 0.5 }
                 }
                 aria-label={`${s}× speed`}
@@ -408,7 +408,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
                   className="w-full text-left px-[12px] py-[8px] font-mono text-[9px] tracking-[0.06em] cursor-pointer border-none bg-transparent transition-colors hover:opacity-70"
                   style={
                     i === selectedVoiceIndex
-                      ? { color: ACCENT, fontWeight: 600, background: `${ACCENT}10` }
+                      ? { color: ACCENT, fontWeight: 600, background: `color-mix(in srgb, var(--ch-accent) 6%, transparent)` }
                       : { color: fg, opacity: 0.7 }
                   }
                 >

@@ -26,7 +26,7 @@ declare global {
   }
 }
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 interface Message { role: "user" | "assistant"; content: string; }
 type VoiceState = "idle" | "listening" | "thinking" | "speaking";
@@ -355,7 +355,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           {/* Last exchange preview */}
           <div className="w-full max-w-[460px] space-y-[8px]">
             {lastUser && (
-              <div className="rounded-[10px] px-[14px] py-[10px]" style={{ background: ACCENT + "15", border: `1px solid ${ACCENT}30` }}>
+              <div className="rounded-[10px] px-[14px] py-[10px]" style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", border: `1px solid color-mix(in srgb, var(--ch-accent) 19%, transparent)` }}>
                 <div className="font-mono text-[9px] uppercase tracking-[0.12em] mb-[4px]" style={{ color: ACCENT }}>You</div>
                 <div className="text-[13px] text-[var(--ink)] leading-[1.6]">{lastUser.content}</div>
               </div>
@@ -414,7 +414,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           <button
             onClick={() => setTtsEnabled((v) => !v)}
             className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all"
-            style={{ background: ttsEnabled ? `${ACCENT}20` : "var(--bg)", color: ttsEnabled ? ACCENT : "var(--ink-3)" }}
+            style={{ background: ttsEnabled ? `color-mix(in srgb, var(--ch-accent) 13%, transparent)` : "var(--bg)", color: ttsEnabled ? ACCENT : "var(--ink-3)" }}
             aria-label={ttsEnabled ? "Disable read-aloud" : "Enable read-aloud"}
             title="Read responses aloud"
           >
@@ -423,7 +423,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           <button
             onClick={enterVoiceMode}
             className="inline-flex items-center gap-[6px] h-[32px] px-[12px] rounded-[6px] border-none cursor-pointer font-mono text-[9px] tracking-[0.1em] uppercase font-semibold transition-all hover:opacity-80"
-            style={{ background: `${ACCENT}18`, color: ACCENT }}
+            style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)`, color: ACCENT }}
             title="Switch to live voice dialogue"
           >
             <Phone size={12} /> Voice Chat
@@ -438,7 +438,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
             {msg.role === "assistant" && (
               <div
                 className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0 mr-[10px] mt-[2px]"
-                style={{ background: `${ACCENT}20` }}
+                style={{ background: `color-mix(in srgb, var(--ch-accent) 13%, transparent)` }}
               >
                 <BookMarked size={14} style={{ color: ACCENT }} />
               </div>
@@ -447,7 +447,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
               className="max-w-[80%] max-[480px]:max-w-[92%] rounded-[12px] px-[14px] sm:px-[16px] py-[12px] text-[13px] sm:text-[14px] leading-[1.65]"
               style={
                 msg.role === "user"
-                  ? { background: ACCENT, color: "#fff" }
+                  ? { background: ACCENT, color: "var(--ch-bg)" }
                   : { background: "var(--bg-2)", color: "var(--ink)", border: "1px solid var(--rule)" }
               }
             >
@@ -524,7 +524,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
             onClick={() => void sendMessage(input)}
             disabled={!input.trim() || loading}
             className="w-[44px] h-[44px] flex items-center justify-center rounded-[10px] border-none cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-            style={{ background: ACCENT, color: "#fff" }}
+            style={{ background: ACCENT, color: "var(--ch-bg)" }}
             aria-label="Send message"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}

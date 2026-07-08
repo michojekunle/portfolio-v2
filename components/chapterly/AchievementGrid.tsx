@@ -54,7 +54,7 @@ const BADGE_ICONS: Record<BadgeId, React.ReactNode> = {
 };
 
 const BADGE_ACCENT: Record<BadgeId, string> = {
-  first_book: "#4F6D7A",
+  first_book: "var(--ch-accent)",
   completionist_1: "#16A34A",
   completionist_10: "#D97706",
   completionist_50: "#D97706",
@@ -70,9 +70,9 @@ const BADGE_ACCENT: Record<BadgeId, string> = {
   highlight_hero: "#CA8A04",
   note_keeper: "#0EA5E9",
   flashcard_master: "#8B5CF6",
-  ai_explorer: "#4F6D7A",
+  ai_explorer: "var(--ch-accent)",
   polymath: "#059669",
-  deep_reader: "#4F6D7A",
+  deep_reader: "var(--ch-accent)",
   speed_demon: "#16A34A",
 };
 

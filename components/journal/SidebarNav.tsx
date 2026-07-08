@@ -9,6 +9,7 @@ import { VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 
 const NAV_LINKS = [
   { href: "/tools/journal",             label: "Dashboard",   icon: <Home size={16} /> },
+  { href: "/tools/journal/canvas",      label: "Canvas",      icon: <CalendarDays size={16} /> },
   { href: "/tools/journal/log",         label: "Today's Log", icon: <BookOpen size={16} /> },
   { href: "/tools/journal/log/history", label: "History",     icon: <CalendarDays size={16} /> },
   { href: "/tools/journal/objectives",  label: "Objectives",  icon: <Target size={16} /> },

@@ -6,7 +6,7 @@ import type { ChGoal } from "@/lib/chapterly/types";
 import { Save, Loader2, BookMarked, ArrowRight, Snowflake, Check } from "lucide-react";
 import Link from "next/link";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 const DAILY_GOAL_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
 
@@ -103,7 +103,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
               className="font-mono text-[11px] tracking-[0.1em] uppercase px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all font-semibold"
               style={
                 dailyMinutes === m
-                  ? { background: ACCENT, color: "#fff" }
+                  ? { background: ACCENT, color: "var(--bg)" }
                   : {
                       background: "var(--bg)",
                       color: "var(--ink-3)",
@@ -134,7 +134,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
             max={52}
             value={annualBooks}
             onChange={(e) => setAnnualBooks(Number(e.target.value))}
-            className="flex-1 accent-[#4F6D7A]"
+            className="flex-1 accent-[var(--ch-accent)]"
             aria-label="Annual book goal"
           />
           <div className="text-[28px] font-bold text-[var(--ink)] w-[48px] text-center shrink-0">
@@ -152,7 +152,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
       <div
         id="upgrade"
         className="rounded-[16px] p-[28px] border"
-        style={{ borderColor: ACCENT + "40", background: ACCENT + "08" }}
+        style={{ borderColor: "color-mix(in srgb, var(--ch-accent) 25%, transparent)", background: "color-mix(in srgb, var(--ch-accent) 3%, transparent)" }}
       >
         <div
           className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[16px]"
@@ -171,14 +171,14 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
           </div>
           <div
             className="font-mono text-[10px] tracking-[0.12em] uppercase px-[12px] py-[6px] rounded-full font-semibold"
-            style={{ background: ACCENT + "20", color: ACCENT }}
+            style={{ background: "color-mix(in srgb, var(--ch-accent) 13%, transparent)", color: ACCENT }}
           >
             Active
           </div>
         </div>
         <div
           className="mt-[20px] pt-[20px] border-t"
-          style={{ borderColor: ACCENT + "25" }}
+          style={{ borderColor: "color-mix(in srgb, var(--ch-accent) 15%, transparent)" }}
         >
           <div className="text-[14px] font-semibold text-[var(--ink)] mb-[4px]">
             Pro — Unlimited
@@ -237,7 +237,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
               onClick={() => void handleFreezeStreak()}
               disabled={freezing || freezeCount <= 0}
               className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer font-semibold transition-opacity hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ background: "#0EA5E9", color: "#fff" }}
+              style={{ background: "#0EA5E9", color: "var(--ch-bg)" }}
             >
               {freezing ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -273,7 +273,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
           <Link
             href="/tools/bookbreaks"
             className="shrink-0 inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold no-underline px-[14px] py-[8px] rounded-[8px] transition-opacity hover:opacity-80"
-            style={{ background: "#C85A2C", color: "#fff" }}
+            style={{ background: "#C85A2C", color: "var(--ch-bg)" }}
           >
             <BookMarked size={12} /> Open BookBreaks <ArrowRight size={12} />
           </Link>

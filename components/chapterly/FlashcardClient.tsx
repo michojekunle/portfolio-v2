@@ -13,7 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 type Rating = 0 | 1 | 2 | 3;
 
@@ -118,7 +118,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
       >
         <div
           className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center"
-          style={{ background: `${ACCENT}18` }}
+          style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)` }}
         >
           <Brain size={32} style={{ color: ACCENT }} />
         </div>
@@ -136,7 +136,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
               <Link
                 href="/tools/chapterly/flashcards?all=true"
                 className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] no-underline"
-                style={{ background: ACCENT, color: "#fff" }}
+                style={{ background: ACCENT, color: "var(--ch-bg)" }}
               >
                 Study All Anyway
               </Link>
@@ -168,7 +168,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
       >
         <div
           className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center"
-          style={{ background: `${ACCENT}18` }}
+          style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)` }}
         >
           <Sparkles size={32} style={{ color: ACCENT }} />
         </div>
@@ -224,7 +224,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
             }}
             disabled={failedCardIds.size === 0}
             className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{ background: ACCENT, color: "#fff" }}
+            style={{ background: ACCENT, color: "var(--ch-bg)" }}
           >
             <RotateCcw size={13} />
             Re-review {sessionStats[0]} failed
@@ -316,7 +316,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
           {!flipped ? (
             <div
               className="px-[36px] py-[20px] border-t border-[var(--rule)] flex items-center justify-between max-[480px]:px-[24px]"
-              style={{ background: `${ACCENT}08` }}
+              style={{ background: `color-mix(in srgb, var(--ch-accent) 3%, transparent)` }}
             >
               <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
                 Tap to reveal

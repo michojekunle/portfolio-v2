@@ -70,7 +70,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "TikTok",
-    handle: "@devvmichael",
+    handle: "@devvmichaell",
     url: "https://www.tiktok.com/@devvmichaell",
     tagline: "Fast-cut dev tips and bite-sized lessons from real projects.",
     color: "#000000",

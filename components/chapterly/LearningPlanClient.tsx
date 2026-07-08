@@ -6,7 +6,7 @@ import { BookOpen, Plus, Loader2, Check, Sparkles } from "lucide-react";
 import { CURATED_BOOKS, type CuratedBookSummary } from "@/lib/chapterly/curated";
 import { SummaryDrawer } from "./SummaryDrawer";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 
 interface Props {
   initialPlan: RecommendedBookPlanItem[];
@@ -113,7 +113,7 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
                 {/* Cover thumbnail */}
                 <div
                   className="w-[44px] h-[60px] rounded-[4px] shrink-0 overflow-hidden relative border border-[var(--rule)]"
-                  style={{ background: ACCENT + "15" }}
+                  style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)" }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -147,7 +147,7 @@ export function ChLearningPlanClient({ initialPlan, userBookTitles }: Props): Re
                       const summary = CURATED_BOOKS.find((c) => c.id === item.id);
                       if (summary) setReadingBook(summary);
                     }}
-                    className="h-[28px] px-[12px] rounded-[6px] font-mono text-[8px] tracking-[0.08em] uppercase font-semibold text-white cursor-pointer border-none flex items-center gap-[4px] transition-all hover:opacity-90"
+                    className="h-[28px] px-[12px] rounded-[6px] font-mono text-[8px] tracking-[0.08em] uppercase font-semibold text-[var(--ch-bg)] cursor-pointer border-none flex items-center gap-[4px] transition-all hover:opacity-90"
                     style={{ background: ACCENT }}
                     title="Read this summary"
                   >

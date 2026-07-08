@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { formatCurrency } from "@/lib/flowise/calculator";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import type { FwGoal } from "@/lib/flowise/types";
 import { FREE_GOAL_LIMIT } from "@/lib/flowise/types";
 import { Plus, X, Check, Trash2 } from "lucide-react";
@@ -15,7 +16,8 @@ interface Props {
 }
 
 export function GoalsClient({ initialGoals }: Props): React.ReactElement {
-  const [goals, setGoals] = useState(initialGoals);
+  const { hidden } = usePrivacy();
+const [goals, setGoals] = useState(initialGoals);
   const [showForm, setShowForm] = useState(false);
   const [addingAmount, setAddingAmount] = useState<string | null>(null);
 
@@ -129,7 +131,7 @@ export function GoalsClient({ initialGoals }: Props): React.ReactElement {
                 <span className="text-[18px]">{goal.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-[14px] font-medium text-[var(--ink)]">{goal.name}</div>
-                  <div className="font-mono text-[10px] text-[var(--ink-3)]">{formatCurrency(goal.target_amount, "NGN")} saved</div>
+                  <div className="font-mono text-[10px] text-[var(--ink-3)]">{(hidden ? "****" : formatCurrency(goal.target_amount, "NGN"))} saved</div>
                 </div>
                 <span className="font-mono text-[10px] text-[#16A34A]">✓ Done</span>
                 <button onClick={() => handleDelete(goal.id)} className="w-[24px] h-[24px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-4)] hover:text-[#DC2626]">
@@ -154,8 +156,9 @@ function GoalCard({ goal, addingAmount, onAddAmount, onSaveProgress, onComplete,
   onAddAmount: () => void;
   onSaveProgress: (id: string, extra: number) => Promise<void>;
   onComplete: () => void;
-  onDelete: () => void;
+  onDelete: () => Promise<void>;
 }): React.ReactElement {
+  const { hidden } = usePrivacy();
   const [extraInput, setExtraInput] = useState("");
   const [saveError, setSaveError] = useState<string | null>(null);
   const pct = goal.target_amount > 0 ? Math.min((goal.current_amount / goal.target_amount) * 100, 100) : 0;
@@ -235,11 +238,11 @@ function GoalCard({ goal, addingAmount, onAddAmount, onSaveProgress, onComplete,
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--ink-4)] mb-[2px]">Saved</div>
-          <div className="font-display text-[22px] font-normal tracking-[-0.01em] fvs-text text-[var(--ink)]">{formatCurrency(goal.current_amount, "NGN", true)}</div>
-          <div className="font-mono text-[10px] text-[var(--ink-3)]">of {formatCurrency(goal.target_amount, "NGN", true)}</div>
+          <div className="font-display text-[22px] font-normal tracking-[-0.01em] fvs-text text-[var(--ink)]">{(hidden ? "****" : formatCurrency(goal.current_amount, "NGN", true))}</div>
+          <div className="font-mono text-[10px] text-[var(--ink-3)]">of {(hidden ? "****" : formatCurrency(goal.target_amount, "NGN", true))}</div>
           {monthlyNeeded !== null && monthlyNeeded > 0 && (
             <div className="font-mono text-[10px] mt-[6px]" style={{ color: ACCENT }}>
-              Save {formatCurrency(monthlyNeeded, "NGN", true)}/mo to hit deadline
+              Save {(hidden ? "****" : formatCurrency(monthlyNeeded, "NGN", true))}/mo to hit deadline
             </div>
           )}
         </div>

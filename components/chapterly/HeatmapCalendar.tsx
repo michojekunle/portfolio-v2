@@ -1,6 +1,6 @@
 "use client";
 
-const ACCENT = "#4F6D7A";
+const ACCENT = "var(--ch-accent)";
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 const WEEKS = 53;
 

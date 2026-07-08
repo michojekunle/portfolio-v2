@@ -67,6 +67,9 @@ interface Props {
   hasObjectives: boolean;
 }
 
+import { db, LocalChatMessage } from "@/lib/journal/db";
+import { createClient } from "@/lib/supabase/client";
+
 export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -82,11 +85,36 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
   const [listening, setListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState("");
   const [ttsEnabled, setTtsEnabled] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const processingRef = useRef(false);
   const router = useRouter();
+
+  // Load user and chat history on mount
+  useEffect(() => {
+    const loadChats = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setUserId(user.id);
+
+      const localChats = await db.chats.where("user_id").equals(user.id).toArray();
+      if (localChats.length > 0) {
+        // Sort by id to keep chronological order
+        localChats.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        setMessages(localChats.map(c => ({
+          role: c.role,
+          content: c.content,
+          executed: c.executed
+        })));
+      }
+    };
+    void loadChats();
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -125,7 +153,20 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
     setInput("");
     setLoading(true);
 
+    if (userId) {
+      await db.chats.add({
+        user_id: userId,
+        role: "user",
+        content: trimmed,
+        executed: null,
+        created_at: new Date().toISOString(),
+        sync_status: "pending_push"
+      });
+    }
+
     try {
+      // The API call acts as an online-only AI processor.
+      // If offline, the fetch will fail and be caught below, keeping the user message in local db!
       const res = await fetch("/api/journal/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -135,16 +176,70 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
       if (!res.ok) throw new Error("Assistant response failed");
       const data = await res.json() as { reply: string; executed: ExecutedAction[] };
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply, executed: data.executed },
-      ]);
-      speakText(data.reply);
+      // Determine if we should append this to the canvas
+      const isPlanOrLog = data.executed.length > 0 || /plan|log/i.test(trimmed);
+      let finalReply = data.reply;
 
       // Refresh server components so the dashboard/log reflects what was done
       if (data.executed.some((e) => e.ok)) {
         router.refresh();
       }
+
+      // Auto-add to canvas if it was a plan
+      if (userId && isPlanOrLog) {
+        finalReply += "\n\n[Open Daily Canvas](/tools/journal/canvas) to see your updated notes.";
+        
+        const today = new Date().toLocaleDateString("en-CA");
+        const existingEntry = await db.entries.where({ user_id: userId, date: today }).first();
+        
+        // Very basic markdown to HTML for Tiptap
+        const htmlContent = data.reply
+          .split('\n\n')
+          .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>')}</p>`)
+          .join('');
+
+        const block = `<h3>AI Guide Update</h3>${htmlContent}<hr/>`;
+
+        if (existingEntry) {
+          await db.entries.update(existingEntry.id, { 
+            content: (existingEntry.content || "") + block,
+            sync_status: "pending_push" 
+          });
+        } else {
+          await db.entries.add({
+            id: crypto.randomUUID(),
+            user_id: userId,
+            date: today,
+            top_priorities: [],
+            accomplished: [],
+            blockers: null,
+            energy_level: null,
+            content: block,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            sync_status: "pending_push"
+          });
+        }
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: finalReply, executed: data.executed },
+      ]);
+      
+      if (userId) {
+        await db.chats.add({
+          user_id: userId,
+          role: "assistant",
+          content: finalReply,
+          executed: data.executed.length > 0 ? data.executed : null,
+          created_at: new Date().toISOString(),
+          sync_status: "pending_push"
+        });
+      }
+
+      speakText(data.reply); // Speak only the text, not the link!
+
     } catch (err) {
       console.error("[journal/assistant] error:", err);
       setMessages((prev) => [
@@ -156,26 +251,87 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
-
-  const toggleSpeechRecognition = (): void => {
+  const toggleSpeechRecognition = async (): Promise<void> => {
     if (typeof window === "undefined") return;
 
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Voice input isn't supported in this browser — try Chrome or Safari." },
-      ]);
-      return;
-    }
-
     if (listening) {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+        mediaRecorderRef.current.stop();
+        return;
+      }
       recognitionRef.current?.stop();
       setListening(false);
       setInterimTranscript("");
       return;
     }
 
+    // A previous recording is still being transcribed/sent — refuse to start
+    // a new one until that resolves. Without this guard, tapping the mic
+    // again while the first recording's upload+transcribe was still in
+    // flight let a second recording start, and whichever pipeline finished
+    // last would silently send its (possibly stale) transcript as a message.
+    if (processingRef.current) return;
+
+    // Prefer the browser's native SpeechRecognition — it streams a live
+    // interim transcript as the user speaks. MediaRecorder + server
+    // transcription is a fallback for browsers without native support (e.g.
+    // Firefox); it only shows text after the full clip is uploaded, so it
+    // can't be "real time" no matter how it's wired.
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SR) {
+      startNativeSpeech(SR);
+      return;
+    }
+
+    if (navigator.mediaDevices && window.MediaRecorder) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mr = new MediaRecorder(stream);
+        // Captured by this closure only — never shared with a later
+        // recording, so a new session can't corrupt or race with this one.
+        const chunks: BlobPart[] = [];
+        mr.ondataavailable = (e) => {
+          if (e.data.size > 0) chunks.push(e.data);
+        };
+        mr.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop());
+          setListening(false);
+          setInterimTranscript("Transcribing…");
+          processingRef.current = true;
+          try {
+            const audioBlob = new Blob(chunks, { type: "audio/webm" });
+            const form = new FormData();
+            form.append("audio", audioBlob);
+            const res = await fetch("/api/journal/speech", { method: "POST", body: form });
+            if (!res.ok) throw new Error(`Speech API failed: ${res.status}`);
+            const data = await res.json() as { transcript: string };
+            if (data.transcript) {
+              void handleSendMessage(data.transcript);
+            }
+          } catch (err) {
+            console.error("[journal/assistant] Speech API error:", err);
+            setMessages((prev) => [...prev, { role: "assistant", content: "Voice recognition failed. Please try again." }]);
+          } finally {
+            setInterimTranscript("");
+            processingRef.current = false;
+          }
+        };
+        mediaRecorderRef.current = mr;
+        mr.start();
+        setListening(true);
+        return;
+      } catch (err) {
+        console.error("Mic error:", err);
+      }
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: "Voice input isn't supported in this browser — try Chrome or Safari." },
+    ]);
+  };
+
+  const startNativeSpeech = (SR: SpeechRecognitionConstructor): void => {
     const rec = new SR();
     rec.continuous = false;
     rec.interimResults = true;
@@ -330,11 +486,25 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
                   </div>
                 </div>
               )}
+
+              {/* Transcribing — shown after recording stops but before the
+                  message sends, so the pause isn't silent */}
+              {!listening && interimTranscript && (
+                <div className="flex justify-end">
+                  <div
+                    className="rounded-[14px] rounded-br-[2px] px-[16px] py-[12px] flex items-center gap-[8px]"
+                    style={{ background: ACCENT_BG, color: ACCENT }}
+                  >
+                    <Loader2 className="animate-spin" size={14} />
+                    <span className="font-mono text-[10px]">{interimTranscript}</span>
+                  </div>
+                </div>
+              )}
               <div ref={bottomRef} />
             </div>
 
-            {/* Quick suggestions — only while the conversation is fresh */}
-            {messages.length <= 1 && !loading && (
+            {/* Quick suggestions */}
+            {!loading && (
               <div className="px-[20px] pb-[10px] flex gap-[8px] flex-wrap">
                 {SUGGESTIONS.map((s) => (
                   <button
@@ -355,15 +525,22 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
               >
                 <button
                   type="button"
-                  onClick={toggleSpeechRecognition}
-                  className={`w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all ${
+                  onClick={() => void toggleSpeechRecognition()}
+                  disabled={!listening && Boolean(interimTranscript)}
+                  className={`w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                     listening ? "text-white" : "hover:bg-[var(--bg-2)] text-[var(--ink-3)] bg-transparent"
                   }`}
                   style={listening ? { background: "#DC2626" } : undefined}
-                  title={listening ? "Stop listening" : "Speak to Vela"}
+                  title={listening ? "Stop listening" : !listening && interimTranscript ? "Transcribing…" : "Speak to Vela"}
                   aria-label={listening ? "Stop voice input" : "Start voice input"}
                 >
-                  {listening ? <MicOff size={16} /> : <Mic size={16} />}
+                  {!listening && interimTranscript ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : listening ? (
+                    <MicOff size={16} />
+                  ) : (
+                    <Mic size={16} />
+                  )}
                 </button>
 
                 <textarea
