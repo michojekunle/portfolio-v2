@@ -88,9 +88,10 @@ self.addEventListener("fetch", (event) => {
       caches.match(event.request).then((cached) => {
         const network = fetch(event.request).then((res) => {
           if (res.ok) {
+            const clone = res.clone();
             caches
               .open(`creator-suite-assets-${CACHE_VERSION}`)
-              .then((cache) => cache.put(event.request, res.clone()));
+              .then((cache) => cache.put(event.request, clone));
           }
           return res;
         });

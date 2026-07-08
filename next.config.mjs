@@ -31,7 +31,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com",
               "style-src 'self' 'unsafe-inline'",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
@@ -45,8 +45,8 @@ const nextConfig = {
                 // WebSocket for Supabase realtime (if ever enabled)
                 `wss://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
               ].join(" "),
-              // blob: allows epubjs to render EPUB content in its internally-created iframes
-              "frame-src 'self' blob:",
+              // Allow YouTube, Instagram, TikTok, and Vimeo embeds (plus blob: for epubjs)
+              "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.vimeo.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
