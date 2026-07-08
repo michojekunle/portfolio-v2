@@ -260,6 +260,9 @@ importers:
       sanitize-html:
         specifier: ^2.15.0
         version: 2.17.2
+      serwist:
+        specifier: ^9.5.11
+        version: 9.5.11(browserslist@4.25.0)(typescript@5.8.3)
       sonner:
         specifier: ^1.7.1
         version: 1.7.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

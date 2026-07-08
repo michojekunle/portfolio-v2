@@ -913,7 +913,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           tags: [],
           rating: null,
           description: null,
-          language: null,
+          language: "",
           published_year: null,
           is_private: true,
           metadata: null,

@@ -41,6 +41,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@serwist/next": "^9.5.11",
     "@serwist/window": "^9.5.11",
+    "serwist": "^9.5.11",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.49.10",
     "@tailwindcss/postcss": "^4.2.4",

@@ -91,7 +91,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
   return (
     <div className="space-y-[32px]">
       {/* ── Daily reading goal ── */}
-      <div className="rounded-[16px] p-[28px] border border-[var(--rule)] bg-[var(--bg-2)]">
+      <div className="rounded-2xl p-7 border border-[var(--rule)] bg-[var(--bg-2)]">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[20px]">
           Daily Reading Goal
         </div>
@@ -100,7 +100,7 @@ export function ChSettingsClient({ goal }: Props): React.ReactElement {
             <button
               key={m}
               onClick={() => setDailyMinutes(m)}
-              className="font-mono text-[11px] tracking-[0.1em] uppercase px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all font-semibold"
+              className="font-mono text-[11px] tracking-widest uppercase px-3.5 py-2 rounded-[8px] border-none cursor-pointer transition-all font-semibold"
               style={
                 dailyMinutes === m
                   ? { background: ACCENT, color: "var(--bg)" }

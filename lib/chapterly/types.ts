@@ -35,7 +35,7 @@ export interface ChBook {
   language: string;
   published_year: number | null;
   is_private: boolean;
-  metadata: ChBookMetadata;
+  metadata: ChBookMetadata | null;
   created_at: string;
   updated_at: string;
 }
