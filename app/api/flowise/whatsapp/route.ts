@@ -4,6 +4,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { extractReceipt } from "@/lib/flowise/receipt-extractor";
 import { syncAccountBalance } from "@/lib/flowise/balance";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
+import { checkBudgetStatus } from "@/lib/flowise/budget-alerts";
 
 /**
  * WhatsApp Cloud API webhook for the Flowise receipt bot.
@@ -219,7 +220,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const { data: account } = await supabase
         .from("fw_accounts")
-        .select("id, name")
+        .select("id, name, currency")
         .eq("user_id", userId)
         .eq("is_archived", false)
         .order("created_at", { ascending: true })
@@ -265,9 +266,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         : "Uncategorised";
       const kind = extracted.amount > 0 ? "💰 Income" : "💸 Expense";
 
+      let budgetAlert = "";
+      if (extracted.category_id && extracted.amount < 0) {
+        try {
+          budgetAlert = await checkBudgetStatus(
+            supabase,
+            userId,
+            extracted.category_id,
+            date,
+            account.currency as string
+          );
+        } catch (budgetErr) {
+          console.error("[flowise/whatsapp] budget status fetch failed:", budgetErr);
+        }
+      }
+
       await waSend(
         from,
-        `${kind} logged ✅\n\n${fmtAmount(extracted.amount)} — ${description}\n📁 ${categoryName}\n📅 ${date}\n🏦 ${account.name}\n\nWrong details? Edit it in Flowise → Transactions.`
+        `${kind} logged ✅\n\n${fmtAmount(extracted.amount)} — ${description}\n📁 ${categoryName}\n📅 ${date}\n🏦 ${account.name}${budgetAlert}\n\nWrong details? Edit it in Flowise → Transactions.`
       );
     } catch (err) {
       console.error("[flowise/whatsapp] processing error:", err);

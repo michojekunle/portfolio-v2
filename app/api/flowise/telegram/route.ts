@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { extractReceipt } from "@/lib/flowise/receipt-extractor";
 import { syncAccountBalance } from "@/lib/flowise/balance";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
+import { checkBudgetStatus } from "@/lib/flowise/budget-alerts";
 
 /**
  * Telegram webhook for the Flowise receipt bot.
@@ -281,9 +282,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       : "Uncategorised";
     const kind = extracted.amount > 0 ? "💰 Income" : "💸 Expense";
 
+    let budgetAlert = "";
+    if (extracted.category_id && extracted.amount < 0) {
+      try {
+        budgetAlert = await checkBudgetStatus(
+          supabase,
+          userId,
+          extracted.category_id,
+          date,
+          account.currency as string
+        );
+      } catch (budgetErr) {
+        console.error("[flowise/telegram] budget status fetch failed:", budgetErr);
+      }
+    }
+
     await tgSend(
       chatId,
-      `${kind} logged ✅\n\n*${fmtAmount(extracted.amount)}* — ${description}\n📁 ${categoryName}\n📅 ${date}\n🏦 ${account.name}\n\n_Wrong details? Edit it in Flowise → Transactions._`
+      `${kind} logged ✅\n\n*${fmtAmount(extracted.amount)}* — ${description}\n📁 ${categoryName}\n📅 ${date}\n🏦 ${account.name}${budgetAlert}\n\n_Wrong details? Edit it in Flowise → Transactions._`
     );
   } catch (err) {
     console.error("[flowise/telegram] processing error:", err);

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import {
@@ -16,10 +17,39 @@ import {
   Wallet,
   TrendingUp,
   Landmark,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 const ACCENT = "#16A34A";
 const ACCENT_BG = "rgba(22,163,74,0.10)";
+
+function SidebarNetWorth({ netWorth, symbol }: { netWorth: number; symbol: string }): React.ReactElement {
+  const { hidden, toggle } = usePrivacy();
+  return (
+    <div className="mt-[14px] flex items-center justify-between">
+      <div>
+        <div className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-4)] mb-[2px]">
+          Net Worth
+        </div>
+        <div
+          className="font-display text-[20px] font-normal tracking-[-0.02em] fvs-text"
+          style={{ color: netWorth >= 0 ? ACCENT : "#DC2626" }}
+        >
+          <Amount value={netWorth} currency="NGN" />
+        </div>
+      </div>
+      <button
+        onClick={toggle}
+        className="w-[28px] h-[28px] rounded-[6px] border border-[var(--rule)] bg-transparent flex items-center justify-center cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+        title={hidden ? "Show amounts" : "Hide amounts"}
+        aria-label={hidden ? "Show financial amounts" : "Hide financial amounts"}
+      >
+        {hidden ? <Eye size={14} /> : <EyeOff size={14} />}
+      </button>
+    </div>
+  );
+}
 
 const NAV_LINKS = [
   { href: "/tools/flowise",              label: "Dashboard",    icon: <Home size={16} /> },
@@ -82,17 +112,7 @@ function SidebarContent({
         </div>
 
         {netWorth !== undefined && (
-          <div className="mt-[14px]">
-            <div className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-4)] mb-[2px]">
-              Net Worth
-            </div>
-            <div
-              className="font-display text-[20px] font-normal tracking-[-0.02em] fvs-text"
-              style={{ color: netWorth >= 0 ? ACCENT : "#DC2626" }}
-            >
-              {symbol}{Math.abs(netWorth).toLocaleString("en-NG")}
-            </div>
-          </div>
+          <SidebarNetWorth netWorth={netWorth} symbol={symbol} />
         )}
       </div>
 

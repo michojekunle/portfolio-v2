@@ -5,6 +5,7 @@ import { getUserAccounts } from "@/lib/flowise/queries";
 import { computeNetWorth } from "@/lib/flowise/calculator";
 import { AssistantWidget } from "@/components/flowise/AssistantWidget";
 import { PwaRegistrar } from "@/components/PwaRegistrar";
+import { PrivacyProvider } from "@/components/flowise/PrivacyProvider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -38,17 +39,19 @@ export default async function FlowiseLayout({
   const netWorth = computeNetWorth(accounts);
 
   return (
-    <div className="min-h-screen flex bg-[var(--bg)] text-[var(--ink)]">
-      <FwSidebarNav
-        userEmail={user.email ?? ""}
-        netWorth={netWorth}
-        currency="NGN"
-      />
-      <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-[260px] flex flex-col relative">
-        <main className="flex-1 min-h-screen">{children}</main>
+    <PrivacyProvider>
+      <div className="min-h-screen flex bg-[var(--bg)] text-[var(--ink)]">
+        <FwSidebarNav
+          userEmail={user.email ?? ""}
+          netWorth={netWorth}
+          currency="NGN"
+        />
+        <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-[260px] flex flex-col relative">
+          <main className="flex-1 min-h-screen">{children}</main>
+        </div>
+        <AssistantWidget />
+        <PwaRegistrar toolId="flowise" />
       </div>
-      <AssistantWidget />
-      <PwaRegistrar toolId="flowise" />
-    </div>
+    </PrivacyProvider>
   );
 }
