@@ -134,7 +134,11 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     } else {
       return NextResponse.json({ error: "Missing challenge reference" }, { status: 400 });
     }
-    await query;
+    const { error } = await query;
+    if (error) {
+      console.error("[challenges] leave error:", error);
+      return NextResponse.json({ error: "Failed to leave challenge" }, { status: 500 });
+    }
     return NextResponse.json({ ok: true });
   }
 
