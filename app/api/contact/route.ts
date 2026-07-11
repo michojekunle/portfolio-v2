@@ -6,6 +6,7 @@ import {
   contactNotificationEmail,
   contactConfirmationEmail,
 } from "@/lib/email/templates";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 class ContactError extends Error {
   constructor(
@@ -68,6 +69,15 @@ function hasInjectionPattern(input: ContactInput): boolean {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anon";
+  const rl = await checkRateLimit(`contact:${ip}`, { limit: 3, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { success: false, message: "Too many messages. Please wait a minute before trying again.", error: "Rate limit exceeded" },
+      { status: 429 }
+    );
+  }
+
   try {
     let body: unknown;
     try {

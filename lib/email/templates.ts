@@ -18,8 +18,13 @@ const F =
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+import { createHmac } from "crypto";
+
 function unsubUrl(email: string): string {
-  return `${SITE_URL}/api/unsubscribe?t=${Buffer.from(email).toString("base64url")}`;
+  const secret = process.env.TELEGRAM_WEBHOOK_SECRET || "default_uns_key_secret_2026";
+  const hmac = createHmac("sha256", secret).update(email.toLowerCase().trim()).digest("hex");
+  const token = Buffer.from(`${email}:${hmac}`).toString("base64url");
+  return `${SITE_URL}/api/unsubscribe?t=${token}`;
 }
 
 /** Thin horizontal rule — no extra outer padding, caller controls spacing via surrounding tds */

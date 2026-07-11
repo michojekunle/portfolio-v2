@@ -63,6 +63,14 @@ interface Window {
 const fallbackStore = new Map<string, Window>();
 
 function checkRateLimitFallback(key: string, config: RateLimitConfig): RateLimitResult {
+  // Lazy prune of fallback store (10% chance on fallback requests)
+  if (Math.random() < 0.1) {
+    const nowTime = Date.now();
+    for (const [k, win] of fallbackStore) {
+      if (nowTime >= win.resetAt) fallbackStore.delete(k);
+    }
+  }
+
   const now = Date.now();
   const existing = fallbackStore.get(key);
 
@@ -103,11 +111,3 @@ export async function checkRateLimit(
     return { allowed: true, remaining: config.limit, resetAt: Date.now() + config.windowMs };
   }
 }
-
-// Prune the in-memory fallback store every 10 minutes to avoid unbounded growth.
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, win] of fallbackStore) {
-    if (now >= win.resetAt) fallbackStore.delete(key);
-  }
-}, 10 * 60 * 1000);

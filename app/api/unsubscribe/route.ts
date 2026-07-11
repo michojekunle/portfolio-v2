@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createHmac, timingSafeEqual } from "crypto";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://michaelojekunle.dev";
@@ -47,8 +48,24 @@ export async function GET(request: Request): Promise<Response> {
 
   let email: string;
   try {
-    email = Buffer.from(token, "base64url").toString("utf-8");
-    if (!email.includes("@")) throw new Error("not an email");
+    const decoded = Buffer.from(token, "base64url").toString("utf-8");
+    const parts = decoded.split(":");
+    if (parts.length !== 2) throw new Error("invalid token format");
+
+    const [rawEmail, signature] = parts;
+    if (!rawEmail.includes("@")) throw new Error("not an email");
+
+    const secret = process.env.TELEGRAM_WEBHOOK_SECRET || "default_uns_key_secret_2026";
+    const expected = createHmac("sha256", secret).update(rawEmail.toLowerCase().trim()).digest("hex");
+
+    const sigBuffer = Buffer.from(signature, "hex");
+    const expBuffer = Buffer.from(expected, "hex");
+
+    if (sigBuffer.length !== expBuffer.length || !timingSafeEqual(sigBuffer, expBuffer)) {
+      throw new Error("invalid signature");
+    }
+
+    email = rawEmail;
   } catch {
     return page(
       "Invalid link",
