@@ -219,6 +219,20 @@ export function PdfReader({
     }
   }, [loadingPdf, currentPage, scale, renderPage, totalPages]);
 
+  // Arrow-key page turns
+  useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
+      if (e.key === "ArrowLeft") {
+        setCurrentPage((p) => Math.max(1, p - 1));
+      } else if (e.key === "ArrowRight") {
+        setCurrentPage((p) => Math.min(totalPages, p + 1));
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [totalPages]);
+
   const handleMouseUp = (): void => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed || !sel.toString().trim()) {

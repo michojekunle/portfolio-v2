@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -21,6 +21,55 @@ export function Navbar(): React.ReactNode {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      triggerRef.current?.focus();
+      return;
+    }
+
+    const menuElement = menuRef.current;
+    if (!menuElement) return;
+
+    const focusable = menuElement.querySelectorAll<HTMLElement>(
+      'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length > 0) {
+      focusable[0].focus();
+    }
+
+    const handleFocusTrap = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      const focusableElements = menuElement.querySelectorAll<HTMLElement>(
+        'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleFocusTrap);
+    return () => {
+      document.removeEventListener("keydown", handleFocusTrap);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     setMounted(true);
@@ -118,6 +167,7 @@ export function Navbar(): React.ReactNode {
           </MagneticWrapper>
 
           <button
+            ref={triggerRef}
             className="hidden max-[820px]:flex items-center justify-center w-[38px] h-[38px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer transition-all duration-150 hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
             onClick={() => setIsOpen((v) => !v)}
             aria-expanded={isOpen}
@@ -136,6 +186,7 @@ export function Navbar(): React.ReactNode {
       </div>
 
       <div
+        ref={menuRef}
         id="v3-mobile-menu"
         className={`${isOpen ? "flex" : "hidden"} flex-col pt-[16px] px-[var(--gutter)] pb-[24px] border-t border-[var(--rule)] bg-[var(--bg)] gap-[2px]`}
         role="dialog"
