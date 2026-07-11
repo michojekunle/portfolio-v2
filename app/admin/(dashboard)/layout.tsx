@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { AdminNav } from "./admin-nav";
+import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
@@ -10,6 +11,12 @@ export default async function AdminLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const adminEmail = process.env.CONTACT_TO_EMAIL || "info@michaelojekunle.dev";
+
+  if (!user || user.email !== adminEmail) {
+    redirect("/admin/login");
+  }
 
   return (
     <div className="min-h-screen bg-background">

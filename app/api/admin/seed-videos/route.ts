@@ -65,8 +65,14 @@ export async function POST(): Promise<Response> {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const adminEmail = process.env.CONTACT_TO_EMAIL || "info@michaelojekunle.dev";
+
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (user.email !== adminEmail) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {

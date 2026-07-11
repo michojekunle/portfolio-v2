@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatDistanceToNow } from "date-fns";
 import { MessageItem } from "./message-item";
+import { redirect } from "next/navigation";
 
 interface Message {
   id: string;
@@ -14,6 +15,15 @@ interface Message {
 
 export default async function AdminMessagesPage(): Promise<React.ReactElement> {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const adminEmail = process.env.CONTACT_TO_EMAIL || "info@michaelojekunle.dev";
+
+  if (!user || user.email !== adminEmail) {
+    redirect("/admin/login");
+  }
 
   const { data: messages } = await supabase
     .from("messages")
