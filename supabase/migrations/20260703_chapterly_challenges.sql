@@ -20,9 +20,11 @@ CREATE TABLE IF NOT EXISTS ch_challenges (
 
 ALTER TABLE ch_challenges ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ch_challenges_select" ON ch_challenges;
 CREATE POLICY "ch_challenges_select" ON ch_challenges
   FOR SELECT USING (user_id = auth.uid() OR is_public = true);
 
+DROP POLICY IF EXISTS "ch_challenges_write" ON ch_challenges;
 CREATE POLICY "ch_challenges_write" ON ch_challenges
   FOR ALL TO authenticated
   USING (user_id = auth.uid())
@@ -48,6 +50,7 @@ CREATE TABLE IF NOT EXISTS ch_challenge_entries (
 
 ALTER TABLE ch_challenge_entries ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ch_entries_owner" ON ch_challenge_entries;
 CREATE POLICY "ch_entries_owner" ON ch_challenge_entries
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
