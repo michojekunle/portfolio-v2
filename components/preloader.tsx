@@ -7,10 +7,20 @@ export function Preloader(): React.ReactElement {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Extended delay to allow the slower typewriter animation to fully play out
+    try {
+      const hasSeen = sessionStorage.getItem("hasSeenPreloader")
+      if (hasSeen) {
+        setIsLoading(false)
+        return
+      }
+    } catch {}
+
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 6500)
+      try {
+        sessionStorage.setItem("hasSeenPreloader", "true")
+      } catch {}
+    }, 2000)
 
     return () => clearTimeout(timer)
   }, [])
@@ -86,7 +96,7 @@ export function Preloader(): React.ReactElement {
              <motion.div 
                initial={{ x: "-100%" }}
                animate={{ x: "0%" }}
-               transition={{ duration: 6.5, ease: "easeInOut" }}
+               transition={{ duration: 2.0, ease: "easeInOut" }}
                className="w-full h-full bg-[var(--ink)]"
              />
           </div>
