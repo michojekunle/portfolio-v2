@@ -5,6 +5,8 @@ import { Plus, X, Save, Loader2, Sparkles, ChevronDown, AlertCircle } from "luci
 import type { JoEntry, JoObjectiveWithMilestones } from "@/lib/journal/types";
 import { ENERGY_LABELS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 import { SaveToast } from "@/components/journal/SaveToast";
+import { db } from "@/lib/journal/db";
+import { createClient } from "@/lib/supabase/client";
 
 const REFLECTION_PROMPTS = [
   "What is one thing that felt surprisingly easy or smooth today?",
@@ -31,6 +33,37 @@ interface Props {
   onSaved?: (entry: JoEntry) => void;
   /** "priorities" narrows the form to just priorities and collapses the rest. "log" (default) shows everything. */
   initialView?: "priorities" | "log";
+}
+
+async function queueEntryLocally(
+  date: string,
+  initialEntry: JoEntry | null,
+  payload: {
+    top_priorities: string[];
+    accomplished: string[];
+    blockers: string | null;
+    notes: string | null;
+    energy_level: number | null;
+    objective_ids: string[];
+  }
+): Promise<void> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("No authenticated user for offline save");
+
+  const existingLocal = await db.entries.get(initialEntry?.id ?? "");
+  const id = existingLocal?.id ?? initialEntry?.id ?? crypto.randomUUID();
+  const now = new Date().toISOString();
+
+  await db.entries.put({
+    id,
+    user_id: user.id,
+    date,
+    ...payload,
+    created_at: existingLocal?.created_at ?? initialEntry?.created_at ?? now,
+    updated_at: now,
+    sync_status: "pending_push",
+  });
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }): React.ReactElement {
@@ -115,18 +148,19 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
     }
     setSaving(true);
     setError(null);
+    const payload = {
+      top_priorities: priorities,
+      accomplished,
+      blockers: blockers.trim() || null,
+      notes: notes.trim() || null,
+      energy_level: energy,
+      objective_ids: linkedObjectiveIds,
+    };
     try {
       const res = await fetch(`/api/journal/entries/${date}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          top_priorities: priorities,
-          accomplished,
-          blockers: blockers.trim() || null,
-          notes: notes.trim() || null,
-          energy_level: energy,
-          objective_ids: linkedObjectiveIds,
-        }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const json = (await res.json()) as { error?: string };
@@ -138,12 +172,28 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
       setTimeout(() => setSaved(false), 2000);
       onSaved?.(json.entry);
     } catch (err) {
-      console.error("[entry-form] save error:", err);
-      setError(err instanceof Error ? err.message : "Failed to save. Please try again.");
+      // A thrown TypeError means fetch itself failed (offline/no connection),
+      // as opposed to a non-ok response the server actually processed —
+      // only the former is safe to queue locally and retry later.
+      const isNetworkFailure = err instanceof TypeError;
+      if (isNetworkFailure) {
+        try {
+          await queueEntryLocally(date, initialEntry, payload);
+          setSaved(true);
+          setToastVisible(true);
+          setTimeout(() => setSaved(false), 2000);
+        } catch (queueErr) {
+          console.error("[entry-form] offline queue failed:", queueErr);
+          setError("Failed to save, even offline. Please try again.");
+        }
+      } else {
+        console.error("[entry-form] save error:", err);
+        setError(err instanceof Error ? err.message : "Failed to save. Please try again.");
+      }
     } finally {
       setSaving(false);
     }
-  }, [date, priorities, accomplished, blockers, notes, energy, linkedObjectiveIds, onSaved]);
+  }, [date, priorities, accomplished, blockers, notes, energy, linkedObjectiveIds, onSaved, initialEntry]);
 
   const activeObjectives = objectives.filter((o) => o.status === "active");
 

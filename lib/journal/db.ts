@@ -7,8 +7,9 @@ export interface LocalEntry {
   top_priorities: string[];
   accomplished: string[];
   blockers: string | null;
+  notes: string | null;
   energy_level: number | null;
-  content: string | null; // Rich-text canvas content
+  objective_ids: string[];
   created_at: string;
   updated_at: string;
   sync_status: 'synced' | 'pending_push';
@@ -22,8 +23,8 @@ export interface LocalObjective {
   status: 'active' | 'completed' | 'paused' | 'dropped';
   target_date: string | null;
   priority: 'high' | 'medium' | 'low';
-  category: string | null;
-  sort_order: number;
+  color: string;
+  icon: string;
   created_at: string;
   updated_at: string;
   sync_status: 'synced' | 'pending_push';
@@ -31,12 +32,12 @@ export interface LocalObjective {
 
 export interface LocalMilestone {
   id: string; // uuid
+  user_id: string;
   objective_id: string;
   title: string;
   is_done: boolean;
   due_date: string | null;
   created_at: string;
-  updated_at: string;
   sync_status: 'synced' | 'pending_push';
 }
 

@@ -67,7 +67,7 @@ interface Props {
   hasObjectives: boolean;
 }
 
-import { db, LocalChatMessage } from "@/lib/journal/db";
+import { db } from "@/lib/journal/db";
 import { createClient } from "@/lib/supabase/client";
 
 export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
@@ -94,7 +94,9 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
   const processingRef = useRef(false);
   const router = useRouter();
 
-  // Load user and chat history on mount
+  // Load user and chat history on mount — pulls server history first so a
+  // fresh browser (empty Dexie) still shows past conversations, then reads
+  // the merged local mirror for display.
   useEffect(() => {
     const loadChats = async () => {
       const supabase = createClient();
@@ -102,14 +104,41 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
       if (!user) return;
       setUserId(user.id);
 
+      try {
+        const res = await fetch("/api/journal/chats?limit=100");
+        if (res.ok) {
+          const { messages: serverMessages } = await res.json() as {
+            messages: { id: string; role: "user" | "assistant"; content: string; executed: ExecutedAction[] | null; created_at: string }[];
+          };
+          const existingServerIds = new Set(
+            (await db.chats.where("user_id").equals(user.id).toArray())
+              .map((c) => c.server_id)
+              .filter(Boolean)
+          );
+          const toInsert = serverMessages
+            .filter((m) => !existingServerIds.has(m.id))
+            .map((m) => ({
+              server_id: m.id,
+              user_id: user.id,
+              role: m.role,
+              content: m.content,
+              executed: m.executed,
+              created_at: m.created_at,
+              sync_status: "synced" as const,
+            }));
+          if (toInsert.length > 0) await db.chats.bulkAdd(toInsert);
+        }
+      } catch (err) {
+        console.error("[journal/assistant] chat history pull failed (offline?):", err);
+      }
+
       const localChats = await db.chats.where("user_id").equals(user.id).toArray();
       if (localChats.length > 0) {
-        // Sort by id to keep chronological order
-        localChats.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        localChats.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
         setMessages(localChats.map(c => ({
           role: c.role,
           content: c.content,
-          executed: c.executed
+          executed: c.executed ?? undefined,
         })));
       }
     };
@@ -153,8 +182,11 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
     setInput("");
     setLoading(true);
 
+    // Optimistic local write so the message survives a reload before we know
+    // whether the round trip succeeded.
+    let localUserChatId: number | undefined;
     if (userId) {
-      await db.chats.add({
+      localUserChatId = await db.chats.add({
         user_id: userId,
         role: "user",
         content: trimmed,
@@ -165,8 +197,6 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
     }
 
     try {
-      // The API call acts as an online-only AI processor.
-      // If offline, the fetch will fail and be caught below, keeping the user message in local db!
       const res = await fetch("/api/journal/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,75 +206,40 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
       if (!res.ok) throw new Error("Assistant response failed");
       const data = await res.json() as { reply: string; executed: ExecutedAction[] };
 
-      // Determine if we should append this to the canvas
-      const isPlanOrLog = data.executed.length > 0 || /plan|log/i.test(trimmed);
-      let finalReply = data.reply;
-
       // Refresh server components so the dashboard/log reflects what was done
       if (data.executed.some((e) => e.ok)) {
         router.refresh();
       }
 
-      // Auto-add to canvas if it was a plan
-      if (userId && isPlanOrLog) {
-        finalReply += "\n\n[Open Daily Canvas](/tools/journal/canvas) to see your updated notes.";
-        
-        const today = new Date().toLocaleDateString("en-CA");
-        const existingEntry = await db.entries.where({ user_id: userId, date: today }).first();
-        
-        // Very basic markdown to HTML for Tiptap
-        const htmlContent = data.reply
-          .split('\n\n')
-          .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>')}</p>`)
-          .join('');
-
-        const block = `<h3>AI Guide Update</h3>${htmlContent}<hr/>`;
-
-        if (existingEntry) {
-          await db.entries.update(existingEntry.id, { 
-            content: (existingEntry.content || "") + block,
-            sync_status: "pending_push" 
-          });
-        } else {
-          await db.entries.add({
-            id: crypto.randomUUID(),
-            user_id: userId,
-            date: today,
-            top_priorities: [],
-            accomplished: [],
-            blockers: null,
-            energy_level: null,
-            content: block,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            sync_status: "pending_push"
-          });
-        }
-      }
-
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: finalReply, executed: data.executed },
+        { role: "assistant", content: data.reply, executed: data.executed },
       ]);
-      
-      if (userId) {
-        await db.chats.add({
-          user_id: userId,
-          role: "assistant",
-          content: finalReply,
-          executed: data.executed.length > 0 ? data.executed : null,
-          created_at: new Date().toISOString(),
-          sync_status: "pending_push"
-        });
+
+      // The /assistant route already persisted both turns to jo_chats
+      // server-side with their own ids (which this response doesn't return),
+      // so drop the optimistic local copy rather than leave it stranded
+      // without a server_id — the next history pull will fetch the
+      // server's canonical rows and dedupe correctly. Keeping a
+      // server_id-less "synced" copy here would make it invisible to that
+      // dedup check and double up on every reload.
+      if (userId && localUserChatId !== undefined) {
+        await db.chats.delete(localUserChatId);
       }
 
-      speakText(data.reply); // Speak only the text, not the link!
+      speakText(data.reply);
 
     } catch (err) {
       console.error("[journal/assistant] error:", err);
+      const offline = typeof navigator !== "undefined" && !navigator.onLine;
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, I had trouble processing that. Please try again." },
+        {
+          role: "assistant",
+          content: offline
+            ? "You're offline — your message is saved and queued. Send it again once you're back online to get a reply."
+            : "Sorry, I had trouble processing that. Please try again.",
+        },
       ]);
     } finally {
       setLoading(false);

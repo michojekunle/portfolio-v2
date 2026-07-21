@@ -1,34 +1,66 @@
-import { db, LocalEntry, LocalObjective, LocalMilestone, LocalChatMessage } from './db';
+import { db } from './db';
 import { createClient } from '@/lib/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function syncJournalData() {
+export async function syncJournalData(): Promise<void> {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
   try {
-    // 1. Push pending local entries
+    // 1. Push pending local entries. jo_entries has two identities: the
+    // primary key `id` and the business key (user_id, date) — a plain
+    // upsert() defaults to conflict-on-`id`, so if the local row's id
+    // doesn't match whatever the server already has for that date (e.g.
+    // this device created it offline before ever syncing, while another
+    // device's copy is canonical), the insert would violate the
+    // (user_id, date) unique constraint. Look the row up by date first and
+    // reconcile onto its real id instead of blindly upserting — upserting
+    // with onConflict on (user_id, date) would "fix" the constraint error
+    // but silently rewrite the existing row's id to this device's, which
+    // corrupts the canonical id other devices still hold.
     const pendingEntries = await db.entries.where('sync_status').equals('pending_push').toArray();
     for (const entry of pendingEntries) {
-      const { sync_status, ...rest } = entry;
-      const { error } = await supabase.from('jo_entries').upsert({
-        ...rest,
-        updated_at: new Date().toISOString()
-      });
-      if (!error) {
-        await db.entries.update(entry.id, { sync_status: 'synced' });
+      const { sync_status, id, ...fields } = entry;
+      try {
+        const { data: existing, error: lookupError } = await supabase
+          .from('jo_entries')
+          .select('id')
+          .eq('user_id', entry.user_id)
+          .eq('date', entry.date)
+          .maybeSingle();
+        if (lookupError) throw lookupError;
+
+        if (existing && existing.id !== id) {
+          const { error } = await supabase
+            .from('jo_entries')
+            .update({ ...fields, updated_at: new Date().toISOString() })
+            .eq('id', existing.id);
+          if (error) throw error;
+          await db.transaction('rw', db.entries, async () => {
+            await db.entries.delete(id);
+            await db.entries.put({ ...entry, id: existing.id, sync_status: 'synced' });
+          });
+        } else {
+          const { error } = await supabase
+            .from('jo_entries')
+            .upsert({ id, ...fields, updated_at: new Date().toISOString() });
+          if (error) throw error;
+          await db.entries.update(id, { sync_status: 'synced' });
+        }
+      } catch (err) {
+        console.error('[syncEngine] entry push failed:', err);
       }
     }
 
-    // 2. Pull remote entries (simplified: pull all for user)
+    // 2. Pull remote entries
     const { data: remoteEntries } = await supabase
       .from('jo_entries')
       .select('*')
       .eq('user_id', user.id);
-    
+
     if (remoteEntries) {
-      const localEntries = remoteEntries.map(e => ({ ...e, sync_status: 'synced' }));
+      const localEntries = remoteEntries.map((e) => ({ ...e, sync_status: 'synced' as const }));
       await db.entries.bulkPut(localEntries);
     }
 
@@ -38,10 +70,12 @@ export async function syncJournalData() {
       const { sync_status, ...rest } = obj;
       const { error } = await supabase.from('jo_objectives').upsert({
         ...rest,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       });
       if (!error) {
         await db.objectives.update(obj.id, { sync_status: 'synced' });
+      } else {
+        console.error('[syncEngine] objective push failed:', error);
       }
     }
 
@@ -50,9 +84,9 @@ export async function syncJournalData() {
       .from('jo_objectives')
       .select('*')
       .eq('user_id', user.id);
-    
+
     if (remoteObjectives) {
-      const localObjectives = remoteObjectives.map(o => ({ ...o, sync_status: 'synced' }));
+      const localObjectives = remoteObjectives.map((o) => ({ ...o, sync_status: 'synced' as const }));
       await db.objectives.bulkPut(localObjectives);
     }
 
@@ -60,32 +94,24 @@ export async function syncJournalData() {
     const pendingMilestones = await db.milestones.where('sync_status').equals('pending_push').toArray();
     for (const ms of pendingMilestones) {
       const { sync_status, ...rest } = ms;
-      const { error } = await supabase.from('jo_milestones').upsert({
-        ...rest,
-        updated_at: new Date().toISOString()
-      });
+      const { error } = await supabase.from('jo_milestones').upsert(rest);
       if (!error) {
         await db.milestones.update(ms.id, { sync_status: 'synced' });
+      } else {
+        console.error('[syncEngine] milestone push failed:', error);
       }
     }
 
-    // 6. Pull remote milestones
+    // 6. Pull remote milestones — jo_milestones carries user_id directly, no join needed
     const { data: remoteMilestones } = await supabase
       .from('jo_milestones')
-      .select('jo_milestones.*')
-      .eq('jo_objectives.user_id', user.id); // Assuming we can join or we just pull all user's milestones
+      .select('*')
+      .eq('user_id', user.id);
 
-    // More robust way to fetch user's milestones:
-    const { data: userObjectives } = await supabase.from('jo_objectives').select('id').eq('user_id', user.id);
-    if (userObjectives && userObjectives.length > 0) {
-      const objIds = userObjectives.map(o => o.id);
-      const { data: allMilestones } = await supabase.from('jo_milestones').select('*').in('objective_id', objIds);
-      if (allMilestones) {
-        const localMs = allMilestones.map(m => ({ ...m, sync_status: 'synced' }));
-        await db.milestones.bulkPut(localMs);
-      }
+    if (remoteMilestones) {
+      const localMs = remoteMilestones.map((m) => ({ ...m, sync_status: 'synced' as const }));
+      await db.milestones.bulkPut(localMs);
     }
-
   } catch (err) {
     console.error('[syncEngine] Sync failed:', err);
   }

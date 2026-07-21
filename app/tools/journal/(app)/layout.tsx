@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { JournalSidebarNav } from "@/components/journal/SidebarNav";
 import { AssistantWidget } from "@/components/journal/AssistantWidget";
+import { SyncBootstrap } from "@/components/journal/SyncBootstrap";
 import { getRecentEntries, getObjectivesWithMilestones } from "@/lib/journal/queries";
 import { PwaRegistrar } from "@/components/PwaRegistrar";
 import type { Metadata } from "next";
@@ -55,6 +56,7 @@ export default async function JournalLayout({
         <main className="flex-1 min-h-screen max-[1024px]:pt-[52px]">{children}</main>
       </div>
       <AssistantWidget hasObjectives={objectives.length > 0} />
+      <SyncBootstrap />
       <PwaRegistrar toolId="journal" />
     </div>
   );
