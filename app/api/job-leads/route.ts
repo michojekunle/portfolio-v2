@@ -5,6 +5,10 @@ import { requireAdminAuth } from "@/lib/admin/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import type { JobRole } from "@/lib/admin/job-search-data";
 
+// POST is written by an external cron job; GET is polled by the dashboard's
+// refresh button. Neither should ever be served from Next's fetch cache.
+export const dynamic = "force-dynamic";
+
 const LeadSchema = z.object({
   company: z.string().min(1).max(200),
   title: z.string().min(1).max(200),

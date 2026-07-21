@@ -1,7 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
-import { JobsDashboard } from "@/components/admin/JobsDashboard";
-import type { JobApplication } from "@/components/admin/JobsDashboard";
+import { JobsDashboard } from "@/components/admin/jobs/JobsDashboard";
+import type { JobApplication } from "@/components/admin/jobs/constants";
 import type { JobLead } from "@/app/api/job-leads/route";
+
+// Leads/applications are written by an external cron POST and by admin
+// mutations independent of this render — without this, Next's fetch cache
+// can serve a stale (e.g. pre-first-lead empty) result here indefinitely.
+export const dynamic = "force-dynamic";
 
 export default async function JobsPage(): Promise<React.ReactElement> {
   const supabase = await createClient();

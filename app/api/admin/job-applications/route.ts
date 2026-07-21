@@ -3,6 +3,9 @@ import { z } from "zod";
 import { requireAdminAuth } from "@/lib/admin/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
+// Same fetch-cache pitfall as /api/job-leads — never serve a stale list here.
+export const dynamic = "force-dynamic";
+
 const ApplicationCreateSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   role: z.enum(["flutter", "rust"]),
