@@ -1,6 +1,9 @@
 import Link from "next/link"
+import { formatDistanceToNow } from "date-fns"
 import { createClient } from "@/lib/supabase/server"
 import { MagneticWrapper } from "./magnetic-wrapper"
+import { SpotifyListeningPanel } from "./spotify-listening-panel"
+import { getSpotifyNowPlaying, getSpotifyTopTracks, getSpotifyRecentlyPlayed } from "@/lib/spotify"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 // DB column is `name` for building_projects and learning_items
@@ -10,12 +13,14 @@ interface BuildingItem {
   status?: string | null
   notes?: string | null
   github_url?: string | null
+  updated_at?: string | null
 }
 
 interface LearningItem {
   name: string
   description?: string | null
   progress?: number | null
+  updated_at?: string | null
 }
 
 // DB column is `title` + `status` for books
@@ -24,6 +29,16 @@ interface BookItem {
   author?: string | null
   status?: string | null   // "reading" | "completed" | "queued"
   cover_url?: string | null
+  updated_at?: string | null
+}
+
+function UpdatedBadge({ date }: { date?: string | null }): React.ReactElement | null {
+  if (!date) return null
+  return (
+    <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted-foreground/60 whitespace-nowrap">
+      Updated {formatDistanceToNow(new Date(date))} ago
+    </span>
+  )
 }
 
 function statusClass(status: string | null | undefined): string {
@@ -47,10 +62,16 @@ export async function NowSection(): Promise<React.ReactElement> {
     { data: booksRaw, error: booksErr },
     { data: learningRaw, error: learningErr },
     { data: buildingRaw, error: buildingErr },
+    nowPlaying,
+    topTracks,
+    recentlyPlayed,
   ] = await Promise.all([
-    supabase.from("books").select("title, author, status, cover_url").order("sort_order"),
-    supabase.from("learning_items").select("name, description, progress").order("sort_order"),
-    supabase.from("building_projects").select("name, description, status, notes, github_url").order("sort_order"),
+    supabase.from("books").select("title, author, status, cover_url, updated_at").order("sort_order"),
+    supabase.from("learning_items").select("name, description, progress, updated_at").order("sort_order"),
+    supabase.from("building_projects").select("name, description, status, notes, github_url, updated_at").order("sort_order"),
+    getSpotifyNowPlaying(),
+    getSpotifyTopTracks(),
+    getSpotifyRecentlyPlayed(),
   ])
 
   if (booksErr) console.error("[NowSection] books:", booksErr.message)
@@ -65,17 +86,27 @@ export async function NowSection(): Promise<React.ReactElement> {
     <section className="relative py-30 max-180:py-18 bg-(--bg-2) border-y border-(--rule)" id="now" aria-labelledby="now-heading">
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
         <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5">04 — NOW</div>
+          <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) animate-pulse" />
+            04 — NOW
+          </div>
           <div>
             <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
               Currently <em className="not-italic italic text-(--v3-accent) fvs-soft">working on.</em>
             </h2>
             <div className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-              A snapshot. Updated when something meaningful changes — not on a schedule.
+              A live snapshot — Spotify updates in real time, everything else the moment it changes.
             </div>
           </div>
         </div>
 
+        <SpotifyListeningPanel
+          initialNowPlaying={nowPlaying}
+          initialTopTracks={topTracks}
+          initialRecentlyPlayed={recentlyPlayed}
+        />
+
+        <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-6 font-medium">The work</h3>
         <div className="grid grid-cols-3 max-[920px]:grid-cols-1 gap-0 border-y border-(--rule)">
 
           {/* Building */}
@@ -99,17 +130,20 @@ export async function NowSection(): Promise<React.ReactElement> {
                     {item.notes && (
                       <span className="notes">{item.notes}</span>
                     )}
-                    {item.github_url && (
-                      <a
-                        href={item.github_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="github-link"
-                        aria-label={`${item.name} repository`}
-                      >
-                        GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
-                      </a>
-                    )}
+                    <div className="flex items-center justify-between gap-3 mt-2">
+                      {item.github_url ? (
+                        <a
+                          href={item.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="github-link"
+                          aria-label={`${item.name} repository`}
+                        >
+                          GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
+                        </a>
+                      ) : <span />}
+                      <UpdatedBadge date={item.updated_at} />
+                    </div>
                   </li>
                 ))
               ) : (
@@ -146,6 +180,9 @@ export async function NowSection(): Promise<React.ReactElement> {
                         <div className="h-full bg-(--v3-accent) rounded-sm transition-[width] duration-800 ease-[cubic-bezier(0.2,0.8,0.2,1)]" style={{ width: `${item.progress}%` }} />
                       </div>
                     )}
+                    <div className="mt-2">
+                      <UpdatedBadge date={item.updated_at} />
+                    </div>
                   </li>
                 ))
               ) : (
@@ -174,6 +211,9 @@ export async function NowSection(): Promise<React.ReactElement> {
                       {b.author && (
                         <span className="font-mono text-[11px] text-muted-foreground tracking-[0.04em]">by {b.author}</span>
                       )}
+                      <div className="mt-2">
+                        <UpdatedBadge date={b.updated_at} />
+                      </div>
                     </li>
                   ))}
                   <li className="pt-6">

@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { Clock, Play, BookOpen, GraduationCap } from "lucide-react"
+import type { SpotifyNowPlaying } from "@/lib/spotify"
+
+const NOW_PLAYING_POLL_MS = 15_000
 
 export function AboutHeroWidget() {
   const [lagosTime, setLagosTime] = useState("");
   const [status, setStatus] = useState<any>(null);
+  const [nowPlaying, setNowPlaying] = useState<SpotifyNowPlaying | null>(null);
+  const [displayProgress, setDisplayProgress] = useState(0);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -23,6 +28,36 @@ export function AboutHeroWidget() {
     const interval = setInterval(fetchStatus, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Real live Spotify playback — polled independently of the profile status.
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/spotify/now-playing");
+        if (!res.ok) return;
+        const data = (await res.json()) as SpotifyNowPlaying;
+        setNowPlaying(data);
+        setDisplayProgress(data.progressMs);
+      } catch (e) {
+        console.warn("Failed to fetch now-playing:", e);
+      }
+    };
+    void poll();
+    const id = setInterval(poll, NOW_PLAYING_POLL_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  // Interpolate the progress bar forward between polls so it reads as live.
+  useEffect(() => {
+    if (!nowPlaying?.isPlaying || !nowPlaying.track) return;
+    const tick = () => {
+      const elapsed = Date.now() - nowPlaying.fetchedAt;
+      setDisplayProgress(Math.min(nowPlaying.track!.durationMs, nowPlaying.progressMs + elapsed));
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [nowPlaying]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -105,52 +140,55 @@ export function AboutHeroWidget() {
       {/* Divider */}
       <div className="h-0.25 bg-(--rule) w-full" />
 
-      {/* Section 3: Now Playing Spotify mockup */}
-      <div className="flex items-center gap-3 p-3 rounded-xl border border-(--rule) bg-(--bg-2) relative overflow-hidden group/spotify">
-        <div className="w-10 h-10 rounded-lg bg-(--rule) flex items-center justify-center relative overflow-hidden flex-shrink-0">
-          {/* Animated bars */}
-          <div className="flex gap-0.75 items-end h-4">
-            <div
-              className="w-0.75 bg-(--v3-accent) rounded-full"
-              style={{
-                height: "40%",
-                animation: status?.spotify_override_active !== false
-                  ? "music-bar 0.8s ease-in-out infinite"
-                  : "none",
-              }}
-            />
-            <div
-              className="w-0.75 bg-(--v3-accent) rounded-full"
-              style={{
-                height: "80%",
-                animation: status?.spotify_override_active !== false
-                  ? "music-bar 1.2s ease-in-out infinite 0.2s"
-                  : "none",
-              }}
-            />
-            <div
-              className="w-0.75 bg-(--v3-accent) rounded-full"
-              style={{
-                height: "60%",
-                animation: status?.spotify_override_active !== false
-                  ? "music-bar 1.0s ease-in-out infinite 0.1s"
-                  : "none",
-              }}
-            />
-          </div>
-        </div>
-        <div className="flex-grow flex flex-col gap-0.5 overflow-hidden">
-          <span className="font-mono text-[8px] uppercase tracking-widest text-(--v3-accent) font-semibold flex items-center gap-1">
-            <Play className="w-2.5 h-2.5 fill-current" /> {status?.spotify_override_playlist || "Spotify Track"}
-          </span>
-          <span className="text-[12px] font-semibold text-(--ink) line-clamp-1 leading-[1.3]">
-            {status?.spotify_override_title || "Metanoia (feat. Lofi Chill)"}
-          </span>
-          <span className="text-[10px] text-muted-foreground line-clamp-1">
-            {status?.spotify_override_artist || "Michael's Focus Mix"}
-          </span>
-        </div>
-      </div>
+      {/* Section 3: Now Playing — real live Spotify, falls back to override text */}
+      {(() => {
+        const liveTrack = nowPlaying?.track ?? null;
+        const isPlaying = Boolean(nowPlaying?.isPlaying && liveTrack);
+        const label = liveTrack ? (isPlaying ? "Listening now" : "Last played") : (status?.spotify_override_playlist || "Spotify Track");
+        const title = liveTrack?.name ?? status?.spotify_override_title ?? "Metanoia (feat. Lofi Chill)";
+        const artist = liveTrack?.artist ?? status?.spotify_override_artist ?? "Michael's Focus Mix";
+        const animate = liveTrack ? isPlaying : status?.spotify_override_active !== false;
+        const progressPct = liveTrack ? Math.min(100, (displayProgress / liveTrack.durationMs) * 100) : 0;
+
+        return (
+          <a
+            href={liveTrack?.trackUrl ?? undefined}
+            target={liveTrack?.trackUrl ? "_blank" : undefined}
+            rel="noopener noreferrer"
+            className={`block p-3 rounded-xl border border-(--rule) bg-(--bg-2) relative overflow-hidden no-underline ${liveTrack?.trackUrl ? "transition-colors hover:border-(--v3-accent-soft)" : ""}`}
+          >
+            <div className="flex items-center gap-3">
+              {/* Album art (or animated bars fallback) */}
+              <div className="w-10 h-10 rounded-lg bg-(--rule) flex items-center justify-center relative overflow-hidden flex-shrink-0">
+                {liveTrack?.albumImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={liveTrack.albumImage} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="flex gap-0.75 items-end h-4">
+                    <div className="w-0.75 bg-(--v3-accent) rounded-full" style={{ height: "40%", animation: animate ? "music-bar 0.8s ease-in-out infinite" : "none" }} />
+                    <div className="w-0.75 bg-(--v3-accent) rounded-full" style={{ height: "80%", animation: animate ? "music-bar 1.2s ease-in-out infinite 0.2s" : "none" }} />
+                    <div className="w-0.75 bg-(--v3-accent) rounded-full" style={{ height: "60%", animation: animate ? "music-bar 1.0s ease-in-out infinite 0.1s" : "none" }} />
+                  </div>
+                )}
+              </div>
+              <div className="flex-grow flex flex-col gap-0.5 overflow-hidden">
+                <span className="font-mono text-[8px] uppercase tracking-widest text-(--v3-accent) font-semibold flex items-center gap-1">
+                  <Play className="w-2.5 h-2.5 fill-current" /> {label}
+                </span>
+                <span className="text-[12px] font-semibold text-(--ink) line-clamp-1 leading-[1.3]">{title}</span>
+                <span className="text-[10px] text-muted-foreground line-clamp-1">{artist}</span>
+              </div>
+            </div>
+
+            {/* Live progress bar */}
+            {isPlaying && (
+              <div className="h-0.75 bg-(--rule) rounded-full overflow-hidden mt-2.5">
+                <div className="h-full bg-(--v3-accent) rounded-full" style={{ width: `${progressPct}%`, transition: "width 1s linear" }} />
+              </div>
+            )}
+          </a>
+        );
+      })()}
 
       {/* Styles for custom music bar keyframe animation inside a style tag to keep it clean */}
       <style jsx>{`

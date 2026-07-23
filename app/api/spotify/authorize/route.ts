@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { requireAdminAuth } from "@/lib/admin/auth";
-import { getSpotifyRedirectUri } from "@/lib/spotify";
-
-// Read-only "now playing" is all the widget needs — no playback control scopes.
-const SCOPE = "user-read-currently-playing";
+import { getSpotifyRedirectUri, SPOTIFY_SCOPES } from "@/lib/spotify";
 
 /** GET /api/spotify/authorize — kicks off the OAuth flow from the "Connect Spotify" button on /admin/now. */
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -22,7 +19,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const authUrl = new URL("https://accounts.spotify.com/authorize");
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set("client_id", client_id);
-  authUrl.searchParams.set("scope", SCOPE);
+  authUrl.searchParams.set("scope", SPOTIFY_SCOPES);
   authUrl.searchParams.set("redirect_uri", redirect_uri);
   authUrl.searchParams.set("state", state);
   // Forces the account chooser/consent screen every time rather than
