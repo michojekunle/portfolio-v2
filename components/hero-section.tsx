@@ -7,12 +7,12 @@ import { TextReveal } from "./text-reveal"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 const STACK = [
+  { label: "Flutter", primary: true },
+  { label: "Rust", primary: true },
   { label: "TypeScript", primary: true },
-  { label: "Next.js", primary: true },
-  { label: "Solidity", primary: true },
-  { label: "Cairo", primary: false },
-  { label: "Rust", primary: false },
-  { label: "Clarity", primary: false },
+  { label: "Next.js", primary: false },
+  { label: "Dart", primary: false },
+  { label: "Solidity", primary: false },
 ]
 
 export function HeroSection(): React.ReactElement {
@@ -29,7 +29,7 @@ export function HeroSection(): React.ReactElement {
       >
         <div className="leading-[1.7] text-[12px] text-muted-foreground max-180:text-left max-[480px]:text-[10px]">
           <b className="text-(--ink) font-medium">Michael Ojekunle</b><br />
-          Full-Stack &amp; Web3 · Lagos, NG
+          Software Engineer &amp; Builder · Lagos, NG
         </div>
         <div className="leading-[1.7] text-[12px] text-center max-180:text-left text-(--v3-accent) max-[480px]:text-[10px]">
           <span className="inline-block w-1.75 h-1.75 rounded-full bg-(--v3-accent) mr-2 align-middle animate-[v3-pulse_2.4s_infinite_ease-in-out]" aria-hidden="true" />
@@ -50,8 +50,8 @@ export function HeroSection(): React.ReactElement {
       <div className="relative z-[1] grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
           <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.25] text-(--ink) m-0 max-w-[24ch] text-pretty">
-            I build web3 frontends that hold up under pressure. Quietly going deep on{" "}
-            <em>ZK proofs</em> and Rust — because I want to understand the stack all the way down.
+            I build software end to end. Four years full-stack — now going deep on{" "}
+            <em>Rust systems</em> and <em>Flutter mobile</em>, building products of my own.
           </p>
 
           {/* Tech stack pills */}
@@ -62,14 +62,27 @@ export function HeroSection(): React.ReactElement {
               </span>
             ))}
           </div>
+
+          {/* Now → Next trajectory */}
+          <div className="flex items-center gap-3.5 mt-7 flex-wrap font-mono text-[10px] tracking-[0.14em] uppercase" aria-label="Current focus and where I'm heading">
+            <div className="flex items-center gap-2">
+              <span className="text-(--v3-accent) font-medium">Now</span>
+              <span className="text-muted-foreground">Flutter · Rust systems</span>
+            </div>
+            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" aria-hidden="true" />
+            <div className="flex items-center gap-2">
+              <span className="text-(--ink) font-medium">Next</span>
+              <span className="text-muted-foreground">zkML</span>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}>
           <p className="text-[17px] leading-[1.7] text-secondary-foreground m-0">
-            Four years engineering frontends across Next.js, Solidity, Cairo, and Clarity.
-            Shipping production apps on <b className="text-(--ink) font-medium">Rootstock</b>, <b className="text-(--ink) font-medium">Starknet</b>, and <b className="text-(--ink) font-medium">Stacks</b>.
-            Right now I&apos;m learning ZK proofs and Rust systems programming alongside —
-            because I want to understand the stack all the way to the metal.
+            Four years building full-stack products — two of them deep in web3, shipping on{" "}
+            <b className="text-(--ink) font-medium">Rootstock</b>, <b className="text-(--ink) font-medium">Starknet</b>, and <b className="text-(--ink) font-medium">Stacks</b>.
+            Now I&apos;m going deeper into systems with <b className="text-(--ink) font-medium">Rust</b> and mobile with{" "}
+            <b className="text-(--ink) font-medium">Flutter</b>, and building products of my own — heading toward zkML.
           </p>
 
           <div className="flex gap-4 flex-wrap mt-8 max-180:mb-10">

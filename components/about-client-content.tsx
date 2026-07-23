@@ -93,8 +93,8 @@ export function AboutClientContent() {
               className="text-[18px] leading-[1.7] text-secondary-foreground"
             >
               My first serious programming was Java. Then React. Then — around the time L2s started
-              actually shipping — Solidity. I&apos;ve spent the last four years engineering
-              frontends for web3 teams shipping on Rootstock, Starknet, and Stacks. Some of it
+              actually shipping — Solidity. Four years of full-stack product work, the last two of
+              them deep in web3, shipping on Rootstock, Starknet, and Stacks. Some of it
               I&apos;m proud of. Some of it taught me what I&apos;d never do again.
             </motion.p>
           </div>
@@ -108,20 +108,20 @@ export function AboutClientContent() {
 
               <div className="flex flex-col gap-4.5">
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
+                  <span className="text-[17px] text-(--ink) font-medium">Mobile</span>
+                  <span className="text-[14px] text-muted-foreground font-mono">Flutter · Dart</span>
+                </div>
+                <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
+                  <span className="text-[17px] text-(--ink) font-medium">Systems</span>
+                  <span className="text-[14px] text-muted-foreground font-mono">Rust · Linux internals</span>
+                </div>
+                <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
                   <span className="text-[17px] text-(--ink) font-medium">Frontend</span>
                   <span className="text-[14px] text-muted-foreground font-mono">Next.js 16 · TypeScript · Tailwind</span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
-                  <span className="text-[17px] text-(--ink) font-medium">Contracts</span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Solidity · Cairo · Clarity · Foundry</span>
-                </div>
-                <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
-                  <span className="text-[17px] text-(--ink) font-medium">Chains</span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Starknet · Rootstock · Stacks · ETH L1</span>
-                </div>
-                <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
-                  <span className="text-[17px] text-(--ink) font-medium">Systems</span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Rust · Linux internals · Halo2</span>
+                  <span className="text-[17px] text-(--ink) font-medium">Web3 <span className="text-[11px] text-muted-foreground/70 font-mono">· background</span></span>
+                  <span className="text-[14px] text-muted-foreground font-mono">Solidity · Cairo · Clarity · Starknet · Rootstock</span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-[17px] text-(--ink) font-medium">Infra</span>
@@ -150,12 +150,13 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              Right now I&apos;m splitting time between two adjacent obsessions:{" "}
-              <b className="text-(--ink) font-medium">zero-knowledge machine learning</b> and <b className="text-(--ink) font-medium">Rust systems programming</b>. They
-              feel related to me, even though most people would put them on opposite ends of a
-              stack diagram. ZK is teaching me to think in constraints. Rust is teaching me to
-              think in lifetimes. Both are teaching me that the abstractions I&apos;ve been
-              trusting were never as solid as I assumed.
+              Right now I&apos;m going lower down the stack than the frontend. My two current
+              obsessions are{" "}
+              <b className="text-(--ink) font-medium">Rust systems programming</b> and{" "}
+              <b className="text-(--ink) font-medium">Flutter mobile development</b>. Rust is
+              teaching me to think in lifetimes and memory; Flutter is teaching me to ship
+              polished apps to real devices. Both are teaching me that the abstractions
+              I&apos;d been trusting were never as solid as I assumed.
             </motion.p>
 
             <motion.div {...fadeUp} className="relative py-2 my-2">
@@ -167,10 +168,23 @@ export function AboutClientContent() {
                 &ldquo;
               </span>
               <p className="relative font-sans text-[26px] max-[720px]:text-[21px] leading-[1.45] text-(--ink) font-normal italic pl-9 max-180:pl-7">
-                I&apos;m building toward making zkML feel legible to the engineer on the
-                other side of the screen. Less mythical, more shippable.
+                Once these feel like second nature, the real destination is zkML — making
+                zero-knowledge machine learning legible and shippable, not mythical.
               </p>
             </motion.div>
+
+            <motion.p
+              {...fadeUp}
+              transition={{ duration: 0.8 }}
+              className="text-[19px] leading-[1.7] text-secondary-foreground"
+            >
+              I&apos;m not just an engineer for hire — I&apos;m building my own things. A growing
+              set of <b className="text-(--ink) font-medium">products and small businesses</b>,
+              shipped as real tools with auth, databases, and paying-attention-to-the-details
+              polish, not weekend demos. Building my own things teaches me the half of the craft
+              that pure engineering doesn&apos;t: distribution, retention, and knowing what&apos;s
+              worth building at all.
+            </motion.p>
 
             <motion.p
               {...fadeUp}
@@ -187,11 +201,12 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              I&apos;m also drawn to applied systems thinking beyond software.{" "}
+              That builder&apos;s itch reaches past software too.{" "}
               <b className="text-(--ink) font-medium">Agriculture and food systems</b>, <b className="text-(--ink) font-medium">waste management</b>, and{" "}
               <b className="text-(--ink) font-medium">recycling infrastructure</b> — the same first-principles thinking I apply to
               protocol design shows up in how I think about resource loops in the physical world.
-              The incentive structures are not that different.
+              The incentive structures are not that different, and I expect some of what I build
+              next to live there.
             </motion.p>
 
             <motion.p
@@ -222,7 +237,7 @@ export function AboutClientContent() {
               <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground font-medium">Reading</h4>
               <div className="flex flex-col gap-3.5 h-full justify-between">
                 <span className="text-[16px] text-(--ink) leading-normal">Crafting Interpreters <br/><span className="text-[13px] text-muted-foreground font-mono">Book</span></span>
-                <span className="text-[16px] text-(--ink) leading-normal">Halo2 spec <br/><span className="text-[13px] text-muted-foreground font-mono">Paper</span></span>
+                <span className="text-[16px] text-(--ink) leading-normal">The Rust Book <br/><span className="text-[13px] text-muted-foreground font-mono">Book</span></span>
               </div>
             </div>
           </TiltCard>

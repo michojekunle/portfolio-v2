@@ -7,19 +7,19 @@ import { MagneticWrapper } from "./magnetic-wrapper"
 import { TextReveal } from "./text-reveal"
 
 const ROLES = [
-  { 
-    title: "Full-Stack Engineer", 
-    desc: "Building complex interfaces that don't compromise on performance. Next.js, TypeScript, and React are my default stack.",
-    tag: "UI/UX"
+  {
+    title: "Software Engineer",
+    desc: "Four years full-stack, two deep in web3. Now going lower down the stack — Rust systems and Flutter mobile.",
+    tag: "ENGINEERING"
   },
-  { 
-    title: "Web3 Builder", 
-    desc: "Engineering trustless systems on Rootstock, Starknet, and Stacks. Moving from EVM to ZK-proofs and Rust-based protocols.",
-    tag: "BLOCKCHAIN"
+  {
+    title: "Builder",
+    desc: "Building a handful of my own products and businesses — shipping real tools, not demos, and learning what it takes to run them.",
+    tag: "PRODUCTS"
   },
-  { 
-    title: "Technical Writer", 
-    desc: "Distilling complex technical concepts into accessible, high-signal writing. Documentation, case studies, and thought pieces.",
+  {
+    title: "Writer",
+    desc: "Writing essays as I learn in public — distilling hard technical ideas into accessible, high-signal pieces.",
     tag: "CONTENT"
   }
 ]
@@ -47,7 +47,7 @@ export function AboutPreviewSection(): React.ReactElement {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
           >
-            I don&apos;t just build features; I architect systems. My approach is rooted in understanding the metal while obsessing over the interface.
+            I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface — and increasingly, the business around it.
           </motion.div>
         </div>
       </motion.div>

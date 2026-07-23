@@ -4,7 +4,7 @@ import { WorkHeroWidget } from "@/components/work-hero-widget"
 
 export const metadata: Metadata = {
   title: "Work",
-  description: "A selection of projects worth talking about — web3 frontends, smart contracts, and open-source tools by Michael Ojekunle.",
+  description: "A selection of projects worth talking about — full-stack products, mobile and web3 apps, smart contracts, and open-source tools by Michael Ojekunle.",
 }
 
 export default function WorkPage(): React.ReactElement {

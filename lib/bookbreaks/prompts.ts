@@ -4,7 +4,7 @@ import { DEFAULT_WEBSITE_URL } from "./constants";
 const SHARED_CONTEXT = (book: BBBook, websiteUrl: string): string => `
 Book: "${book.title}" by ${book.author}
 Website: ${websiteUrl}
-Author: Michael Ojekunle — Full-Stack & Web3 developer from Lagos, Nigeria. Builds in public and shares what he learns. Follow on X @devvmichael.
+Author: Michael Ojekunle — software engineer and builder from Lagos, Nigeria. Builds in public and shares what he learns. Follow on X @devvmichael.
 
 Key Insights from the book:
 ${book.insights.map((ins, i) => `${i + 1}. ${ins}`).join("\n")}

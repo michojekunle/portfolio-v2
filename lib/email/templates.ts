@@ -88,7 +88,7 @@ function emailHeader(): string {
         <!-- Name + role -->
         <td style="padding-left:14px;vertical-align:middle;">
           <p style="margin:0 0 3px 0;font-family:${F};font-size:15px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;line-height:1.2;">Michael Ojekunle</p>
-          <p style="margin:0;font-family:${F};font-size:12px;color:#555;letter-spacing:0.2px;line-height:1.2;">Full-Stack &amp; Web3 Developer</p>
+          <p style="margin:0;font-family:${F};font-size:12px;color:#555;letter-spacing:0.2px;line-height:1.2;">Software Engineer &amp; Builder</p>
         </td>
       </tr>
     </table>
