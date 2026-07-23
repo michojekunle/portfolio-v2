@@ -23,7 +23,7 @@ export function MarkdownInline({ text }: { text: string }): React.ReactElement {
           return (
             <code
               key={i}
-              className="font-mono text-[0.85em] px-[4px] py-[1px] rounded-[4px]"
+              className="font-mono text-[0.85em] px-1 py-0.25 rounded"
               style={{ background: "color-mix(in srgb, currentColor 10%, transparent)" }}
             >
               {part.slice(1, -1)}
@@ -97,7 +97,7 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
       blocks.push(
         <pre
           key={key++}
-          className="font-mono text-[0.85em] leading-[1.6] p-[12px] rounded-[8px] overflow-x-auto my-[8px]"
+          className="font-mono text-[0.85em] leading-[1.6] p-3 rounded-lg overflow-x-auto my-2"
           style={{ background: "color-mix(in srgb, currentColor 8%, transparent)" }}
         >
           {codeLines.join("\n")}
@@ -115,8 +115,8 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
           key={key++}
           className={
             level <= 2
-              ? "font-semibold text-[1.05em] mt-[14px] mb-[6px] leading-[1.35]"
-              : "font-semibold text-[0.95em] mt-[12px] mb-[4px] leading-[1.35]"
+              ? "font-semibold text-[1.05em] mt-3.5 mb-1.5 leading-[1.35]"
+              : "font-semibold text-[0.95em] mt-3 mb-1 leading-[1.35]"
           }
           style={{ color: headingColor }}
         >
@@ -137,7 +137,7 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
       blocks.push(
         <blockquote
           key={key++}
-          className="italic my-[8px] pl-[12px] opacity-80 m-0"
+          className="italic my-2 pl-3 opacity-80 m-0"
           style={{ borderLeft: "1px solid color-mix(in srgb, currentColor 35%, transparent)" }}
         >
           <MarkdownInline text={quoteLines.join(" ")} />
@@ -154,7 +154,7 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
         i++;
       }
       blocks.push(
-        <ul key={key++} className="my-[6px] pl-[18px] space-y-[4px] list-disc">
+        <ul key={key++} className="my-1.5 pl-4.5 space-y-1 list-disc">
           {items.map((item, j) => (
             <li key={j}><MarkdownInline text={item} /></li>
           ))}
@@ -171,7 +171,7 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
         i++;
       }
       blocks.push(
-        <ol key={key++} className="my-[6px] pl-[18px] space-y-[4px] list-decimal">
+        <ol key={key++} className="my-1.5 pl-4.5 space-y-1 list-decimal">
           {items.map((item, j) => (
             <li key={j}><MarkdownInline text={item} /></li>
           ))}
@@ -185,7 +185,7 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
       blocks.push(
         <div
           key={key++}
-          className="h-[1px] my-[12px]"
+          className="h-0.25 my-3"
           style={{ background: "color-mix(in srgb, currentColor 20%, transparent)" }}
         />
       );
@@ -210,11 +210,11 @@ export function Markdown({ text, accent }: MarkdownProps): React.ReactElement {
       i++;
     }
     blocks.push(
-      <p key={key++} className="my-[6px] m-0 first:mt-0">
+      <p key={key++} className="my-1.5 m-0 first:mt-0">
         <MarkdownInline text={paraLines.join(" ")} />
       </p>
     );
   }
 
-  return <div className="space-y-[6px]">{blocks}</div>;
+  return <div className="space-y-1.5">{blocks}</div>;
 }

@@ -58,10 +58,10 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
   return (
     <>
       {/* Category filter pills */}
-      <div className="flex items-center gap-[8px] flex-wrap mb-[32px]">
+      <div className="flex items-center gap-2 flex-wrap mb-8">
         <button
           onClick={() => setActiveCategory(null)}
-          className="font-mono text-[9px] tracking-[0.12em] uppercase px-[12px] py-[6px] rounded-full border cursor-pointer transition-all"
+          className="font-mono text-[9px] tracking-[0.12em] uppercase px-3 py-1.5 rounded-full border cursor-pointer transition-all"
           style={
             activeCategory === null
               ? { background: ACCENT, color: "var(--ch-bg)", borderColor: ACCENT }
@@ -76,7 +76,7 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
             <button
               key={cat}
               onClick={() => setActiveCategory(cat === activeCategory ? null : cat)}
-              className="font-mono text-[9px] tracking-[0.12em] uppercase px-[12px] py-[6px] rounded-full border cursor-pointer transition-all"
+              className="font-mono text-[9px] tracking-[0.12em] uppercase px-3 py-1.5 rounded-full border cursor-pointer transition-all"
               style={
                 activeCategory === cat
                   ? { background: color, color: "var(--ch-bg)", borderColor: color }
@@ -90,19 +90,19 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
       </div>
 
       {/* Book grid */}
-      <div className="grid grid-cols-3 max-[1000px]:grid-cols-2 max-[560px]:grid-cols-1 gap-[20px]">
+      <div className="grid grid-cols-3 max-[1000px]:grid-cols-2 max-[560px]:grid-cols-1 gap-5">
         {filtered.map((book) => {
           const color = CATEGORY_COLORS[book.category] ?? ACCENT;
           return (
             <button
               key={book.id}
               onClick={() => setSelected(book)}
-              className="text-left rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[24px] cursor-pointer transition-all hover:border-[var(--ink-3)] hover:shadow-md hover:-translate-y-[1px] group"
+              className="text-left rounded-2xl border border-(--rule) bg-(--bg-2) p-6 cursor-pointer transition-all hover:border-muted-foreground hover:shadow-md hover:-translate-y-0.25 group"
             >
               {/* Cover placeholder + category badge */}
-              <div className="relative mb-[18px]">
+              <div className="relative mb-4.5">
                 <div
-                  className="w-full h-[120px] rounded-[10px] overflow-hidden flex items-center justify-center"
+                  className="w-full h-30 rounded-[10px] overflow-hidden flex items-center justify-center"
                   style={{ background: color + "15" }}
                 >
                   {book.cover_url ? (
@@ -117,29 +117,29 @@ export function DiscoverClient({ books, categories, userBookTitles }: Props): Re
                   )}
                 </div>
                 <span
-                  className="absolute top-[8px] right-[8px] font-mono text-[8px] tracking-[0.12em] uppercase px-[8px] py-[3px] rounded-full font-semibold"
+                  className="absolute top-2 right-2 font-mono text-[8px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full font-semibold"
                   style={{ background: color, color: "var(--ch-bg)" }}
                 >
                   {book.category}
                 </span>
               </div>
 
-              <div className="text-[15px] font-semibold text-[var(--ink)] leading-[1.3] mb-[4px] line-clamp-2">
+              <div className="text-[15px] font-semibold text-(--ink) leading-[1.3] mb-1 line-clamp-2">
                 {book.title}
               </div>
-              <div className="font-mono text-[10px] text-[var(--ink-3)] mb-[10px]">
+              <div className="font-mono text-[10px] text-muted-foreground mb-2.5">
                 {book.author}
               </div>
-              <p className="text-[12px] leading-[1.6] text-[var(--ink-3)] line-clamp-2 mb-[14px]">
+              <p className="text-[12px] leading-[1.6] text-muted-foreground line-clamp-2 mb-3.5">
                 {book.tagline}
               </p>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-[5px] font-mono text-[9px] text-[var(--ink-3)]">
+                <div className="flex items-center gap-1.25 font-mono text-[9px] text-muted-foreground">
                   <Clock size={10} />
                   {book.read_time_minutes} min read
                 </div>
                 <div
-                  className="flex items-center gap-[4px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold transition-opacity group-hover:opacity-100 opacity-60"
+                  className="flex items-center gap-1 font-mono text-[9px] tracking-[0.08em] uppercase font-semibold transition-opacity group-hover:opacity-100 opacity-60"
                   style={{ color: ACCENT }}
                 >
                   <BookOpen size={11} /> Read Summary

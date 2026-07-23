@@ -191,29 +191,29 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
   const stepIdx = STEPS.indexOf(step === "importing" ? "preview" : step);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-[16px]">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 w-full max-w-[560px] max-h-[90vh] flex flex-col rounded-t-[20px] sm:rounded-[16px] overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
+      <div className="relative z-10 w-full max-w-[560px] max-h-[90vh] flex flex-col rounded-t-[20px] sm:rounded-2xl overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)] shrink-0">
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-(--rule) shrink-0">
           <div>
-            <h2 className="font-display text-[18px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">Import CSV</h2>
-            <div className="flex items-center gap-[8px] mt-[4px]">
+            <h2 className="font-display text-[18px] font-normal tracking-[-0.01em] fvs-text m-0 text-(--ink)">Import CSV</h2>
+            <div className="flex items-center gap-2 mt-1">
               {["Upload", "Map", "Preview", "Done"].map((s, i) => (
-                <div key={s} className="flex items-center gap-[4px]">
-                  <div className="w-[16px] h-[16px] rounded-full flex items-center justify-center text-[8px] font-mono font-bold" style={{ background: i <= stepIdx ? ACCENT : "var(--rule)", color: i <= stepIdx ? "white" : "var(--ink-4)" }}>{i < stepIdx ? "✓" : i + 1}</div>
-                  <span className="font-mono text-[9px] text-[var(--ink-3)]">{s}</span>
-                  {i < 3 && <ChevronRight size={10} className="text-[var(--ink-4)]" />}
+                <div key={s} className="flex items-center gap-1">
+                  <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-mono font-bold" style={{ background: i <= stepIdx ? ACCENT : "var(--rule)", color: i <= stepIdx ? "white" : "var(--ink-4)" }}>{i < stepIdx ? "✓" : i + 1}</div>
+                  <span className="font-mono text-[9px] text-muted-foreground">{s}</span>
+                  {i < 3 && <ChevronRight size={10} className="text-(--ink-4)" />}
                 </div>
               ))}
             </div>
           </div>
-          <button onClick={onClose} className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)]"><X size={18} /></button>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground"><X size={18} /></button>
         </div>
 
-        <div className="overflow-y-auto flex-1 px-[24px] py-[20px]">
+        <div className="overflow-y-auto flex-1 px-6 py-5">
           {error && (
-            <div className="flex items-center gap-[8px] rounded-[8px] px-[12px] py-[10px] mb-[16px] font-mono text-[12px]" style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}>
+            <div className="flex items-center gap-2 rounded-lg px-3 py-2.5 mb-4 font-mono text-[12px]" style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}>
               <AlertCircle size={13} />{error}
             </div>
           )}
@@ -221,7 +221,7 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
           {/* Step: Upload */}
           {step === "upload" && (
             <div
-              className="rounded-[12px] border-2 border-dashed py-[48px] flex flex-col items-center gap-[12px] cursor-pointer transition-colors"
+              className="rounded-xl border-2 border-dashed py-12 flex flex-col items-center gap-3 cursor-pointer transition-colors"
               style={{ borderColor: dragOver ? ACCENT : "var(--rule)", background: dragOver ? `${ACCENT}08` : "var(--bg-2)" }}
               onDrop={handleDrop}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -229,40 +229,40 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
               onClick={() => fileRef.current?.click()}
             >
               <Upload size={32} style={{ color: ACCENT }} />
-              <div className="text-[14px] font-medium text-[var(--ink)]">Drop your bank CSV here</div>
-              <div className="text-[12px] text-[var(--ink-3)] text-center max-w-[32ch]">Supports GTBank, Access, Zenith, UBA, Kuda, OPay, PalmPay and most Nigerian bank exports</div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.1em]" style={{ color: ACCENT }}>or click to browse</div>
+              <div className="text-[14px] font-medium text-(--ink)">Drop your bank CSV here</div>
+              <div className="text-[12px] text-muted-foreground text-center max-w-[32ch]">Supports GTBank, Access, Zenith, UBA, Kuda, OPay, PalmPay and most Nigerian bank exports</div>
+              <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: ACCENT }}>or click to browse</div>
               <input ref={fileRef} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
             </div>
           )}
 
           {/* Step: Map */}
           {step === "map" && (
-            <div className="space-y-[16px]">
-              <div className="text-[13px] text-[var(--ink-3)]">Found <strong className="text-[var(--ink)]">{rawRows.length} rows</strong> and <strong className="text-[var(--ink)]">{headers.length} columns</strong>. Map them below.</div>
+            <div className="space-y-4">
+              <div className="text-[13px] text-muted-foreground">Found <strong className="text-(--ink)">{rawRows.length} rows</strong> and <strong className="text-(--ink)">{headers.length} columns</strong>. Map them below.</div>
               {[
                 { label: "Date Column", value: colDate, set: setColDate },
                 { label: "Description Column", value: colDesc, set: setColDesc },
               ].map(({ label, value, set }) => (
                 <div key={label}>
-                  <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[6px]">{label}</label>
-                  <select value={value} onChange={(e) => set(e.target.value)} className="w-full h-[40px] px-[12px] rounded-[8px] text-[13px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
+                  <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-1.5">{label}</label>
+                  <select value={value} onChange={(e) => set(e.target.value)} className="w-full h-10 px-3 rounded-lg text-[13px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
                     <option value="">— Select column —</option>
                     {headers.map((h) => <option key={h} value={h}>{h}</option>)}
                   </select>
                 </div>
               ))}
               <div>
-                <label className="flex items-center gap-[8px] cursor-pointer mb-[12px]">
-                  <input type="checkbox" checked={useSeparateColumns} onChange={(e) => setUseSeparateColumns(e.target.checked)} className="w-[14px] h-[14px] rounded" />
-                  <span className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)]">Separate Credit / Debit columns</span>
+                <label className="flex items-center gap-2 cursor-pointer mb-3">
+                  <input type="checkbox" checked={useSeparateColumns} onChange={(e) => setUseSeparateColumns(e.target.checked)} className="w-3.5 h-3.5 rounded" />
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">Separate Credit / Debit columns</span>
                 </label>
                 {useSeparateColumns ? (
-                  <div className="grid grid-cols-2 gap-[12px]">
+                  <div className="grid grid-cols-2 gap-3">
                     {[["Credit / Income", colCredit, setColCredit], ["Debit / Expense", colDebit, setColDebit]].map(([label, val, set]) => (
                       <div key={label as string}>
-                        <label className="block font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] mb-[4px]">{label as string}</label>
-                        <select value={val as string} onChange={(e) => (set as React.Dispatch<React.SetStateAction<string>>)(e.target.value)} className="w-full h-[38px] px-[10px] rounded-[8px] text-[12px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
+                        <label className="block font-mono text-[9px] tracking-widest uppercase text-muted-foreground mb-1">{label as string}</label>
+                        <select value={val as string} onChange={(e) => (set as React.Dispatch<React.SetStateAction<string>>)(e.target.value)} className="w-full h-9.5 px-2.5 rounded-lg text-[12px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
                           <option value="">—</option>
                           {headers.map((h) => <option key={h} value={h}>{h}</option>)}
                         </select>
@@ -271,15 +271,15 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
                   </div>
                 ) : (
                   <div>
-                    <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[6px]">Amount Column</label>
-                    <select value={colAmount} onChange={(e) => setColAmount(e.target.value)} className="w-full h-[40px] px-[12px] rounded-[8px] text-[13px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
+                    <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-1.5">Amount Column</label>
+                    <select value={colAmount} onChange={(e) => setColAmount(e.target.value)} className="w-full h-10 px-3 rounded-lg text-[13px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
                       <option value="">— Select column —</option>
                       {headers.map((h) => <option key={h} value={h}>{h}</option>)}
                     </select>
                   </div>
                 )}
               </div>
-              <button onClick={handleBuildPreview} className="w-full h-[44px] rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer mt-[8px]" style={{ background: ACCENT }}>
+              <button onClick={handleBuildPreview} className="w-full h-11 rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer mt-2" style={{ background: ACCENT }}>
                 Preview Import <ChevronRight size={13} className="inline" />
               </button>
             </div>
@@ -287,34 +287,34 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
 
           {/* Step: Preview */}
           {step === "preview" && (
-            <div className="space-y-[16px]">
+            <div className="space-y-4">
               <div>
-                <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[6px]">Import to Account</label>
-                <select value={selectedAccount} onChange={(e) => setSelectedAccount(e.target.value)} className="w-full h-[40px] px-[12px] rounded-[8px] text-[13px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
+                <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-1.5">Import to Account</label>
+                <select value={selectedAccount} onChange={(e) => setSelectedAccount(e.target.value)} className="w-full h-10 px-3 rounded-lg text-[13px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer" style={{ border: "1.5px solid var(--rule)" }}>
                   {accounts.map((a) => <option key={a.id} value={a.id}>{a.icon} {a.name}</option>)}
                 </select>
               </div>
-              <div className="font-mono text-[11px] text-[var(--ink-3)]"><strong className="text-[var(--ink)]">{parsedRows.length}</strong> valid transactions found. AI will auto-categorize on import.</div>
+              <div className="font-mono text-[11px] text-muted-foreground"><strong className="text-(--ink)">{parsedRows.length}</strong> valid transactions found. AI will auto-categorize on import.</div>
               <div className="rounded-[10px] overflow-hidden" style={{ border: "1px solid var(--rule)" }}>
-                <div className="grid text-[10px] font-mono uppercase tracking-[0.1em] text-[var(--ink-4)] px-[12px] py-[8px]" style={{ gridTemplateColumns: "100px 1fr 80px", background: "var(--bg-2)" }}>
+                <div className="grid text-[10px] font-mono uppercase tracking-widest text-(--ink-4) px-3 py-2" style={{ gridTemplateColumns: "100px 1fr 80px", background: "var(--bg-2)" }}>
                   <div>Date</div><div>Description</div><div className="text-right">Amount</div>
                 </div>
-                <div className="max-h-[240px] overflow-y-auto divide-y divide-[var(--rule)]">
+                <div className="max-h-60 overflow-y-auto divide-y divide-(--rule)">
                   {parsedRows.slice(0, 50).map((r, i) => (
-                    <div key={i} className="grid px-[12px] py-[8px] text-[12px]" style={{ gridTemplateColumns: "100px 1fr 80px" }}>
-                      <div className="font-mono text-[10px] text-[var(--ink-3)]">{r.date}</div>
-                      <div className="text-[var(--ink)] truncate">{r.description}</div>
+                    <div key={i} className="grid px-3 py-2 text-[12px]" style={{ gridTemplateColumns: "100px 1fr 80px" }}>
+                      <div className="font-mono text-[10px] text-muted-foreground">{r.date}</div>
+                      <div className="text-(--ink) truncate">{r.description}</div>
                       <div className="font-mono text-right font-semibold" style={{ color: r.amount > 0 ? "#16A34A" : "#EF4444" }}>
                         {r.amount > 0 ? "+" : ""}₦{Math.abs(r.amount).toLocaleString()}
                       </div>
                     </div>
                   ))}
                   {parsedRows.length > 50 && (
-                    <div className="px-[12px] py-[8px] font-mono text-[10px] text-[var(--ink-4)]">+{parsedRows.length - 50} more rows...</div>
+                    <div className="px-3 py-2 font-mono text-[10px] text-(--ink-4)">+{parsedRows.length - 50} more rows...</div>
                   )}
                 </div>
               </div>
-              <button onClick={() => void handleImport()} className="w-full h-[48px] rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer flex items-center justify-center gap-[8px]" style={{ background: ACCENT }}>
+              <button onClick={() => void handleImport()} className="w-full h-12 rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer flex items-center justify-center gap-2" style={{ background: ACCENT }}>
                 <Check size={14} /> Import {parsedRows.length} Transactions
               </button>
             </div>
@@ -322,22 +322,22 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
 
           {/* Step: Importing */}
           {step === "importing" && (
-            <div className="py-[48px] flex flex-col items-center gap-[16px]">
-              <div className="w-[48px] h-[48px] rounded-full border-[3px] animate-spin" style={{ borderColor: `${ACCENT}30`, borderTopColor: ACCENT }} />
-              <div className="text-[14px] text-[var(--ink)]">Importing & categorizing...</div>
-              <div className="text-[12px] text-[var(--ink-3)]">AI is categorizing your transactions</div>
+            <div className="py-12 flex flex-col items-center gap-4">
+              <div className="w-12 h-12 rounded-full border-0.75 animate-spin" style={{ borderColor: `${ACCENT}30`, borderTopColor: ACCENT }} />
+              <div className="text-[14px] text-(--ink)">Importing & categorizing...</div>
+              <div className="text-[12px] text-muted-foreground">AI is categorizing your transactions</div>
             </div>
           )}
 
           {/* Step: Done */}
           {step === "done" && (
-            <div className="py-[48px] flex flex-col items-center gap-[16px] text-center">
-              <div className="w-[56px] h-[56px] rounded-full flex items-center justify-center" style={{ background: `${ACCENT}15` }}>
+            <div className="py-12 flex flex-col items-center gap-4 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}15` }}>
                 <Check size={28} style={{ color: ACCENT }} />
               </div>
-              <div className="text-[18px] font-semibold text-[var(--ink)]">{importedCount} transactions imported</div>
-              <div className="text-[13px] text-[var(--ink-3)] max-w-[32ch]">Categories have been assigned automatically. Review them in your transaction list.</div>
-              <button onClick={() => { onImported(importedCount); onClose(); }} className="h-[44px] px-[24px] rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
+              <div className="text-[18px] font-semibold text-(--ink)">{importedCount} transactions imported</div>
+              <div className="text-[13px] text-muted-foreground max-w-[32ch]">Categories have been assigned automatically. Review them in your transaction list.</div>
+              <button onClick={() => { onImported(importedCount); onClose(); }} className="h-11 px-6 rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
                 View Transactions
               </button>
             </div>

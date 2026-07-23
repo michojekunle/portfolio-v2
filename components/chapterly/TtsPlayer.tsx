@@ -205,12 +205,12 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
   if (isMinimized) {
     return (
       <div
-        className="fixed bottom-[20px] right-[20px] max-[480px]:bottom-[80px] max-[480px]:right-[16px] max-[480px]:left-[16px] z-50 rounded-full shadow-2xl flex items-center gap-[12px] px-[16px] py-[8px] border transition-all duration-300"
+        className="fixed bottom-5 right-5 max-[480px]:bottom-20 max-[480px]:right-4 max-[480px]:left-4 z-50 rounded-full shadow-2xl flex items-center gap-3 px-4 py-2 border transition-all duration-300"
         style={{ background: bg, borderColor: `${fg}18`, color: fg }}
       >
         <button
           onClick={togglePause}
-          className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-80"
+          className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-80"
           style={{ background: ACCENT, color: "var(--ch-bg)" }}
           aria-label={playState === "playing" ? "Pause" : "Play"}
         >
@@ -221,7 +221,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         </span>
         <button
           onClick={() => setIsMinimized(false)}
-          className="w-[22px] h-[22px] flex items-center justify-center rounded-full border-none cursor-pointer opacity-50 hover:opacity-80 bg-transparent shrink-0"
+          className="w-5.5 h-5.5 flex items-center justify-center rounded-full border-none cursor-pointer opacity-50 hover:opacity-80 bg-transparent shrink-0"
           style={{ color: fg }}
           title="Restore player"
         >
@@ -229,7 +229,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         </button>
         <button
           onClick={handleClose}
-          className="w-[22px] h-[22px] flex items-center justify-center rounded-full border-none cursor-pointer opacity-50 hover:opacity-80 bg-transparent shrink-0"
+          className="w-5.5 h-5.5 flex items-center justify-center rounded-full border-none cursor-pointer opacity-50 hover:opacity-80 bg-transparent shrink-0"
           style={{ color: fg }}
           title="Close player"
         >
@@ -241,24 +241,24 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
 
   return (
     <div
-      className="fixed bottom-[20px] right-[20px] max-[480px]:bottom-[80px] max-[480px]:right-[16px] max-[480px]:left-[16px] z-50 rounded-[16px] shadow-2xl transition-all duration-300"
+      className="fixed bottom-5 right-5 max-[480px]:bottom-20 max-[480px]:right-4 max-[480px]:left-4 z-50 rounded-2xl shadow-2xl transition-all duration-300"
       style={{ background: bg, border: `1px solid ${fg}18`, minWidth: "280px", maxWidth: "380px" }}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-[14px] py-[10px] border-b"
+        className="flex items-center justify-between px-3.5 py-2.5 border-b"
         style={{ borderColor: `${fg}12` }}
       >
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center gap-2">
           <Volume2 size={13} style={{ color: ACCENT }} />
           <span className="font-mono text-[9px] tracking-[0.12em] uppercase font-semibold" style={{ color: fg, opacity: 0.6 }}>
             Reading aloud
           </span>
         </div>
-        <div className="flex items-center gap-[4px]">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => setIsMinimized(true)}
-            className="w-[22px] h-[22px] flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-80 bg-transparent"
+            className="w-5.5 h-5.5 flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-80 bg-transparent"
             style={{ color: fg, opacity: 0.4 }}
             title="Minimize"
           >
@@ -266,7 +266,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
           </button>
           <button
             onClick={handleClose}
-            className="w-[22px] h-[22px] flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-80 bg-transparent"
+            className="w-5.5 h-5.5 flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-80 bg-transparent"
             style={{ color: fg, opacity: 0.4 }}
             aria-label="Close TTS player"
           >
@@ -276,9 +276,9 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
       </div>
 
       {/* Progress bar */}
-      <div className="px-[14px] pt-[12px]">
+      <div className="px-3.5 pt-3">
         <div
-          className="h-[3px] rounded-full overflow-hidden"
+          className="h-0.75 rounded-full overflow-hidden"
           style={{ background: `${fg}14` }}
         >
           <div
@@ -286,7 +286,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
             style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
           />
         </div>
-        <div className="flex justify-between mt-[4px]">
+        <div className="flex justify-between mt-1">
           <span className="font-mono text-[8px] opacity-40" style={{ color: fg }}>
             {progressPct}%
           </span>
@@ -297,12 +297,12 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
       </div>
 
       {/* Controls */}
-      <div className="px-[14px] pb-[12px] flex items-center gap-[8px]">
+      <div className="px-3.5 pb-3 flex items-center gap-2">
         {/* Skip back 15s */}
         <button
           onClick={skipBack}
           disabled={playState === "idle" && charIndexRef.current === 0}
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 disabled:cursor-not-allowed bg-transparent"
+          className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 disabled:cursor-not-allowed bg-transparent"
           style={{ color: fg }}
           aria-label="Skip back 15 seconds"
           title="−15s"
@@ -313,7 +313,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         {/* Play / Pause */}
         <button
           onClick={togglePause}
-          className="w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-80"
+          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-80"
           style={{ background: ACCENT, color: "var(--ch-bg)" }}
           aria-label={playState === "playing" ? "Pause" : "Play"}
         >
@@ -324,7 +324,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         <button
           onClick={skipForward}
           disabled={playState === "idle" && progress === 0}
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 disabled:cursor-not-allowed bg-transparent"
+          className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 disabled:cursor-not-allowed bg-transparent"
           style={{ color: fg }}
           aria-label="Skip forward 15 seconds"
           title="+15s"
@@ -336,7 +336,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         <button
           onClick={stop}
           disabled={playState === "idle"}
-          className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 disabled:cursor-not-allowed bg-transparent"
+          className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 disabled:cursor-not-allowed bg-transparent"
           style={{ color: fg }}
           aria-label="Stop"
         >
@@ -346,14 +346,14 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
         {/* Speed buttons */}
         <div className="flex-1 flex justify-end">
           <div
-            className="flex items-center rounded-[6px] overflow-hidden border"
+            className="flex items-center rounded-md overflow-hidden border"
             style={{ borderColor: `${fg}20` }}
           >
             {SPEEDS.map((s) => (
               <button
                 key={s}
                 onClick={() => setSpeed(s)}
-                className="h-[28px] px-[7px] font-mono text-[9px] font-semibold border-none cursor-pointer transition-all"
+                className="h-7 px-1.75 font-mono text-[9px] font-semibold border-none cursor-pointer transition-all"
                 style={
                   speed === s
                     ? { background: ACCENT, color: "var(--ch-bg)" }
@@ -371,11 +371,11 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
 
       {/* Voice selector */}
       {voices.length > 0 && (
-        <div className="px-[14px] pb-[14px] relative">
+        <div className="px-3.5 pb-3.5 relative">
           <button
             ref={voiceBtnRef}
             onClick={() => setShowVoiceMenu((v) => !v)}
-            className="w-full flex items-center justify-between px-[10px] py-[6px] rounded-[6px] border cursor-pointer text-left transition-colors bg-transparent"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md border cursor-pointer text-left transition-colors bg-transparent"
             style={{ borderColor: `${fg}18`, color: fg }}
           >
             <span className="font-mono text-[9px] tracking-[0.06em] truncate opacity-70">
@@ -394,7 +394,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
 
           {showVoiceMenu && (
             <div
-              className="absolute bottom-[calc(100%-8px)] left-[14px] right-[14px] rounded-[8px] border shadow-xl overflow-y-auto max-h-[180px] z-[9999]"
+              className="absolute bottom-[calc(100%-8px)] left-3.5 right-3.5 rounded-lg border shadow-xl overflow-y-auto max-h-[180px] z-[9999]"
               style={{ background: bg, borderColor: `${fg}18` }}
               data-lenis-prevent="true"
             >
@@ -405,7 +405,7 @@ export function TtsPlayer({ text, onClose, theme }: Props): React.ReactElement {
                     setSelectedVoiceIndex(i);
                     setShowVoiceMenu(false);
                   }}
-                  className="w-full text-left px-[12px] py-[8px] font-mono text-[9px] tracking-[0.06em] cursor-pointer border-none bg-transparent transition-colors hover:opacity-70"
+                  className="w-full text-left px-3 py-2 font-mono text-[9px] tracking-[0.06em] cursor-pointer border-none bg-transparent transition-colors hover:opacity-70"
                   style={
                     i === selectedVoiceIndex
                       ? { color: ACCENT, fontWeight: 600, background: `color-mix(in srgb, var(--ch-accent) 6%, transparent)` }

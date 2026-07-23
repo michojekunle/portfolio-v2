@@ -151,7 +151,7 @@ export function BadgeUnlockToast(): React.ReactElement {
 
   return (
     <div
-      className="fixed bottom-[24px] right-[24px] z-[100] max-[480px]:left-[24px] max-[480px]:right-[24px]"
+      className="fixed bottom-6 right-6 z-[100] max-[480px]:left-6 max-[480px]:right-6"
       style={{
         transform: visible
           ? `translateX(${dragX}px) translateY(0) scale(1)`
@@ -165,27 +165,27 @@ export function BadgeUnlockToast(): React.ReactElement {
       onTouchEnd={handleTouchEnd}
     >
       <div
-        className="relative w-[320px] max-[480px]:w-full rounded-[16px] border border-[var(--rule)] shadow-2xl overflow-hidden"
+        className="relative w-80 max-[480px]:w-full rounded-2xl border border-(--rule) shadow-2xl overflow-hidden"
         style={{ background: "var(--bg)" }}
       >
         <Confetti />
 
         {/* Top accent */}
         <div
-          className="absolute top-0 left-0 right-0 h-[3px]"
+          className="absolute top-0 left-0 right-0 h-0.75"
           style={{ background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 40%, white))` }}
         />
 
-        <div className="p-[20px] pt-[22px]">
+        <div className="p-5 pt-5.5">
           {/* Label */}
-          <div className="font-mono text-[9px] tracking-[0.14em] uppercase mb-[12px]" style={{ color: ACCENT }}>
+          <div className="font-mono text-[9px] tracking-[0.14em] uppercase mb-3" style={{ color: ACCENT }}>
             Achievement Unlocked
           </div>
 
-          <div className="flex items-start gap-[14px]">
+          <div className="flex items-start gap-3.5">
             {/* Badge icon */}
             <div
-              className="w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0"
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
             >
               <Award size={24} style={{ color: ACCENT }} />
@@ -193,10 +193,10 @@ export function BadgeUnlockToast(): React.ReactElement {
 
             {/* Text */}
             <div className="min-w-0 flex-1">
-              <div className="font-semibold text-[15px] text-[var(--ink)] leading-[1.2] mb-[4px]">
+              <div className="font-semibold text-[15px] text-(--ink) leading-[1.2] mb-1">
                 {def?.label ?? current.badge_id}
               </div>
-              <div className="text-[12px] leading-[1.5] text-[var(--ink-3)]">
+              <div className="text-[12px] leading-normal text-muted-foreground">
                 {def?.description ?? "You earned a new badge!"}
               </div>
             </div>
@@ -204,7 +204,7 @@ export function BadgeUnlockToast(): React.ReactElement {
             {/* Close */}
             <button
               onClick={dismiss}
-              className="shrink-0 w-[24px] h-[24px] flex items-center justify-center rounded-[6px] border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors text-[16px] leading-none"
+              className="shrink-0 w-6 h-6 flex items-center justify-center rounded-md border-none bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors text-[16px] leading-none"
               aria-label="Dismiss"
             >
               ×
@@ -212,7 +212,7 @@ export function BadgeUnlockToast(): React.ReactElement {
           </div>
 
           {/* Progress bar (auto-dismiss countdown) */}
-          <div className="mt-[14px] h-[2px] rounded-full bg-[var(--rule)] overflow-hidden">
+          <div className="mt-3.5 h-0.5 rounded-full bg-(--rule) overflow-hidden">
             <div
               className="h-full rounded-full"
               style={{

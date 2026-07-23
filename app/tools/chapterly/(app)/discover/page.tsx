@@ -10,12 +10,12 @@ export default async function DiscoverPage(): Promise<React.ReactElement> {
   const userBooks = await getUserBooks();
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px] max-w-[1200px]">
-      <div className="mb-[40px]">
-        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[8px]">
+    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8 max-w-[1200px]">
+      <div className="mb-10">
+        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-2">
           10 curated summaries · Headway-style
         </div>
-        <h1 className="font-display text-[32px] max-[720px]:text-[24px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] m-0 leading-[1.1]">
+        <h1 className="font-display text-[32px] max-180:text-[24px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
           Discover Books
         </h1>
       </div>

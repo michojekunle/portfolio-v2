@@ -69,14 +69,14 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
     // ── H2: section header ──
     if (line.startsWith("## ")) {
       elements.push(
-        <div key={key++} className="mt-[32px] mb-[12px]">
+        <div key={key++} className="mt-8 mb-3">
           <div
-            className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[2px]"
+            className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-0.5"
             style={{ color: ACCENT }}
           >
             {line.slice(3)}
           </div>
-          <div className="h-[1px] w-full" style={{ background: `color-mix(in srgb, var(--ch-accent) 16%, transparent)` }} />
+          <div className="h-0.25 w-full" style={{ background: `color-mix(in srgb, var(--ch-accent) 16%, transparent)` }} />
         </div>
       );
       i++;
@@ -86,7 +86,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
     // ── H3 ──
     if (line.startsWith("### ")) {
       elements.push(
-        <h3 key={key++} className="text-[14px] font-bold mt-[18px] mb-[4px]" style={{ color: textColor }}>
+        <h3 key={key++} className="text-[14px] font-bold mt-4.5 mb-1" style={{ color: textColor }}>
           {renderInline(line.slice(4))}
         </h3>
       );
@@ -104,7 +104,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
       elements.push(
         <div
           key={key++}
-          className="my-[12px] px-[16px] py-[12px] rounded-[10px]"
+          className="my-3 px-4 py-3 rounded-[10px]"
           style={{ background: `color-mix(in srgb, var(--ch-accent) 7%, transparent)` }}
         >
           <p className="italic text-[13px] leading-[1.75] m-0" style={{ color: textColor, opacity: 0.9 }}>
@@ -123,11 +123,11 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
         i++;
       }
       elements.push(
-        <ul key={key++} className="space-y-[8px] my-[10px] list-none p-0">
+        <ul key={key++} className="space-y-2 my-2.5 list-none p-0">
           {items.map((item, j) => (
-            <li key={j} className="flex items-start gap-[10px] text-[14px] leading-[1.65]" style={{ color: textColor }}>
+            <li key={j} className="flex items-start gap-2.5 text-[14px] leading-[1.65]" style={{ color: textColor }}>
               <span
-                className="mt-[8px] w-[5px] h-[5px] rounded-full shrink-0"
+                className="mt-2 w-1.25 h-1.25 rounded-full shrink-0"
                 style={{ background: ACCENT, opacity: 0.7 }}
               />
               <span>{renderInline(item)}</span>
@@ -159,17 +159,17 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
       elements.push(
         <div
           key={key++}
-          className="flex items-start gap-[14px] my-[18px] rounded-[12px] px-[14px] py-[14px]"
+          className="flex items-start gap-3.5 my-4.5 rounded-xl px-3.5 py-3.5"
           style={{ background: `color-mix(in srgb, var(--ch-accent) 3%, transparent)` }}
         >
           <span
-            className="shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center text-[11px] font-mono font-bold mt-[1px]"
+            className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-mono font-bold mt-0.25"
             style={{ background: ACCENT, color: "var(--ch-bg)" }}
           >
             {num}
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-[15px] font-bold leading-[1.4] mb-[6px]" style={{ color: textColor }}>
+            <div className="text-[15px] font-bold leading-[1.4] mb-1.5" style={{ color: textColor }}>
               {renderInline(titleLine)}
             </div>
             {descLines.length > 0 && (
@@ -179,7 +179,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
             )}
             {quoteLines.length > 0 && (
               <div
-                className="mt-[10px] px-[12px] py-[8px] rounded-[8px]"
+                className="mt-2.5 px-3 py-2 rounded-lg"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
               >
                 <p className="italic text-[12px] leading-[1.6] m-0" style={{ color: textColor, opacity: 0.8 }}>
@@ -211,7 +211,7 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
     }
   }
 
-  return <div className="space-y-[6px]">{elements}</div>;
+  return <div className="space-y-1.5">{elements}</div>;
 }
 
 // Finds the first occurrence of `snippet` across the container's text nodes
@@ -927,7 +927,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
       {/* ── Top bar ── */}
       <div
-        className={`fixed top-0 max-[1024px]:top-[60px] left-0 right-0 z-50 flex items-center justify-between px-[16px] sm:px-[20px] h-[56px] transition-opacity duration-300 ${
+        className={`fixed top-0 max-256:top-15 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-5 h-14 transition-opacity duration-300 ${
           showControls ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         style={{
@@ -936,10 +936,10 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           borderBottom: `1px solid ${current.text}15`,
         }}
       >
-        <div className="flex items-center gap-[16px]">
+        <div className="flex items-center gap-4">
           <Link
             href="/tools/chapterly/library"
-            className="flex items-center gap-[6px] no-underline font-mono text-[10px] tracking-[0.12em] uppercase transition-opacity hover:opacity-60"
+            className="flex items-center gap-1.5 no-underline font-mono text-[10px] tracking-[0.12em] uppercase transition-opacity hover:opacity-60"
             style={{ color: current.text }}
           >
             <ArrowLeft size={14} />
@@ -959,7 +959,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           </span>
           {isOffline && (
             <span
-              className="font-mono text-[8px] tracking-[0.1em] uppercase font-bold px-[8px] py-[3px] rounded-full inline-flex items-center gap-[4px] shrink-0"
+              className="font-mono text-[8px] tracking-widest uppercase font-bold px-2 py-0.75 rounded-full inline-flex items-center gap-1 shrink-0"
               style={{ background: "#EF44441F", color: "#EF4444" }}
               title="You are currently reading offline"
             >
@@ -969,26 +969,26 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           )}
         </div>
 
-        <div className="flex items-center gap-[6px]">
+        <div className="flex items-center gap-1.5">
           {/* Font size */}
-          <div className="flex items-center gap-[2px]">
+          <div className="flex items-center gap-0.5">
             <button
               onClick={() => setFontSize((s) => Math.max(12, s - 1))}
-              className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+              className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
               style={{ background: current.text + "12", color: current.text }}
               aria-label="Decrease font size"
             >
               <Type size={11} />
             </button>
             <span
-              className="font-mono text-[10px] w-[26px] text-center"
+              className="font-mono text-[10px] w-6.5 text-center"
               style={{ color: current.text, opacity: 0.6 }}
             >
               {fontSize}
             </span>
             <button
               onClick={() => setFontSize((s) => Math.min(32, s + 1))}
-              className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+              className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
               style={{ background: current.text + "12", color: current.text }}
               aria-label="Increase font size"
             >
@@ -999,7 +999,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {/* Theme */}
           <button
             onClick={() => setShowThemePanel((v) => !v)}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
             style={{ background: current.text + "12", color: current.text }}
             aria-label="Toggle theme"
           >
@@ -1013,7 +1013,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {/* TTS */}
           <button
             onClick={() => setShowTtsPlayer((v) => !v)}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
             style={{
               background: showTtsPlayer ? "color-mix(in srgb, var(--ch-accent) 19%, transparent)" : current.text + "12",
               color: showTtsPlayer ? ACCENT : current.text,
@@ -1026,7 +1026,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {/* Quick note */}
           <button
             onClick={openNotePanel}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
             style={{ background: current.text + "12", color: current.text }}
             aria-label="Add note"
             title="Add quick note"
@@ -1037,7 +1037,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {/* Notes page */}
           <Link
             href={`/tools/chapterly/notes/${book.id}`}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] no-underline transition-opacity hover:opacity-60"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md no-underline transition-opacity hover:opacity-60"
             style={{ background: current.text + "12", color: current.text }}
             aria-label="All notes & highlights"
             title="Notes & highlights"
@@ -1048,7 +1048,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {/* AI Chat */}
           <Link
             href={`/tools/chapterly/chat/${book.id}`}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] no-underline transition-opacity hover:opacity-60"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md no-underline transition-opacity hover:opacity-60"
             style={{ background: current.text + "12", color: current.text }}
             aria-label="Open AI chat"
             title="AI chat"
@@ -1059,7 +1059,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {/* AI Summary */}
           <button
             onClick={() => void openSummaryPanel()}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
             style={{ background: current.text + "12", color: current.text }}
             aria-label="Open AI summary"
             title="AI book summary"
@@ -1071,7 +1071,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           {isTextFormat && docContent && (
             <button
               onClick={() => setShowChapterCanvas(true)}
-              className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60"
+              className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
               style={{
                 background: showChapterCanvas ? "color-mix(in srgb, var(--ch-accent) 19%, transparent)" : current.text + "12",
                 color: showChapterCanvas ? ACCENT : current.text,
@@ -1088,16 +1088,16 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       {/* Theme panel */}
       {showThemePanel && (
         <div
-          className="fixed top-[64px] right-[20px] z-50 rounded-[12px] p-[16px] shadow-xl border"
+          className="fixed top-16 right-5 z-50 rounded-xl p-4 shadow-xl border"
           style={{ background: current.bg, borderColor: current.text + "20" }}
         >
           <div
-            className="font-mono text-[9px] tracking-[0.12em] uppercase mb-[12px]"
+            className="font-mono text-[9px] tracking-[0.12em] uppercase mb-3"
             style={{ color: current.text, opacity: 0.5 }}
           >
             Theme
           </div>
-          <div className="flex gap-[8px]">
+          <div className="flex gap-2">
             {(Object.keys(THEMES) as ReaderTheme[]).map((t) => (
               <button
                 key={t}
@@ -1105,7 +1105,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   setTheme(t);
                   setShowThemePanel(false);
                 }}
-                className="w-[40px] h-[40px] rounded-[8px] border-[2px] cursor-pointer transition-all"
+                className="w-10 h-10 rounded-lg border-0.5 cursor-pointer transition-all"
                 style={{
                   background: THEMES[t].bg,
                   borderColor: t === theme ? ACCENT : "transparent",
@@ -1121,7 +1121,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       )}
 
       {/* ── Reader area ── */}
-      <div className="flex-1 pt-[56px]">
+      <div className="flex-1 pt-14">
         {isEpub ? (
           <div className="h-[calc(100vh-56px)] overflow-y-auto overscroll-contain" data-lenis-prevent="true">
             {resolvedUrl ? (
@@ -1161,7 +1161,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             />
             ) : (
               <div className="h-full flex items-center justify-center">
-                <Loader2 className="animate-spin text-[var(--ink-3)]" size={32} />
+                <Loader2 className="animate-spin text-muted-foreground" size={32} />
               </div>
             )}
           </div>
@@ -1199,7 +1199,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             />
             ) : (
               <div className="h-full flex items-center justify-center">
-                <Loader2 className="animate-spin text-[var(--ink-3)]" size={32} />
+                <Loader2 className="animate-spin text-muted-foreground" size={32} />
               </div>
             )}
           </div>
@@ -1211,7 +1211,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           >
             <div
               id="reader-content"
-              className="max-w-[72ch] mx-auto px-[32px] py-[64px] leading-[1.75]"
+              className="max-w-[72ch] mx-auto px-8 py-16 leading-[1.75]"
               style={{ fontSize: `${fontSize}px`, color: current.text }}
             onMouseUp={handleTextSelectionEnd}
             onTouchStart={(e) => {
@@ -1241,11 +1241,11 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           >
             {docLoading ? (
               <div
-                className="flex items-center justify-center py-[120px] gap-[12px]"
+                className="flex items-center justify-center py-30 gap-3"
                 style={{ color: current.text, opacity: 0.4 }}
               >
                 <Loader2 size={20} className="animate-spin" />
-                <span className="font-mono text-[12px] tracking-[0.1em] uppercase">
+                <span className="font-mono text-[12px] tracking-widest uppercase">
                   Loading…
                 </span>
               </div>
@@ -1287,14 +1287,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 </pre>
               )
             ) : (
-              <div className="text-center py-[80px]">
+              <div className="text-center py-20">
                 <BookMarked
                   size={48}
-                  className="mx-auto mb-[24px] opacity-20"
+                  className="mx-auto mb-6 opacity-20"
                   style={{ color: current.text }}
                 />
                 <div
-                  className="font-display text-[24px] font-normal mb-[12px]"
+                  className="font-display text-[24px] font-normal mb-3"
                   style={{ color: current.text }}
                 >
                   Could not load document
@@ -1303,7 +1303,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   href={book.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-[20px] py-[12px] rounded-[8px] transition-opacity hover:opacity-80"
+                  className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-5 py-3 rounded-lg transition-opacity hover:opacity-80"
                   style={{ background: ACCENT, color: "var(--ch-bg)" }}
                 >
                   <ExternalLink size={14} />
@@ -1316,24 +1316,24 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         ) : (
           <div
             id="reader-content"
-            className="max-w-[68ch] mx-auto px-[24px] py-[64px] leading-[1.75]"
+            className="max-w-[68ch] mx-auto px-6 py-16 leading-[1.75]"
             style={{ fontSize: `${fontSize}px`, color: current.text }}
           >
-            <div className="text-center py-[80px]">
+            <div className="text-center py-20">
               <BookMarked
                 size={48}
-                className="mx-auto mb-[24px] opacity-20"
+                className="mx-auto mb-6 opacity-20"
                 style={{ color: current.text }}
               />
               <div
-                className="font-display text-[24px] font-normal mb-[12px]"
+                className="font-display text-[24px] font-normal mb-3"
                 style={{ color: current.text }}
               >
                 {book.title}
               </div>
               {book.author && (
                 <div
-                  className="font-mono text-[12px] tracking-[0.1em] uppercase mb-[32px]"
+                  className="font-mono text-[12px] tracking-widest uppercase mb-8"
                   style={{ color: current.text, opacity: 0.5 }}
                 >
                   {book.author}
@@ -1343,14 +1343,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 href={book.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-[20px] py-[12px] rounded-[8px] transition-opacity hover:opacity-80"
+                className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-5 py-3 rounded-lg transition-opacity hover:opacity-80"
                 style={{ background: ACCENT, color: "var(--ch-bg)" }}
               >
                 <ExternalLink size={14} />
                 Open in new tab
               </a>
               <p
-                className="mt-[20px] text-[13px] max-w-[40ch] mx-auto leading-[1.6]"
+                className="mt-5 text-[13px] max-w-[40ch] mx-auto leading-[1.6]"
                 style={{ color: current.text, opacity: 0.5 }}
               >
                 Inline reading for {book.file_format.toUpperCase()} coming soon.
@@ -1364,7 +1364,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       {/* ── Text selection highlight toolbar ── */}
       {textSelection && (
         <div
-          className="fixed z-50 flex items-center gap-[6px] px-[10px] py-[8px] rounded-[10px] shadow-xl border"
+          className="fixed z-50 flex items-center gap-1.5 px-2.5 py-2 rounded-[10px] shadow-xl border"
           style={{
             left: `${textSelection.x}px`,
             top: `${textSelection.y}px`,
@@ -1373,14 +1373,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             borderColor: "#ffffff18",
           }}
         >
-          <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-(--bg) opacity-50 mr-[2px]">
+          <span className="font-mono text-[9px] tracking-widest uppercase text-(--bg) opacity-50 mr-0.5">
             Highlight
           </span>
           {HIGHLIGHT_COLORS.map(({ id, bg, ring }) => (
             <button
               key={id}
               onClick={() => void saveHighlight(id)}
-              className="w-[20px] h-[20px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+              className="w-5 h-5 rounded-full border-0.5 cursor-pointer transition-transform hover:scale-110"
               style={{ background: bg, borderColor: ring }}
               aria-label={`Highlight ${id}`}
               title={id}
@@ -1388,7 +1388,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           ))}
           <button
             onClick={() => void saveHighlightAsFlashcard()}
-            className="ml-[4px] px-[8px] py-[4px] rounded bg-[var(--ch-accent)] hover:opacity-90 text-[var(--ch-bg)] font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
+            className="ml-1 px-2 py-1 rounded bg-(--ch-accent) hover:opacity-90 text-(--ch-bg) font-mono text-[9px] uppercase tracking-wider font-semibold cursor-pointer border-none flex items-center gap-1 transition-colors"
             title="Add to flashcards"
           >
             <Brain size={11} />
@@ -1396,7 +1396,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           </button>
           <button
             onClick={() => setTextSelection(null)}
-            className="ml-[2px] w-[18px] h-[18px] flex items-center justify-center rounded-full border-none cursor-pointer opacity-40 hover:opacity-80 bg-transparent"
+            className="ml-0.5 w-4.5 h-4.5 flex items-center justify-center rounded-full border-none cursor-pointer opacity-40 hover:opacity-80 bg-transparent"
             style={{ color: "var(--ch-bg)" }}
             aria-label="Dismiss"
           >
@@ -1414,14 +1414,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             aria-hidden="true"
           />
           <div
-            className="fixed top-[56px] max-[1024px]:top-[116px] right-0 bottom-0 z-50 w-[360px] max-[480px]:w-full flex flex-col shadow-2xl border-l"
+            className="fixed top-14 max-[1024px]:top-[116px] right-0 bottom-0 z-50 w-90 max-[480px]:w-full flex flex-col shadow-2xl border-l"
             style={{ background: current.bg, borderColor: current.text + "20" }}
           >
             <div
-              className="flex items-center justify-between px-[20px] py-[16px] border-b"
+              className="flex items-center justify-between px-5 py-4 border-b"
               style={{ borderColor: current.text + "15" }}
             >
-              <div className="flex items-center gap-[8px]">
+              <div className="flex items-center gap-2">
                 <StickyNote size={14} style={{ color: ACCENT }} />
                 <span
                   className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold"
@@ -1432,7 +1432,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               </div>
               <button
                 onClick={() => setShowNotePanel(false)}
-                className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60 bg-transparent"
+                className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60 bg-transparent"
                 style={{ color: current.text }}
                 aria-label="Close"
               >
@@ -1445,17 +1445,17 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
               placeholder={`Thoughts on "${book.title}"…`}
-              className="flex-1 resize-none px-[20px] py-[16px] text-[14px] leading-[1.65] outline-none border-none bg-transparent"
+              className="flex-1 resize-none px-5 py-4 text-[14px] leading-[1.65] outline-none border-none bg-transparent"
               style={{ color: current.text, fontFamily: "inherit" }}
             />
 
             <div
-              className="px-[20px] py-[16px] border-t flex items-center justify-between"
+              className="px-5 py-4 border-t flex items-center justify-between"
               style={{ borderColor: current.text + "15" }}
             >
               <Link
                 href={`/tools/chapterly/notes/${book.id}`}
-                className="font-mono text-[10px] tracking-[0.1em] uppercase no-underline transition-opacity hover:opacity-60"
+                className="font-mono text-[10px] tracking-widest uppercase no-underline transition-opacity hover:opacity-60"
                 style={{ color: current.text, opacity: 0.5 }}
                 onClick={() => setShowNotePanel(false)}
               >
@@ -1464,7 +1464,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               <button
                 onClick={() => void saveNote()}
                 disabled={noteSaving || !noteText.trim()}
-                className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-3.5 py-2 rounded-lg border-none cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background: noteSaved ? "#16A34A" : ACCENT,
                   color: "var(--ch-bg)",
@@ -1494,7 +1494,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       {/* ── Session debrief pill (appears after 3 min) ── */}
       {showDebrief && (
         <div
-          className="fixed bottom-[24px] left-1/2 -translate-x-1/2 z-40 flex items-center gap-[12px] px-[16px] py-[10px] rounded-[12px] shadow-lg"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2.5 rounded-xl shadow-lg"
           style={{
             background: current.bg,
             border: `1px solid ${current.text}18`,
@@ -1508,14 +1508,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
           </span>
           <Link
             href={`/tools/chapterly/chat/${book.id}`}
-            className="shrink-0 font-mono text-[9px] tracking-[0.1em] uppercase font-semibold no-underline px-[10px] py-[5px] rounded-[6px] transition-opacity hover:opacity-80"
+            className="shrink-0 font-mono text-[9px] tracking-widest uppercase font-semibold no-underline px-2.5 py-1.25 rounded-md transition-opacity hover:opacity-80"
             style={{ background: ACCENT, color: "var(--ch-bg)" }}
           >
             AI chat
           </Link>
           <button
             onClick={() => setShowDebrief(false)}
-            className="shrink-0 w-[18px] h-[18px] flex items-center justify-center rounded-full border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
+            className="shrink-0 w-4.5 h-4.5 flex items-center justify-center rounded-full border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
             style={{ color: current.text, opacity: 0.4 }}
             aria-label="Dismiss"
           >
@@ -1533,14 +1533,14 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
             aria-hidden="true"
           />
           <div
-            className="fixed top-[56px] max-[1024px]:top-[116px] right-0 bottom-0 z-50 w-[420px] max-[560px]:w-full flex flex-col shadow-2xl border-l overflow-hidden"
+            className="fixed top-14 max-[1024px]:top-[116px] right-0 bottom-0 z-50 w-105 max-[560px]:w-full flex flex-col shadow-2xl border-l overflow-hidden"
             style={{ background: current.bg, borderColor: current.text + "20" }}
           >
             <div
-              className="flex items-center justify-between px-[20px] py-[16px] border-b shrink-0"
+              className="flex items-center justify-between px-5 py-4 border-b shrink-0"
               style={{ borderColor: current.text + "15" }}
             >
-              <div className="flex items-center gap-[8px] min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
                 <Sparkles size={14} style={{ color: ACCENT }} />
                 <span
                   className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold shrink-0"
@@ -1557,7 +1557,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               </div>
               <button
                 onClick={() => setShowSummary(false)}
-                className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-opacity hover:opacity-60 bg-transparent shrink-0"
+                className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60 bg-transparent shrink-0"
                 style={{ color: current.text }}
                 aria-label="Close summary"
               >
@@ -1565,21 +1565,21 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               </button>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px]" data-lenis-prevent="true">
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5" data-lenis-prevent="true">
               {summaryLoading ? (
                 <div
-                  className="flex items-center justify-center py-[60px] gap-[10px]"
+                  className="flex items-center justify-center py-15 gap-2.5"
                   style={{ color: current.text, opacity: 0.4 }}
                 >
                   <Loader2 size={18} className="animate-spin" />
-                  <span className="font-mono text-[11px] tracking-[0.1em] uppercase">
+                  <span className="font-mono text-[11px] tracking-widest uppercase">
                     Loading…
                   </span>
                 </div>
               ) : summaryText ? (
                 <div>
                   {showSummaryTts && (
-                    <div className="mb-[16px]">
+                    <div className="mb-4">
                       <TtsPlayer
                         text={stripMarkdown(summaryText)}
                         onClose={() => setShowSummaryTts(false)}
@@ -1590,7 +1590,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   {renderMarkdown(summaryText, current.text)}
                   {generatingSummary && (
                     <span
-                      className="inline-flex items-center gap-[6px] mt-[8px] font-mono text-[10px] tracking-[0.1em] uppercase opacity-50"
+                      className="inline-flex items-center gap-1.5 mt-2 font-mono text-[10px] tracking-widest uppercase opacity-50"
                       style={{ color: current.text }}
                     >
                       <Loader2 size={10} className="animate-spin" />
@@ -1598,27 +1598,27 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   )}
                 </div>
               ) : !generatingSummary ? (
-                <div className="text-center py-[60px]">
+                <div className="text-center py-15">
                   <Sparkles
                     size={32}
-                    className="mx-auto mb-[16px]"
+                    className="mx-auto mb-4"
                     style={{ color: ACCENT, opacity: 0.4 }}
                   />
                   <div
-                    className="text-[15px] font-semibold mb-[8px]"
+                    className="text-[15px] font-semibold mb-2"
                     style={{ color: current.text }}
                   >
                     No summary yet
                   </div>
                   <p
-                    className="text-[13px] mb-[28px] max-w-[260px] mx-auto leading-[1.6]"
+                    className="text-[13px] mb-7 max-w-[260px] mx-auto leading-[1.6]"
                     style={{ color: current.text, opacity: 0.5 }}
                   >
                     Generate a Headway-style 15-minute structured summary of this book using AI.
                   </p>
                   <button
                     onClick={() => void startSummaryStream()}
-                    className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[18px] py-[10px] rounded-[8px] border-none cursor-pointer transition-opacity hover:opacity-90"
+                    className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-4.5 py-2.5 rounded-lg border-none cursor-pointer transition-opacity hover:opacity-90"
                     style={{ background: ACCENT, color: "var(--ch-bg)" }}
                   >
                     <Sparkles size={13} />
@@ -1627,11 +1627,11 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 </div>
               ) : (
                 <div
-                  className="flex items-center gap-[8px] py-[60px] justify-center"
+                  className="flex items-center gap-2 py-15 justify-center"
                   style={{ color: ACCENT, opacity: 0.6 }}
                 >
                   <Loader2 size={16} className="animate-spin" />
-                  <span className="font-mono text-[11px] tracking-[0.1em] uppercase">
+                  <span className="font-mono text-[11px] tracking-widest uppercase">
                     Generating…
                   </span>
                 </div>
@@ -1640,13 +1640,13 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
             {summaryText && !generatingSummary && (
               <div
-                className="px-[20px] py-[14px] border-t shrink-0 space-y-[10px]"
+                className="px-5 py-3.5 border-t shrink-0 space-y-2.5"
                 style={{ borderColor: current.text + "15" }}
               >
-                <div className="flex items-center gap-[8px]">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowSummaryTts((v) => !v)}
-                    className="flex-1 inline-flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-widest uppercase font-semibold px-3 py-2 rounded-lg border-none cursor-pointer transition-all"
                     style={
                       showSummaryTts
                         ? { background: ACCENT, color: "var(--ch-bg)" }
@@ -1658,7 +1658,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   </button>
                   <a
                     href={`/tools/chapterly/notes/${book.id}`}
-                    className="flex-1 inline-flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[8px] rounded-[8px] no-underline transition-all"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-widest uppercase font-semibold px-3 py-2 rounded-lg no-underline transition-all"
                     style={{ background: current.text + "10", color: current.text, opacity: 0.7 }}
                   >
                     <BookOpen size={11} />
@@ -1674,7 +1674,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                   </span>
                   <button
                     onClick={() => void startSummaryStream()}
-                    className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
+                    className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60"
                     style={{ color: ACCENT }}
                   >
                     <Sparkles size={11} />
@@ -1689,7 +1689,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
       {/* ── Progress bar ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 h-[3px] z-50"
+        className="fixed bottom-0 left-0 right-0 h-0.75 z-50"
         style={{ background: current.text + "20" }}
       >
         <div

@@ -37,7 +37,7 @@ function EntryStreak({
   return (
     <div>
       {/* Section header with streak count inline */}
-      <div className="flex items-center justify-between mb-[14px]">
+      <div className="flex items-center justify-between mb-3.5">
         <span
           className="font-mono text-[10px] tracking-[0.14em] uppercase"
           style={{ color: "var(--ink-3)" }}
@@ -46,7 +46,7 @@ function EntryStreak({
         </span>
         {streakCount > 0 && (
           <span
-            className="font-mono text-[10px] tracking-[0.1em]"
+            className="font-mono text-[10px] tracking-widest"
             style={{ color: VELA_ACCENT }}
           >
             🔥 {streakCount}-day streak
@@ -55,18 +55,18 @@ function EntryStreak({
       </div>
 
       {/* Dot grid */}
-      <div className="flex items-center gap-[8px]">
+      <div className="flex items-center gap-2">
         {days.map((d) => {
           const done = doneSet.has(d);
           const isToday = d === currentTodayStr;
           return (
             <div
               key={d}
-              className="flex flex-col items-center gap-[6px] flex-1"
+              className="flex flex-col items-center gap-1.5 flex-1"
               title={formatDate(d)}
             >
               <div
-                className="w-full h-[32px] rounded-[8px] transition-all duration-300"
+                className="w-full h-8 rounded-lg transition-all duration-300"
                 style={{
                   background: done
                     ? VELA_ACCENT
@@ -77,7 +77,7 @@ function EntryStreak({
                 }}
               />
               <span
-                className="font-mono text-[9px] tracking-[0.05em] uppercase"
+                className="font-mono text-[9px] tracking-wider uppercase"
                 style={{
                   color: isToday ? VELA_ACCENT : "var(--ink-4)",
                   fontWeight: isToday ? 600 : 400,
@@ -127,12 +127,12 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
   const entryDates = entries.map((e) => e.date);
 
   return (
-    <div className="max-w-[760px] mx-auto px-[32px] py-[48px] max-[640px]:px-[20px] max-[640px]:py-[32px]">
+    <div className="max-w-190 mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
 
       {/* ── Header ── */}
-      <div className="mb-[36px]">
+      <div className="mb-9">
         <div
-          className="font-mono text-[10px] tracking-[0.18em] uppercase mb-[8px]"
+          className="font-mono text-[10px] tracking-[0.18em] uppercase mb-2"
           style={{ color: "var(--ink-4)" }}
         >
           {new Date().toLocaleDateString("en-GB", {
@@ -142,7 +142,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
           })}
         </div>
         <h1
-          className="font-display font-normal leading-[1.05] tracking-[-0.025em] fvs-text m-0"
+          className="font-display font-normal leading-[1.05] tracking-tight fvs-text m-0"
           style={{ fontSize: "clamp(28px,4.5vw,42px)", color: "var(--ink)" }}
         >
           {todayEntry ? (
@@ -168,7 +168,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
       <DailyCTAs date={today} todayEntry={todayEntry} />
 
       {/* ── Stats row — 3 clean numbers ── */}
-      <div className="grid grid-cols-3 gap-[12px] mb-[40px]">
+      <div className="grid grid-cols-3 gap-3 mb-10">
         {[
           { value: streakCount, label: "day streak", accent: streakCount > 0 },
           { value: activeObjectives.length, label: "objectives", accent: false },
@@ -176,7 +176,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
         ].map(({ value, label, accent }) => (
           <div
             key={label}
-            className="rounded-[12px] px-[16px] py-[18px]"
+            className="rounded-xl px-4 py-4.5"
             style={{
               background: accent ? VELA_ACCENT_SOFT : "var(--bg-2)",
               border: accent ? `1.5px solid rgba(124,58,237,0.18)` : "1px solid var(--rule)",
@@ -184,13 +184,13 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
             }}
           >
             <div
-              className="font-display text-[36px] font-normal tracking-[-0.03em] fvs-text leading-[1]"
+              className="font-display text-[36px] font-normal tracking-[-0.03em] fvs-text leading-none"
               style={{ color: accent ? VELA_ACCENT : "var(--ink)" }}
             >
               {value}
             </div>
             <div
-              className="font-mono text-[9px] tracking-[0.12em] uppercase mt-[6px]"
+              className="font-mono text-[9px] tracking-[0.12em] uppercase mt-1.5"
               style={{ color: accent ? VELA_ACCENT : "var(--ink-3)", opacity: accent ? 0.7 : 1 }}
             >
               {label}
@@ -200,20 +200,20 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
       </div>
 
       {/* ── 7-day streak grid ── */}
-      <section className="mb-[40px]">
+      <section className="mb-10">
         <EntryStreak entries={entries} streakCount={streakCount} />
       </section>
 
       {/* ── Monthly heatmap ── */}
-      <section className="mb-[40px]">
+      <section className="mb-10">
         <div
-          className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[14px]"
+          className="font-mono text-[10px] tracking-[0.14em] uppercase mb-3.5"
           style={{ color: "var(--ink-3)" }}
         >
           Monthly activity
         </div>
         <div
-          className="rounded-[14px] p-[20px]"
+          className="rounded-[14px] p-5"
           style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
         >
           <MonthHeatmap entryDates={entryDates} />
@@ -222,8 +222,8 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
 
       {/* ── Active objectives ── */}
       {activeObjectives.length > 0 && (
-        <section className="mb-[40px]">
-          <div className="flex items-center justify-between mb-[14px]">
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-3.5">
             <div
               className="font-mono text-[10px] tracking-[0.14em] uppercase"
               style={{ color: "var(--ink-3)" }}
@@ -232,13 +232,13 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
             </div>
             <Link
               href="/tools/journal/objectives"
-              className="font-mono text-[10px] tracking-[0.10em] uppercase no-underline transition-opacity hover:opacity-70"
+              className="font-mono text-[10px] tracking-widest uppercase no-underline transition-opacity hover:opacity-70"
               style={{ color: VELA_ACCENT }}
             >
               Manage →
             </Link>
           </div>
-          <div className="space-y-[8px]">
+          <div className="space-y-2">
             {activeObjectives.slice(0, 5).map((obj) => {
               const milestones = obj.milestones ?? [];
               const done = milestones.filter((m) => m.is_done).length;
@@ -249,24 +249,24 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
                 <Link
                   key={obj.id}
                   href="/tools/journal/objectives"
-                  className="flex items-center gap-[12px] rounded-[10px] px-[14px] py-[12px] no-underline transition-all hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+                  className="flex items-center gap-3 rounded-[10px] px-3.5 py-3 no-underline transition-all hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
                   style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
                 >
                   {/* Icon */}
                   <div
-                    className="w-[34px] h-[34px] rounded-[8px] flex items-center justify-center text-[16px] flex-shrink-0"
+                    className="w-8.5 h-8.5 rounded-lg flex items-center justify-center text-[16px] flex-shrink-0"
                     style={{ background: `${obj.color}18`, border: `1px solid ${obj.color}28` }}
                   >
                     {obj.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-medium truncate text-[var(--ink)]">
+                    <div className="text-[13px] font-medium truncate text-(--ink)">
                       {obj.title}
                     </div>
                     {total > 0 && (
-                      <div className="flex items-center gap-[8px] mt-[5px]">
+                      <div className="flex items-center gap-2 mt-1.25">
                         <div
-                          className="flex-1 h-[3px] rounded-full overflow-hidden"
+                          className="flex-1 h-0.75 rounded-full overflow-hidden"
                           style={{ background: "var(--rule)", maxWidth: "100px" }}
                         >
                           <div
@@ -284,7 +284,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
                     )}
                   </div>
                   <span
-                    className="font-mono text-[9px] tracking-[0.06em] uppercase px-[7px] py-[3px] rounded-full flex-shrink-0"
+                    className="font-mono text-[9px] tracking-[0.06em] uppercase px-1.75 py-0.75 rounded-full flex-shrink-0"
                     style={{ background: `${priCfg.color}12`, color: priCfg.color }}
                   >
                     {priCfg.label}
@@ -300,32 +300,32 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
       {entries.length > 0 && (
         <section>
           <div
-            className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[14px]"
+            className="font-mono text-[10px] tracking-[0.14em] uppercase mb-3.5"
             style={{ color: "var(--ink-3)" }}
           >
             Recent entries
           </div>
-          <div className="space-y-[6px]">
+          <div className="space-y-1.5">
             {entries.slice(0, 5).map((entry) => (
               <Link
                 key={entry.date}
                 href={`/tools/journal/log/${entry.date}`}
-                className="flex items-center gap-[12px] rounded-[10px] px-[14px] py-[12px] no-underline transition-all hover:shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+                className="flex items-center gap-3 rounded-[10px] px-3.5 py-3 no-underline transition-all hover:shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
                 style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium text-[var(--ink)]">
+                  <div className="text-[13px] font-medium text-(--ink)">
                     {formatDate(entry.date)}
                     {entry.date === today && (
                       <span
-                        className="ml-[8px] font-mono text-[9px] tracking-[0.1em] uppercase px-[6px] py-[2px] rounded-full"
+                        className="ml-2 font-mono text-[9px] tracking-widest uppercase px-1.5 py-0.5 rounded-full"
                         style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
                       >
                         Today
                       </span>
                     )}
                   </div>
-                  <div className="font-mono text-[10px] mt-[2px]" style={{ color: "var(--ink-4)" }}>
+                  <div className="font-mono text-[10px] mt-0.5" style={{ color: "var(--ink-4)" }}>
                     {entry.top_priorities.length}p · {entry.accomplished.length} done
                     {entry.energy_level && ` · ${"⚡".repeat(entry.energy_level)}`}
                   </div>
@@ -339,21 +339,21 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
 
       {/* ── Empty state ── */}
       {activeObjectives.length === 0 && entries.length === 0 && (
-        <div className="text-center py-[72px]">
+        <div className="text-center py-18">
           <div
-            className="mx-auto mb-[20px] w-[64px] h-[64px] rounded-[16px] flex items-center justify-center text-[28px]"
+            className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center text-[28px]"
             style={{ background: VELA_ACCENT_SOFT }}
           >
             🧭
           </div>
           <div
-            className="font-display text-[24px] font-normal tracking-[-0.01em] fvs-text mb-[8px]"
+            className="font-display text-[24px] font-normal tracking-[-0.01em] fvs-text mb-2"
             style={{ color: "var(--ink)" }}
           >
             Set your first objective
           </div>
           <p
-            className="text-[14px] leading-[1.6] mb-[24px] max-w-[360px] mx-auto"
+            className="text-[14px] leading-[1.6] mb-6 max-w-90 mx-auto"
             style={{ color: "var(--ink-3)" }}
           >
             Objectives are the big things you&apos;re steering toward. Start with one, then log
@@ -361,7 +361,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
           </p>
           <Link
             href="/tools/journal/objectives"
-            className="inline-flex items-center gap-[8px] px-[20px] py-[11px] rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white no-underline transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 px-5 py-2.75 rounded-[10px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white no-underline transition-opacity hover:opacity-90"
             style={{ background: VELA_ACCENT }}
           >
             <Target size={13} />

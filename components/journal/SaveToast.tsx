@@ -24,7 +24,7 @@ export function SaveToast({
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-[28px] right-[28px] z-50 flex items-center gap-[10px] px-[20px] py-[14px] rounded-[14px] shadow-[0_8px_40px_rgba(0,0,0,0.22)]"
+      className="fixed bottom-7 right-7 z-50 flex items-center gap-2.5 px-5 py-3.5 rounded-[14px] shadow-[0_8px_40px_rgba(0,0,0,0.22)]"
       style={{
         background: "linear-gradient(135deg, #16A34A 0%, #15803d 100%)",
         color: "#fff",

@@ -107,10 +107,10 @@ export default function OnboardingQuizPage(): React.ReactElement {
   const progress = ((step + 1) / 5) * 100;
 
   return (
-    <div className="chapterly-root min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col items-center justify-center p-[24px]">
-      <div className="w-full max-w-[580px] bg-[var(--bg-2)] border border-[var(--rule)] rounded-[24px] p-[40px] max-[480px]:p-[24px] shadow-xl relative overflow-hidden">
+    <div className="chapterly-root min-h-screen bg-(--bg) text-(--ink) flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-145 bg-(--bg-2) border border-(--rule) rounded-3xl p-10 max-[480px]:p-6 shadow-xl relative overflow-hidden">
         {/* Progress indicator */}
-        <div className="absolute top-0 left-0 right-0 h-[4px] bg-[var(--rule)]">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-(--rule)">
           <motion.div
             className="h-full"
             style={{ backgroundColor: ACCENT }}
@@ -121,7 +121,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
         </div>
 
         {/* Top brand header */}
-        <div className="flex items-center gap-[8px] mb-[32px] opacity-60">
+        <div className="flex items-center gap-2 mb-8 opacity-60">
           <Compass size={18} style={{ color: ACCENT }} />
           <span className="font-mono text-[9px] tracking-[0.16em] uppercase">
             Chapterly Mentor Onboarding
@@ -136,25 +136,25 @@ export default function OnboardingQuizPage(): React.ReactElement {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
               transition={{ duration: 0.2 }}
-              className="space-y-[24px]"
+              className="space-y-6"
             >
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   What areas of self-growth do you want to explore?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   Select all that interest you to customize your learning recommendations.
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-[12px] pt-[8px]">
+              <div className="grid grid-cols-2 gap-3 pt-2">
                 {INTEREST_OPTIONS.map((opt) => {
                   const selected = interests.includes(opt.id);
                   return (
                     <button
                       key={opt.id}
                       onClick={() => toggleInterest(opt.id)}
-                      className="h-[100px] rounded-[16px] border flex flex-col items-center justify-center gap-[8px] cursor-pointer transition-all text-center p-[12px] bg-[var(--bg)] hover:border-[var(--ink-3)]"
+                      className="h-[100px] rounded-2xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all text-center p-3 bg-(--bg) hover:border-muted-foreground"
                       style={
                         selected
                           ? { borderColor: ACCENT, background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }
@@ -162,7 +162,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                       }
                     >
                       <span className="text-[24px]">{opt.icon}</span>
-                      <span className="font-mono text-[10px] tracking-[0.05em] uppercase font-semibold">
+                      <span className="font-mono text-[10px] tracking-wider uppercase font-semibold">
                         {opt.label}
                       </span>
                     </button>
@@ -179,25 +179,25 @@ export default function OnboardingQuizPage(): React.ReactElement {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
               transition={{ duration: 0.2 }}
-              className="space-y-[24px]"
+              className="space-y-6"
             >
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   What is your primary reading goal?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   This helps us target the type of books and lessons we prepare.
                 </p>
               </div>
 
-              <div className="space-y-[10px] pt-[8px]">
+              <div className="space-y-2.5 pt-2">
                 {GOAL_OPTIONS.map((opt) => {
                   const selected = goals.includes(opt.id);
                   return (
                     <button
                       key={opt.id}
                       onClick={() => toggleGoal(opt.id)}
-                      className="w-full h-[54px] rounded-[12px] border px-[16px] flex items-center gap-[12px] cursor-pointer transition-all text-left bg-[var(--bg)] hover:border-[var(--ink-3)]"
+                      className="w-full h-[54px] rounded-xl border px-4 flex items-center gap-3 cursor-pointer transition-all text-left bg-(--bg) hover:border-muted-foreground"
                       style={
                         selected
                           ? { borderColor: ACCENT, background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }
@@ -220,25 +220,25 @@ export default function OnboardingQuizPage(): React.ReactElement {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
               transition={{ duration: 0.2 }}
-              className="space-y-[24px]"
+              className="space-y-6"
             >
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   How would you describe your reading frequency?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   This helps us calculate estimates for summaries and book sessions.
                 </p>
               </div>
 
-              <div className="space-y-[10px] pt-[8px]">
+              <div className="space-y-2.5 pt-2">
                 {LEVEL_OPTIONS.map((opt) => {
                   const selected = readingLevel === opt.id;
                   return (
                     <button
                       key={opt.id}
                       onClick={() => setReadingLevel(opt.id)}
-                      className="w-full rounded-[14px] border p-[16px] flex items-start gap-[12px] cursor-pointer transition-all text-left bg-[var(--bg)] hover:border-[var(--ink-3)]"
+                      className="w-full rounded-[14px] border p-4 flex items-start gap-3 cursor-pointer transition-all text-left bg-(--bg) hover:border-muted-foreground"
                       style={
                         selected
                           ? { borderColor: ACCENT, background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)" }
@@ -249,11 +249,11 @@ export default function OnboardingQuizPage(): React.ReactElement {
                         <span className="text-[13px] font-semibold block" style={{ color: selected ? ACCENT : "var(--ink)" }}>
                           {opt.label}
                         </span>
-                        <span className="text-[12px] text-[var(--ink-3)] mt-[2px] block">
+                        <span className="text-[12px] text-muted-foreground mt-0.5 block">
                           {opt.desc}
                         </span>
                       </div>
-                      <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] border px-[8px] py-[3px] rounded-[6px]">
+                      <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground border px-2 py-0.75 rounded-md">
                         {opt.speed}
                       </span>
                     </button>
@@ -270,26 +270,26 @@ export default function OnboardingQuizPage(): React.ReactElement {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
               transition={{ duration: 0.2 }}
-              className="space-y-[24px]"
+              className="space-y-6"
             >
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   How many minutes will you commit to each day?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   Consistently reading just a few minutes daily produces massive long-term results.
                 </p>
               </div>
 
-              <div className="space-y-[20px] pt-[8px]">
-                <div className="flex gap-[8px] flex-wrap justify-center">
+              <div className="space-y-5 pt-2">
+                <div className="flex gap-2 flex-wrap justify-center">
                   {TIME_OPTIONS.map((m) => {
                     const selected = dailyMinutes === m;
                     return (
                       <button
                         key={m}
                         onClick={() => setDailyMinutes(m)}
-                        className="font-mono text-[11px] tracking-[0.1em] uppercase px-[16px] py-[10px] rounded-[8px] border-none cursor-pointer transition-all font-semibold"
+                        className="font-mono text-[11px] tracking-widest uppercase px-4 py-2.5 rounded-lg border-none cursor-pointer transition-all font-semibold"
                         style={
                           selected
                             ? { background: ACCENT, color: "#fff" }
@@ -301,7 +301,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                     );
                   })}
                 </div>
-                <div className="text-center font-mono text-[11px] text-[var(--ink-3)]">
+                <div className="text-center font-mono text-[11px] text-muted-foreground">
                   💡 A {dailyMinutes}-minute daily reading habit accumulates to about {Math.round((dailyMinutes * 365) / 60)} hours of learning in a year!
                 </div>
               </div>
@@ -315,26 +315,26 @@ export default function OnboardingQuizPage(): React.ReactElement {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
               transition={{ duration: 0.2 }}
-              className="space-y-[24px]"
+              className="space-y-6"
             >
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   Choose your annual reading goal
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   Setting a concrete books-finished target keeps you accountable.
                 </p>
               </div>
 
-              <div className="space-y-[20px] pt-[8px]">
-                <div className="flex gap-[8px] flex-wrap justify-center">
+              <div className="space-y-5 pt-2">
+                <div className="flex gap-2 flex-wrap justify-center">
                   {ANNUAL_OPTIONS.map((b) => {
                     const selected = annualBooks === b;
                     return (
                       <button
                         key={b}
                         onClick={() => setAnnualBooks(b)}
-                        className="font-mono text-[11px] tracking-[0.1em] uppercase px-[16px] py-[10px] rounded-[8px] border-none cursor-pointer transition-all font-semibold"
+                        className="font-mono text-[11px] tracking-widest uppercase px-4 py-2.5 rounded-lg border-none cursor-pointer transition-all font-semibold"
                         style={
                           selected
                             ? { background: ACCENT, color: "#fff" }
@@ -346,7 +346,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                     );
                   })}
                 </div>
-                <div className="text-center font-mono text-[11px] text-[var(--ink-3)]">
+                <div className="text-center font-mono text-[11px] text-muted-foreground">
                   📚 This is roughly {Math.round((annualBooks / 12) * 10) / 10} book summaries per month.
                 </div>
               </div>
@@ -355,17 +355,17 @@ export default function OnboardingQuizPage(): React.ReactElement {
         </AnimatePresence>
 
         {error && (
-          <div className="mt-[20px] p-[12px] rounded-[8px] text-[12px] bg-red-500/10 border border-red-500/20 text-red-500">
+          <div className="mt-5 p-3 rounded-lg text-[12px] bg-red-500/10 border border-red-500/20 text-red-500">
             {error}
           </div>
         )}
 
         {/* Footer controls */}
-        <div className="flex items-center justify-between mt-[40px] pt-[20px] border-t border-[var(--rule)]">
+        <div className="flex items-center justify-between mt-10 pt-5 border-t border-(--rule)">
           <button
             onClick={handleBack}
             disabled={step === 0 || submitting}
-            className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] bg-transparent border-none cursor-pointer disabled:opacity-30 transition-all"
+            className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase text-muted-foreground hover:text-(--ink) bg-transparent border-none cursor-pointer disabled:opacity-30 transition-all"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -373,7 +373,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
           <button
             onClick={handleNext}
             disabled={submitting}
-            className="h-[40px] px-[20px] rounded-[10px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold text-(--bg) cursor-pointer border-none flex items-center gap-[6px] transition-all hover:opacity-90 disabled:opacity-50"
+            className="h-10 px-5 rounded-[10px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold text-(--bg) cursor-pointer border-none flex items-center gap-1.5 transition-all hover:opacity-90 disabled:opacity-50"
             style={{ background: ACCENT }}
           >
             {submitting ? (

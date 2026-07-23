@@ -160,26 +160,26 @@ export function ThemeSelector(): React.ReactElement {
   }, [])
 
   return (
-    <div className="flex flex-col gap-[32px]">
+    <div className="flex flex-col gap-8">
 
       {/* Color themes */}
-      <div className="flex flex-col gap-[12px]">
-        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Color theme</div>
+      <div className="flex flex-col gap-3">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Color theme</div>
         <div className="v3-theme-selector">
-          <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-3 gap-[8px]">
+          <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-180:grid-cols-3 gap-2">
             {Object.entries(THEMES).map(([key, t]) => {
               const palette = isDark ? t.dark : t.light
               return (
                 <button
                   key={key}
-                  className={`flex items-center gap-[8px] px-[12px] py-[10px] rounded-[6px] border bg-transparent cursor-pointer transition-all duration-150 font-inherit text-[13px] hover:border-[var(--v3-accent)] hover:bg-[var(--paper)] hover:text-[var(--ink)] ${activeTheme === key ? " border-[var(--v3-accent)] bg-[color-mix(in_oklab,var(--v3-accent)_8%,transparent)] text-[var(--ink)]" : " border-[var(--rule)] text-[var(--ink-2)]"}`}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-md border bg-transparent cursor-pointer transition-all duration-150 font-inherit text-[13px] hover:border-(--v3-accent) hover:bg-(--paper) hover:text-(--ink) ${activeTheme === key ? " border-(--v3-accent) bg-[color-mix(in_oklab,var(--v3-accent)_8%,transparent)] text-(--ink)" : " border-(--rule) text-secondary-foreground"}`}
                   onClick={() => applyTheme(key, isDark)}
                   title={t.name}
                   aria-label={`Apply ${t.name} theme`}
                   aria-pressed={activeTheme === key}
                 >
                   <span
-                    className="inline-block w-[12px] h-[12px] rounded-full shrink-0"
+                    className="inline-block w-3 h-3 rounded-full shrink-0"
                     style={{ background: palette["--accent"] }}
                     aria-hidden="true"
                   />
@@ -192,17 +192,17 @@ export function ThemeSelector(): React.ReactElement {
       </div>
       
       {/* Display font */}
-      <div className="flex flex-col gap-[12px]">
-        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Display font</div>
-        <div className="flex gap-[8px] flex-wrap">
+      <div className="flex flex-col gap-3">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Display font</div>
+        <div className="flex gap-2 flex-wrap">
           {Object.entries(FONTS).map(([key, f]) => (
             <button
               key={key}
-              className={`flex flex-col items-center gap-[4px] px-[16px] py-[12px] rounded-[6px] border bg-transparent cursor-pointer transition-all duration-150 font-inherit text-[13px] flex-1 hover:border-[var(--v3-accent)] hover:bg-[var(--paper)] hover:text-[var(--ink)] ${activeFont === key ? " border-[var(--v3-accent)] bg-[color-mix(in_oklab,var(--v3-accent)_8%,transparent)] text-[var(--ink)]" : " border-[var(--rule)] text-[var(--ink-2)]"}`}
+              className={`flex flex-col items-center gap-1 px-4 py-3 rounded-md border bg-transparent cursor-pointer transition-all duration-150 font-inherit text-[13px] flex-1 hover:border-(--v3-accent) hover:bg-(--paper) hover:text-(--ink) ${activeFont === key ? " border-(--v3-accent) bg-[color-mix(in_oklab,var(--v3-accent)_8%,transparent)] text-(--ink)" : " border-(--rule) text-secondary-foreground"}`}
               onClick={() => handleFont(key)}
               aria-pressed={activeFont === key}
             >
-              <span className="text-[20px] leading-[1] text-[var(--ink)]" style={{ fontFamily: f.value, fontVariationSettings: key === "fraunces" ? '"opsz" 96, "SOFT" 100' : undefined }}>Ag</span>
+              <span className="text-[20px] leading-none text-(--ink)" style={{ fontFamily: f.value, fontVariationSettings: key === "fraunces" ? '"opsz" 96, "SOFT" 100' : undefined }}>Ag</span>
               {f.name}
             </button>
           ))}
@@ -210,20 +210,20 @@ export function ThemeSelector(): React.ReactElement {
       </div>
 
       {/* Marginalia toggle */}
-      <div className="flex flex-col gap-[12px]">
-        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)] font-semibold">Marginalia</div>
-        <div className="flex items-center justify-between gap-[16px]">
+      <div className="flex flex-col gap-3">
+        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Marginalia</div>
+        <div className="flex items-center justify-between gap-4">
           <button
-            className={`group flex items-center gap-[10px] bg-transparent border-none cursor-pointer font-inherit text-[13px] p-0 transition-colors duration-150 hover:text-[var(--ink)] ${showMarginalia ? "text-[var(--ink)]" : "text-[var(--ink-2)]"}`}
+            className={`group flex items-center gap-2.5 bg-transparent border-none cursor-pointer font-inherit text-[13px] p-0 transition-colors duration-150 hover:text-(--ink) ${showMarginalia ? "text-(--ink)" : "text-secondary-foreground"}`}
             onClick={() => handleMarginalia(!showMarginalia)}
             aria-pressed={showMarginalia}
           >
-            <span className={`w-[36px] h-[20px] rounded-full relative transition-colors duration-150 ${showMarginalia ? "bg-[var(--v3-accent)]" : "bg-[var(--rule)]"}`}>
-              <span className={`absolute top-[2px] left-[2px] w-[16px] h-[16px] rounded-full bg-[var(--bg)] transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${showMarginalia ? "translate-x-[16px]" : "translate-x-0"}`} />
+            <span className={`w-9 h-5 rounded-full relative transition-colors duration-150 ${showMarginalia ? "bg-(--v3-accent)" : "bg-(--rule)"}`}>
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-(--bg) transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${showMarginalia ? "translate-x-4" : "translate-x-0"}`} />
             </span>
             <span>{showMarginalia ? "Visible" : "Hidden"}</span>
           </button>
-          <span className="text-[13px] text-[var(--ink-3)]">Side notes in essays</span>
+          <span className="text-[13px] text-muted-foreground">Side notes in essays</span>
         </div>
       </div>
 

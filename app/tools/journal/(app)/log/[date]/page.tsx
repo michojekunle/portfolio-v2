@@ -48,12 +48,12 @@ export default async function LogDatePage({ params, searchParams }: Props): Prom
   const hasNext = nextDate <= today;
 
   return (
-    <div className="max-w-[720px] mx-auto px-[32px] py-[48px] max-[640px]:px-[20px] max-[640px]:py-[32px]">
+    <div className="max-w-180 mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
       {/* Date navigation */}
-      <div className="flex items-center justify-between mb-[32px]">
+      <div className="flex items-center justify-between mb-8">
         <Link
           href={`/tools/journal/log/${prevDate}`}
-          className="w-[36px] h-[36px] flex items-center justify-center rounded-[8px] no-underline transition-all hover:shadow-sm"
+          className="w-9 h-9 flex items-center justify-center rounded-lg no-underline transition-all hover:shadow-sm"
           style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-2)" }}
           aria-label="Previous day"
         >
@@ -62,15 +62,15 @@ export default async function LogDatePage({ params, searchParams }: Props): Prom
 
         <div className="text-center">
           <div
-            className="font-display text-[22px] font-normal tracking-[-0.02em] fvs-text leading-[1] text-[var(--ink)]"
+            className="font-display text-[22px] font-normal tracking-[-0.02em] fvs-text leading-none text-(--ink)"
           >
             {weekday}
           </div>
-          <div className="flex items-center justify-center gap-[8px] mt-[4px]">
-            <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--ink-3)]">{rest}</span>
+          <div className="flex items-center justify-center gap-2 mt-1">
+            <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground">{rest}</span>
             {isToday && (
               <span
-                className="font-mono text-[9px] tracking-[0.1em] uppercase px-[7px] py-[2px] rounded-full"
+                className="font-mono text-[9px] tracking-widest uppercase px-1.75 py-0.5 rounded-full"
                 style={{ background: VELA_ACCENT, color: "#fff" }}
               >
                 Today
@@ -82,14 +82,14 @@ export default async function LogDatePage({ params, searchParams }: Props): Prom
         {hasNext ? (
           <Link
             href={`/tools/journal/log/${nextDate}`}
-            className="w-[36px] h-[36px] flex items-center justify-center rounded-[8px] no-underline transition-all hover:shadow-sm"
+            className="w-9 h-9 flex items-center justify-center rounded-lg no-underline transition-all hover:shadow-sm"
             style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-2)" }}
             aria-label="Next day"
           >
             <ArrowRight size={15} />
           </Link>
         ) : (
-          <div className="w-[36px]" />
+          <div className="w-9" />
         )}
       </div>
 

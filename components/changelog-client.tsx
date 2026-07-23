@@ -43,12 +43,12 @@ export function ChangelogClient({ grouped }: { grouped: [string, ChangelogEntry[
                       {entry.repo}#{entry.sha}
                     </span>
                     <ExternalLink
-                      className="inline transition-transform group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"
+                      className="inline transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                       style={{ width: "10px", height: "10px", marginLeft: "4px" }}
                       aria-hidden="true"
                     />
                   </a>
-                  <span className="font-mono text-[10px] text-[var(--ink-3)] ml-2">
+                  <span className="font-mono text-[10px] text-muted-foreground ml-2">
                     {formatDistanceToNow(new Date(entry.date), { addSuffix: true })}
                   </span>
                 </li>

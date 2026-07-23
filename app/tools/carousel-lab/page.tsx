@@ -816,13 +816,13 @@ export default function CarouselLabPage(): React.ReactElement {
     >
       {/* Header Banner */}
       <section
-        className="pt-[140px] pb-[60px] max-[720px]:pt-[100px] max-[720px]:pb-[36px] border-b"
+        className="pt-35 pb-15 max-[720px]:pt-[100px] max-180:pb-9 border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div className="max-w-[1240px] mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-[32px] max-[720px]:flex-col max-[720px]:items-start">
+        <div className="max-w-310 mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-8 max-180:flex-col max-180:items-start">
           <div>
             <div
-              className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.16em] uppercase mb-[20px] px-[10px] py-[4px] rounded-full"
+              className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.16em] uppercase mb-5 px-2.5 py-1 rounded-full"
               style={{
                 background: ACCENT_SOFT,
                 color: ACCENT,
@@ -830,14 +830,14 @@ export default function CarouselLabPage(): React.ReactElement {
               }}
             >
               <span
-                className="w-[5px] h-[5px] rounded-full"
+                className="w-1.25 h-1.25 rounded-full"
                 style={{ background: ACCENT }}
                 aria-hidden="true"
               />
               Carousel Lab Suite
             </div>
             <h1
-              className="font-display font-normal leading-[0.9] tracking-[-0.04em] fvs-display m-0 mb-[16px]"
+              className="font-display font-normal leading-[0.9] tracking-[-0.04em] fvs-display m-0 mb-4"
               style={{ fontSize: "clamp(44px,7vw,72px)", color: "var(--ink)" }}
             >
               Design world-class{" "}
@@ -854,11 +854,11 @@ export default function CarouselLabPage(): React.ReactElement {
           </div>
 
           <div
-            className="flex items-center gap-[12px] p-[16px] rounded-[12px] max-w-[340px]"
+            className="flex items-center gap-3 p-4 rounded-xl max-w-85"
             style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
           >
             <Smartphone className="shrink-0" size={24} style={{ color: ACCENT }} />
-            <div className="text-[12px] leading-[1.4] text-[var(--ink-3)]">
+            <div className="text-[12px] leading-[1.4] text-muted-foreground">
               <strong>LinkedIn PDF:</strong> We support compiling your slides directly into LinkedIn-compatible multi-page swipeable PDFs!
             </div>
           </div>
@@ -866,14 +866,14 @@ export default function CarouselLabPage(): React.ReactElement {
       </section>
 
       {/* Generator & Builder */}
-      <section className="max-w-[1240px] mx-auto px-[var(--gutter,24px)] py-[48px]">
+      <section className="max-w-310 mx-auto px-[var(--gutter,24px)] py-12">
         {/* Input area */}
         <div
-          className="rounded-[16px] p-[32px] max-[720px]:p-[20px] mb-[40px] space-y-[24px]"
+          className="rounded-2xl p-8 max-180:p-5 mb-10 space-y-6"
           style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
         >
           {/* Creation Mode Tabs */}
-          <div className="flex border-b border-[var(--rule)] pb-[1px] gap-[24px] overflow-x-auto">
+          <div className="flex border-b border-(--rule) pb-0.25 gap-6 overflow-x-auto">
             {[
               { id: "topic", label: "From Topic" },
               { id: "refine", label: "Refine Raw Draft" },
@@ -883,7 +883,7 @@ export default function CarouselLabPage(): React.ReactElement {
                 key={tab.id}
                 type="button"
                 onClick={() => setInputMode(tab.id as "topic" | "refine" | "manual")}
-                className="pb-[12px] font-mono text-[10px] uppercase tracking-[0.14em] font-semibold cursor-pointer border-b-2 transition-colors duration-150 shrink-0"
+                className="pb-3 font-mono text-[10px] uppercase tracking-[0.14em] font-semibold cursor-pointer border-b-2 transition-colors duration-150 shrink-0"
                 style={{
                   color: inputMode === tab.id ? ACCENT : "var(--ink-3)",
                   borderColor: inputMode === tab.id ? ACCENT : "transparent",
@@ -895,11 +895,11 @@ export default function CarouselLabPage(): React.ReactElement {
           </div>
 
           {inputMode === "topic" && (
-            <div className="flex gap-[16px] max-[720px]:flex-col">
+            <div className="flex gap-4 max-180:flex-col">
               <div className="flex-1">
                 <label
                   htmlFor="carousel-topic"
-                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                   style={{ color: "var(--ink-3)" }}
                 >
                   Topic or Content Pitch
@@ -913,7 +913,7 @@ export default function CarouselLabPage(): React.ReactElement {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") void generate();
                   }}
-                  className="w-full rounded-[10px] px-[16px] h-[52px] text-[15px] outline-none transition-colors duration-150"
+                  className="w-full rounded-[10px] px-4 h-13 text-[15px] outline-none transition-colors duration-150"
                   style={{
                     background: "var(--bg)",
                     border: "1px solid var(--rule)",
@@ -928,28 +928,28 @@ export default function CarouselLabPage(): React.ReactElement {
                 />
               </div>
 
-              <div className="w-[200px] max-[720px]:w-full">
+              <div className="w-[200px] max-180:w-full">
                 <label
-                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                   style={{ color: "var(--ink-3)" }}
                 >
                   Slides ({slideCount})
                 </label>
-                <div className="flex items-center gap-[12px] h-[52px] px-[12px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)]">
+                <div className="flex items-center gap-3 h-13 px-3 rounded-[10px] border border-(--rule) bg-(--bg)">
                   <input
                     type="range"
                     min={3}
                     max={8}
                     value={slideCount}
                     onChange={(e) => setSlideCount(Number(e.target.value))}
-                    className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
+                    className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
                     style={{
                       background: `linear-gradient(90deg, ${ACCENT} ${((slideCount - 3) / (8 - 3)) * 100}%, var(--rule) ${((slideCount - 3) / (8 - 3)) * 100}%)`,
                       accentColor: ACCENT
                     }}
                     aria-label="Number of slides"
                   />
-                  <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
+                  <span className="font-mono text-[15px] font-semibold text-(--ink)">
                     {slideCount}
                   </span>
                 </div>
@@ -958,11 +958,11 @@ export default function CarouselLabPage(): React.ReactElement {
           )}
 
           {inputMode === "refine" && (
-            <div className="flex gap-[16px] max-[720px]:flex-col">
+            <div className="flex gap-4 max-180:flex-col">
               <div className="flex-1">
                 <label
                   htmlFor="carousel-notes"
-                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                   style={{ color: "var(--ink-3)" }}
                 >
                   Rough Notes / Copy Draft / Ideas Outline
@@ -973,7 +973,7 @@ export default function CarouselLabPage(): React.ReactElement {
                   value={roughNotes}
                   onChange={(e) => setRoughNotes(e.target.value)}
                   rows={4}
-                  className="w-full rounded-[10px] p-[16px] text-[14px] outline-none transition-colors duration-150 resize-none font-sans"
+                  className="w-full rounded-[10px] p-4 text-[14px] outline-none transition-colors duration-150 resize-none font-sans"
                   style={{
                     background: "var(--bg)",
                     border: "1px solid var(--rule)",
@@ -988,28 +988,28 @@ export default function CarouselLabPage(): React.ReactElement {
                 />
               </div>
 
-              <div className="w-[200px] max-[720px]:w-full">
+              <div className="w-[200px] max-180:w-full">
                 <label
-                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                  className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                   style={{ color: "var(--ink-3)" }}
                 >
                   Slides ({slideCount})
                 </label>
-                <div className="flex items-center gap-[12px] h-[96px] px-[12px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)]">
+                <div className="flex items-center gap-3 h-24 px-3 rounded-[10px] border border-(--rule) bg-(--bg)">
                   <input
                     type="range"
                     min={3}
                     max={8}
                     value={slideCount}
                     onChange={(e) => setSlideCount(Number(e.target.value))}
-                    className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
+                    className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
                     style={{
                       background: `linear-gradient(90deg, ${ACCENT} ${((slideCount - 3) / (8 - 3)) * 100}%, var(--rule) ${((slideCount - 3) / (8 - 3)) * 100}%)`,
                       accentColor: ACCENT
                     }}
                     aria-label="Number of slides"
                   />
-                  <span className="font-mono text-[15px] font-semibold text-[var(--ink)]">
+                  <span className="font-mono text-[15px] font-semibold text-(--ink)">
                     {slideCount}
                   </span>
                 </div>
@@ -1018,8 +1018,8 @@ export default function CarouselLabPage(): React.ReactElement {
           )}
 
           {inputMode === "manual" && (
-            <div className="p-[24px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)] text-center">
-              <p className="text-[13px] leading-[1.65] text-[var(--ink-2)] m-0">
+            <div className="p-6 rounded-[10px] border border-(--rule) bg-(--bg) text-center">
+              <p className="text-[13px] leading-[1.65] text-secondary-foreground m-0">
                 🚀 Skip AI generation entirely! Start with a default empty 3-slide template (Hook Cover, Body Point, Brand CTA Card) and craft your layout parameters, brand initials logo, and custom content slides directly in the sidebar design panels.
               </p>
             </div>
@@ -1031,7 +1031,7 @@ export default function CarouselLabPage(): React.ReactElement {
             <button
               type="button"
               onClick={startManualDeck}
-              className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 text-white flex items-center justify-center gap-[8px] cursor-pointer"
+              className="w-full h-13 rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 text-white flex items-center justify-center gap-2 cursor-pointer"
               style={{ background: ACCENT }}
             >
               <Plus size={14} /> Start Designer Canvas
@@ -1041,7 +1041,7 @@ export default function CarouselLabPage(): React.ReactElement {
               type="button"
               onClick={() => void generate()}
               disabled={loading || (inputMode === "topic" ? !topic.trim() : !roughNotes.trim())}
-              className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center gap-[8px] cursor-pointer"
+              className="w-full h-13 rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center gap-2 cursor-pointer"
               style={{
                 background: (inputMode === "topic" ? topic.trim() : roughNotes.trim()) && !loading ? ACCENT : "var(--rule)",
               }}
@@ -1054,84 +1054,84 @@ export default function CarouselLabPage(): React.ReactElement {
 
         {/* Customization Workspace */}
         {hasSlides && (
-          <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-[32px]">
+          <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-8">
             
             {/* Left Controls Panel */}
-            <div className="space-y-[24px] max-[800px]:order-2 overflow-y-auto max-h-[calc(100vh-160px)] max-[800px]:max-h-none pr-[2px] sticky top-[80px] self-start max-[800px]:static">
+            <div className="space-y-6 max-[800px]:order-2 overflow-y-auto max-h-[calc(100vh-160px)] max-[800px]:max-h-none pr-0.5 sticky top-20 self-start max-[800px]:static">
               
               {/* Creator Branding */}
-              <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">
-                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
+              <div className="rounded-2xl p-6 border border-(--rule) bg-(--bg-2) space-y-4">
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground border-b pb-2.5 border-(--rule)">
                   Creator Branding & Logo
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] text-[var(--ink-2)]">Show Profile Branding</span>
+                  <span className="text-[12px] text-secondary-foreground">Show Profile Branding</span>
                   <input
                     type="checkbox"
                     checked={showBranding}
                     onChange={(e) => setShowBranding(e.target.checked)}
-                    className="w-[36px] h-[20px] rounded-full appearance-none cursor-pointer relative bg-[var(--bg)] border border-[var(--rule)] checked:bg-[var(--accent)] transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:w-[14px] after:h-[14px] after:rounded-full after:bg-[var(--ink-3)] checked:after:translate-x-[16px] after:transition-transform"
+                    className="w-9 h-5 rounded-full appearance-none cursor-pointer relative bg-(--bg) border border-(--rule) checked:bg-(--accent) transition-all after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-3.5 after:h-3.5 after:rounded-full after:bg-muted-foreground checked:after:translate-x-4 after:transition-transform"
                     style={{ "--accent": ACCENT } as React.CSSProperties}
                   />
                 </div>
                 {showBranding && (
-                  <div className="space-y-[12px]">
+                  <div className="space-y-3">
                     <div>
-                      <label className="block font-mono text-[8px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      <label className="block font-mono text-[8px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                         Brand Logo Text
                       </label>
                       <input
                         type="text"
                         value={logoText}
                         onChange={(e) => setLogoText(e.target.value)}
-                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                        className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block font-mono text-[8px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      <label className="block font-mono text-[8px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                         Top Right Header Tag
                       </label>
                       <input
                         type="text"
                         value={topRightTag}
                         onChange={(e) => setTopRightTag(e.target.value)}
-                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                        className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block font-mono text-[8px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      <label className="block font-mono text-[8px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                         Bottom Left Creator Name
                       </label>
                       <input
                         type="text"
                         value={creatorName}
                         onChange={(e) => setCreatorName(e.target.value)}
-                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                        className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block font-mono text-[8px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      <label className="block font-mono text-[8px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                         Bottom Right Link / URL
                       </label>
                       <input
                         type="text"
                         value={creatorHandle}
                         onChange={(e) => setCreatorHandle(e.target.value)}
-                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                        className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[20px]">
-                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
+              <div className="rounded-2xl p-6 border border-(--rule) bg-(--bg-2) space-y-5">
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground border-b pb-2.5 border-(--rule)">
                   Canvas Customizer
                 </div>
 
                 {/* Aesthetic Mood Selector */}
                 <div>
-                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                  <label className="block font-mono text-[9px] tracking-widest uppercase mb-2 text-muted-foreground">
                     Aesthetic Mood Style
                   </label>
                   <select
@@ -1141,7 +1141,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       // Custom colors intentionally kept — they override the new aesthetic
                       // until cleared by the user in the color inputs below
                     }}
-                    className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none focus:border-[var(--ink-3)]"
+                    className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none focus:border-muted-foreground"
                   >
                     {AESTHETIC_MOODS.map((t) => (
                       <option key={t} value={t}>
@@ -1153,10 +1153,10 @@ export default function CarouselLabPage(): React.ReactElement {
 
                 {/* Aspect Ratio */}
                 <div>
-                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                  <label className="block font-mono text-[9px] tracking-widest uppercase mb-2 text-muted-foreground">
                     Aspect Ratio
                   </label>
-                  <div className="grid grid-cols-2 gap-[8px]">
+                  <div className="grid grid-cols-2 gap-2">
                     {[
                       { id: "portrait", label: "Portrait 4:5" },
                       { id: "square", label: "Square 1:1" }
@@ -1164,7 +1164,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <button
                         key={opt.id}
                         onClick={() => setAspectRatio(opt.id as "square" | "portrait")}
-                        className="py-[10px] rounded-[8px] border text-[10px] font-mono uppercase tracking-[0.05em] cursor-pointer"
+                        className="py-2.5 rounded-lg border text-[10px] font-mono uppercase tracking-wider cursor-pointer"
                         style={{
                           background: aspectRatio === opt.id ? "var(--bg)" : "transparent",
                           borderColor: aspectRatio === opt.id ? ACCENT : "var(--rule)",
@@ -1179,10 +1179,10 @@ export default function CarouselLabPage(): React.ReactElement {
 
                 {/* Background style */}
                 <div>
-                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                  <label className="block font-mono text-[9px] tracking-widest uppercase mb-2 text-muted-foreground">
                     Background Style
                   </label>
-                  <div className="grid grid-cols-3 gap-[6px]">
+                  <div className="grid grid-cols-3 gap-1.5">
                     {[
                       { id: "solid", label: "Solid" },
                       { id: "gradient", label: "Grad" },
@@ -1191,7 +1191,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <button
                         key={opt.id}
                         onClick={() => setBackgroundStyle(opt.id as "solid" | "gradient" | "mesh")}
-                        className="py-[8px] rounded-[8px] border text-[9px] font-mono uppercase tracking-[0.05em] cursor-pointer"
+                        className="py-2 rounded-lg border text-[9px] font-mono uppercase tracking-wider cursor-pointer"
                         style={{
                           background: backgroundStyle === opt.id ? "var(--bg)" : "transparent",
                           borderColor: backgroundStyle === opt.id ? ACCENT : "var(--rule)",
@@ -1205,15 +1205,15 @@ export default function CarouselLabPage(): React.ReactElement {
                 </div>
 
                 {/* Typography select */}
-                <div className="space-y-[12px]">
+                <div className="space-y-3">
                   <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                    <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                       Title Font
                     </label>
                     <select
                       value={fontTitle}
                       onChange={(e) => setFontTitle(e.target.value)}
-                      className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                      className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none"
                     >
                       {FONTS_LIST.map((f) => (
                         <option key={f.name} value={f.value}>
@@ -1224,13 +1224,13 @@ export default function CarouselLabPage(): React.ReactElement {
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                    <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                       Body Font
                     </label>
                     <select
                       value={fontBody}
                       onChange={(e) => setFontBody(e.target.value)}
-                      className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[12px] outline-none"
+                      className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[12px] outline-none"
                     >
                       {FONTS_LIST.map((f) => (
                         <option key={f.name} value={f.value}>
@@ -1242,36 +1242,36 @@ export default function CarouselLabPage(): React.ReactElement {
                 </div>
 
                 {/* Color Pickers */}
-                <div className="space-y-[12px]">
-                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                <div className="space-y-3">
+                  <label className="block font-mono text-[9px] tracking-widest uppercase text-muted-foreground">
                     Color Overrides
                   </label>
-                  <div className="grid grid-cols-3 gap-[8px]">
-                    <div className="space-y-[4px]">
-                      <div className="text-[8px] font-mono text-[var(--ink-3)]">BG</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1">
+                      <div className="text-[8px] font-mono text-muted-foreground">BG</div>
                       <input
                         type="color"
                         value={activeBg}
                         onChange={(e) => handleSetCustomBg(e.target.value)}
-                        className="w-full h-[32px] rounded-[6px] border-none bg-transparent cursor-pointer"
+                        className="w-full h-8 rounded-md border-none bg-transparent cursor-pointer"
                       />
                     </div>
-                    <div className="space-y-[4px]">
-                      <div className="text-[8px] font-mono text-[var(--ink-3)]">Text</div>
+                    <div className="space-y-1">
+                      <div className="text-[8px] font-mono text-muted-foreground">Text</div>
                       <input
                         type="color"
                         value={activeText}
                         onChange={(e) => handleSetCustomText(e.target.value)}
-                        className="w-full h-[32px] rounded-[6px] border-none bg-transparent cursor-pointer"
+                        className="w-full h-8 rounded-md border-none bg-transparent cursor-pointer"
                       />
                     </div>
-                    <div className="space-y-[4px]">
-                      <div className="text-[8px] font-mono text-[var(--ink-3)]">Accent</div>
+                    <div className="space-y-1">
+                      <div className="text-[8px] font-mono text-muted-foreground">Accent</div>
                       <input
                         type="color"
                         value={activeAccent}
                         onChange={(e) => handleSetCustomAccent(e.target.value)}
-                        className="w-full h-[32px] rounded-[6px] border-none bg-transparent cursor-pointer"
+                        className="w-full h-8 rounded-md border-none bg-transparent cursor-pointer"
                       />
                     </div>
                   </div>
@@ -1287,7 +1287,7 @@ export default function CarouselLabPage(): React.ReactElement {
                           localStorage.removeItem("carousel_lab_custom_accent");
                         } catch {}
                       }}
-                      className="mt-[8px] w-full h-[28px] rounded-[6px] font-mono text-[8px] tracking-[0.08em] uppercase font-semibold border border-dashed transition-all hover:bg-[var(--bg)] cursor-pointer"
+                      className="mt-2 w-full h-7 rounded-md font-mono text-[8px] tracking-[0.08em] uppercase font-semibold border border-dashed transition-all hover:bg-(--bg) cursor-pointer"
                       style={{ borderColor: "var(--rule)", color: "var(--ink-3)" }}
                     >
                       Reset to Mood Defaults
@@ -1298,20 +1298,20 @@ export default function CarouselLabPage(): React.ReactElement {
             </div>
 
             {/* Center Panel (Live Slide Preview Mockup) */}
-            <div className="space-y-[24px]">
+            <div className="space-y-6">
               {/* Toolbar */}
-              <div className="flex items-center justify-between border-b pb-[14px] border-[var(--rule)] flex-wrap gap-[12px]">
-                <div className="flex items-center gap-[10px]">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.05em] text-[var(--ink)]">
+              <div className="flex items-center justify-between border-b pb-3.5 border-(--rule) flex-wrap gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-(--ink)">
                     Slide {activeSlideIndex + 1} of {slides.length}
                   </span>
                 </div>
-                <div className="flex items-center gap-[8px] flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap">
                   <button
                     type="button"
                     onClick={exportSlideAsPNG}
                     disabled={!!exportLoading}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border border-(--rule) bg-transparent text-(--ink) cursor-pointer hover:border-secondary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Download size={11} />
                     {exportLoading === "png" ? "Saving…" : "This Slide PNG"}
@@ -1320,7 +1320,7 @@ export default function CarouselLabPage(): React.ReactElement {
                     type="button"
                     onClick={() => void exportAllAsZip()}
                     disabled={!!exportLoading}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink)] cursor-pointer hover:border-[var(--ink-2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border border-(--rule) bg-transparent text-(--ink) cursor-pointer hover:border-secondary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Layers size={11} />
                     {exportLoading === "zip" ? "Zipping…" : "All Slides ZIP"}
@@ -1329,7 +1329,7 @@ export default function CarouselLabPage(): React.ReactElement {
                     type="button"
                     onClick={() => void exportAsPDF()}
                     disabled={!!exportLoading}
-                    className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none text-white cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border-none text-white cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ background: ACCENT }}
                   >
                     <FileText size={11} />
@@ -1340,11 +1340,11 @@ export default function CarouselLabPage(): React.ReactElement {
 
               {/* Slide Layout Selector (Apply to active slide) */}
               {activeSlide && (
-                <div className="p-[16px] rounded-[12px] border border-[var(--rule)] bg-[var(--bg-2)]">
-                  <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[8px] text-[var(--ink-3)]">
+                <div className="p-4 rounded-xl border border-(--rule) bg-(--bg-2)">
+                  <label className="block font-mono text-[9px] tracking-widest uppercase mb-2 text-muted-foreground">
                     Active Slide Template Layout
                   </label>
-                  <div className="grid grid-cols-6 gap-[6px] max-[480px]:grid-cols-2">
+                  <div className="grid grid-cols-6 gap-1.5 max-[480px]:grid-cols-2">
                     {[
                       { id: "default", label: "Default" },
                       { id: "hook", label: "Hook Cover" },
@@ -1356,7 +1356,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       <button
                         key={opt.id}
                         onClick={() => updateActiveSlide("layout", opt.id)}
-                        className="py-[8px] rounded-[6px] border text-[9px] font-mono uppercase tracking-[0.05em] cursor-pointer"
+                        className="py-2 rounded-md border text-[9px] font-mono uppercase tracking-wider cursor-pointer"
                         style={{
                           background: (activeSlide.layout || "default") === opt.id ? "var(--bg)" : "transparent",
                           borderColor: (activeSlide.layout || "default") === opt.id ? ACCENT : "var(--rule)",
@@ -1371,16 +1371,16 @@ export default function CarouselLabPage(): React.ReactElement {
               )}
 
               {/* Device Mockup Wrapper */}
-              <div className="flex items-center justify-center p-[20px] rounded-[24px] border border-[var(--rule)] bg-[color-mix(in_oklab,var(--bg)_80%,var(--bg-2))] min-h-[500px] relative overflow-hidden">
+              <div className="flex items-center justify-center p-5 rounded-3xl border border-(--rule) bg-[color-mix(in_oklab,var(--bg)_80%,var(--bg-2))] min-h-[500px] relative overflow-hidden">
                 {/* Ambient glowing circles if mesh background style selected */}
                 {backgroundStyle === "mesh" && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
                     <div
-                      className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px]"
+                      className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-20"
                       style={{ background: activeAccent }}
                     />
                     <div
-                      className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full blur-[80px]"
+                      className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full blur-20"
                       style={{ background: activeText }}
                     />
                   </div>
@@ -1388,7 +1388,7 @@ export default function CarouselLabPage(): React.ReactElement {
 
                 {activeSlide && (
                   <div
-                    className="shadow-2xl overflow-hidden flex flex-col justify-between p-[36px] relative select-none transition-all duration-300 border"
+                    className="shadow-2xl overflow-hidden flex flex-col justify-between p-9 relative select-none transition-all duration-300 border"
                     style={{
                       background: backgroundStyle === "gradient"
                         ? `linear-gradient(135deg, ${activeBg} 0%, ${activeAccent}18 100%)`
@@ -1403,32 +1403,32 @@ export default function CarouselLabPage(): React.ReactElement {
                   >
                     {/* Header Branding (Header top) */}
                     {showBranding && (activeSlide.layout || "default") !== "cta" && (
-                      <div className="flex items-center justify-between border-b pb-[10px]" style={{ borderColor: activeBorder }}>
-                        <div className="flex items-center gap-[8px]">
+                      <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: activeBorder }}>
+                        <div className="flex items-center gap-2">
                           {/* Logo badge */}
                           <div
-                            className="w-[28px] h-[28px] rounded-[8px] flex items-center justify-center text-[12px] font-bold"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-[12px] font-bold"
                             style={{ background: activeAccent + "20", color: activeAccent }}
                           >
                             🕮
                           </div>
-                          <div className="text-[12px] font-bold tracking-[0.1em] uppercase" style={{ color: activeAccent }}>
+                          <div className="text-[12px] font-bold tracking-widest uppercase" style={{ color: activeAccent }}>
                             {logoText}
                           </div>
                         </div>
                         {/* Tagline */}
-                        <div className="font-mono text-[9px] tracking-[0.05em] uppercase" style={{ color: activeText + "80" }}>
+                        <div className="font-mono text-[9px] tracking-wider uppercase" style={{ color: activeText + "80" }}>
                           {topRightTag}
                         </div>
                       </div>
                     )}
 
                     {/* Middle Card layouts based on active layout type */}
-                    <div className="flex-1 flex flex-col justify-center py-[10px]">
+                    <div className="flex-1 flex flex-col justify-center py-2.5">
                       {(activeSlide.layout || "default") === "hook" && (
                         <div>
                           <h3
-                            className="font-bold leading-[1.15] tracking-[-0.03em] mb-[12px] m-0"
+                            className="font-bold leading-[1.15] tracking-[-0.03em] mb-3 m-0"
                             style={{
                               fontFamily: activeFontTitle,
                               fontSize: "clamp(22px,3.5vw,30px)",
@@ -1451,8 +1451,8 @@ export default function CarouselLabPage(): React.ReactElement {
                       )}
 
                       {(activeSlide.layout || "default") === "split" && (
-                        <div className="grid grid-cols-2 h-full items-center gap-[12px] -mx-[36px] my-0 px-[36px] bg-[color-mix(in_oklab,var(--bg-2)_20%,transparent)]">
-                          <div className="h-full flex items-center border-r pr-[12px]" style={{ borderColor: activeBorder }}>
+                        <div className="grid grid-cols-2 h-full items-center gap-3 -mx-9 my-0 px-9 bg-[color-mix(in_oklab,var(--bg-2)_20%,transparent)]">
+                          <div className="h-full flex items-center border-r pr-3" style={{ borderColor: activeBorder }}>
                             <h3
                               className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
                               style={{
@@ -1464,9 +1464,9 @@ export default function CarouselLabPage(): React.ReactElement {
                               {activeSlide.title}
                             </h3>
                           </div>
-                          <div className="pl-[4px]">
+                          <div className="pl-1">
                             <p
-                              className="text-[12px] leading-[1.5] m-0 font-sans"
+                              className="text-[12px] leading-normal m-0 font-sans"
                               style={{
                                 fontFamily: activeFontBody,
                                 color: activeText,
@@ -1479,10 +1479,10 @@ export default function CarouselLabPage(): React.ReactElement {
                       )}
 
                       {(activeSlide.layout || "default") === "quote" && (
-                        <div className="relative space-y-[12px]">
-                          <Quote className="absolute -top-[24px] -left-[16px] opacity-10" size={56} style={{ color: activeAccent }} />
+                        <div className="relative space-y-3">
+                          <Quote className="absolute -top-6 -left-4 opacity-10" size={56} style={{ color: activeAccent }} />
                           <p
-                            className="text-[16px] leading-[1.6] italic m-0 font-medium pl-[12px]"
+                            className="text-[16px] leading-[1.6] italic m-0 font-medium pl-3"
                             style={{
                               fontFamily: activeFontTitle,
                               color: activeText,
@@ -1493,9 +1493,9 @@ export default function CarouselLabPage(): React.ReactElement {
                           
                           {/* Quote Badge Reference */}
                           {activeSlide.title && (
-                            <div className="pt-[4px]">
+                            <div className="pt-1">
                               <span
-                                className="inline-block px-[14px] py-[6px] rounded-full border text-[10px] font-mono font-bold tracking-[0.1em] uppercase"
+                                className="inline-block px-3.5 py-1.5 rounded-full border text-[10px] font-mono font-bold tracking-widest uppercase"
                                 style={{ borderColor: activeAccent + "40", color: activeAccent }}
                               >
                                 {activeSlide.title}
@@ -1506,8 +1506,8 @@ export default function CarouselLabPage(): React.ReactElement {
                       )}
 
                       {(activeSlide.layout || "default") === "metrics" && (
-                        <div className="space-y-[8px]">
-                          <div className="font-mono text-[56px] font-bold leading-[1]" style={{ color: activeAccent }}>
+                        <div className="space-y-2">
+                          <div className="font-mono text-[56px] font-bold leading-none" style={{ color: activeAccent }}>
                             0{activeSlideIndex + 1}
                           </div>
                           <h3
@@ -1521,7 +1521,7 @@ export default function CarouselLabPage(): React.ReactElement {
                             {activeSlide.title}
                           </h3>
                           <p
-                            className="text-[13px] leading-[1.5] m-0 font-sans"
+                            className="text-[13px] leading-normal m-0 font-sans"
                             style={{
                               fontFamily: activeFontBody,
                               color: activeSubtext,
@@ -1533,26 +1533,26 @@ export default function CarouselLabPage(): React.ReactElement {
                       )}
 
                       {(activeSlide.layout || "default") === "cta" && (
-                        <div className="text-center space-y-[20px] p-[20px] rounded-[16px]" style={{ background: activeAccent + "08" }}>
+                        <div className="text-center space-y-5 p-5 rounded-2xl" style={{ background: activeAccent + "08" }}>
                           {/* Centered initials avatar */}
                           <div
-                            className="w-[60px] h-[60px] rounded-full mx-auto flex items-center justify-center text-[18px] font-bold shadow-sm"
+                            className="w-15 h-15 rounded-full mx-auto flex items-center justify-center text-[18px] font-bold shadow-sm"
                             style={{ background: activeAccent, color: activeBg }}
                           >
                             {creatorName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
                           </div>
                           <div>
-                            <h3 className="text-[20px] font-bold m-0 mb-[4px]" style={{ fontFamily: activeFontTitle, color: activeText }}>
+                            <h3 className="text-[20px] font-bold m-0 mb-1" style={{ fontFamily: activeFontTitle, color: activeText }}>
                               {activeSlide.title || "Let's connect!"}
                             </h3>
-                            <p className="text-[12px] leading-[1.5] m-0" style={{ fontFamily: activeFontBody, color: activeSubtext }}>
+                            <p className="text-[12px] leading-normal m-0" style={{ fontFamily: activeFontBody, color: activeSubtext }}>
                               {activeSlide.content || "Follow for daily guides and resources."}
                             </p>
                           </div>
                           {/* Giant link CTA button */}
                           <div>
                             <span
-                              className="inline-block px-[24px] py-[10px] rounded-full text-[13px] font-bold font-mono tracking-[0.05em] shadow-sm uppercase"
+                              className="inline-block px-6 py-2.5 rounded-full text-[13px] font-bold font-mono tracking-wider shadow-sm uppercase"
                               style={{ background: activeAccent, color: activeBg }}
                             >
                               {creatorHandle.toLowerCase()}
@@ -1564,7 +1564,7 @@ export default function CarouselLabPage(): React.ReactElement {
                       {(activeSlide.layout || "default") === "default" && (
                         <div>
                           <h3
-                            className="font-bold leading-[1.2] tracking-[-0.03em] mb-[10px] m-0"
+                            className="font-bold leading-[1.2] tracking-[-0.03em] mb-2.5 m-0"
                             style={{
                               fontFamily: activeFontTitle,
                               fontSize: "24px",
@@ -1583,7 +1583,7 @@ export default function CarouselLabPage(): React.ReactElement {
                             {activeSlide.content}
                           </p>
                           {activeSlide.emoji && (
-                            <div className="text-[40px] mt-[16px]">{activeSlide.emoji}</div>
+                            <div className="text-[40px] mt-4">{activeSlide.emoji}</div>
                           )}
                         </div>
                       )}
@@ -1591,12 +1591,12 @@ export default function CarouselLabPage(): React.ReactElement {
 
                     {/* Divider Line */}
                     {activeDivider && (activeSlide.layout || "default") !== "split" && (
-                      <div className="h-[1px] w-full" style={{ background: activeBorder }} />
+                      <div className="h-0.25 w-full" style={{ background: activeBorder }} />
                     )}
 
                     {/* Footer indicators */}
-                    <div className="flex items-center justify-between pt-[6px]">
-                      <span className="font-mono text-[10px] tracking-[0.05em] font-semibold" style={{ color: activeText + "80" }}>
+                    <div className="flex items-center justify-between pt-1.5">
+                      <span className="font-mono text-[10px] tracking-wider font-semibold" style={{ color: activeText + "80" }}>
                         {creatorName}
                       </span>
                       <span className="font-mono text-[11px] font-bold" style={{ color: activeText }}>
@@ -1608,21 +1608,21 @@ export default function CarouselLabPage(): React.ReactElement {
               </div>
 
               {/* Slider Nav controls */}
-              <div className="flex items-center justify-between bg-[var(--bg-2)] p-[12px] rounded-[12px] border border-[var(--rule)]">
+              <div className="flex items-center justify-between bg-(--bg-2) p-3 rounded-xl border border-(--rule)">
                 <button
                   disabled={activeSlideIndex === 0}
                   onClick={() => setActiveSlideIndex((prev) => prev - 1)}
-                  className="w-[36px] h-[36px] flex items-center justify-center rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer disabled:opacity-30"
+                  className="w-9 h-9 flex items-center justify-center rounded-lg border border-(--rule) bg-transparent cursor-pointer disabled:opacity-30"
                 >
                   <ChevronLeft size={16} />
                 </button>
 
-                <div className="flex gap-[4px] flex-wrap justify-center">
+                <div className="flex gap-1 flex-wrap justify-center">
                   {slides.map((_, idx) => (
                     <button
                       key={idx}
                       onClick={() => setActiveSlideIndex(idx)}
-                      className="w-[28px] h-[28px] rounded-[6px] font-mono text-[10px] border cursor-pointer font-semibold"
+                      className="w-7 h-7 rounded-md font-mono text-[10px] border cursor-pointer font-semibold"
                       style={{
                         background: idx === activeSlideIndex ? ACCENT : "transparent",
                         borderColor: idx === activeSlideIndex ? ACCENT : "var(--rule)",
@@ -1637,7 +1637,7 @@ export default function CarouselLabPage(): React.ReactElement {
                 <button
                   disabled={activeSlideIndex === slides.length - 1}
                   onClick={() => setActiveSlideIndex((prev) => prev + 1)}
-                  className="w-[36px] h-[36px] flex items-center justify-center rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer disabled:opacity-30"
+                  className="w-9 h-9 flex items-center justify-center rounded-lg border border-(--rule) bg-transparent cursor-pointer disabled:opacity-30"
                 >
                   <ChevronRight size={16} />
                 </button>
@@ -1645,25 +1645,25 @@ export default function CarouselLabPage(): React.ReactElement {
 
               {/* Quick Slide content inline editing fields */}
               {activeSlide && (
-                <div className="rounded-[16px] p-[24px] border border-[var(--rule)] bg-[var(--bg-2)] space-y-[16px]">
-                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] border-b pb-[10px] border-[var(--rule)]">
+                <div className="rounded-2xl p-6 border border-(--rule) bg-(--bg-2) space-y-4">
+                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground border-b pb-2.5 border-(--rule)">
                     Edit Slide Content
                   </div>
 
-                  <div className="grid grid-cols-[1fr_auto] gap-[12px]">
+                  <div className="grid grid-cols-[1fr_auto] gap-3">
                     <div>
-                      <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                         Slide Title / Badge
                       </label>
                       <input
                         type="text"
                         value={activeSlide.title}
                         onChange={(e) => updateActiveSlide("title", e.target.value)}
-                        className="w-full h-[36px] px-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[13px] outline-none focus:border-[var(--ink-3)]"
+                        className="w-full h-9 px-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[13px] outline-none focus:border-muted-foreground"
                       />
                     </div>
                     <div>
-                      <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                      <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                         Emoji
                       </label>
                       <input
@@ -1671,20 +1671,20 @@ export default function CarouselLabPage(): React.ReactElement {
                         maxLength={4}
                         value={activeSlide.emoji || ""}
                         onChange={(e) => updateActiveSlide("emoji", e.target.value)}
-                        className="w-[60px] h-[36px] text-center rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[16px] outline-none focus:border-[var(--ink-3)]"
+                        className="w-15 h-9 text-center rounded-lg border border-(--rule) bg-(--bg) text-[16px] outline-none focus:border-muted-foreground"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[9px] tracking-[0.1em] uppercase mb-[6px] text-[var(--ink-3)]">
+                    <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
                       Slide Description / Body
                     </label>
                     <textarea
                       value={activeSlide.content}
                       onChange={(e) => updateActiveSlide("content", e.target.value)}
                       rows={4}
-                      className="w-full p-[10px] rounded-[8px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] text-[13px] outline-none focus:border-[var(--ink-3)] resize-none"
+                      className="w-full p-2.5 rounded-lg border border-(--rule) bg-(--bg) text-(--ink) text-[13px] outline-none focus:border-muted-foreground resize-none"
                     />
                   </div>
                 </div>
@@ -1692,43 +1692,43 @@ export default function CarouselLabPage(): React.ReactElement {
             </div>
 
             {/* Right Panel (All slides list) */}
-            <div className="space-y-[16px] max-[1120px]:col-span-2 max-[800px]:col-span-1">
+            <div className="space-y-4 max-[1120px]:col-span-2 max-[800px]:col-span-1">
               <div className="flex items-center justify-between">
-                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
                   Slide Stack
                 </div>
                 <button
                   onClick={addSlide}
-                  className="inline-flex items-center gap-[4px] font-mono text-[9px] uppercase tracking-[0.08em] font-semibold text-[var(--ink)] cursor-pointer bg-transparent border-none"
+                  className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] font-semibold text-(--ink) cursor-pointer bg-transparent border-none"
                 >
                   <Plus size={10} /> Add Slide
                 </button>
               </div>
 
-              <div className="space-y-[12px] max-h-[580px] overflow-y-auto pr-[4px]">
+              <div className="space-y-3 max-h-145 overflow-y-auto pr-1">
                 {slides.map((s, idx) => {
                   const isActive = idx === activeSlideIndex;
                   return (
                     <div
                       key={idx}
                       onClick={() => setActiveSlideIndex(idx)}
-                      className="group/item relative rounded-[12px] p-[14px] border cursor-pointer transition-all flex flex-col justify-between"
+                      className="group/item relative rounded-xl p-3.5 border cursor-pointer transition-all flex flex-col justify-between"
                       style={{
                         background: isActive ? "var(--bg-2)" : "var(--bg)",
                         borderColor: isActive ? ACCENT : "var(--rule)",
                       }}
                     >
-                      <div className="flex items-start justify-between gap-[8px] mb-[6px]">
-                        <div className="font-mono text-[9px] text-[var(--ink-3)]">
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <div className="font-mono text-[9px] text-muted-foreground">
                           Slide {idx + 1} · <span className="capitalize">{s.layout || "default"}</span>
                         </div>
-                        <div className="flex items-center gap-[4px] opacity-0 group-hover/item:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               duplicateSlide(idx);
                             }}
-                            className="w-[20px] h-[20px] flex items-center justify-center rounded border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)]"
+                            className="w-5 h-5 flex items-center justify-center rounded border-none bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink)"
                             title="Duplicate"
                           >
                             <Copy size={10} />
@@ -1739,17 +1739,17 @@ export default function CarouselLabPage(): React.ReactElement {
                               e.stopPropagation();
                               deleteSlide(idx);
                             }}
-                            className="w-[20px] h-[20px] flex items-center justify-center rounded border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-red-500 disabled:opacity-30"
+                            className="w-5 h-5 flex items-center justify-center rounded border-none bg-transparent cursor-pointer text-muted-foreground hover:text-red-500 disabled:opacity-30"
                             title="Delete"
                           >
                             <Trash2 size={10} />
                           </button>
                         </div>
                       </div>
-                      <div className="text-[12px] font-semibold text-[var(--ink)] truncate mb-[2px]">
+                      <div className="text-[12px] font-semibold text-(--ink) truncate mb-0.5">
                         {s.title}
                       </div>
-                      <div className="text-[11px] text-[var(--ink-3)] line-clamp-1 font-sans">
+                      <div className="text-[11px] text-muted-foreground line-clamp-1 font-sans">
                         {s.content}
                       </div>
                     </div>

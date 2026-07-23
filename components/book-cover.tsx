@@ -25,7 +25,7 @@ function hashHue(input: string): number {
 // gradient derived from the title's hash (so it's stable per-book) when the
 // cover is missing OR fails to load. Mixed with var(--bg-2) so the gradient's
 // overall tone tracks light/dark theme automatically.
-export function BookCover({ title, coverUrl, className = "", titleSize = 15 }: Props): React.ReactElement {
+export function BookCover({ title, coverUrl, className="", titleSize = 15 }: Props): React.ReactElement {
   const [failed, setFailed] = useState(false);
   const showImage = coverUrl && !failed;
 
@@ -46,13 +46,13 @@ export function BookCover({ title, coverUrl, className = "", titleSize = 15 }: P
 
   return (
     <div
-      className={`absolute inset-0 flex items-end p-[14px] ${className}`}
+      className={`absolute inset-0 flex items-end p-3.5 ${className}`}
       style={{
         background: `linear-gradient(135deg, color-mix(in oklch, oklch(0.72 0.12 ${hue}) 62%, var(--bg-2)) 0%, color-mix(in oklch, oklch(0.52 0.15 ${hue2}) 62%, var(--bg-2)) 100%)`,
       }}
     >
       <span
-        className="font-display font-normal leading-[1.15] tracking-[-0.01em] text-[var(--ink)] line-clamp-4"
+        className="font-display font-normal leading-[1.15] tracking-[-0.01em] text-(--ink) line-clamp-4"
         style={{ fontSize: `${titleSize}px` }}
       >
         {title}

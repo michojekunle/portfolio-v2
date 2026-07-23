@@ -53,14 +53,14 @@ type SelectableCardsProps = {
 
 function SelectableCards({ options, selected, onSelect }: SelectableCardsProps): React.ReactElement {
   return (
-    <div className="space-y-[10px] pt-[8px]">
+    <div className="space-y-2.5 pt-2">
       {options.map((opt) => {
         const isSelected = selected === opt.id;
         return (
           <button
             key={opt.id}
             onClick={() => onSelect(opt.id)}
-            className="w-full h-[54px] rounded-[12px] border px-[16px] flex items-center gap-[12px] cursor-pointer transition-all text-left bg-[var(--bg)] hover:border-[var(--ink-3)]"
+            className="w-full h-[54px] rounded-xl border px-4 flex items-center gap-3 cursor-pointer transition-all text-left bg-(--bg) hover:border-muted-foreground"
             style={
               isSelected
                 ? { borderColor: ACCENT, background: ACCENT + "15", color: ACCENT }
@@ -210,9 +210,9 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
   const progress = ((Math.min(step, INPUT_STEP_COUNT) + 1) / (INPUT_STEP_COUNT + 1)) * 100;
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col items-center justify-center p-[24px]">
-      <div className="w-full max-w-[580px] bg-[var(--bg-2)] border border-[var(--rule)] rounded-[24px] p-[40px] max-[480px]:p-[24px] shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-[4px] bg-[var(--rule)]">
+    <div className="min-h-screen bg-(--bg) text-(--ink) flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-145 bg-(--bg-2) border border-(--rule) rounded-3xl p-10 max-[480px]:p-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-(--rule)">
           <motion.div
             className="h-full"
             style={{ backgroundColor: ACCENT }}
@@ -222,7 +222,7 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
           />
         </div>
 
-        <div className="flex items-center gap-[8px] mb-[32px] opacity-60">
+        <div className="flex items-center gap-2 mb-8 opacity-60">
           <Wallet size={18} style={{ color: ACCENT }} />
           <span className="font-mono text-[9px] tracking-[0.16em] uppercase">
             Flowise Setup
@@ -231,12 +231,12 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
 
         <AnimatePresence mode="wait">
           {step === 0 && (
-            <motion.div key="step0" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-[24px]">
+            <motion.div key="step0" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-6">
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   Where does your money come from?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   This helps us tailor budgets to how your income actually works.
                 </p>
               </div>
@@ -245,12 +245,12 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
           )}
 
           {step === 1 && (
-            <motion.div key="step1" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-[24px]">
+            <motion.div key="step1" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-6">
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   Roughly what do you bring in monthly?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   Just a range — this only sizes your starter budget, you can edit everything after.
                 </p>
               </div>
@@ -259,12 +259,12 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
           )}
 
           {step === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-[24px]">
+            <motion.div key="step2" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-6">
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   What's your main money goal right now?
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   We'll weight your starter plan toward this.
                 </p>
               </div>
@@ -273,12 +273,12 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
           )}
 
           {currentQuizQuestion && (
-            <motion.div key={`quiz-${currentQuizQuestion.id}`} initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-[24px]">
+            <motion.div key={`quiz-${currentQuizQuestion.id}`} initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-6">
               <div>
                 <h1 className="text-[28px] max-[480px]:text-[22px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                   {currentQuizQuestion.question}
                 </h1>
-                <p className="text-[14px] text-[var(--ink-3)] mt-[8px]">
+                <p className="text-[14px] text-muted-foreground mt-2">
                   Quick gut-check question {step - 2} of {PERSONA_QUIZ.length} — there's no wrong answer.
                 </p>
               </div>
@@ -291,22 +291,22 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
           )}
 
           {step === INPUT_STEP_COUNT && results && (
-            <motion.div key="results" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-[20px]">
+            <motion.div key="results" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-5">
               <div>
-                <div className="flex items-center gap-[8px] mb-[8px]">
+                <div className="flex items-center gap-2 mb-2">
                   <span className="text-[22px]">{PERSONA_CONFIG[results.persona].icon}</span>
                   <h1 className="text-[24px] max-[480px]:text-[20px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                     You're {PERSONA_CONFIG[results.persona].label}
                   </h1>
                 </div>
-                <p className="text-[13px] text-[var(--ink-3)]">{results.welcome_message}</p>
+                <p className="text-[13px] text-muted-foreground">{results.welcome_message}</p>
               </div>
 
               <div>
-                <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[10px]">
+                <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mb-2.5">
                   Starter budgets — pick what to keep
                 </div>
-                <div className="space-y-[8px]">
+                <div className="space-y-2">
                   {results.budgets.map((b, idx) => {
                     const cat = SYSTEM_CATEGORIES.find((c) => c.id === b.category_id);
                     const isSelected = selectedBudgets.has(idx);
@@ -314,18 +314,18 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
                       <button
                         key={idx}
                         onClick={() => toggleBudget(idx)}
-                        className="w-full h-[48px] rounded-[10px] border px-[14px] flex items-center justify-between cursor-pointer transition-all bg-[var(--bg)] hover:border-[var(--ink-3)]"
+                        className="w-full h-12 rounded-[10px] border px-3.5 flex items-center justify-between cursor-pointer transition-all bg-(--bg) hover:border-muted-foreground"
                         style={isSelected ? { borderColor: ACCENT, background: ACCENT + "10" } : { borderColor: "var(--rule)" }}
                       >
-                        <span className="flex items-center gap-[8px] text-[13px] font-medium">
+                        <span className="flex items-center gap-2 text-[13px] font-medium">
                           <span>{cat?.icon}</span> {cat?.name ?? b.category_id}
                         </span>
-                        <span className="flex items-center gap-[8px]">
-                          <span className="font-mono text-[11px] text-[var(--ink-3)]">
+                        <span className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] text-muted-foreground">
                             {CURRENCY_SYMBOLS[CURRENCY]}{b.amount.toLocaleString()}
                           </span>
                           <span
-                            className="w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center"
+                            className="w-4.5 h-4.5 rounded-[5px] border flex items-center justify-center"
                             style={isSelected ? { borderColor: ACCENT, background: ACCENT } : { borderColor: "var(--rule)" }}
                           >
                             {isSelected && <Check size={11} color="#fff" />}
@@ -339,26 +339,26 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
 
               {results.goals.length > 0 && (
                 <div>
-                  <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[10px]">
+                  <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mb-2.5">
                     Starter goals — pick what to keep
                   </div>
-                  <div className="space-y-[8px]">
+                  <div className="space-y-2">
                     {results.goals.map((g, idx) => {
                       const isSelected = selectedGoals.has(idx);
                       return (
                         <button
                           key={idx}
                           onClick={() => toggleGoal(idx)}
-                          className="w-full h-[48px] rounded-[10px] border px-[14px] flex items-center justify-between cursor-pointer transition-all bg-[var(--bg)] hover:border-[var(--ink-3)]"
+                          className="w-full h-12 rounded-[10px] border px-3.5 flex items-center justify-between cursor-pointer transition-all bg-(--bg) hover:border-muted-foreground"
                           style={isSelected ? { borderColor: ACCENT, background: ACCENT + "10" } : { borderColor: "var(--rule)" }}
                         >
                           <span className="text-[13px] font-medium">{g.name}</span>
-                          <span className="flex items-center gap-[8px]">
-                            <span className="font-mono text-[11px] text-[var(--ink-3)]">
+                          <span className="flex items-center gap-2">
+                            <span className="font-mono text-[11px] text-muted-foreground">
                               {CURRENCY_SYMBOLS[CURRENCY]}{g.target_amount.toLocaleString()}
                             </span>
                             <span
-                              className="w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center"
+                              className="w-4.5 h-4.5 rounded-[5px] border flex items-center justify-center"
                               style={isSelected ? { borderColor: ACCENT, background: ACCENT } : { borderColor: "var(--rule)" }}
                             >
                               {isSelected && <Check size={11} color="#fff" />}
@@ -375,16 +375,16 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
         </AnimatePresence>
 
         {error && (
-          <div className="mt-[20px] p-[12px] rounded-[8px] text-[12px] bg-red-500/10 border border-red-500/20 text-red-500">
+          <div className="mt-5 p-3 rounded-lg text-[12px] bg-red-500/10 border border-red-500/20 text-red-500">
             {error}
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-[40px] pt-[20px] border-t border-[var(--rule)]">
+        <div className="flex items-center justify-between mt-10 pt-5 border-t border-(--rule)">
           <button
             onClick={handleBack}
             disabled={step === 0 || submitting || finishing}
-            className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] bg-transparent border-none cursor-pointer disabled:opacity-30 transition-all"
+            className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase text-muted-foreground hover:text-(--ink) bg-transparent border-none cursor-pointer disabled:opacity-30 transition-all"
           >
             <ArrowLeft size={14} /> Back
           </button>
@@ -393,7 +393,7 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
             <button
               onClick={handleNext}
               disabled={!canAdvance() || submitting}
-              className="h-[40px] px-[20px] rounded-[10px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold text-white cursor-pointer border-none flex items-center gap-[6px] transition-all hover:opacity-90 disabled:opacity-50"
+              className="h-10 px-5 rounded-[10px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold text-white cursor-pointer border-none flex items-center gap-1.5 transition-all hover:opacity-90 disabled:opacity-50"
               style={{ background: ACCENT }}
             >
               {submitting ? (
@@ -414,7 +414,7 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
             <button
               onClick={() => void handleFinish()}
               disabled={finishing}
-              className="h-[40px] px-[20px] rounded-[10px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold text-white cursor-pointer border-none flex items-center gap-[6px] transition-all hover:opacity-90 disabled:opacity-50"
+              className="h-10 px-5 rounded-[10px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold text-white cursor-pointer border-none flex items-center gap-1.5 transition-all hover:opacity-90 disabled:opacity-50"
               style={{ background: ACCENT }}
             >
               {finishing ? <Loader2 size={14} className="animate-spin" /> : <>Finish Setup <Check size={14} /></>}

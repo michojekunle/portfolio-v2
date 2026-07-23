@@ -13,22 +13,22 @@ export function NewsletterCTA({
 }: NewsletterCTAProps): React.ReactElement {
   if (compact) {
     return (
-      <div className="p-[24px] bg-[var(--bg-2)] border border-[var(--rule)] rounded-[16px]">
-        <h4 className="m-0 font-display text-[20px] font-normal text-[var(--ink)] mb-[8px] fvs-text">{title}</h4>
-        <p className="text-[14px] text-[var(--ink-2)] leading-[1.5] mb-[20px]">{description}</p>
+      <div className="p-6 bg-(--bg-2) border border-(--rule) rounded-2xl">
+        <h4 className="m-0 font-display text-[20px] font-normal text-(--ink) mb-2 fvs-text">{title}</h4>
+        <p className="text-[14px] text-secondary-foreground leading-normal mb-5">{description}</p>
         <NewsletterForm />
       </div>
     )
   }
 
   return (
-    <div id="newsletter" className="py-[80px] px-[var(--gutter)] bg-[var(--bg-2)] border-y border-[var(--rule)] text-center">
+    <div id="newsletter" className="py-20 px-(--gutter) bg-(--bg-2) border-y border-(--rule) text-center">
       <div className="max-w-[500px] mx-auto flex flex-col items-center">
-        <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--v3-accent)] mb-[24px] font-bold">Newsletter</div>
-        <h2 className="m-0 font-display text-[clamp(32px,5vw,48px)] font-normal text-[var(--ink)] leading-[1.1] tracking-[-0.03em] mb-[16px] fvs-display">
+        <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-(--v3-accent) mb-6 font-bold">Newsletter</div>
+        <h2 className="m-0 font-display text-[clamp(32px,5vw,48px)] font-normal text-(--ink) leading-[1.1] tracking-[-0.03em] mb-4 fvs-display">
           {title}
         </h2>
-        <p className="text-[17px] text-[var(--ink-2)] leading-[1.6] mb-[40px] text-balance">
+        <p className="text-[17px] text-secondary-foreground leading-[1.6] mb-10 text-balance">
           {description}
         </p>
         <NewsletterForm />

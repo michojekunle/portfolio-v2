@@ -69,7 +69,7 @@ async function queueEntryLocally(
 function SectionLabel({ children }: { children: React.ReactNode }): React.ReactElement {
   return (
     <div
-      className="font-mono text-[10px] tracking-[0.14em] uppercase mb-[12px]"
+      className="font-mono text-[10px] tracking-[0.14em] uppercase mb-3"
       style={{ color: "var(--ink-3)" }}
     >
       {children}
@@ -198,14 +198,14 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
   const activeObjectives = objectives.filter((o) => o.status === "active");
 
   const inputClass =
-    "flex-1 h-[40px] px-[12px] rounded-[8px] text-[14px] outline-none transition-colors";
+    "flex-1 h-10 px-3 rounded-lg text-[14px] outline-none transition-colors";
   const inputStyle = {
     border: "1.5px solid var(--rule)",
     background: "var(--bg)",
     color: "var(--ink)",
   };
   const textareaClass =
-    "w-full px-[12px] py-[10px] rounded-[8px] text-[14px] leading-[1.65] outline-none transition-colors resize-none";
+    "w-full px-3 py-2.5 rounded-lg text-[14px] leading-[1.65] outline-none transition-colors resize-none";
 
   const dailyLogSummary = accomplished.length > 0 || energy !== null || blockers.trim() || notes.trim()
     ? `${accomplished.length} accomplished${energy ? ` · ${"⚡".repeat(energy)} ${ENERGY_LABELS[energy]}` : ""}`
@@ -219,17 +219,17 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
         onDismiss={() => setToastVisible(false)}
       />
 
-      <div className="space-y-[36px]">
+      <div className="space-y-9">
 
         {/* Nudge: opened via "Log the day" but priorities haven't been set yet */}
         {!prioritiesFocused && priorities.length === 0 && (
           <button
             type="button"
             onClick={focusPriorities}
-            className="w-full text-left flex items-center justify-between gap-[12px] rounded-[10px] px-[16px] py-[12px] border-none cursor-pointer transition-opacity hover:opacity-90"
+            className="w-full text-left flex items-center justify-between gap-3 rounded-[10px] px-4 py-3 border-none cursor-pointer transition-opacity hover:opacity-90"
             style={{ background: VELA_ACCENT_SOFT, border: `1px solid rgba(124,58,237,0.22)` }}
           >
-            <span className="flex items-center gap-[10px] text-[13px] font-medium" style={{ color: VELA_ACCENT }}>
+            <span className="flex items-center gap-2.5 text-[13px] font-medium" style={{ color: VELA_ACCENT }}>
               <AlertCircle size={14} />
               You haven&apos;t set your priorities for today yet
             </span>
@@ -242,37 +242,37 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
         {/* Priorities */}
         <section id="priorities" style={{ scrollMarginTop: "24px" }}>
           {prioritiesFocused ? (
-            <div className="mb-[18px]">
+            <div className="mb-4.5">
               <h1
                 className="font-display font-normal leading-[1.05] tracking-[-0.02em] fvs-text m-0"
                 style={{ fontSize: "clamp(26px,4vw,34px)", color: "var(--ink)" }}
               >
                 Today&apos;s Priorities
               </h1>
-              <p className="text-[13px] mt-[6px]" style={{ color: "var(--ink-3)" }}>
+              <p className="text-[13px] mt-1.5" style={{ color: "var(--ink-3)" }}>
                 Just the things that matter today. You can log the rest of the day later.
               </p>
             </div>
           ) : (
             <SectionLabel>Today&apos;s Priorities</SectionLabel>
           )}
-          <div className="space-y-[6px]">
+          <div className="space-y-1.5">
             {priorities.map((p, i) => (
               <div
                 key={i}
-                className="flex items-center gap-[10px] group px-[12px] py-[10px] rounded-[8px]"
+                className="flex items-center gap-2.5 group px-3 py-2.5 rounded-lg"
                 style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
               >
                 <span
-                  className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0"
+                  className="w-4.5 h-4.5 rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0"
                   style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
                 >
                   {i + 1}
                 </span>
-                <span className="flex-1 text-[14px] text-[var(--ink)]">{p}</span>
+                <span className="flex-1 text-[14px] text-(--ink)">{p}</span>
                 <button
                   onClick={() => removeItem(priorities, setPriorities, i)}
-                  className="w-[20px] h-[20px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="w-5 h-5 flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ color: "var(--ink-3)" }}
                   aria-label="Remove"
                 >
@@ -280,7 +280,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                 </button>
               </div>
             ))}
-            <div className="flex gap-[8px]">
+            <div className="flex gap-2">
               <input
                 ref={priorityInputRef}
                 type="text"
@@ -293,13 +293,13 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                   }
                 }}
                 placeholder="Add a priority and press Enter…"
-                className={prioritiesFocused ? `${inputClass} h-[48px] text-[16px]` : inputClass}
+                className={prioritiesFocused ? `${inputClass} h-12 text-[16px]` : inputClass}
                 style={inputStyle}
               />
               <button
                 onClick={() => addItem(priorities, setPriorities, newPriority, setNewPriority)}
                 disabled={!newPriority.trim()}
-                className={`flex items-center justify-center rounded-[8px] border-none cursor-pointer disabled:opacity-40 transition-opacity ${prioritiesFocused ? "w-[48px] h-[48px]" : "w-[40px] h-[40px]"}`}
+                className={`flex items-center justify-center rounded-lg border-none cursor-pointer disabled:opacity-40 transition-opacity ${prioritiesFocused ? "w-12 h-12" : "w-10 h-10"}`}
                 style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
                 aria-label="Add priority"
               >
@@ -313,7 +313,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
             <button
               onClick={() => void handleSave()}
               disabled={saving}
-              className="flex items-center justify-center gap-[8px] w-full h-[48px] rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 transition-all mt-[20px]"
+              className="flex items-center justify-center gap-2 w-full h-12 rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 transition-all mt-5"
               style={{
                 background: saved ? "#16A34A" : VELA_ACCENT,
                 boxShadow: priorities.length > 0 && !saved ? `0 4px 24px rgba(124,58,237,0.35)` : "none",
@@ -333,14 +333,14 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
           )}
         </section>
 
-        <div className="h-[1px]" style={{ background: "var(--rule)" }} />
+        <div className="h-0.25" style={{ background: "var(--rule)" }} />
 
         {/* Daily Log — collapsible wrap-up: what got done, blockers, reflection, energy, objectives */}
         <section>
           <button
             type="button"
             onClick={() => setDailyLogOpen((v) => !v)}
-            className="w-full flex items-center justify-between gap-[12px] border-none bg-transparent cursor-pointer p-0 mb-[12px]"
+            className="w-full flex items-center justify-between gap-3 border-none bg-transparent cursor-pointer p-0 mb-3"
           >
             <span
               className="font-mono text-[10px] tracking-[0.14em] uppercase"
@@ -363,22 +363,22 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
             <button
               type="button"
               onClick={() => setDailyLogOpen(true)}
-              className="w-full text-left rounded-[10px] px-[14px] py-[12px] cursor-pointer transition-colors hover:bg-[var(--bg-3)]"
+              className="w-full text-left rounded-[10px] px-3.5 py-3 cursor-pointer transition-colors hover:bg-(--bg-3)"
               style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
             >
               <span className="text-[13px]" style={{ color: "var(--ink-3)" }}>{dailyLogSummary}</span>
             </button>
           ) : (
-            <div id="log-today" className="space-y-[36px]" style={{ scrollMarginTop: "24px" }}>
+            <div id="log-today" className="space-y-9" style={{ scrollMarginTop: "24px" }}>
 
               {/* Accomplished */}
               <div>
                 <SectionLabel>What Got Done</SectionLabel>
-                <div className="space-y-[6px]">
+                <div className="space-y-1.5">
                   {accomplished.map((a, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-[10px] group px-[12px] py-[10px] rounded-[8px]"
+                      className="flex items-center gap-2.5 group px-3 py-2.5 rounded-lg"
                       style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
                     >
                       <span
@@ -387,10 +387,10 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                       >
                         ✓
                       </span>
-                      <span className="flex-1 text-[14px] text-[var(--ink)]">{a}</span>
+                      <span className="flex-1 text-[14px] text-(--ink)">{a}</span>
                       <button
                         onClick={() => removeItem(accomplished, setAccomplished, i)}
-                        className="w-[20px] h-[20px] flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="w-5 h-5 flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                         style={{ color: "var(--ink-3)" }}
                         aria-label="Remove"
                       >
@@ -398,7 +398,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                       </button>
                     </div>
                   ))}
-                  <div className="flex gap-[8px]">
+                  <div className="flex gap-2">
                     <input
                       ref={accomplishedInputRef}
                       type="text"
@@ -419,7 +419,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                         addItem(accomplished, setAccomplished, newAccomplished, setNewAccomplished)
                       }
                       disabled={!newAccomplished.trim()}
-                      className="w-[40px] h-[40px] flex items-center justify-center rounded-[8px] border-none cursor-pointer disabled:opacity-40 transition-opacity"
+                      className="w-10 h-10 flex items-center justify-center rounded-lg border-none cursor-pointer disabled:opacity-40 transition-opacity"
                       style={{ background: "rgba(22,163,74,0.10)", color: "#16A34A" }}
                       aria-label="Add"
                     >
@@ -429,7 +429,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                 </div>
               </div>
 
-              <div className="h-[1px]" style={{ background: "var(--rule)" }} />
+              <div className="h-0.25" style={{ background: "var(--rule)" }} />
 
               {/* Blockers */}
               <div>
@@ -445,16 +445,16 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                 />
               </div>
 
-              <div className="h-[1px]" style={{ background: "var(--rule)" }} />
+              <div className="h-0.25" style={{ background: "var(--rule)" }} />
 
               {/* Reflection */}
               <div>
-                <div className="flex items-center justify-between mb-[12px]">
+                <div className="flex items-center justify-between mb-3">
                   <SectionLabel>Reflection &amp; Notes</SectionLabel>
                   <button
                     type="button"
                     onClick={generatePrompt}
-                    className="font-mono text-[8px] tracking-[0.1em] uppercase px-[9px] py-[4px] rounded-[6px] border cursor-pointer transition-all flex items-center gap-[5px] -mt-[12px]"
+                    className="font-mono text-[8px] tracking-widest uppercase px-2.25 py-1 rounded-md border cursor-pointer transition-all flex items-center gap-1.25 -mt-3"
                     style={{
                       borderColor: "var(--rule)",
                       background: "transparent",
@@ -476,17 +476,17 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                 />
               </div>
 
-              <div className="h-[1px]" style={{ background: "var(--rule)" }} />
+              <div className="h-0.25" style={{ background: "var(--rule)" }} />
 
               {/* Energy */}
               <div>
                 <SectionLabel>Energy Level</SectionLabel>
-                <div className="flex gap-[8px]">
+                <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((level) => (
                     <button
                       key={level}
                       onClick={() => setEnergy(energy === level ? null : level)}
-                      className="flex-1 py-[10px] rounded-[8px] text-[12px] font-medium border transition-all cursor-pointer"
+                      className="flex-1 py-2.5 rounded-lg text-[12px] font-medium border transition-all cursor-pointer"
                       style={
                         energy === level
                           ? {
@@ -503,7 +503,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                       }
                       title={ENERGY_LABELS[level]}
                     >
-                      <div className="text-[15px] mb-[2px]">{"⚡".repeat(level)}</div>
+                      <div className="text-[15px] mb-0.5">{"⚡".repeat(level)}</div>
                       <div className="font-mono text-[9px] tracking-[0.04em] hidden min-[480px]:block opacity-70">
                         {ENERGY_LABELS[level]}
                       </div>
@@ -515,17 +515,17 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
               {/* Linked objectives */}
               {activeObjectives.length > 0 && (
                 <>
-                  <div className="h-[1px]" style={{ background: "var(--rule)" }} />
+                  <div className="h-0.25" style={{ background: "var(--rule)" }} />
                   <div>
                     <SectionLabel>Objectives Touched Today</SectionLabel>
-                    <div className="flex flex-wrap gap-[8px]">
+                    <div className="flex flex-wrap gap-2">
                       {activeObjectives.map((obj) => {
                         const active = linkedObjectiveIds.includes(obj.id);
                         return (
                           <button
                             key={obj.id}
                             onClick={() => toggleObjective(obj.id)}
-                            className="flex items-center gap-[6px] px-[12px] py-[7px] rounded-[8px] text-[13px] font-medium border transition-all cursor-pointer"
+                            className="flex items-center gap-1.5 px-3 py-1.75 rounded-lg text-[13px] font-medium border transition-all cursor-pointer"
                             style={
                               active
                                 ? {
@@ -556,7 +556,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
         {/* Error */}
         {error && (
           <div
-            className="rounded-[8px] px-[14px] py-[10px] text-[13px] font-mono"
+            className="rounded-lg px-3.5 py-2.5 text-[13px] font-mono"
             style={{
               background: "rgba(220,38,38,0.07)",
               color: "#DC2626",
@@ -572,7 +572,7 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
           <button
             onClick={() => void handleSave()}
             disabled={saving}
-            className="flex items-center justify-center gap-[8px] w-full h-[48px] rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 transition-all"
+            className="flex items-center justify-center gap-2 w-full h-12 rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 transition-all"
             style={{
               background: saved ? "#16A34A" : VELA_ACCENT,
               boxShadow: isComplete && !saved

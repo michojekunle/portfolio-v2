@@ -113,7 +113,7 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="fixed bottom-[24px] right-[24px] z-[9999] flex items-center gap-[12px] p-[12px] pl-[16px] rounded-[16px] border shadow-lg max-w-[340px] max-[480px]:left-[16px] max-[480px]:right-[16px] max-[480px]:bottom-[16px] overflow-hidden"
+          className="fixed bottom-6 right-6 z-[9999] flex items-center gap-3 p-3 pl-4 rounded-2xl border shadow-lg max-w-85 max-[480px]:left-4 max-[480px]:right-4 max-[480px]:bottom-4 overflow-hidden"
           style={{
             background: "var(--bg-2)",
             borderColor: brandColors.accentBorder,
@@ -122,13 +122,13 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
         >
           {/* Subtle colored glow background */}
           <div
-            className="absolute -top-[30px] -right-[30px] w-[90px] h-[90px] rounded-full opacity-[0.08] blur-[15px] -z-40"
+            className="absolute -top-7.5 -right-7.5 w-[90px] h-[90px] rounded-full opacity-[0.08] blur-[15px] -z-40"
             style={{ background: brandColors.accent }}
             aria-hidden="true"
           />
 
           <div
-            className="w-[36px] h-[36px] rounded-[10px] flex items-center justify-center shrink-0"
+            className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
             style={{
               background: brandColors.accentSoft,
               color: brandColors.accent,
@@ -137,19 +137,19 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
             <Smartphone size={18} />
           </div>
 
-          <div className="flex-1 min-w-0 pr-[8px]">
-            <div className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] mb-[2px]">
+          <div className="flex-1 min-w-0 pr-2">
+            <div className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground mb-0.5">
               App Available
             </div>
-            <div className="text-[13px] font-medium text-[var(--ink)] truncate">
+            <div className="text-[13px] font-medium text-(--ink) truncate">
               Install {TOOL_NAMES[toolId] || toolId}
             </div>
           </div>
 
-          <div className="flex items-center gap-[6px] shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={handleInstallClick}
-              className="h-[28px] px-[12px] rounded-[8px] border-none font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer transition-transform hover:scale-[1.03] active:scale-[0.97]"
+              className="h-7 px-3 rounded-lg border-none font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer transition-transform hover:scale-[1.03] active:scale-[0.97]"
               style={{
                 background: brandColors.accent,
                 color: "#ffffff",
@@ -159,7 +159,7 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
             </button>
             <button
               onClick={handleDismiss}
-              className="relative z-20 h-[28px] px-[12px] tracking-[0.08em] font-semibold cursor-pointer transition-transform hover:scale-[1.03] active:scale-[0.97]"
+              className="relative z-20 h-7 px-3 tracking-[0.08em] font-semibold cursor-pointer transition-transform hover:scale-[1.03] active:scale-[0.97]"
               aria-label="Dismiss install prompt"
             >
               <X size={14} />

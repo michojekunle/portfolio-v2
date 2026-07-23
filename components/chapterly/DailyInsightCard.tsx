@@ -67,11 +67,11 @@ export function DailyInsightCard(): React.ReactElement {
   if (loading) {
     return (
       <div
-        className="rounded-[14px] px-[16px] py-[14px] mb-[24px] flex items-center gap-[10px]"
+        className="rounded-[14px] px-4 py-3.5 mb-6 flex items-center gap-2.5"
         style={{ background: `color-mix(in srgb, var(--ch-accent) 3%, transparent)`, border: `1px solid color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
       >
         <Loader2 size={12} className="animate-spin shrink-0" style={{ color: ACCENT, opacity: 0.5 }} />
-        <span className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)]">
+        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
           Getting your daily insight…
         </span>
       </div>
@@ -81,16 +81,16 @@ export function DailyInsightCard(): React.ReactElement {
   if (!insight && fetchError) {
     return (
       <div
-        className="rounded-[14px] px-[16px] py-[14px] mb-[24px] flex items-center justify-between gap-[10px]"
+        className="rounded-[14px] px-4 py-3.5 mb-6 flex items-center justify-between gap-2.5"
         style={{ background: `rgba(239,68,68,0.06)`, border: `1px solid rgba(239,68,68,0.15)` }}
       >
-        <span className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)]">
+        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
           Could not load daily insight
         </span>
         <button
           onClick={() => void fetchInsight(true)}
           disabled={refreshing}
-          className="shrink-0 flex items-center gap-[5px] font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer bg-transparent disabled:opacity-50"
+          className="shrink-0 flex items-center gap-1.25 font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer bg-transparent disabled:opacity-50"
           style={{ color: ACCENT }}
         >
           <RefreshCw size={10} className={refreshing ? "animate-spin" : ""} />
@@ -104,19 +104,19 @@ export function DailyInsightCard(): React.ReactElement {
 
   return (
     <div
-      className="rounded-[14px] mb-[24px] overflow-hidden"
+      className="rounded-[14px] mb-6 overflow-hidden"
       style={{ border: `1px solid color-mix(in srgb, var(--ch-accent) 10%, transparent)`, background: `color-mix(in srgb, var(--ch-accent) 2%, transparent)` }}
     >
-      <div className="h-[2px]" style={{ background: `linear-gradient(90deg, ${ACCENT}, transparent)` }} />
-      <div className="px-[18px] py-[14px] flex items-start gap-[10px]">
-        <Sparkles size={13} className="shrink-0 mt-[2px]" style={{ color: ACCENT, opacity: 0.7 }} />
-        <p className="flex-1 text-[13px] leading-[1.65] m-0 text-[var(--ink-2)]">
+      <div className="h-0.5" style={{ background: `linear-gradient(90deg, ${ACCENT}, transparent)` }} />
+      <div className="px-4.5 py-3.5 flex items-start gap-2.5">
+        <Sparkles size={13} className="shrink-0 mt-0.5" style={{ color: ACCENT, opacity: 0.7 }} />
+        <p className="flex-1 text-[13px] leading-[1.65] m-0 text-secondary-foreground">
           {insight && <MarkdownInline text={insight} />}
         </p>
         <button
           onClick={() => void fetchInsight(true)}
           disabled={refreshing}
-          className="shrink-0 w-[22px] h-[22px] flex items-center justify-center rounded-[5px] border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60 disabled:opacity-30 mt-[1px]"
+          className="shrink-0 w-5.5 h-5.5 flex items-center justify-center rounded-[5px] border-none cursor-pointer bg-transparent transition-opacity hover:opacity-60 disabled:opacity-30 mt-0.25"
           style={{ color: ACCENT }}
           title="Refresh insight"
           aria-label="Refresh daily insight"

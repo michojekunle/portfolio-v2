@@ -170,19 +170,19 @@ export default function ObjectivesPage(): React.ReactElement {
   };
 
   return (
-    <div className="max-w-[800px] mx-auto px-[32px] py-[48px] max-[640px]:px-[20px] max-[640px]:py-[32px]">
-      <div className="flex items-center justify-between mb-[32px]">
+    <div className="max-w-[800px] mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text m-0 text-[var(--ink)]">
+          <h1 className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text m-0 text-(--ink)">
             Objectives
           </h1>
-          <p className="text-[13px] text-[var(--ink-3)] mt-[4px] mb-0">
+          <p className="text-[13px] text-muted-foreground mt-1 mb-0">
             The big things you&apos;re steering toward.
           </p>
         </div>
         <button
           onClick={() => { setShowForm((s) => !s); setCreateError(null); }}
-          className="flex items-center gap-[8px] px-[16px] py-[9px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer transition-opacity hover:opacity-90"
+          className="flex items-center gap-2 px-4 py-2.25 rounded-lg font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer transition-opacity hover:opacity-90"
           style={{ background: VELA_ACCENT }}
         >
           <Plus size={13} />
@@ -193,24 +193,24 @@ export default function ObjectivesPage(): React.ReactElement {
       {/* Create form */}
       {showForm && (
         <div
-          className="rounded-[12px] border border-[var(--rule)] p-[24px] mb-[28px] space-y-[16px]"
+          className="rounded-xl border border-(--rule) p-6 mb-7 space-y-4"
           style={{ background: "var(--bg-2)" }}
         >
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
             New Objective
           </div>
 
-          <div className="flex gap-[16px] flex-wrap">
+          <div className="flex gap-4 flex-wrap">
             <div>
-              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
                 Icon
               </label>
-              <div className="flex flex-wrap gap-[6px]">
+              <div className="flex flex-wrap gap-1.5">
                 {ICONS.map((ic) => (
                   <button
                     key={ic}
                     onClick={() => setIcon(ic)}
-                    className="w-[32px] h-[32px] text-[18px] rounded-[6px] flex items-center justify-center border cursor-pointer transition-all"
+                    className="w-8 h-8 text-[18px] rounded-md flex items-center justify-center border cursor-pointer transition-all"
                     style={{
                       background: icon === ic ? VELA_ACCENT_SOFT : "var(--bg)",
                       borderColor: icon === ic ? VELA_ACCENT : "var(--rule)",
@@ -222,15 +222,15 @@ export default function ObjectivesPage(): React.ReactElement {
               </div>
             </div>
             <div>
-              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
                 Colour
               </label>
-              <div className="flex flex-wrap gap-[6px]">
+              <div className="flex flex-wrap gap-1.5">
                 {OBJECTIVE_COLORS.map((c) => (
                   <button
                     key={c}
                     onClick={() => setColor(c)}
-                    className="w-[24px] h-[24px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+                    className="w-6 h-6 rounded-full border-0.5 cursor-pointer transition-transform hover:scale-110"
                     style={{
                       background: c,
                       borderColor: color === c ? "var(--ink)" : "transparent",
@@ -243,7 +243,7 @@ export default function ObjectivesPage(): React.ReactElement {
           </div>
 
           <div>
-            <label htmlFor="obj-title" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+            <label htmlFor="obj-title" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
               Title *
             </label>
             <input
@@ -253,12 +253,12 @@ export default function ObjectivesPage(): React.ReactElement {
               onChange={(e) => setTitle(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") void handleCreate(); }}
               placeholder="What are you working toward?"
-              className="w-full h-[42px] px-[14px] rounded-[8px] text-[14px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
+              className="w-full h-[42px] px-3.5 rounded-lg text-[14px] border border-(--rule) bg-(--bg) text-(--ink) outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="obj-desc" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+            <label htmlFor="obj-desc" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
               Description
             </label>
             <textarea
@@ -267,13 +267,13 @@ export default function ObjectivesPage(): React.ReactElement {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Why does this matter to you?"
               rows={2}
-              className="w-full px-[14px] py-[10px] rounded-[8px] text-[14px] leading-[1.5] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none resize-none"
+              className="w-full px-3.5 py-2.5 rounded-lg text-[14px] leading-normal border border-(--rule) bg-(--bg) text-(--ink) outline-none resize-none"
             />
           </div>
 
-          <div className="flex gap-[16px] flex-wrap">
+          <div className="flex gap-4 flex-wrap">
             <div className="flex-1 min-w-[180px]">
-              <label htmlFor="obj-date" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+              <label htmlFor="obj-date" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
                 Target Date
               </label>
               <input
@@ -281,18 +281,18 @@ export default function ObjectivesPage(): React.ReactElement {
                 type="date"
                 value={targetDate}
                 onChange={(e) => setTargetDate(e.target.value)}
-                className="w-full h-[42px] px-[14px] rounded-[8px] text-[14px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
+                className="w-full h-[42px] px-3.5 rounded-lg text-[14px] border border-(--rule) bg-(--bg) text-(--ink) outline-none"
               />
             </div>
             <div className="flex-1 min-w-[180px]">
-              <label htmlFor="obj-priority" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+              <label htmlFor="obj-priority" className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
                 Priority
               </label>
               <select
                 id="obj-priority"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as "high" | "medium" | "low")}
-                className="w-full h-[42px] px-[14px] rounded-[8px] text-[14px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none cursor-pointer"
+                className="w-full h-[42px] px-3.5 rounded-lg text-[14px] border border-(--rule) bg-(--bg) text-(--ink) outline-none cursor-pointer"
               >
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
@@ -303,7 +303,7 @@ export default function ObjectivesPage(): React.ReactElement {
 
           {createError && (
             <div
-              className="flex items-center gap-[8px] rounded-[8px] px-[12px] py-[10px] text-[13px]"
+              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-[13px]"
               style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626" }}
             >
               <AlertCircle size={14} />
@@ -311,11 +311,11 @@ export default function ObjectivesPage(): React.ReactElement {
             </div>
           )}
 
-          <div className="flex gap-[10px] pt-[4px]">
+          <div className="flex gap-2.5 pt-1">
             <button
               onClick={() => void handleCreate()}
               disabled={saving || !title.trim()}
-              className="flex items-center gap-[8px] px-[20px] h-[40px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-50 transition-opacity hover:opacity-90"
+              className="flex items-center gap-2 px-5 h-10 rounded-lg font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-50 transition-opacity hover:opacity-90"
               style={{ background: VELA_ACCENT }}
             >
               {saving ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
@@ -323,7 +323,7 @@ export default function ObjectivesPage(): React.ReactElement {
             </button>
             <button
               onClick={() => { setShowForm(false); setCreateError(null); }}
-              className="px-[16px] h-[40px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] transition-opacity hover:opacity-70"
+              className="px-4 h-10 rounded-lg font-mono text-[10px] tracking-[0.12em] uppercase border border-(--rule) bg-transparent cursor-pointer text-muted-foreground transition-opacity hover:opacity-70"
             >
               Cancel
             </button>
@@ -333,40 +333,40 @@ export default function ObjectivesPage(): React.ReactElement {
 
       {/* Objectives list */}
       {loading ? (
-        <div className="flex items-center justify-center py-[60px]">
+        <div className="flex items-center justify-center py-15">
           <Loader2 size={22} className="animate-spin" style={{ color: VELA_ACCENT }} />
         </div>
       ) : fetchError ? (
-        <div className="text-center py-[60px]">
-          <AlertCircle size={32} className="mx-auto mb-[12px]" style={{ color: "#DC2626", opacity: 0.5 }} />
-          <div className="text-[15px] font-medium mb-[8px] text-[var(--ink)]">Failed to load objectives</div>
-          <p className="text-[13px] text-[var(--ink-3)] mb-[20px]">{fetchError}</p>
+        <div className="text-center py-15">
+          <AlertCircle size={32} className="mx-auto mb-3" style={{ color: "#DC2626", opacity: 0.5 }} />
+          <div className="text-[15px] font-medium mb-2 text-(--ink)">Failed to load objectives</div>
+          <p className="text-[13px] text-muted-foreground mb-5">{fetchError}</p>
           <button
             onClick={() => void loadObjectives()}
-            className="px-[16px] py-[8px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-2)] transition-opacity hover:opacity-70"
+            className="px-4 py-2 rounded-lg font-mono text-[10px] tracking-[0.12em] uppercase border border-(--rule) bg-transparent cursor-pointer text-secondary-foreground transition-opacity hover:opacity-70"
           >
             Try again
           </button>
         </div>
       ) : objectives.length === 0 ? (
-        <div className="text-center py-[60px]">
-          <Target size={36} className="mx-auto mb-[16px]" style={{ color: VELA_ACCENT, opacity: 0.3 }} />
-          <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text mb-[8px] text-[var(--ink)]">
+        <div className="text-center py-15">
+          <Target size={36} className="mx-auto mb-4" style={{ color: VELA_ACCENT, opacity: 0.3 }} />
+          <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text mb-2 text-(--ink)">
             No objectives yet
           </div>
-          <p className="text-[14px] text-[var(--ink-3)] mb-[24px]">
+          <p className="text-[14px] text-muted-foreground mb-6">
             Add your first objective to start steering with intention.
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="px-[20px] py-[10px] rounded-[8px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer"
+            className="px-5 py-2.5 rounded-lg font-mono text-[11px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer"
             style={{ background: VELA_ACCENT }}
           >
             Add your first objective
           </button>
         </div>
       ) : (
-        <div className="space-y-[16px]">
+        <div className="space-y-4">
           {objectives.map((obj) => (
             <ObjectiveCard
               key={obj.id}

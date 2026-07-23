@@ -68,13 +68,13 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
   const isFreeAtLimit = books.length >= FREE_BOOK_LIMIT;
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px] max-w-[1200px]">
+    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8 max-w-[1200px]">
       {/* ── Header ── */}
-      <div className="mb-[48px]">
-        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[8px]">
+      <div className="mb-12">
+        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-2">
           Good {getGreeting()}, {user?.email?.split("@")[0]}
         </div>
-        <h1 className="font-display text-[36px] max-[720px]:text-[28px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] m-0 leading-[1.1]">
+        <h1 className="font-display text-[36px] max-180:text-[28px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
           Your Reading OS
         </h1>
       </div>
@@ -83,7 +83,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
       <DailyInsightCard />
 
       {/* ── Stats strip ── */}
-      <div className="grid grid-cols-4 max-[900px]:grid-cols-2 max-[480px]:grid-cols-2 gap-[16px] mb-[40px]">
+      <div className="grid grid-cols-4 max-[900px]:grid-cols-2 max-[480px]:grid-cols-2 gap-4 mb-10">
         <StatCard
           icon={<BookOpen size={18} />}
           label="Books"
@@ -118,7 +118,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
 
       {/* ── Streak freeze ── */}
       {goal && stats.current_streak > 0 && (
-        <div className="mb-[40px] -mt-[24px]">
+        <div className="mb-10 -mt-6">
           <FreezeStreakButton
             frozenUntil={goal.streak_freeze_until}
             freezesUsed={goal.streak_freeze_count ?? 0}
@@ -128,27 +128,27 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
       )}
 
       {/* ── Daily goal ring + current book ── */}
-      <div className="grid grid-cols-[1fr_1fr] max-[900px]:grid-cols-1 gap-[24px] mb-[40px] items-start">
+      <div className="grid grid-cols-[1fr_1fr] max-[900px]:grid-cols-1 gap-6 mb-10 items-start">
         {/* Left Column: Daily goal & Learning plan */}
-        <div className="space-y-[24px]">
+        <div className="space-y-6">
           {/* Daily goal ring */}
-          <div className="rounded-[16px] p-[32px] max-[480px]:p-[24px] bg-[var(--bg-2)] border border-[var(--rule)]">
-            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[24px]">
+          <div className="rounded-2xl p-8 max-[480px]:p-6 bg-(--bg-2) border border-(--rule)">
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-6">
               Daily Goal
             </div>
-            <div className="flex items-center gap-[32px]">
+            <div className="flex items-center gap-8">
               <GoalRing pct={dailyProgress} accent={ACCENT} />
               <div>
-                <div className="text-[32px] font-bold text-[var(--ink)] leading-[1]">
+                <div className="text-[32px] font-bold text-(--ink) leading-none">
                   {dailyProgress}%
                 </div>
-                <div className="text-[14px] text-[var(--ink-3)] mt-[4px]">
+                <div className="text-[14px] text-muted-foreground mt-1">
                   {formatReadingTime(stats.reading_time_today)} of{" "}
                   {goal?.daily_minutes ?? 15}m
                 </div>
                 {dailyProgress >= 100 ? (
                   <div
-                    className="mt-[12px] inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[10px] py-[5px] rounded-full"
+                    className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase font-semibold px-2.5 py-1.25 rounded-full"
                     style={{
                       background: "rgba(22,163,74,0.12)",
                       color: "#16A34A",
@@ -157,7 +157,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                     Goal complete!
                   </div>
                 ) : (
-                  <div className="mt-[12px] font-mono text-[11px] text-[var(--ink-3)]">
+                  <div className="mt-3 font-mono text-[11px] text-muted-foreground">
                     {formatReadingTime(
                       Math.max(
                         0,
@@ -169,18 +169,18 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                 )}
               </div>
             </div>
-            <div className="mt-[24px] pt-[20px] border-t border-[var(--rule)] flex items-center justify-between">
+            <div className="mt-6 pt-5 border-t border-(--rule) flex items-center justify-between">
               <div>
-                <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+                <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground">
                   Annual
                 </div>
-                <div className="text-[14px] font-semibold text-[var(--ink)] mt-[2px]">
+                <div className="text-[14px] font-semibold text-(--ink) mt-0.5">
                   {stats.books_this_year} / {goal?.annual_books ?? 12} books
                 </div>
               </div>
               <Link
                 href="/tools/chapterly/settings"
-                className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline text-[var(--ink-3)] hover:text-[var(--ink)]"
+                className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline text-muted-foreground hover:text-(--ink)"
               >
                 Edit goals →
               </Link>
@@ -197,8 +197,8 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
         </div>
 
         {/* Current book */}
-        <div className="rounded-[16px] p-[32px] max-[480px]:p-[24px] bg-[var(--bg-2)] border border-[var(--rule)]">
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[24px]">
+        <div className="rounded-2xl p-8 max-[480px]:p-6 bg-(--bg-2) border border-(--rule)">
+          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-6">
             {currentBook?.status === "reading"
               ? "Currently Reading"
               : "Up Next"}
@@ -206,10 +206,10 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
 
           {currentBook ? (
             <>
-              <div className="flex items-start gap-[16px]">
+              <div className="flex items-start gap-4">
                 {/* Cover placeholder */}
                 <div
-                  className="w-[56px] h-[76px] rounded-[6px] shrink-0 flex items-center justify-center relative overflow-hidden"
+                  className="w-14 h-[76px] rounded-md shrink-0 flex items-center justify-center relative overflow-hidden"
                   style={{ background: "color-mix(in srgb, var(--ch-accent) 13%, transparent)" }}
                 >
                   {currentBook.cover_url ? (
@@ -224,17 +224,17 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[16px] font-semibold text-[var(--ink)] leading-[1.3] line-clamp-2">
+                  <div className="text-[16px] font-semibold text-(--ink) leading-[1.3] line-clamp-2">
                     {currentBook.title}
                   </div>
                   {currentBook.author && (
-                    <div className="text-[13px] text-[var(--ink-3)] mt-[4px]">
+                    <div className="text-[13px] text-muted-foreground mt-1">
                       {currentBook.author}
                     </div>
                   )}
-                  <div className="mt-[12px]">
-                    <div className="flex items-center justify-between mb-[6px]">
-                      <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground">
                         Progress
                       </span>
                       <span
@@ -244,7 +244,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                         {Math.round(currentBook.progress_pct)}%
                       </span>
                     </div>
-                    <div className="h-[4px] rounded-full bg-[var(--rule)]">
+                    <div className="h-1 rounded-full bg-(--rule)">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -257,34 +257,34 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                 </div>
               </div>
 
-              <div className="mt-[24px] pt-[20px] border-t border-[var(--rule)] flex items-center gap-[12px]">
+              <div className="mt-6 pt-5 border-t border-(--rule) flex items-center gap-3">
                 <Link
                   href={`/tools/chapterly/read/${currentBook.id}`}
-                  className="flex-1 h-[40px] rounded-[8px] flex items-center justify-center gap-[8px] no-underline font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-(--bg) transition-all hover:opacity-90"
+                  className="flex-1 h-10 rounded-lg flex items-center justify-center gap-2 no-underline font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-(--bg) transition-all hover:opacity-90"
                   style={{ background: ACCENT }}
                 >
                   <BookOpen size={14} /> Continue reading
                 </Link>
                 <Link
                   href={`/tools/chapterly/chat/${currentBook.id}`}
-                  className="h-[40px] px-[16px] rounded-[8px] flex items-center justify-center no-underline font-mono text-[10px] tracking-[0.12em] uppercase transition-all border border-[var(--rule)] text-[var(--ink-2)] hover:border-[var(--ink-2)]"
+                  className="h-10 px-4 rounded-lg flex items-center justify-center no-underline font-mono text-[10px] tracking-[0.12em] uppercase transition-all border border-(--rule) text-secondary-foreground hover:border-secondary-foreground"
                 >
                   AI chat
                 </Link>
               </div>
             </>
           ) : (
-            <div className="text-center py-[24px]">
+            <div className="text-center py-6">
               <BookMarked
                 size={40}
-                className="mx-auto mb-[16px] opacity-20 text-[var(--ink)]"
+                className="mx-auto mb-4 opacity-20 text-(--ink)"
               />
-              <p className="text-[14px] text-[var(--ink-3)] mb-[20px]">
+              <p className="text-[14px] text-muted-foreground mb-5">
                 No books in your library yet.
               </p>
               <Link
                 href="/tools/chapterly/library"
-                className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-[16px] py-[10px] rounded-[8px] text-(--bg)"
+                className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] uppercase font-semibold no-underline px-4 py-2.5 rounded-lg text-(--bg)"
                 style={{ background: ACCENT }}
               >
                 <Plus size={14} /> Add your first book
@@ -296,27 +296,27 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
 
       {/* ── Recent library ── */}
       {recentBooks.length > 0 && (
-        <div className="mb-[40px]">
-          <div className="flex items-center justify-between mb-[20px]">
-            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-5">
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
               Your Library
             </div>
             <Link
               href="/tools/chapterly/library"
-              className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline text-[var(--ink-3)] hover:text-[var(--ink)] flex items-center gap-[6px]"
+              className="font-mono text-[10px] tracking-[0.12em] uppercase no-underline text-muted-foreground hover:text-(--ink) flex items-center gap-1.5"
             >
               View all <ArrowRight size={12} />
             </Link>
           </div>
-          <div className="grid grid-cols-4 max-[1100px]:grid-cols-3 max-[800px]:grid-cols-2 max-[480px]:grid-cols-2 gap-[16px]">
+          <div className="grid grid-cols-4 max-[1100px]:grid-cols-3 max-[800px]:grid-cols-2 max-[480px]:grid-cols-2 gap-4">
             {recentBooks.map((book) => (
               <Link
                 key={book.id}
                 href={`/tools/chapterly/read/${book.id}`}
-                className="rounded-[14px] p-[16px] no-underline border border-[var(--rule)] bg-[var(--bg-2)] hover:border-[var(--ink-3)] hover:shadow-md transition-all duration-200 group block"
+                className="rounded-[14px] p-4 no-underline border border-(--rule) bg-(--bg-2) hover:border-muted-foreground hover:shadow-md transition-all duration-200 group block"
               >
                 <div
-                  className="w-full aspect-[3/4] rounded-[6px] flex items-center justify-center mb-[12px] relative overflow-hidden"
+                  className="w-full aspect-[3/4] rounded-md flex items-center justify-center mb-3 relative overflow-hidden"
                   style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)" }}
                 >
                   {book.cover_url ? (
@@ -333,16 +333,16 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                     />
                   )}
                 </div>
-                <div className="text-[13px] font-semibold text-[var(--ink)] line-clamp-2 leading-[1.3]">
+                <div className="text-[13px] font-semibold text-(--ink) line-clamp-2 leading-[1.3]">
                   {book.title}
                 </div>
                 {book.author && (
-                  <div className="text-[11px] text-[var(--ink-3)] mt-[3px] truncate">
+                  <div className="text-[11px] text-muted-foreground mt-0.75 truncate">
                     {book.author}
                   </div>
                 )}
-                <div className="mt-[10px]">
-                  <div className="h-[3px] rounded-full bg-[var(--rule)]">
+                <div className="mt-2.5">
+                  <div className="h-0.75 rounded-full bg-(--rule)">
                     <div
                       className="h-full rounded-full transition-all"
                       style={{
@@ -351,14 +351,14 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
                       }}
                     />
                   </div>
-                  <div className="flex items-center justify-between mt-[6px]">
+                  <div className="flex items-center justify-between mt-1.5">
                     <span
-                      className="font-mono text-[8px] tracking-[0.1em] uppercase px-[6px] py-[2px] rounded-full"
+                      className="font-mono text-[8px] tracking-widest uppercase px-1.5 py-0.5 rounded-full"
                       style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)", color: ACCENT }}
                     >
                       {STATUS_LABELS[book.status]}
                     </span>
-                    <span className="font-mono text-[9px] text-[var(--ink-3)]">
+                    <span className="font-mono text-[9px] text-muted-foreground">
                       {Math.round(book.progress_pct)}%
                     </span>
                   </div>
@@ -370,10 +370,10 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
             {!isFreeAtLimit && (
               <Link
                 href="/tools/chapterly/library"
-                className="rounded-[12px] p-[16px] no-underline border border-dashed border-[var(--rule)] bg-transparent hover:border-[var(--ink-3)] transition-all flex flex-col items-center justify-center text-center min-h-[160px]"
+                className="rounded-xl p-4 no-underline border border-dashed border-(--rule) bg-transparent hover:border-muted-foreground transition-all flex flex-col items-center justify-center text-center min-h-40"
               >
-                <Plus size={24} className="text-[var(--ink-3)] mb-[8px]" />
-                <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+                <Plus size={24} className="text-muted-foreground mb-2" />
+                <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
                   Add Book
                 </span>
               </Link>
@@ -383,23 +383,23 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
           {/* Freemium upgrade nudge */}
           {isFreeAtLimit && (
             <div
-              className="mt-[20px] rounded-[12px] px-[20px] py-[16px] flex items-center justify-between gap-[16px]"
+              className="mt-5 rounded-xl px-5 py-4 flex items-center justify-between gap-4"
               style={{
                 background: "color-mix(in srgb, var(--ch-accent) 6%, transparent)",
                 border: `1px solid color-mix(in srgb, var(--ch-accent) 19%, transparent)`,
               }}
             >
               <div>
-                <div className="font-semibold text-[14px] text-[var(--ink)]">
+                <div className="font-semibold text-[14px] text-(--ink)">
                   Free plan limit reached — {FREE_BOOK_LIMIT} books
                 </div>
-                <div className="text-[13px] text-[var(--ink-3)] mt-[2px]">
+                <div className="text-[13px] text-muted-foreground mt-0.5">
                   Upgrade to add unlimited books and unlock all AI features.
                 </div>
               </div>
               <Link
                 href="/tools/chapterly/settings#upgrade"
-                className="shrink-0 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold no-underline px-[14px] py-[8px] rounded-[8px] text-(--bg)"
+                className="shrink-0 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold no-underline px-3.5 py-2 rounded-lg text-(--bg)"
                 style={{ background: ACCENT }}
               >
                 Upgrade
@@ -410,22 +410,22 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
       )}
 
       {/* ── BookBreaks bridge ── */}
-      <div className="rounded-[16px] p-[28px] border border-[var(--rule)] bg-[var(--bg-2)] flex items-center justify-between gap-[20px] max-[640px]:flex-col max-[640px]:text-center">
+      <div className="rounded-2xl p-7 border border-(--rule) bg-(--bg-2) flex items-center justify-between gap-5 max-160:flex-col max-160:text-center">
         <div>
-          <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[6px]">
+          <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
             Powered by BookBreaks
           </div>
-          <div className="text-[15px] font-semibold text-[var(--ink)]">
+          <div className="text-[15px] font-semibold text-(--ink)">
             Turn your highlights into content
           </div>
-          <div className="text-[13px] text-[var(--ink-3)] mt-[4px]">
+          <div className="text-[13px] text-muted-foreground mt-1">
             Any book you finish → one click to generate threads, carousels, and
             articles in BookBreaks.
           </div>
         </div>
         <Link
           href="/tools/bookbreaks"
-          className="shrink-0 inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold no-underline px-[16px] py-[10px] rounded-[8px] transition-all hover:opacity-80"
+          className="shrink-0 inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold no-underline px-4 py-2.5 rounded-lg transition-all hover:opacity-80"
           style={{ background: "#C85A2C", color: "#fff" }}
         >
           Open BookBreaks <ArrowRight size={12} />
@@ -459,7 +459,7 @@ function StatCard({
 }): React.ReactElement {
   return (
     <div
-      className="rounded-[14px] p-[20px] border transition-all duration-300 relative overflow-hidden"
+      className="rounded-[14px] p-5 border transition-all duration-300 relative overflow-hidden"
       style={{
         background: highlight
           ? `linear-gradient(135deg, ${color}10, ${color}20)`
@@ -472,20 +472,20 @@ function StatCard({
       {/* Subtle top-left glow when highlighted */}
       {highlight && (
         <div
-          className="absolute top-0 left-0 w-[80px] h-[80px] rounded-full opacity-20 blur-xl pointer-events-none"
+          className="absolute top-0 left-0 w-20 h-20 rounded-full opacity-20 blur-xl pointer-events-none"
           style={{ background: color }}
         />
       )}
-      <div className="flex items-center gap-[8px] mb-[12px] relative" style={{ color }}>
+      <div className="flex items-center gap-2 mb-3 relative" style={{ color }}>
         {icon}
-        <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+        <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground">
           {label}
         </span>
       </div>
-      <div className="text-[28px] max-[480px]:text-[22px] font-bold text-[var(--ink)] leading-[1] relative">
+      <div className="text-[28px] max-[480px]:text-[22px] font-bold text-(--ink) leading-none relative">
         {value}
       </div>
-      <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[4px]">
+      <div className="font-mono text-[10px] text-muted-foreground mt-1">
         {sub}
       </div>
     </div>

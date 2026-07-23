@@ -196,16 +196,16 @@ export function BBGenerator({
 
   if (books.length === 0) {
     return (
-      <div className="rounded-[12px] p-[48px] max-[480px]:p-[32px] text-center bg-[var(--bg-2)] border-[1.5px] border-dashed border-[var(--rule)]">
-        <div className="mb-[16px] text-[var(--v3-accent)]">
+      <div className="rounded-xl p-12 max-[480px]:p-8 text-center bg-(--bg-2) border-[1.5px] border-dashed border-(--rule)">
+        <div className="mb-4 text-(--v3-accent)">
           <BookOpen size={48} className="mx-auto" />
         </div>
-        <p className="font-mono text-[12px] uppercase tracking-[0.1em] mb-[20px] text-[var(--ink-3)]">
+        <p className="font-mono text-[12px] uppercase tracking-widest mb-5 text-muted-foreground">
           No books in your library yet
         </p>
         <a
           href="/tools/bookbreaks/books"
-          className="inline-flex items-center gap-[8px] font-mono text-[12px] uppercase tracking-[0.12em] font-semibold no-underline text-[var(--v3-accent)] hover:opacity-80"
+          className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.12em] font-semibold no-underline text-(--v3-accent) hover:opacity-80"
         >
           Add a book first{" "}
           <ArrowRight size={14} className="ml-1 inline-block" />
@@ -215,25 +215,25 @@ export function BBGenerator({
   }
 
   return (
-    <div className="grid grid-cols-[360px_1fr] max-[1100px]:grid-cols-1 gap-[24px] items-start">
+    <div className="grid grid-cols-[360px_1fr] max-[1100px]:grid-cols-1 gap-6 items-start">
       {/* ── Controls panel ───────────────────────────────── */}
-      <div className="rounded-[16px] overflow-hidden sticky top-[88px] max-[1100px]:static bg-[var(--bg-2)] border border-[var(--rule)]">
-        <div className="px-[20px] py-[16px] border-b border-[var(--rule)]">
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+      <div className="rounded-2xl overflow-hidden sticky top-[88px] max-[1100px]:static bg-(--bg-2) border border-(--rule)">
+        <div className="px-5 py-4 border-b border-(--rule)">
+          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
             Configuration
           </div>
         </div>
 
-        <div className="p-[20px] space-y-[18px]">
+        <div className="p-5 space-y-4.5">
           {/* Book selector */}
           <div>
-            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
               Book
             </label>
             <select
               value={bookId}
               onChange={(e) => setBookId(e.target.value)}
-              className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[13px] outline-none cursor-pointer bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)] transition-colors"
+              className="w-full h-11 px-3.5 rounded-lg font-mono text-[13px] outline-none cursor-pointer bg-(--bg) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent) transition-colors"
             >
               {books.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -243,7 +243,7 @@ export function BBGenerator({
             </select>
             {selectedBook && (
               <div
-                className="mt-[8px] h-[3px] rounded-full transition-all duration-300"
+                className="mt-2 h-0.75 rounded-full transition-all duration-300"
                 style={{ background: selectedTheme.bg }}
                 aria-hidden="true"
               />
@@ -252,16 +252,16 @@ export function BBGenerator({
 
           {/* Content type */}
           <div>
-            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[10px] text-[var(--ink-3)]">
+            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-2.5 text-muted-foreground">
               Content Type
             </label>
-            <div className="grid grid-cols-3 max-[400px]:grid-cols-2 gap-[6px]">
+            <div className="grid grid-cols-3 max-[400px]:grid-cols-2 gap-1.5">
               {CONTENT_TYPES.map((ct) => (
                 <button
                   key={ct}
                   type="button"
                   onClick={() => setContentType(ct)}
-                  className="flex items-center gap-[5px] h-[38px] px-[8px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.07em] transition-all cursor-pointer border-none text-left"
+                  className="flex items-center gap-1.25 h-9.5 px-2 rounded-lg font-mono text-[10px] uppercase tracking-[0.07em] transition-all cursor-pointer border-none text-left"
                   style={{
                     background:
                       contentType === ct
@@ -291,13 +291,13 @@ export function BBGenerator({
 
           {/* Tone */}
           <div>
-            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
               Tone
             </label>
             <select
               value={tone}
               onChange={(e) => setTone(e.target.value)}
-              className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[13px] outline-none cursor-pointer bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)] transition-colors"
+              className="w-full h-11 px-3.5 rounded-lg font-mono text-[13px] outline-none cursor-pointer bg-(--bg) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent) transition-colors"
             >
               {TONE_OPTIONS.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -310,7 +310,7 @@ export function BBGenerator({
           {/* Word count — articles only */}
           {contentType === "article" && (
             <div>
-              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
                 Target Word Count
               </label>
               <input
@@ -320,7 +320,7 @@ export function BBGenerator({
                 min={500}
                 max={3000}
                 step={100}
-                className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[13px] outline-none bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)] transition-colors"
+                className="w-full h-11 px-3.5 rounded-lg font-mono text-[13px] outline-none bg-(--bg) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent) transition-colors"
               />
             </div>
           )}
@@ -328,7 +328,7 @@ export function BBGenerator({
           {/* SEO keywords — articles only */}
           {contentType === "article" && (
             <div>
-              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
                 SEO Keywords (comma-separated)
               </label>
               <input
@@ -336,14 +336,14 @@ export function BBGenerator({
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
                 placeholder="book review, entrepreneurship, productivity"
-                className="w-full h-[44px] px-[14px] rounded-[8px] font-mono text-[13px] outline-none bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)] transition-colors"
+                className="w-full h-11 px-3.5 rounded-lg font-mono text-[13px] outline-none bg-(--bg) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent) transition-colors"
               />
             </div>
           )}
 
           {/* Custom instructions */}
           <div>
-            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+            <label className="block font-mono text-[11px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
               Custom Instructions{" "}
               <span className="normal-case tracking-normal font-sans opacity-60">
                 (optional)
@@ -354,14 +354,14 @@ export function BBGenerator({
               onChange={(e) => setCustomInstructions(e.target.value)}
               placeholder="Any specific angle, format, or style notes…"
               rows={3}
-              className="w-full px-[14px] py-[12px] rounded-[8px] font-mono text-[13px] outline-none resize-none bg-[var(--bg)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)] transition-colors"
+              className="w-full px-3.5 py-3 rounded-lg font-mono text-[13px] outline-none resize-none bg-(--bg) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent) transition-colors"
             />
           </div>
 
           {/* Error */}
           {error && (
             <div
-              className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px]"
+              className="rounded-lg px-3.5 py-2.5 font-mono text-[11px]"
               style={{
                 background: "color-mix(in oklab, #ef4444 8%, transparent)",
                 color: "color-mix(in oklab, #dc2626 100%, transparent)",
@@ -377,7 +377,7 @@ export function BBGenerator({
           <button
             onClick={handleGenerate}
             disabled={generating || !bookId}
-            className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-[8px] bg-[var(--v3-accent)]"
+            className="w-full h-13 rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 bg-(--v3-accent)"
           >
             <Sparkles size={14} className={generating ? "animate-pulse" : ""} />
             {generating
@@ -390,16 +390,16 @@ export function BBGenerator({
       {/* ── Output panel ─────────────────────────────────── */}
       <div ref={outputRef}>
         {generating || generated ? (
-          <div className="rounded-[16px] overflow-hidden border border-[var(--rule)]">
+          <div className="rounded-2xl overflow-hidden border border-(--rule)">
             {/* Output header */}
             <div
-              className="flex items-center justify-between px-[20px] py-[14px] max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-[8px]"
+              className="flex items-center justify-between px-5 py-3.5 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-2"
               style={{
                 background: selectedTheme.bg,
                 borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
             >
-              <div className="flex items-center gap-[10px]">
+              <div className="flex items-center gap-2.5">
                 <span className="text-[16px]" aria-hidden="true">
                   {CONTENT_TYPE_ICONS[contentType]}
                 </span>
@@ -421,11 +421,11 @@ export function BBGenerator({
 
               {generating && (
                 <div
-                  className="flex items-center gap-[6px] font-mono text-[10px] uppercase tracking-[0.1em]"
+                  className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest"
                   style={{ color: selectedTheme.accent }}
                 >
                   <span
-                    className="inline-block w-[6px] h-[6px] rounded-full animate-pulse"
+                    className="inline-block w-1.5 h-1.5 rounded-full animate-pulse"
                     style={{ background: selectedTheme.accent }}
                     aria-hidden="true"
                   />
@@ -437,7 +437,7 @@ export function BBGenerator({
             {/* Content body */}
             {contentType === "carousel" && generated && !generating ? (
               <div
-                className="p-[24px] max-[480px]:p-[16px]"
+                className="p-6 max-[480px]:p-4"
                 style={{ background: "var(--bg-2)" }}
               >
                 <CarouselPreview
@@ -445,25 +445,25 @@ export function BBGenerator({
                   bookTheme={selectedTheme}
                   bookTitle={selectedBook?.title ?? ""}
                 />
-                <details className="mt-[20px]">
-                  <summary className="font-mono text-[10px] tracking-[0.12em] uppercase cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors">
+                <details className="mt-5">
+                  <summary className="font-mono text-[10px] tracking-[0.12em] uppercase cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors">
                     View raw slide text ▾
                   </summary>
-                  <pre className="whitespace-pre-wrap text-[12px] leading-[1.7] font-mono mt-[12px] p-[16px] rounded-[8px] text-[var(--ink)] bg-[var(--bg)] border border-[var(--rule)] overflow-x-auto">
+                  <pre className="whitespace-pre-wrap text-[12px] leading-[1.7] font-mono mt-3 p-4 rounded-lg text-(--ink) bg-(--bg) border border-(--rule) overflow-x-auto">
                     {generated}
                   </pre>
                 </details>
               </div>
             ) : (
               <div
-                className="p-[24px] max-[480px]:p-[16px]"
+                className="p-6 max-[480px]:p-4"
                 style={{ background: "var(--bg-2)" }}
               >
-                <div className="text-[14px] leading-[1.75] text-[var(--ink)]">
+                <div className="text-[14px] leading-[1.75] text-(--ink)">
                   <Markdown text={generated} accent="var(--v3-accent)" />
                   {generating && (
                     <span
-                      className="inline-block w-[2px] h-[18px] ml-[2px] align-middle bg-[var(--v3-accent)]"
+                      className="inline-block w-0.5 h-4.5 ml-0.5 align-middle bg-(--v3-accent)"
                       style={{ animation: "cursor-blink 1s step-end infinite" }}
                       aria-hidden="true"
                     />
@@ -475,7 +475,7 @@ export function BBGenerator({
             {/* Action bar */}
             {!generating && generated && (
               <div
-                className="flex items-center gap-[10px] px-[20px] py-[14px] flex-wrap"
+                className="flex items-center gap-2.5 px-5 py-3.5 flex-wrap"
                 style={{
                   borderTop: "1px solid var(--rule)",
                   background: "color-mix(in oklab, var(--bg-2) 80%, var(--bg))",
@@ -501,7 +501,7 @@ export function BBGenerator({
                 {saved && (
                   <a
                     href="/tools/bookbreaks/content"
-                    className="inline-flex items-center gap-[5px] font-mono text-[10px] uppercase tracking-[0.1em] no-underline text-[var(--v3-accent)] hover:opacity-70 transition-opacity ml-auto"
+                    className="inline-flex items-center gap-1.25 font-mono text-[10px] uppercase tracking-widest no-underline text-(--v3-accent) hover:opacity-70 transition-opacity ml-auto"
                   >
                     View in Hub <ExternalLink size={11} />
                   </a>
@@ -512,19 +512,19 @@ export function BBGenerator({
         ) : (
           /* Empty state */
           <div
-            className="rounded-[16px] min-h-[300px] max-[1100px]:min-h-[200px] flex flex-col items-center justify-center text-center p-[40px] max-[480px]:p-[24px]"
+            className="rounded-2xl min-h-[300px] max-[1100px]:min-h-[200px] flex flex-col items-center justify-center text-center p-10 max-[480px]:p-6"
             style={{
               border: "1.5px dashed var(--rule)",
               background: "var(--bg-2)",
             }}
           >
-            <div className="text-[40px] mb-[16px] text-[var(--v3-accent)] opacity-50">
+            <div className="text-[40px] mb-4 text-(--v3-accent) opacity-50">
               ✦
             </div>
-            <p className="font-mono text-[12px] uppercase tracking-[0.12em] mb-[8px] text-[var(--ink-3)]">
+            <p className="font-mono text-[12px] uppercase tracking-[0.12em] mb-2 text-muted-foreground">
               Ready to generate
             </p>
-            <p className="text-[13px] leading-[1.6] max-w-[32ch] text-[var(--ink-4)]">
+            <p className="text-[13px] leading-[1.6] max-w-[32ch] text-(--ink-4)">
               Configure your options{" "}
               <span className="max-[1100px]:hidden">on the left</span>{" "}
               <span className="hidden max-[1100px]:inline">above</span> and hit
@@ -561,7 +561,7 @@ function GenActionBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex items-center gap-[5px] h-[34px] px-[12px] rounded-[6px] font-mono text-[10px] uppercase tracking-[0.1em] font-semibold transition-all duration-150 disabled:opacity-50 cursor-pointer border-none hover:opacity-80 active:scale-95"
+      className="inline-flex items-center gap-1.25 h-8.5 px-3 rounded-md font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-150 disabled:opacity-50 cursor-pointer border-none hover:opacity-80 active:scale-95"
       style={
         primary
           ? {

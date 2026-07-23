@@ -214,7 +214,7 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
     <div className="fixed inset-0 z-[60] flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-[3px]"
+        className="absolute inset-0 bg-black/70 backdrop-blur-0.75"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -224,28 +224,28 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
 
       {/* Card */}
       <div
-        className="relative z-10 w-full max-w-[600px] max-h-[90vh] mx-[16px] flex flex-col rounded-[20px] shadow-2xl overflow-hidden"
+        className="relative z-10 w-full max-w-[600px] max-h-[90vh] mx-4 flex flex-col rounded-[20px] shadow-2xl overflow-hidden"
         style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}
       >
         {/* Header */}
         <div
-          className="shrink-0 flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)]"
+          className="shrink-0 flex items-center justify-between px-6 py-4.5 border-b border-(--rule)"
           style={{ background: "var(--bg-2)" }}
         >
-          <div className="flex items-center gap-[10px]">
+          <div className="flex items-center gap-2.5">
             <BookOpen size={16} style={{ color: ACCENT }} />
             <div>
               <div className="font-mono text-[8px] tracking-[0.14em] uppercase" style={{ color: ACCENT }}>
                 Chapter Canvas
               </div>
-              <div className="text-[13px] font-semibold text-[var(--ink)] leading-[1.2]">
+              <div className="text-[13px] font-semibold text-(--ink) leading-[1.2]">
                 {bookTitle.length > 36 ? `${bookTitle.slice(0, 36)}…` : bookTitle}
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none bg-transparent cursor-pointer hover:bg-[var(--bg-3)] text-[var(--ink-3)]"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-lg border-none bg-transparent cursor-pointer hover:bg-(--bg-3) text-muted-foreground"
             aria-label="Close chapter canvas"
           >
             <X size={16} />
@@ -253,12 +253,12 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
         </div>
 
         {/* Chapter nav strip */}
-        <div className="shrink-0 flex items-center gap-[6px] px-[24px] py-[12px] overflow-x-auto scrollbar-none border-b border-[var(--rule)]">
+        <div className="shrink-0 flex items-center gap-1.5 px-6 py-3 overflow-x-auto scrollbar-none border-b border-(--rule)">
           {chapters.map((ch, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
-              className="shrink-0 font-mono text-[9px] tracking-[0.08em] uppercase px-[10px] py-[4px] rounded-full border cursor-pointer transition-all"
+              className="shrink-0 font-mono text-[9px] tracking-[0.08em] uppercase px-2.5 py-1 rounded-full border cursor-pointer transition-all"
               style={
                 i === current
                   ? { background: ACCENT, color: "var(--ch-bg)", borderColor: ACCENT }
@@ -271,36 +271,36 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-[28px] py-[28px]">
+        <div className="flex-1 min-h-0 overflow-y-auto px-7 py-7">
           {/* Chapter number + title */}
-          <div className="mb-[24px]">
-            <div className="font-mono text-[9px] tracking-[0.16em] uppercase mb-[6px]" style={{ color: ACCENT }}>
+          <div className="mb-6">
+            <div className="font-mono text-[9px] tracking-[0.16em] uppercase mb-1.5" style={{ color: ACCENT }}>
               Chapter {chapter.number} of {total}
             </div>
-            <h2 className="text-[22px] font-semibold text-[var(--ink)] leading-[1.3] m-0">
+            <h2 className="text-[22px] font-semibold text-(--ink) leading-[1.3] m-0">
               {chapter.title}
             </h2>
           </div>
 
           {/* Quote */}
           <div
-            className="rounded-[12px] px-[20px] py-[16px] mb-[24px]"
+            className="rounded-xl px-5 py-4 mb-6"
             style={{ background: ACCENT_SOFT }}
           >
-            <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-[8px]" style={{ color: ACCENT }}>
+            <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-2" style={{ color: ACCENT }}>
               Key Quote
             </div>
-            <blockquote className="text-[14px] leading-[1.75] text-[var(--ink)] m-0 italic">
+            <blockquote className="text-[14px] leading-[1.75] text-(--ink) m-0 italic">
               &ldquo;{chapter.quote}&rdquo;
             </blockquote>
           </div>
 
           {/* Takeaway */}
-          <div className="mb-[8px]">
-            <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-[8px]" style={{ color: ACCENT }}>
+          <div className="mb-2">
+            <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-2" style={{ color: ACCENT }}>
               Key Takeaway
             </div>
-            <p className="text-[14px] leading-[1.7] text-[var(--ink-2)] m-0">
+            <p className="text-[14px] leading-[1.7] text-secondary-foreground m-0">
               {chapter.takeaway}
             </p>
           </div>
@@ -308,15 +308,15 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
 
         {/* Actions footer */}
         <div
-          className="shrink-0 flex items-center justify-between px-[24px] py-[16px] border-t border-[var(--rule)]"
+          className="shrink-0 flex items-center justify-between px-6 py-4 border-t border-(--rule)"
           style={{ background: "var(--bg-2)" }}
         >
           {/* Prev / Next */}
-          <div className="flex items-center gap-[8px]">
+          <div className="flex items-center gap-2">
             <button
               onClick={prev}
               disabled={current === 0}
-              className="w-[34px] h-[34px] flex items-center justify-center rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-8.5 h-8.5 flex items-center justify-center rounded-lg border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               style={{ background: "var(--bg-3)", color: "var(--ink-2)" }}
               aria-label="Previous chapter"
             >
@@ -325,7 +325,7 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
             <button
               onClick={next}
               disabled={current === total - 1}
-              className="w-[34px] h-[34px] flex items-center justify-center rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-8.5 h-8.5 flex items-center justify-center rounded-lg border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               style={{ background: "var(--bg-3)", color: "var(--ink-2)" }}
               aria-label="Next chapter"
             >
@@ -334,11 +334,11 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
           </div>
 
           {/* Save + Share */}
-          <div className="flex items-center gap-[8px]">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => void handleSave()}
               disabled={isSaved || saving}
-              className="flex items-center gap-[6px] h-[34px] px-[14px] rounded-[8px] border-none cursor-pointer font-mono text-[10px] tracking-[0.08em] uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 h-8.5 px-3.5 rounded-lg border-none cursor-pointer font-mono text-[10px] tracking-[0.08em] uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={
                 isSaved
                   ? { background: "#16A34A15", color: "#16A34A" }
@@ -358,7 +358,7 @@ export function ChapterCanvas({ bookId, bookTitle, docContent, onClose, onSaveFl
             <button
               onClick={() => void handleShare()}
               disabled={sharing}
-              className="flex items-center gap-[6px] h-[34px] px-[14px] rounded-[8px] border-none cursor-pointer font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ch-bg)] transition-all disabled:opacity-60"
+              className="flex items-center gap-1.5 h-8.5 px-3.5 rounded-lg border-none cursor-pointer font-mono text-[10px] tracking-[0.08em] uppercase text-(--ch-bg) transition-all disabled:opacity-60"
               style={{ background: shared ? "#16A34A" : ACCENT }}
             >
               {sharing ? (

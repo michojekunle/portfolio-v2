@@ -129,10 +129,10 @@ export function TransactionForm({
   const symbol = CURRENCY_SYMBOLS[selectedAccount?.currency ?? "NGN"] ?? "₦";
 
   const formContent = (
-        <form onSubmit={handleSubmit} className="px-[24px] py-[20px] space-y-[18px]">
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4.5">
           {/* Type toggle */}
           <div
-            className="flex rounded-[10px] p-[3px]"
+            className="flex rounded-[10px] p-0.75"
             style={{ background: "var(--bg-2)" }}
           >
             {(["expense", "income"] as TxType[]).map((t) => (
@@ -140,7 +140,7 @@ export function TransactionForm({
                 key={t}
                 type="button"
                 onClick={() => { setTxType(t); setCategoryId(""); }}
-                className="flex-1 h-[36px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.1em] font-semibold border-none cursor-pointer transition-all duration-150"
+                className="flex-1 h-9 rounded-lg font-mono text-[11px] uppercase tracking-widest font-semibold border-none cursor-pointer transition-all duration-150"
                 style={
                   txType === t
                     ? {
@@ -158,12 +158,12 @@ export function TransactionForm({
 
           {/* Amount */}
           <div>
-            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">
+            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">
               Amount
             </label>
             <div className="relative">
               <span
-                className="absolute left-[16px] top-1/2 -translate-y-1/2 font-display text-[20px] fvs-text"
+                className="absolute left-4 top-1/2 -translate-y-1/2 font-display text-[20px] fvs-text"
                 style={{ color: "var(--ink-3)" }}
               >
                 {symbol}
@@ -178,7 +178,7 @@ export function TransactionForm({
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
                 required
-                className="w-full h-[56px] pl-[40px] pr-[16px] rounded-[10px] font-display text-[24px] fvs-text outline-none transition-all bg-[var(--bg-2)] text-[var(--ink)]"
+                className="w-full h-14 pl-10 pr-4 rounded-[10px] font-display text-[24px] fvs-text outline-none transition-all bg-(--bg-2) text-(--ink)"
                 style={{ border: "1.5px solid var(--rule)" }}
               />
             </div>
@@ -186,7 +186,7 @@ export function TransactionForm({
 
           {/* Description */}
           <div>
-            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">
+            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">
               Description
             </label>
             <input
@@ -195,21 +195,21 @@ export function TransactionForm({
               onChange={(e) => setDescription(e.target.value)}
               placeholder={txType === "expense" ? "e.g. Groceries at Shoprite" : "e.g. Freelance payment"}
               maxLength={200}
-              className="w-full h-[44px] px-[14px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] text-[var(--ink)]"
+              className="w-full h-11 px-3.5 rounded-lg text-[14px] outline-none bg-(--bg-2) text-(--ink)"
               style={{ border: "1.5px solid var(--rule)" }}
             />
           </div>
 
           {/* Category + Account row */}
-          <div className="grid grid-cols-2 gap-[12px]">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">
+              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">
                 Category
               </label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full h-[44px] px-[12px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer"
+                className="w-full h-11 px-3 rounded-lg text-[14px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer"
                 style={{ border: "1.5px solid var(--rule)" }}
               >
                 <option value="">Uncategorized</option>
@@ -221,14 +221,14 @@ export function TransactionForm({
               </select>
             </div>
             <div>
-              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">
+              <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">
                 Account
               </label>
               <select
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
                 required
-                className="w-full h-[44px] px-[12px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer"
+                className="w-full h-11 px-3 rounded-lg text-[14px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer"
                 style={{ border: "1.5px solid var(--rule)" }}
               >
                 {accounts.length === 0 && (
@@ -245,7 +245,7 @@ export function TransactionForm({
 
           {/* Date */}
           <div>
-            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">
+            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">
               Date
             </label>
             <input
@@ -253,15 +253,15 @@ export function TransactionForm({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
-              className="w-full h-[44px] px-[14px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] text-[var(--ink)]"
+              className="w-full h-11 px-3.5 rounded-lg text-[14px] outline-none bg-(--bg-2) text-(--ink)"
               style={{ border: "1.5px solid var(--rule)" }}
             />
           </div>
 
           {/* Note (optional) */}
           <div>
-            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">
-              Note <span className="normal-case tracking-normal text-[var(--ink-4)]">(optional)</span>
+            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">
+              Note <span className="normal-case tracking-normal text-(--ink-4)">(optional)</span>
             </label>
             <input
               type="text"
@@ -269,14 +269,14 @@ export function TransactionForm({
               onChange={(e) => setNote(e.target.value)}
               placeholder="Any extra detail…"
               maxLength={500}
-              className="w-full h-[44px] px-[14px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] text-[var(--ink)]"
+              className="w-full h-11 px-3.5 rounded-lg text-[14px] outline-none bg-(--bg-2) text-(--ink)"
               style={{ border: "1.5px solid var(--rule)" }}
             />
           </div>
 
           {error && (
             <div
-              className="rounded-[8px] px-[14px] py-[10px] text-[13px] font-mono"
+              className="rounded-lg px-3.5 py-2.5 text-[13px] font-mono"
               style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}
             >
               {error}
@@ -287,12 +287,12 @@ export function TransactionForm({
           <button
             type="submit"
             disabled={loading || accounts.length === 0}
-            className="w-full h-[52px] rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed border-none cursor-pointer flex items-center justify-center gap-[8px]"
+            className="w-full h-13 rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed border-none cursor-pointer flex items-center justify-center gap-2"
             style={{ background: txType === "expense" ? "#DC2626" : ACCENT }}
           >
             {loading ? (
               <span
-                className="w-[16px] h-[16px] rounded-full border-[2px] border-white/30 border-t-white animate-spin"
+                className="w-4 h-4 rounded-full border-0.5 border-white/30 border-t-white animate-spin"
                 aria-hidden="true"
               />
             ) : (
@@ -304,7 +304,7 @@ export function TransactionForm({
           </button>
 
           {accounts.length === 0 && (
-            <p className="text-center text-[12px] text-[var(--ink-3)] m-0">
+            <p className="text-center text-[12px] text-muted-foreground m-0">
               You need to add an account first.
             </p>
           )}
@@ -314,12 +314,12 @@ export function TransactionForm({
   if (embedded) return formContent;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-[16px]">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 w-full max-w-[480px] rounded-t-[20px] sm:rounded-[16px] overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
-        <div className="flex items-center justify-between px-[24px] py-[20px] border-b border-[var(--rule)]">
-          <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">Add Transaction</h2>
-          <button onClick={onClose} className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:bg-[var(--bg-2)] transition-colors" aria-label="Close"><X size={18} /></button>
+      <div className="relative z-10 w-full max-w-[480px] rounded-t-[20px] sm:rounded-2xl overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-(--rule)">
+          <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-(--ink)">Add Transaction</h2>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:bg-(--bg-2) transition-colors" aria-label="Close"><X size={18} /></button>
         </div>
         {formContent}
       </div>

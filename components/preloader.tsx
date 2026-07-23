@@ -54,7 +54,7 @@ export function Preloader(): React.ReactElement {
           key="preloader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] } }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[var(--bg)] px-[var(--gutter)]"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-(--bg) px-(--gutter)"
           aria-hidden="true"
         >
           <div className="flex flex-col items-center text-center">
@@ -64,10 +64,10 @@ export function Preloader(): React.ReactElement {
               initial="hidden"
               animate="visible"
               exit={{ y: "-50px", opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
-              className="font-display font-extrabold text-[clamp(50px,11vw,140px)] tracking-[-0.04em] text-[var(--ink)] leading-[1.0] mb-[24px] fvs-display"
+              className="font-display font-extrabold text-[clamp(50px,11vw,140px)] tracking-[-0.04em] text-(--ink) leading-[1.0] mb-6 fvs-display"
             >
               {name.map((char, index) => (
-                <motion.span key={index} variants={charVariants} className={char === "." ? "text-[var(--v3-accent)]" : ""}>
+                <motion.span key={index} variants={charVariants} className={char === "." ? "text-(--v3-accent)" : ""}>
                   {char}
                 </motion.span>
               ))}
@@ -79,7 +79,7 @@ export function Preloader(): React.ReactElement {
               initial="hidden"
               animate="visible"
               exit={{ y: "-30px", opacity: 0, transition: { duration: 0.8, ease: "easeInOut", delay: 0.1 } }}
-              className="font-mono text-[clamp(12px,1.5vw,16px)] uppercase tracking-[0.2em] text-[var(--ink-2)]"
+              className="font-mono text-[clamp(12px,1.5vw,16px)] uppercase tracking-[0.2em] text-secondary-foreground"
             >
               {/* Dummy span to delay the second line stagger naturally */}
               <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 0, transition: { delay: 2.2 } } }} />
@@ -92,12 +92,12 @@ export function Preloader(): React.ReactElement {
           </div>
           
           {/* Subtle loading bar */}
-          <div className="absolute bottom-[40px] w-[200px] h-[2px] bg-[var(--rule)] overflow-hidden">
+          <div className="absolute bottom-10 w-[200px] h-0.5 bg-(--rule) overflow-hidden">
              <motion.div 
                initial={{ x: "-100%" }}
                animate={{ x: "0%" }}
                transition={{ duration: 2.0, ease: "easeInOut" }}
-               className="w-full h-full bg-[var(--ink)]"
+               className="w-full h-full bg-(--ink)"
              />
           </div>
         </motion.div>

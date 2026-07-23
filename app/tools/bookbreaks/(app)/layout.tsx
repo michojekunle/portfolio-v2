@@ -31,10 +31,10 @@ export default async function BookBreaksLayout({
 
   return (
     <div
-      className="min-h-screen flex bg-[var(--bg)] text-[var(--ink)]"
+      className="min-h-screen flex bg-(--bg) text-(--ink)"
     >
       <BBSidebarNav userEmail={user.email ?? ""} />
-      <div className="flex-1 min-w-0 ml-[260px] max-[1024px]:ml-0 flex flex-col relative">
+      <div className="flex-1 min-w-0 ml-[260px] max-256:ml-0 flex flex-col relative">
         <main className="flex-1 min-h-screen">{children}</main>
         <ThemeTweaker />
       </div>

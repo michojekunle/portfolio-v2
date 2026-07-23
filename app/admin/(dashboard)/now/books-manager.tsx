@@ -249,7 +249,7 @@ function NotesPanel({
         ))}
       </div>
 
-      <div className="min-h-[24px]">
+      <div className="min-h-6">
         {filtered.length === 0 ? (
           <p className="text-xs text-muted-foreground py-1">
             No {noteTypeConfig[activeType].label.toLowerCase()}s yet.

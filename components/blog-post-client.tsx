@@ -29,29 +29,29 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
   return (
     <>
       <motion.div 
-        className="fixed top-0 left-0 right-0 h-[3px] bg-[var(--v3-accent)] z-[500] origin-left" 
+        className="fixed top-0 left-0 right-0 h-0.75 bg-(--v3-accent) z-[500] origin-left" 
         style={{ scaleX }} 
       />
-      <section className="v3-post-hero v3-container-narrow pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] relative">
+      <section className="v3-post-hero v3-container-narrow pt-40 pb-20 max-180:pt-20 max-180:pb-14 relative">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="crumbs font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] uppercase mb-[32px] flex gap-[8px]" 
+          className="crumbs font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase mb-8 flex gap-2" 
           aria-label="Breadcrumb"
         >
-          <Link href="/" className="hover:text-[var(--ink)] transition-colors">Home</Link>
-          <span className="text-[var(--rule)]">/</span>
-          <Link href="/blog" className="hover:text-[var(--ink)] transition-colors">Notes</Link>
+          <Link href="/" className="hover:text-(--ink) transition-colors">Home</Link>
+          <span className="text-(--rule)">/</span>
+          <Link href="/blog" className="hover:text-(--ink) transition-colors">Notes</Link>
           {post.category && (
             <>
-              <span className="text-[var(--rule)]">/</span>
-              <span className="text-[var(--ink)]">{post.category}</span>
+              <span className="text-(--rule)">/</span>
+              <span className="text-(--ink)">{post.category}</span>
             </>
           )}
         </motion.div>
 
-        <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,100px)] leading-[0.9] tracking-[-0.03em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[8px] max-[720px]:gap-x-[10px]">
+        <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,100px)] leading-[0.9] tracking-[-0.03em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-2 max-[720px]:gap-x-2.5">
           {titleWords.map((word, i) => (
             <motion.span
               key={i}
@@ -73,7 +73,7 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="lede text-[20px] text-[var(--ink-2)] max-w-[56ch] leading-[1.65] m-0 mb-[48px]"
+            className="lede text-[20px] text-secondary-foreground max-w-[56ch] leading-[1.65] m-0 mb-12"
           >
             {post.excerpt}
           </motion.p>
@@ -83,11 +83,11 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="meta-line flex flex-wrap gap-[24px] items-center pt-[24px] border-t border-[var(--rule)] font-mono text-[11px] tracking-[0.08em] text-[var(--ink-3)] uppercase"
+          className="meta-line flex flex-wrap gap-6 items-center pt-6 border-t border-(--rule) font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase"
         >
-          {post.category && <span className="px-[10px] py-[4px] border border-[var(--rule)] rounded-full text-[var(--ink-2)]">{post.category}</span>}
+          {post.category && <span className="px-2.5 py-1 border border-(--rule) rounded-full text-secondary-foreground">{post.category}</span>}
           {post.published_at && (
-            <span className="text-[var(--ink)] font-medium">
+            <span className="text-(--ink) font-medium">
               <time dateTime={post.published_at}>
                 {format(new Date(post.published_at as string), "MMMM d, yyyy")}
               </time>

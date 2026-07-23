@@ -11,7 +11,7 @@ interface TextRevealProps {
 
 export function TextReveal({
   children,
-  className = "",
+  className="",
   delay = 0,
   stagger = 0.03,
 }: TextRevealProps) {

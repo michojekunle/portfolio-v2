@@ -24,9 +24,9 @@ export function HorizontalScroll({ children, title }: HorizontalScrollProps) {
   // If there's only 1 child, no need for horizontal scroll mechanics
   if (children.length <= 1) {
     return (
-      <div className="mb-[120px] max-[720px]:mb-[80px]">
-        {title && <div className="mb-[48px]">{title}</div>}
-        <div className="flex flex-col gap-[40px]">
+      <div className="mb-30 max-180:mb-20">
+        {title && <div className="mb-12">{title}</div>}
+        <div className="flex flex-col gap-10">
           {children}
         </div>
       </div>
@@ -34,16 +34,16 @@ export function HorizontalScroll({ children, title }: HorizontalScrollProps) {
   }
 
   return (
-    <div className="mb-[120px] max-[720px]:mb-[80px]">
-      {title && <div className="mb-[48px]">{title}</div>}
+    <div className="mb-30 max-180:mb-20">
+      {title && <div className="mb-12">{title}</div>}
       
       {/* 
         The container height determines how long the scroll takes.
         We'll make it 100vh per extra child.
       */}
-      <div ref={targetRef} style={{ height: `${children.length * 100}vh` }} className="relative bg-[var(--bg)] rounded-[24px]">
+      <div ref={targetRef} style={{ height: `${children.length * 100}vh` }} className="relative bg-(--bg) rounded-3xl">
         <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-          <motion.div style={{ x }} className="flex gap-[40px] px-[var(--gutter)]">
+          <motion.div style={{ x }} className="flex gap-10 px-(--gutter)">
             {children.map((child, index) => (
               <div key={index} className="w-[85vw] max-w-[1000px] shrink-0">
                 {child}

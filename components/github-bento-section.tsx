@@ -112,24 +112,24 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
 
   return (
     <section
-      className="py-[120px] max-[720px]:py-[72px] relative max-w-[var(--maxw)] mx-auto px-[var(--gutter)]"
+      className="py-30 max-180:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
       id="open-source"
       aria-labelledby="bento-heading"
     >
-      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">03 — OSS</div>
+      <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
+        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — OSS</div>
         <div>
-          <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
-            Other notable <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">work.</em>
+          <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+            Other notable <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
           </h2>
-          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
+          <div className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
             Open source projects on GitHub — tools, experiments, and things I built
             to scratch my own itch.
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-1 gap-[16px] mb-[64px]">
+      <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-180:grid-cols-1 gap-4 mb-16">
         {repos.slice(0, 6).map((repo, i) => {
           const langColor = LANGUAGE_COLORS[repo.language ?? ""] ?? "var(--v3-accent)"
           const isWide = i === 0 || i === 4
@@ -140,25 +140,25 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group flex flex-col bg-[var(--paper)] border border-[var(--rule)] rounded-[12px] p-[24px] h-full no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-[var(--v3-accent)] hover:-translate-y-[2px] hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)]`}
+                className={`group flex flex-col bg-(--paper) border border-(--rule) rounded-xl p-6 h-full no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-(--v3-accent) hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)]`}
                 aria-label={`${repo.name} on GitHub`}
               >
-                <div className="flex justify-between items-start mb-[12px]">
-                  <div className="font-display font-normal text-[24px] text-[var(--ink)] leading-[1.1] fvs-text">{repo.name}</div>
-                  <span className="font-mono text-[11px] text-[var(--ink-3)] border border-[var(--rule)] px-[6px] py-[2px] rounded-[4px]" aria-label={`${repo.stars} stars`}>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="font-display font-normal text-[24px] text-(--ink) leading-[1.1] fvs-text">{repo.name}</div>
+                  <span className="font-mono text-[11px] text-muted-foreground border border-(--rule) px-1.5 py-0.5 rounded" aria-label={`${repo.stars} stars`}>
                     ★ {repo.stars}
                   </span>
                 </div>
 
                 {repo.description && (
-                  <p className="text-[14px] leading-[1.6] text-[var(--ink-2)] m-[0_0_24px] flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
+                  <p className="text-[14px] leading-[1.6] text-secondary-foreground m-6 flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
                 )}
 
-                <div className="flex flex-wrap gap-[8px] items-center mt-auto">
+                <div className="flex flex-wrap gap-2 items-center mt-auto">
                   {repo.language && (
-                    <span className="flex items-center gap-[6px] font-mono text-[10px] text-[var(--ink-3)]">
+                    <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
                       <span
-                        className="w-[8px] h-[8px] rounded-full"
+                        className="w-2 h-2 rounded-full"
                         style={{ background: langColor }}
                         aria-hidden="true"
                       />
@@ -166,11 +166,11 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                     </span>
                   )}
                   {repo.topics.slice(0, 2).map((t) => (
-                    <span key={t} className="font-mono text-[10px] text-[var(--ink-3)] bg-[var(--bg)] border border-[var(--rule)] px-[8px] py-[2px] rounded-full">{t}</span>
+                    <span key={t} className="font-mono text-[10px] text-muted-foreground bg-(--bg) border border-(--rule) px-2 py-0.5 rounded-full">{t}</span>
                   ))}
                 </div>
 
-                <div className="absolute top-[24px] right-[24px] text-[var(--v3-accent)] opacity-0 -translate-x-[4px] translate-y-[4px] transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true"><ArrowUpRight className="w-5 h-5" /></div>
+                <div className="absolute top-6 right-6 text-(--v3-accent) opacity-0 -translate-x-1 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true"><ArrowUpRight className="w-5 h-5" /></div>
               </a>
             </TiltCard>
           )
@@ -183,9 +183,9 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
             href={`https://github.com/${process.env.GITHUB_USERNAME ?? "michojekunle"}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-[10px] px-[24px] py-[14px] rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-200 no-underline hover:border-[var(--ink-3)] hover:bg-[var(--paper)]"
+            className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-200 no-underline hover:border-muted-foreground hover:bg-(--paper)"
           >
-            All repos on GitHub <ArrowUpRight className="inline-block transition-transform duration-250 group-hover:-translate-y-[2px] group-hover:translate-x-[2px] w-4 h-4" aria-hidden="true" />
+            All repos on GitHub <ArrowUpRight className="inline-block transition-transform duration-250 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 w-4 h-4" aria-hidden="true" />
           </a>
         </MagneticWrapper>
       </div>

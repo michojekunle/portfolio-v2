@@ -239,7 +239,7 @@ export function AssistantWidget(): React.ReactElement {
       {/* Floating Trigger Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-[24px] right-[24px] z-50 w-[56px] h-[56px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-[0_8px_32px_rgba(22,163,74,0.25)] transition-all duration-300 hover:scale-[1.08] hover:shadow-[0_12px_40px_rgba(22,163,74,0.35)]"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center border-none cursor-pointer shadow-[0_8px_32px_rgba(22,163,74,0.25)] transition-all duration-300 hover:scale-[1.08] hover:shadow-[0_12px_40px_rgba(22,163,74,0.35)]"
         style={{ background: ACCENT, color: "#fff" }}
         aria-label="Open AI Assistant"
       >
@@ -251,7 +251,7 @@ export function AssistantWidget(): React.ReactElement {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px]"
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-0.5"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
@@ -264,27 +264,27 @@ export function AssistantWidget(): React.ReactElement {
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-[var(--rule)] bg-[var(--bg-2)]">
-              <div className="flex items-center gap-[10px]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-(--rule) bg-(--bg-2)">
+              <div className="flex items-center gap-2.5">
                 <div
-                  className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center"
+                  className="w-7 h-7 rounded-md flex items-center justify-center"
                   style={{ background: ACCENT_BG }}
                 >
                   <Sparkles size={14} style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <div className="font-display text-[15px] font-semibold text-[var(--ink)]">Flowy</div>
-                  <div className="font-mono text-[8px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                  <div className="font-display text-[15px] font-semibold text-(--ink)">Flowy</div>
+                  <div className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
                     {refreshing ? "Syncing data…" : "Flowise Copilot"}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-[6px]">
+              <div className="flex items-center gap-1.5">
                 {/* TTS Reader Toggle */}
                 <button
                   onClick={() => setTtsEnabled(!ttsEnabled)}
-                  className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-[var(--bg-3)] text-[var(--ink-3)] transition-all"
+                  className="w-7.5 h-7.5 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-(--bg-3) text-muted-foreground transition-all"
                   title={ttsEnabled ? "Disable voice output" : "Enable voice output"}
                 >
                   {ttsEnabled ? <Volume2 size={16} style={{ color: ACCENT }} /> : <VolumeX size={16} />}
@@ -292,7 +292,7 @@ export function AssistantWidget(): React.ReactElement {
                 {/* Close */}
                 <button
                   onClick={() => setOpen(false)}
-                  className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-[var(--bg-3)] text-[var(--ink-3)]"
+                  className="w-7.5 h-7.5 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-(--bg-3) text-muted-foreground"
                 >
                   <X size={16} />
                 </button>
@@ -300,17 +300,17 @@ export function AssistantWidget(): React.ReactElement {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px] space-y-[16px] scrollbar-thin" data-lenis-prevent="true">
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 space-y-4 scrollbar-thin" data-lenis-prevent="true">
               {messages.map((m, idx) => (
                 <div
                   key={idx}
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-[14px] px-[16px] py-[12px] text-[13px] leading-[1.6] ${
+                    className={`max-w-[85%] rounded-[14px] px-4 py-3 text-[13px] leading-[1.6] ${
                       m.role === "user"
                         ? "text-white"
-                        : "bg-[var(--bg-2)] text-[var(--ink)]"
+                        : "bg-(--bg-2) text-(--ink)"
                     }`}
                     style={
                       m.role === "user"
@@ -325,17 +325,17 @@ export function AssistantWidget(): React.ReactElement {
               {loading && (
                 <div className="flex justify-start">
                   <div
-                    className="bg-[var(--bg-2)] border border-[var(--rule)] rounded-[14px] rounded-bl-[2px] px-[16px] py-[12px] flex items-center gap-[8px]"
+                    className="bg-(--bg-2) border border-(--rule) rounded-[14px] rounded-bl-sm px-4 py-3 flex items-center gap-2"
                   >
                     <Loader2 className="animate-spin" size={14} style={{ color: ACCENT }} />
-                    <span className="font-mono text-[10px] text-[var(--ink-3)]">Thinking…</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">Thinking…</span>
                   </div>
                 </div>
               )}
               {listening && (
                 <div className="flex justify-end">
                   <div
-                    className="text-white rounded-[14px] rounded-br-[2px] px-[16px] py-[12px] flex items-center gap-[8px] animate-pulse"
+                    className="text-white rounded-[14px] rounded-br-sm px-4 py-3 flex items-center gap-2 animate-pulse"
                     style={{ background: ACCENT }}
                   >
                     <Mic className="animate-bounce" size={14} />
@@ -347,17 +347,17 @@ export function AssistantWidget(): React.ReactElement {
             </div>
 
             {/* Input Panel */}
-            <div className="p-[16px] border-t border-[var(--rule)] bg-[var(--bg-2)]">
+            <div className="p-4 border-t border-(--rule) bg-(--bg-2)">
               <div
-                className="flex items-end gap-[8px] rounded-[12px] p-[8px] bg-[var(--bg)] border transition-all duration-200 focus-within:border-[var(--ink-3)]"
+                className="flex items-end gap-2 rounded-xl p-2 bg-(--bg) border transition-all duration-200 focus-within:border-muted-foreground"
                 style={{ borderColor: "var(--rule)" }}
               >
                 {/* Voice button */}
                 <button
                   type="button"
                   onClick={toggleSpeechRecognition}
-                  className={`w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all ${
-                    listening ? "bg-red-500 text-white" : "hover:bg-[var(--bg-2)] text-[var(--ink-3)] bg-transparent"
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center border-none shrink-0 cursor-pointer transition-all ${
+                    listening ? "bg-red-500 text-white" : "hover:bg-(--bg-2) text-muted-foreground bg-transparent"
                   }`}
                   style={listening ? { background: "#DC2626" } : undefined}
                   title="Speak command"
@@ -374,7 +374,7 @@ export function AssistantWidget(): React.ReactElement {
                   placeholder={listening ? "Listening…" : "Type a financial action…"}
                   disabled={loading}
                   rows={1}
-                  className="flex-1 bg-transparent border-none outline-none resize-none font-sans text-[13px] leading-[1.5] py-[8px] text-[var(--ink)] placeholder:text-[var(--ink-4)]"
+                  className="flex-1 bg-transparent border-none outline-none resize-none font-sans text-[13px] leading-normal py-2 text-(--ink) placeholder:text-(--ink-4)"
                   style={{ maxHeight: "120px" }}
                 />
 
@@ -383,17 +383,17 @@ export function AssistantWidget(): React.ReactElement {
                   type="button"
                   onClick={() => void handleSendMessage(input)}
                   disabled={!input.trim() || loading}
-                  className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed text-white"
+                  className="w-9 h-9 rounded-lg flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed text-white"
                   style={{ background: ACCENT }}
                 >
                   <Send size={14} />
                 </button>
               </div>
-              <div className="flex items-center justify-between mt-[10px] px-[4px]">
-                <span className="font-mono text-[8px] text-[var(--ink-4)] flex items-center gap-[3px]">
+              <div className="flex items-center justify-between mt-2.5 px-1">
+                <span className="font-mono text-[8px] text-(--ink-4) flex items-center gap-0.75">
                   <CornerDownLeft size={8} /> Enter to send
                 </span>
-                <span className="font-mono text-[8px] text-[var(--ink-4)]">
+                <span className="font-mono text-[8px] text-(--ink-4)">
                   Press Mic to speak
                 </span>
               </div>

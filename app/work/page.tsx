@@ -10,14 +10,14 @@ export const metadata: Metadata = {
 export default function WorkPage(): React.ReactElement {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-          <div className="grid grid-cols-[1.4fr_1fr] max-[900px]:grid-cols-1 gap-[64px] max-[720px]:gap-[32px] items-center">
+        <section className="pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+          <div className="grid grid-cols-[1.4fr_1fr] max-[900px]:grid-cols-1 gap-16 max-180:gap-8 items-center">
             <div>
-              <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]">SELECTED WORK · 2024 — 2026</div>
-              <h1 className="m-0 font-display font-normal text-[clamp(48px,8vw,100px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display">
-                Engineering <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">impact.</em>
+              <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6">SELECTED WORK · 2024 — 2026</div>
+              <h1 className="m-0 font-display font-normal text-[clamp(48px,8vw,100px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">
+                Engineering <em className="not-italic italic text-(--v3-accent) fvs-soft">impact.</em>
               </h1>
-              <p className="text-[18px] text-[var(--ink-2)] max-w-[48ch] leading-[1.65] m-0 italic font-display fvs-text">
+              <p className="text-[18px] text-secondary-foreground max-w-[48ch] leading-[1.65] m-0 italic font-display fvs-text">
                 Each project here represents a specific challenge solved—from protocol-level complexity to high-fidelity interface design.
               </p>
             </div>

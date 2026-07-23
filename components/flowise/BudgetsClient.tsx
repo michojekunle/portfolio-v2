@@ -100,15 +100,15 @@ const [month, setMonth] = useState(initialMonth);
   );
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[60px] max-[1024px]:pt-[80px] max-[720px]:px-[20px]">
+    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-[32px] gap-[16px] flex-wrap">
-        <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-[var(--ink)]">
+      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
+        <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)">
           Budgets
         </h1>
         <button
           onClick={() => { setEditRow(null); setShowForm(true); }}
-          className="inline-flex items-center gap-[8px] h-[40px] px-[18px] rounded-full font-mono text-[10px] uppercase tracking-[0.14em] font-semibold text-white border-none cursor-pointer"
+          className="inline-flex items-center gap-2 h-10 px-4.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em] font-semibold text-white border-none cursor-pointer"
           style={{ background: ACCENT }}
         >
           <Plus size={13} /> Add Budget
@@ -116,21 +116,21 @@ const [month, setMonth] = useState(initialMonth);
       </div>
 
       {/* Month nav */}
-      <div className="flex items-center gap-[16px] mb-[28px]">
-        <button onClick={() => shiftMonth(-1)} className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-2)] hover:bg-[var(--bg-2)]">
+      <div className="flex items-center gap-4 mb-7">
+        <button onClick={() => shiftMonth(-1)} className="w-8 h-8 rounded-lg flex items-center justify-center border-none bg-transparent cursor-pointer text-secondary-foreground hover:bg-(--bg-2)">
           <ChevronLeft size={16} />
         </button>
-        <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text text-[var(--ink)] min-w-[140px] text-center">
+        <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text text-(--ink) min-w-35 text-center">
           {MONTHS[mon - 1]} {year}
         </div>
-        <button onClick={() => shiftMonth(1)} disabled={month >= new Date().toISOString().slice(0, 7)} className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-2)] hover:bg-[var(--bg-2)] disabled:opacity-30">
+        <button onClick={() => shiftMonth(1)} disabled={month >= new Date().toISOString().slice(0, 7)} className="w-8 h-8 rounded-lg flex items-center justify-center border-none bg-transparent cursor-pointer text-secondary-foreground hover:bg-(--bg-2) disabled:opacity-30">
           <ChevronRight size={16} />
         </button>
       </div>
 
       {/* Summary */}
       {budgets.length > 0 && (
-        <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-[12px] mb-[28px]">
+        <div className="grid grid-cols-3 max-180:grid-cols-1 gap-3 mb-7">
           <SummaryPill label="Total Budgeted" value={(hidden ? "****" : formatCurrency(totalBudgeted, "NGN"))} color="var(--ink)" />
           <SummaryPill label="Total Spent" value={(hidden ? "****" : formatCurrency(totalSpent, "NGN"))} color={totalSpent > totalBudgeted ? "#DC2626" : "var(--ink)"} />
           <SummaryPill label="Remaining" value={(hidden ? "****" : formatCurrency(Math.max(0, totalBudgeted - totalSpent)), "NGN")} color={ACCENT} />
@@ -139,18 +139,18 @@ const [month, setMonth] = useState(initialMonth);
 
       {/* Budget list */}
       {loading ? (
-        <div className="text-center py-[60px] text-[var(--ink-3)] font-mono text-[12px]">Loading…</div>
+        <div className="text-center py-15 text-muted-foreground font-mono text-[12px]">Loading…</div>
       ) : budgets.length === 0 ? (
-        <div className="rounded-[12px] py-[60px] text-center" style={{ border: "1px dashed var(--rule)" }}>
-          <div className="text-[36px] mb-[12px]">📊</div>
-          <div className="text-[15px] font-medium text-[var(--ink)] mb-[6px]">No budgets for {MONTHS[mon - 1]}</div>
-          <div className="text-[13px] text-[var(--ink-3)] mb-[20px] max-w-[36ch] mx-auto">Set spending limits per category to stay in control of your money.</div>
-          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-[6px] h-[36px] px-[16px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
+        <div className="rounded-xl py-15 text-center" style={{ border: "1px dashed var(--rule)" }}>
+          <div className="text-[36px] mb-3">📊</div>
+          <div className="text-[15px] font-medium text-(--ink) mb-1.5">No budgets for {MONTHS[mon - 1]}</div>
+          <div className="text-[13px] text-muted-foreground mb-5 max-w-[36ch] mx-auto">Set spending limits per category to stay in control of your money.</div>
+          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
             <Plus size={12} /> Set first budget
           </button>
         </div>
       ) : (
-        <div className="space-y-[10px]">
+        <div className="space-y-2.5">
           {budgets.map((budget) => {
             const cat = allCategories.find((c) => c.id === budget.category_id);
             const spent = budget.spent ?? 0;
@@ -195,8 +195,8 @@ function SummaryPill({ label, value, color }: { label: string; value: string; co
   const { hidden } = usePrivacy();
 
   return (
-    <div className="rounded-[10px] px-[16px] py-[12px]" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
-      <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-4)] mb-[4px]">{label}</div>
+    <div className="rounded-[10px] px-4 py-3" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
+      <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-(--ink-4) mb-1">{label}</div>
       <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text" style={{ color }}>{value}</div>
     </div>
   );
@@ -210,13 +210,13 @@ function BudgetBar({ catIcon, catName, catColor, amount, spent, pct, over, onEdi
   const { hidden } = usePrivacy();
   const barColor = over ? "#DC2626" : pct >= 80 ? "#F59E0B" : catColor;
   return (
-    <div className="rounded-[12px] px-[20px] py-[16px] group" style={{ border: "1px solid var(--rule)", background: "var(--bg)" }}>
-      <div className="flex items-center justify-between mb-[10px]">
-        <div className="flex items-center gap-[10px]">
+    <div className="rounded-xl px-5 py-4 group" style={{ border: "1px solid var(--rule)", background: "var(--bg)" }}>
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-2.5">
           <span className="text-[18px]">{catIcon}</span>
           <div>
-            <div className="text-[14px] font-medium text-[var(--ink)]">{catName}</div>
-            <div className="font-mono text-[10px] text-[var(--ink-4)]">
+            <div className="text-[14px] font-medium text-(--ink)">{catName}</div>
+            <div className="font-mono text-[10px] text-(--ink-4)">
               {over
                 ? <span style={{ color: "#DC2626" }}>₦{(spent - amount).toLocaleString("en-NG")} over budget</span>
                 : pct >= 80
@@ -225,20 +225,20 @@ function BudgetBar({ catIcon, catName, catColor, amount, spent, pct, over, onEdi
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-[12px]">
+        <div className="flex items-center gap-3">
           <div className="text-right">
-            <div className="text-[14px] font-semibold tabular-nums text-[var(--ink)]">
-              {(hidden ? "****" : formatCurrency(spent, "NGN", true))} <span className="font-normal text-[var(--ink-4)]">/ {(hidden ? "****" : formatCurrency(amount, "NGN", true))}</span>
+            <div className="text-[14px] font-semibold tabular-nums text-(--ink)">
+              {(hidden ? "****" : formatCurrency(spent, "NGN", true))} <span className="font-normal text-(--ink-4)">/ {(hidden ? "****" : formatCurrency(amount, "NGN", true))}</span>
             </div>
           </div>
-          <div className="flex gap-[4px] opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onClick={onEdit} className="w-[26px] h-[26px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:bg-[var(--bg-2)]"><Pencil size={12} /></button>
-            <button onClick={onDelete} className="w-[26px] h-[26px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)]"><X size={12} /></button>
+          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={onEdit} className="w-6.5 h-6.5 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:bg-(--bg-2)"><Pencil size={12} /></button>
+            <button onClick={onDelete} className="w-6.5 h-6.5 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)]"><X size={12} /></button>
           </div>
         </div>
       </div>
       {/* Progress bar */}
-      <div className="h-[6px] rounded-full overflow-hidden" style={{ background: "var(--bg-2)" }}>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--bg-2)" }}>
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${pct}%`, background: barColor }}
@@ -285,35 +285,35 @@ function BudgetFormModal({ month, monthLabel, categories, editRow, onSaved, onCl
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-[16px]">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center px-0 sm:px-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 w-full max-w-[420px] rounded-t-[20px] sm:rounded-[16px] overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
-        <div className="flex items-center justify-between px-[24px] py-[20px] border-b border-[var(--rule)]">
-          <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">
+      <div className="relative z-10 w-full max-w-105 rounded-t-[20px] sm:rounded-2xl overflow-hidden" style={{ background: "var(--bg)", border: "1px solid var(--rule)" }}>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-(--rule)">
+          <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-(--ink)">
             {editRow ? "Edit Budget" : "Set Budget"} · {monthLabel}
           </h2>
-          <button onClick={onClose} className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:bg-[var(--bg-2)]" aria-label="Close">
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:bg-(--bg-2)" aria-label="Close">
             <X size={18} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="px-[24px] py-[20px] space-y-[16px]">
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">Category</label>
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required disabled={!!editRow} className="w-full h-[44px] px-[12px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] text-[var(--ink)] cursor-pointer disabled:opacity-60" style={{ border: "1.5px solid var(--rule)" }}>
+            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">Category</label>
+            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required disabled={!!editRow} className="w-full h-11 px-3 rounded-lg text-[14px] outline-none bg-(--bg-2) text-(--ink) cursor-pointer disabled:opacity-60" style={{ border: "1.5px solid var(--rule)" }}>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[8px]">Monthly Limit (₦)</label>
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} min="1" step="100" placeholder="e.g. 50000" required autoFocus className="w-full h-[48px] px-[14px] rounded-[8px] font-display text-[20px] fvs-text outline-none bg-[var(--bg-2)] text-[var(--ink)]" style={{ border: "1.5px solid var(--rule)" }} />
+            <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">Monthly Limit (₦)</label>
+            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} min="1" step="100" placeholder="e.g. 50000" required autoFocus className="w-full h-12 px-3.5 rounded-lg font-display text-[20px] fvs-text outline-none bg-(--bg-2) text-(--ink)" style={{ border: "1.5px solid var(--rule)" }} />
           </div>
-          <label className="flex items-center gap-[10px] cursor-pointer">
-            <input type="checkbox" checked={rollover} onChange={(e) => setRollover(e.target.checked)} className="w-[16px] h-[16px] rounded-[4px] cursor-pointer" />
-            <span className="text-[13px] text-[var(--ink-2)]">Roll over unspent budget to next month</span>
+          <label className="flex items-center gap-2.5 cursor-pointer">
+            <input type="checkbox" checked={rollover} onChange={(e) => setRollover(e.target.checked)} className="w-4 h-4 rounded cursor-pointer" />
+            <span className="text-[13px] text-secondary-foreground">Roll over unspent budget to next month</span>
           </label>
-          {error && <div className="rounded-[8px] px-[14px] py-[10px] text-[13px] font-mono" style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}>{error}</div>}
-          <button type="submit" disabled={loading} className="w-full h-[48px] rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 flex items-center justify-center gap-[8px]" style={{ background: ACCENT }}>
-            {loading ? <span className="w-[16px] h-[16px] rounded-full border-[2px] border-white/30 border-t-white animate-spin" /> : <><Check size={14} />{editRow ? "Update Budget" : "Set Budget"}</>}
+          {error && <div className="rounded-lg px-3.5 py-2.5 text-[13px] font-mono" style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}>{error}</div>}
+          <button type="submit" disabled={loading} className="w-full h-12 rounded-[10px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2" style={{ background: ACCENT }}>
+            {loading ? <span className="w-4 h-4 rounded-full border-0.5 border-white/30 border-t-white animate-spin" /> : <><Check size={14} />{editRow ? "Update Budget" : "Set Budget"}</>}
           </button>
         </form>
       </div>

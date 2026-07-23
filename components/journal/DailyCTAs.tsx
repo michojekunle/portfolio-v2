@@ -43,7 +43,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
   const currentSlide = order[active];
 
   return (
-    <div className="mb-[40px]">
+    <div className="mb-10">
       <AnimatePresence mode="wait">
         {currentSlide === "priorities" ? (
           <motion.div
@@ -55,7 +55,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
           >
             <Link
               href={`/tools/journal/log/${date}?focus=priorities#priorities`}
-              className="block rounded-[14px] p-[22px] no-underline transition-all hover:shadow-[0_6px_28px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
+              className="block rounded-[14px] p-5.5 no-underline transition-all hover:shadow-[0_6px_28px_rgba(0,0,0,0.1)] hover:-translate-y-0.25"
               style={
                 prioritiesSet
                   ? { background: VELA_ACCENT_SOFT, border: "1.5px solid rgba(124,58,237,0.22)" }
@@ -68,7 +68,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
               <div className="flex items-center justify-between">
                 <div>
                   <div
-                    className="flex items-center gap-[7px] font-mono text-[10px] tracking-[0.14em] uppercase mb-[8px]"
+                    className="flex items-center gap-1.75 font-mono text-[10px] tracking-[0.14em] uppercase mb-2"
                     style={{ color: prioritiesSet ? VELA_ACCENT : "rgba(255,255,255,0.7)" }}
                   >
                     <Target size={11} />
@@ -83,7 +83,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
                       <div className="text-[16px] font-semibold text-white">
                         Set your priorities for today
                       </div>
-                      <div className="font-mono text-[11px] mt-[3px]" style={{ color: "rgba(255,255,255,0.55)" }}>
+                      <div className="font-mono text-[11px] mt-0.75" style={{ color: "rgba(255,255,255,0.55)" }}>
                         Priorities · Accomplishments · Reflection · Energy
                       </div>
                     </div>
@@ -106,7 +106,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
           >
             <Link
               href={`/tools/journal/log/${date}?focus=log#log-today`}
-              className="block rounded-[14px] p-[22px] no-underline transition-all hover:shadow-[0_6px_28px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
+              className="block rounded-[14px] p-5.5 no-underline transition-all hover:shadow-[0_6px_28px_rgba(0,0,0,0.1)] hover:-translate-y-0.25"
               style={
                 dayLogged
                   ? { background: "rgba(22,163,74,0.08)", border: "1.5px solid rgba(22,163,74,0.22)" }
@@ -119,7 +119,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
               <div className="flex items-center justify-between">
                 <div>
                   <div
-                    className="flex items-center gap-[7px] font-mono text-[10px] tracking-[0.14em] uppercase mb-[8px]"
+                    className="flex items-center gap-1.75 font-mono text-[10px] tracking-[0.14em] uppercase mb-2"
                     style={{ color: dayLogged ? "#16A34A" : "rgba(255,255,255,0.7)" }}
                   >
                     <BookOpen size={11} />
@@ -131,7 +131,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
                         {accomplishedCount} accomplished
                       </div>
                       {energyLevel && (
-                        <div className="font-mono text-[11px] mt-[3px]" style={{ color: "rgba(22,163,74,0.6)" }}>
+                        <div className="font-mono text-[11px] mt-0.75" style={{ color: "rgba(22,163,74,0.6)" }}>
                           {"⚡".repeat(energyLevel)} {ENERGY_LABELS[energyLevel]}
                         </div>
                       )}
@@ -139,7 +139,7 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
                   ) : (
                     <div>
                       <div className="text-[16px] font-semibold text-white">How did today go?</div>
-                      <div className="font-mono text-[11px] mt-[3px]" style={{ color: "rgba(255,255,255,0.55)" }}>
+                      <div className="font-mono text-[11px] mt-0.75" style={{ color: "rgba(255,255,255,0.55)" }}>
                         Accomplishments · Reflection · Energy
                       </div>
                     </div>
@@ -156,13 +156,13 @@ export function DailyCTAs({ date, todayEntry }: Props): React.ReactElement {
       </AnimatePresence>
 
       {/* Slide indicator — also click-to-jump */}
-      <div className="flex items-center justify-center gap-[6px] mt-[12px]">
+      <div className="flex items-center justify-center gap-1.5 mt-3">
         {order.map((id, i) => (
           <button
             key={id}
             onClick={() => setActive(i)}
             aria-label={`Show ${id === "priorities" ? "set priorities" : "log the day"} card`}
-            className="h-[6px] rounded-full border-none cursor-pointer p-0 transition-all duration-300"
+            className="h-1.5 rounded-full border-none cursor-pointer p-0 transition-all duration-300"
             style={{
               width: i === active ? "18px" : "6px",
               background: i === active ? VELA_ACCENT : "var(--rule)",

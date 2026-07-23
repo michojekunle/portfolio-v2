@@ -355,13 +355,13 @@ export function EpubReader({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-[16px] p-[40px]">
-        <div className="font-mono text-[12px] text-[var(--ink-3)]">{error}</div>
+      <div className="flex flex-col items-center justify-center h-full gap-4 p-10">
+        <div className="font-mono text-[12px] text-muted-foreground">{error}</div>
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] no-underline"
+          className="font-mono text-[10px] tracking-widest uppercase font-semibold px-4 py-2.5 rounded-lg no-underline"
           style={{ background: ACCENT, color: "var(--ch-bg)" }}
         >
           Open externally
@@ -384,14 +384,14 @@ export function EpubReader({
       {/* Side click zones for page turning */}
       <button
         onClick={prev}
-        className="absolute left-0 top-0 bottom-[48px] w-[12%] z-10 bg-transparent border-none cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center pl-[12px]"
+        className="absolute left-0 top-0 bottom-12 w-[12%] z-10 bg-transparent border-none cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center pl-3"
         aria-label="Previous page"
       >
         <ChevronLeft size={22} style={{ color: theme.text, opacity: 0.5 }} />
       </button>
       <button
         onClick={next}
-        className="absolute right-0 top-0 bottom-[48px] w-[12%] z-10 bg-transparent border-none cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-end pr-[12px]"
+        className="absolute right-0 top-0 bottom-12 w-[12%] z-10 bg-transparent border-none cursor-pointer opacity-0 hover:opacity-100 transition-opacity flex items-center justify-end pr-3"
         aria-label="Next page"
       >
         <ChevronRight size={22} style={{ color: theme.text, opacity: 0.5 }} />
@@ -402,12 +402,12 @@ export function EpubReader({
 
       {/* Bottom navigation strip */}
       <div
-        className="h-[48px] flex items-center justify-center gap-[32px] shrink-0 border-t"
+        className="h-12 flex items-center justify-center gap-8 shrink-0 border-t"
         style={{ background: theme.bg, borderColor: `${theme.text}15` }}
       >
         <button
           onClick={prev}
-          className="w-[32px] h-[32px] flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-60"
+          className="w-8 h-8 flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-60"
           style={{ background: `${theme.text}10`, color: theme.text }}
           aria-label="Previous"
         >
@@ -421,7 +421,7 @@ export function EpubReader({
         </span>
         <button
           onClick={next}
-          className="w-[32px] h-[32px] flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-60"
+          className="w-8 h-8 flex items-center justify-center rounded-full border-none cursor-pointer transition-opacity hover:opacity-60"
           style={{ background: `${theme.text}10`, color: theme.text }}
           aria-label="Next"
         >
@@ -432,28 +432,28 @@ export function EpubReader({
       {/* Highlight color picker — appears at bottom when epub text is selected */}
       {pendingSelection && (
         <div
-          className="fixed bottom-[72px] max-[1024px]:bottom-[96px] left-1/2 z-50 flex items-center gap-[8px] px-[12px] py-[10px] rounded-[14px] shadow-2xl border"
+          className="fixed bottom-18 max-256:bottom-24 left-1/2 z-50 flex items-center gap-2 px-3 py-2.5 rounded-[14px] shadow-2xl border"
           style={{
             transform: "translateX(-50%)",
             background: "#1A1A1A",
             borderColor: "rgba(255,255,255,0.1)",
           }}
         >
-          <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-white opacity-40 mr-[2px]">
+          <span className="font-mono text-[9px] tracking-widest uppercase text-white opacity-40 mr-0.5">
             Highlight
           </span>
           {HIGHLIGHT_COLORS.map(({ id, bg, ring }) => (
             <button
               key={id}
               onClick={() => void saveHighlight(id)}
-              className="w-[22px] h-[22px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+              className="w-5.5 h-5.5 rounded-full border-0.5 cursor-pointer transition-transform hover:scale-110"
               style={{ background: bg, borderColor: ring }}
               aria-label={`Highlight ${id}`}
             />
           ))}
           <button
             onClick={() => setPendingSelection(null)}
-            className="ml-[2px] w-[18px] h-[18px] flex items-center justify-center rounded-full border-none cursor-pointer text-white opacity-40 hover:opacity-80 bg-transparent"
+            className="ml-0.5 w-4.5 h-4.5 flex items-center justify-center rounded-full border-none cursor-pointer text-white opacity-40 hover:opacity-80 bg-transparent"
             aria-label="Dismiss"
           >
             <X size={10} />

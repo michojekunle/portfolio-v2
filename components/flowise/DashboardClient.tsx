@@ -96,23 +96,23 @@ const router = useRouter();
       : 0;
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[60px] max-[1024px]:pt-[80px] max-[720px]:px-[20px]">
+    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
       {/* Header */}
-      <div className="flex items-start justify-between mb-[40px] gap-[16px] flex-wrap">
+      <div className="flex items-start justify-between mb-10 gap-4 flex-wrap">
         <div>
-          <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-[var(--ink-4)] mb-[6px]">
+          <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-(--ink-4) mb-1.5">
             {new Date().toLocaleDateString("en-NG", { month: "long", year: "numeric" })}
           </div>
           <h1
-            className="font-display font-normal text-[40px] max-[720px]:text-[28px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-[var(--ink)]"
+            className="font-display font-normal text-[40px] max-180:text-[28px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)"
           >
             Dashboard
           </h1>
         </div>
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowScanner(true)}
-            className="inline-flex items-center gap-[6px] h-[44px] px-[16px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 hover:bg-[var(--bg-3)] cursor-pointer"
+            className="inline-flex items-center gap-1.5 h-11 px-4 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 hover:bg-(--bg-3) cursor-pointer"
             style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }}
             title="Scan a receipt or bank alert"
           >
@@ -121,7 +121,7 @@ const router = useRouter();
           </button>
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-200 hover:opacity-90 border-none cursor-pointer"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white transition-all duration-200 hover:opacity-90 border-none cursor-pointer"
             style={{ background: ACCENT }}
           >
             <Plus size={14} />
@@ -131,7 +131,7 @@ const router = useRouter();
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 max-[900px]:grid-cols-1 gap-[16px] mb-[40px]">
+      <div className="grid grid-cols-3 max-[900px]:grid-cols-1 gap-4 mb-10">
         <SummaryCard
           label="Net Worth"
           value={(hidden ? "****" : formatCurrency(netWorth, "NGN"))}
@@ -157,16 +157,16 @@ const router = useRouter();
       </div>
 
       {/* Two-col layout */}
-      <div className="grid grid-cols-[1fr_320px] max-[1200px]:grid-cols-1 gap-[24px]">
+      <div className="grid grid-cols-[1fr_320px] max-[1200px]:grid-cols-1 gap-6">
         {/* Recent Transactions */}
         <section>
-          <div className="flex items-center justify-between mb-[20px]">
-            <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-(--ink)">
               Recent Transactions
             </h2>
             <Link
               href="/tools/flowise/transactions"
-              className="inline-flex items-center gap-[4px] font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors"
+              className="inline-flex items-center gap-1 font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors"
               style={{ color: ACCENT }}
             >
               View all <ChevronRight size={12} />
@@ -182,7 +182,7 @@ const router = useRouter();
             />
           ) : (
             <div
-              className="rounded-[12px] overflow-hidden"
+              className="rounded-xl overflow-hidden"
               style={{ border: "1px solid var(--rule)" }}
             >
               {transactions.map((tx, i) => (
@@ -199,13 +199,13 @@ const router = useRouter();
 
         {/* Accounts */}
         <section>
-          <div className="flex items-center justify-between mb-[20px]">
-            <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-[var(--ink)]">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text m-0 text-(--ink)">
               Accounts
             </h2>
             <Link
               href="/tools/flowise/accounts"
-              className="inline-flex items-center gap-[4px] font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors"
+              className="inline-flex items-center gap-1 font-mono text-[10px] tracking-[0.12em] uppercase no-underline transition-colors"
               style={{ color: ACCENT }}
             >
               Manage <ChevronRight size={12} />
@@ -220,7 +220,7 @@ const router = useRouter();
               actionLabel="Add Account"
             />
           ) : (
-            <div className="space-y-[12px]">
+            <div className="space-y-3">
               {accounts.map((account) => (
                 <AccountSummaryCard key={account.id} account={account} />
               ))}
@@ -230,16 +230,16 @@ const router = useRouter();
           {/* Month savings rate */}
           {stats.thisMonth.income > 0 && (
             <div
-              className="mt-[16px] rounded-[12px] px-[20px] py-[16px]"
+              className="mt-4 rounded-xl px-5 py-4"
               style={{ background: "rgba(22,163,74,0.06)", border: "1px solid rgba(22,163,74,0.15)" }}
             >
-              <div className="font-mono text-[9px] tracking-[0.14em] uppercase mb-[4px]" style={{ color: ACCENT }}>
+              <div className="font-mono text-[9px] tracking-[0.14em] uppercase mb-1" style={{ color: ACCENT }}>
                 Savings Rate
               </div>
               <div className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text" style={{ color: ACCENT }}>
                 {stats.thisMonth.savingsRate}%
               </div>
-              <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[2px]">
+              <div className="font-mono text-[10px] text-muted-foreground mt-0.5">
                 {(hidden ? "****" : formatCurrency(stats.thisMonth.net, "NGN"))} saved this month
               </div>
             </div>
@@ -298,29 +298,29 @@ function SummaryCard({
 
   return (
     <div
-      className="rounded-[14px] px-[24px] py-[20px]"
+      className="rounded-[14px] px-6 py-5"
       style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}
     >
-      <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[10px]">
+      <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2.5">
         {label}
       </div>
       <div
         onClick={toggle}
-        className="font-display text-[28px] max-[720px]:text-[22px] font-normal tracking-[-0.02em] fvs-text leading-[1] cursor-pointer hover:opacity-80 transition-opacity"
+        className="font-display text-[28px] max-180:text-[22px] font-normal tracking-[-0.02em] fvs-text leading-none cursor-pointer hover:opacity-80 transition-opacity"
         style={{ color: accent }}
       >
         {value}
       </div>
       {(sub ?? change !== undefined) && (
-        <div className="flex items-center gap-[6px] mt-[8px]">
+        <div className="flex items-center gap-1.5 mt-2">
           {change !== undefined && (
-            <span className="inline-flex items-center gap-[2px] font-mono text-[10px] font-semibold" style={{ color: changeColor }}>
+            <span className="inline-flex items-center gap-0.5 font-mono text-[10px] font-semibold" style={{ color: changeColor }}>
               {isUp ? <TrendingUp size={10} /> : isDown ? <TrendingDown size={10} /> : null}
               {change > 0 ? "+" : ""}{change}%
             </span>
           )}
           {sub && (
-            <span className="font-mono text-[10px] text-[var(--ink-4)]">{sub}</span>
+            <span className="font-mono text-[10px] text-(--ink-4)">{sub}</span>
           )}
         </div>
       )}
@@ -348,18 +348,18 @@ function TransactionRow({
 
   return (
     <div
-      className="flex items-center gap-[14px] px-[16px] py-[14px] bg-[var(--bg)] hover:bg-[var(--bg-2)] transition-colors"
+      className="flex items-center gap-3.5 px-4 py-3.5 bg-(--bg) hover:bg-(--bg-2) transition-colors"
       style={{ borderBottom: last ? undefined : "1px solid var(--rule)" }}
     >
       <div
-        className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[16px] shrink-0"
+        className="w-9 h-9 rounded-lg flex items-center justify-center text-[16px] shrink-0"
         style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)" }}
       >
         {cat?.icon ?? (isIncome ? "💰" : "💸")}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-[14px] font-medium text-[var(--ink)] truncate">{tx.description}</div>
-        <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[1px]">
+        <div className="text-[14px] font-medium text-(--ink) truncate">{tx.description}</div>
+        <div className="font-mono text-[10px] text-muted-foreground mt-0.25">
           {cat?.name ?? "Uncategorized"} · {date.toLocaleDateString("en-NG", { month: "short", day: "numeric", timeZone: "UTC" })}
         </div>
       </div>
@@ -371,7 +371,7 @@ function TransactionRow({
           {isIncome ? "+" : "−"}{hidden ? "****" : formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
         </div>
         {tx.account && (
-          <div className="font-mono text-[9px] text-[var(--ink-4)] mt-[1px]">
+          <div className="font-mono text-[9px] text-(--ink-4) mt-0.25">
             {tx.account.icon} {tx.account.name}
           </div>
         )}
@@ -391,18 +391,18 @@ function AccountSummaryCard({ account }: { account: FwAccount }): React.ReactEle
 
   return (
     <div
-      className="rounded-[12px] px-[16px] py-[14px] flex items-center gap-[12px]"
+      className="rounded-xl px-4 py-3.5 flex items-center gap-3"
       style={{ border: "1px solid var(--rule)", background: "var(--bg)" }}
     >
       <div
-        className="w-[38px] h-[38px] rounded-[8px] flex items-center justify-center text-[18px] shrink-0"
+        className="w-9.5 h-9.5 rounded-lg flex items-center justify-center text-[18px] shrink-0"
         style={{ background: `${account.color}18` }}
       >
         {account.icon}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-[14px] font-medium text-[var(--ink)] truncate">{account.name}</div>
-        <div className="font-mono text-[10px] text-[var(--ink-3)] capitalize">{account.type}</div>
+        <div className="text-[14px] font-medium text-(--ink) truncate">{account.name}</div>
+        <div className="font-mono text-[10px] text-muted-foreground capitalize">{account.type}</div>
       </div>
       <div
         onClick={toggle}
@@ -430,16 +430,16 @@ function EmptyState({
 }): React.ReactElement {
   return (
     <div
-      className="rounded-[12px] px-[24px] py-[40px] text-center"
+      className="rounded-xl px-6 py-10 text-center"
       style={{ border: "1px dashed var(--rule)" }}
     >
-      <div className="text-[32px] mb-[12px]">💸</div>
-      <div className="text-[15px] font-medium text-[var(--ink)] mb-[6px]">{title}</div>
-      <div className="text-[13px] text-[var(--ink-3)] mb-[20px] max-w-[30ch] mx-auto leading-[1.5]">{body}</div>
+      <div className="text-[32px] mb-3">💸</div>
+      <div className="text-[15px] font-medium text-(--ink) mb-1.5">{title}</div>
+      <div className="text-[13px] text-muted-foreground mb-5 max-w-[30ch] mx-auto leading-normal">{body}</div>
       {onAction ? (
         <button
           onClick={onAction}
-          className="inline-flex items-center gap-[6px] h-[36px] px-[16px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer"
+          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer"
           style={{ background: ACCENT }}
         >
           <Plus size={12} />
@@ -448,7 +448,7 @@ function EmptyState({
       ) : href ? (
         <Link
           href={href}
-          className="inline-flex items-center gap-[6px] h-[36px] px-[16px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white no-underline"
+          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white no-underline"
           style={{ background: ACCENT }}
         >
           <Plus size={12} />

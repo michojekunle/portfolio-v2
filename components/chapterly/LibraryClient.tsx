@@ -486,34 +486,34 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px]"
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-0.5"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div
-        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[520px] rounded-[20px] shadow-2xl border border-[var(--rule)] bg-[var(--bg)] overflow-hidden"
+        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-130 rounded-[20px] shadow-2xl border border-(--rule) bg-(--bg) overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)]">
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-(--rule)">
+          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
             Edit Book
           </div>
           <button
             onClick={onClose}
-            className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+            className="w-7 h-7 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
-        <div className="p-[24px] space-y-[20px]">
+        <div className="p-6 space-y-5">
           {/* Cover + title/author side-by-side */}
-          <div className="flex items-start gap-[20px]">
+          <div className="flex items-start gap-5">
             {/* Cover picker */}
             <div className="shrink-0">
               <div
-                className="w-[88px] h-[120px] rounded-[10px] relative overflow-hidden cursor-pointer group border border-[var(--rule)]"
+                className="w-[88px] h-30 rounded-[10px] relative overflow-hidden cursor-pointer group border border-(--rule)"
                 style={{ background: "color-mix(in srgb, var(--ch-accent) 9%, transparent)" }}
                 onClick={() => coverInputRef.current?.click()}
                 title="Change cover"
@@ -531,7 +531,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
                   </div>
                 )}
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-[4px] transition-opacity">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-1 transition-opacity">
                   <Camera size={18} className="text-white" />
                   <span className="font-mono text-[8px] uppercase tracking-[0.08em] text-white">
                     Change
@@ -547,35 +547,35 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
               />
               <button
                 onClick={() => coverInputRef.current?.click()}
-                className="mt-[6px] w-full font-mono text-[8px] tracking-[0.08em] uppercase text-center text-[var(--ink-3)] hover:text-[var(--ink)] bg-transparent border-none cursor-pointer p-0 transition-colors"
+                className="mt-1.5 w-full font-mono text-[8px] tracking-[0.08em] uppercase text-center text-muted-foreground hover:text-(--ink) bg-transparent border-none cursor-pointer p-0 transition-colors"
               >
                 Upload cover
               </button>
             </div>
 
             {/* Title + Author */}
-            <div className="flex-1 space-y-[12px]">
+            <div className="flex-1 space-y-3">
               <div>
-                <label className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] block mb-[6px]">
+                <label className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground block mb-1.5">
                   Title *
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full h-[40px] px-[12px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] border border-[var(--rule)] text-[var(--ink)] focus:border-[var(--ink-2)] transition-colors"
+                  className="w-full h-10 px-3 rounded-lg text-[14px] outline-none bg-(--bg-2) border border-(--rule) text-(--ink) focus:border-secondary-foreground transition-colors"
                   placeholder="Book title"
                 />
               </div>
               <div>
-                <label className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] block mb-[6px]">
+                <label className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground block mb-1.5">
                   Author
                 </label>
                 <input
                   type="text"
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
-                  className="w-full h-[40px] px-[12px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] border border-[var(--rule)] text-[var(--ink)] focus:border-[var(--ink-2)] transition-colors"
+                  className="w-full h-10 px-3 rounded-lg text-[14px] outline-none bg-(--bg-2) border border-(--rule) text-(--ink) focus:border-secondary-foreground transition-colors"
                   placeholder="Author name"
                 />
               </div>
@@ -584,10 +584,10 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
 
           {/* Status selector */}
           <div>
-            <label className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] block mb-[10px]">
+            <label className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground block mb-2.5">
               Reading Status
             </label>
-            <div className="grid grid-cols-3 max-[360px]:grid-cols-2 gap-[8px]">
+            <div className="grid grid-cols-3 max-90:grid-cols-2 gap-2">
               {(Object.keys(STATUS_CONFIG) as ReadingStatus[]).map((s) => {
                 const cfg = STATUS_CONFIG[s];
                 const active = status === s;
@@ -595,7 +595,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
                   <button
                     key={s}
                     onClick={() => setStatus(s)}
-                    className="h-[38px] rounded-[8px] border font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer transition-all flex items-center justify-center gap-[6px]"
+                    className="h-9.5 rounded-lg border font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer transition-all flex items-center justify-center gap-1.5"
                     style={
                       active
                         ? { background: cfg.color + "20", borderColor: cfg.color, color: cfg.color, fontWeight: 600 }
@@ -613,7 +613,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
           {/* Error */}
           {error && (
             <div
-              className="rounded-[8px] px-[14px] py-[10px] flex items-center gap-[8px] text-[12px]"
+              className="rounded-lg px-3.5 py-2.5 flex items-center gap-2 text-[12px]"
               style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}
             >
               <AlertCircle size={14} className="shrink-0" />
@@ -622,22 +622,22 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-[10px] pt-[4px]">
+          <div className="flex items-center gap-2.5 pt-1">
             {/* Delete */}
             {confirmDelete ? (
-              <div className="flex items-center gap-[8px]">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[10px] text-[#DC2626]">Sure?</span>
                 <button
                   onClick={() => void handleDelete()}
                   disabled={deleting}
-                  className="h-[36px] px-[14px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer border-none transition-all disabled:opacity-60"
+                  className="h-9 px-3.5 rounded-lg font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer border-none transition-all disabled:opacity-60"
                   style={{ background: "#DC2626", color: "var(--ch-bg)" }}
                 >
                   {deleting ? <Loader2 size={13} className="animate-spin" /> : "Yes, delete"}
                 </button>
                 <button
                   onClick={() => setConfirmDelete(false)}
-                  className="h-[36px] px-[14px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+                  className="h-9 px-3.5 rounded-lg font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer border border-(--rule) bg-transparent text-muted-foreground hover:text-(--ink) transition-colors"
                 >
                   Cancel
                 </button>
@@ -645,7 +645,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
             ) : (
               <button
                 onClick={() => setConfirmDelete(true)}
-                className="h-[36px] px-[12px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer flex items-center gap-[6px] border border-[var(--rule)] bg-transparent text-[#DC2626] hover:bg-[rgba(220,38,38,0.06)] transition-colors"
+                className="h-9 px-3 rounded-lg font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer flex items-center gap-1.5 border border-(--rule) bg-transparent text-[#DC2626] hover:bg-[rgba(220,38,38,0.06)] transition-colors"
               >
                 <Trash2 size={13} />
                 Delete
@@ -657,7 +657,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
               <button
                 onClick={() => void handleCloudSync()}
                 disabled={syncing || saving}
-                className="h-[36px] px-[12px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer flex items-center gap-[6px] border border-[var(--rule)] bg-transparent text-[#1D4ED8] hover:bg-[rgba(29,78,216,0.06)] transition-colors disabled:opacity-50"
+                className="h-9 px-3 rounded-lg font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer flex items-center gap-1.5 border border-(--rule) bg-transparent text-[#1D4ED8] hover:bg-[rgba(29,78,216,0.06)] transition-colors disabled:opacity-50"
               >
                 {syncing ? <Loader2 size={13} className="animate-spin" /> : <Cloud size={13} />}
                 Sync to Cloud
@@ -668,14 +668,14 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
 
             <button
               onClick={onClose}
-              className="h-[36px] px-[14px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+              className="h-9 px-3.5 rounded-lg font-mono text-[9px] tracking-[0.08em] uppercase cursor-pointer border border-(--rule) bg-transparent text-muted-foreground hover:text-(--ink) transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={() => void handleSave()}
               disabled={saving || saved}
-              className="h-[36px] px-[18px] rounded-[8px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer border-none flex items-center gap-[6px] transition-all disabled:opacity-70"
+              className="h-9 px-4.5 rounded-lg font-mono text-[9px] tracking-[0.08em] uppercase font-semibold cursor-pointer border-none flex items-center gap-1.5 transition-all disabled:opacity-70"
               style={saved ? { background: "#16A34A", color: "var(--ch-bg)" } : { background: ACCENT, color: "var(--ch-bg)" }}
             >
               {saving ? (
@@ -995,12 +995,12 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
   return (
     <>
       {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-[32px] gap-[16px] flex-wrap">
+      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <div>
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[6px]">
+          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
             {books.length} {books.length === 1 ? "book" : "books"}
           </div>
-          <h1 className="font-display text-[32px] max-[720px]:text-[26px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] m-0 leading-[1.1]">
+          <h1 className="font-display text-[32px] max-180:text-[26px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
             Library
           </h1>
         </div>
@@ -1010,7 +1010,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
             setPendingFile(null);
             setUploadError(null);
           }}
-          className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[10px] text-(--bg) cursor-pointer border-none transition-all hover:opacity-90"
+          className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-4 py-2.5 rounded-[10px] text-(--bg) cursor-pointer border-none transition-all hover:opacity-90"
           style={{ background: ACCENT }}
         >
           <Plus size={14} /> Add Book
@@ -1019,14 +1019,14 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
 
       {/* ── Upload panel ── */}
       {showUpload && (
-        <div className="mb-[32px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] overflow-hidden">
-          <div className="flex items-center justify-between px-[24px] py-[16px] border-b border-[var(--rule)]">
-            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+        <div className="mb-8 rounded-2xl border border-(--rule) bg-(--bg-2) overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-(--rule)">
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
               Upload a book
             </div>
             <button
               onClick={() => { setShowUpload(false); setUploadError(null); setPendingFile(null); }}
-              className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)]"
+              className="w-7 h-7 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink)"
             >
               <X size={16} />
             </button>
@@ -1034,8 +1034,8 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
 
           {!pendingFile ? (
             <div
-              className={`m-[20px] rounded-[12px] border-2 border-dashed flex flex-col items-center justify-center py-[48px] max-[480px]:py-[28px] px-[24px] text-center transition-all cursor-pointer ${
-                dragOver ? "border-[var(--ch-accent)] bg-[color-mix(in oklab, var(--ch-accent) 6%, transparent)]" : "border-[var(--rule)]"
+              className={`m-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center py-12 max-[480px]:py-7 px-6 text-center transition-all cursor-pointer ${
+                dragOver ? "border-(--ch-accent) bg-[color-mix(in oklab, var(--ch-accent) 6%, transparent)]" : "border-(--rule)"
               }`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
@@ -1049,16 +1049,16 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelection(f); }}
               />
-              <Upload size={36} className="mb-[16px] opacity-40 text-[var(--ink)]" />
-              <div className="font-semibold text-[14px] text-[var(--ink)] mb-[6px]">
+              <Upload size={36} className="mb-4 opacity-40 text-(--ink)" />
+              <div className="font-semibold text-[14px] text-(--ink) mb-1.5">
                 Drop your book here
               </div>
-              <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+              <div className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
                 PDF, EPUB, DOCX, TXT, MD, HTML, FB2, CBZ · Max {MAX_FILE_MB}MB
               </div>
               <button
                 type="button"
-                className="mt-[20px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all hover:opacity-90 text-(--bg)"
+                className="mt-5 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-3.5 py-2 rounded-lg border-none cursor-pointer transition-all hover:opacity-90 text-(--bg)"
                 style={{ background: ACCENT }}
                 onClick={(e) => { e.stopPropagation(); fileRef.current?.click(); }}
               >
@@ -1066,50 +1066,50 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               </button>
             </div>
           ) : (
-            <div className="p-[24px] flex flex-col items-center">
-              <div className="w-full p-[16px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)] flex items-center justify-between mb-[24px]">
-                <div className="flex items-center gap-[12px] overflow-hidden">
+            <div className="p-6 flex flex-col items-center">
+              <div className="w-full p-4 rounded-[10px] border border-(--rule) bg-(--bg) flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3 overflow-hidden">
                   <FileText size={20} style={{ color: ACCENT }} />
-                  <div className="truncate text-[14px] font-semibold text-[var(--ink)]">
+                  <div className="truncate text-[14px] font-semibold text-(--ink)">
                     {pendingFile.name}
                   </div>
                 </div>
-                <div className="font-mono text-[10px] text-[var(--ink-3)] shrink-0 ml-[12px]">
+                <div className="font-mono text-[10px] text-muted-foreground shrink-0 ml-3">
                   {(pendingFile.size / 1024 / 1024).toFixed(1)}MB
                 </div>
               </div>
 
               {uploading ? (
-                <div className="flex flex-col items-center justify-center py-[20px]">
-                  <Loader2 size={32} className="animate-spin mb-[12px]" style={{ color: ACCENT }} />
-                  <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--ink-3)]">
+                <div className="flex flex-col items-center justify-center py-5">
+                  <Loader2 size={32} className="animate-spin mb-3" style={{ color: ACCENT }} />
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                     Saving...
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-[16px] w-full">
+                <div className="grid grid-cols-2 gap-4 w-full">
                   <button
                     onClick={() => void processLocalUpload()}
-                    className="flex flex-col items-center justify-center p-[20px] rounded-[12px] border border-[var(--rule)] bg-[var(--bg)] cursor-pointer transition-all hover:border-[#16A34A] hover:bg-[rgba(22,163,74,0.04)] group"
+                    className="flex flex-col items-center justify-center p-5 rounded-xl border border-(--rule) bg-(--bg) cursor-pointer transition-all hover:border-[#16A34A] hover:bg-[rgba(22,163,74,0.04)] group"
                   >
-                    <div className="w-[40px] h-[40px] rounded-full bg-[rgba(22,163,74,0.1)] text-[#16A34A] flex items-center justify-center mb-[12px] group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-[rgba(22,163,74,0.1)] text-[#16A34A] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <HardDrive size={20} />
                     </div>
-                    <div className="font-semibold text-[14px] text-[var(--ink)] mb-[4px]">Local Device</div>
-                    <div className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.05em]">
+                    <div className="font-semibold text-[14px] text-(--ink) mb-1">Local Device</div>
+                    <div className="font-mono text-[9px] text-muted-foreground text-center tracking-wider">
                       Unlimited books<br/>Stored on this device only
                     </div>
                   </button>
 
                   <button
                     onClick={() => void processCloudUpload()}
-                    className="flex flex-col items-center justify-center p-[20px] rounded-[12px] border border-[var(--rule)] bg-[var(--bg)] cursor-pointer transition-all hover:border-[#1D4ED8] hover:bg-[rgba(29,78,216,0.04)] group"
+                    className="flex flex-col items-center justify-center p-5 rounded-xl border border-(--rule) bg-(--bg) cursor-pointer transition-all hover:border-[#1D4ED8] hover:bg-[rgba(29,78,216,0.04)] group"
                   >
-                    <div className="w-[40px] h-[40px] rounded-full bg-[rgba(29,78,216,0.1)] text-[#1D4ED8] flex items-center justify-center mb-[12px] group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-[rgba(29,78,216,0.1)] text-[#1D4ED8] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <Cloud size={20} />
                     </div>
-                    <div className="font-semibold text-[14px] text-[var(--ink)] mb-[4px]">Cloud Sync</div>
-                    <div className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.05em]">
+                    <div className="font-semibold text-[14px] text-(--ink) mb-1">Cloud Sync</div>
+                    <div className="font-mono text-[9px] text-muted-foreground text-center tracking-wider">
                       Read across devices<br/>{books.filter((b) => !b.file_url.startsWith("local://")).length}/{FREE_BOOK_LIMIT} slots used
                     </div>
                   </button>
@@ -1119,7 +1119,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
               {!uploading && (
                 <button
                   onClick={() => setPendingFile(null)}
-                  className="mt-[24px] font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] bg-transparent border-none cursor-pointer transition-colors"
+                  className="mt-6 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-(--ink) bg-transparent border-none cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
@@ -1128,10 +1128,10 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           )}
           {uploadError && (
             <div
-              className="mx-[20px] mb-[20px] rounded-[8px] px-[16px] py-[12px] flex items-start gap-[10px] text-[13px]"
+              className="mx-5 mb-5 rounded-lg px-4 py-3 flex items-start gap-2.5 text-[13px]"
               style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}
             >
-              <AlertCircle size={16} className="shrink-0 mt-[1px]" />
+              <AlertCircle size={16} className="shrink-0 mt-0.25" />
               {uploadError}
             </div>
           )}
@@ -1140,37 +1140,37 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
 
       {/* ── Daily Pick Banner ── */}
       <div
-        className="mb-[32px] rounded-[16px] border p-[24px] flex items-center justify-between gap-[24px] max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-[16px]"
+        className="mb-8 rounded-2xl border p-6 flex items-center justify-between gap-6 max-180:flex-col max-180:items-start max-180:gap-4"
         style={{ borderColor: "var(--rule)", background: "linear-gradient(135deg, color-mix(in oklab, var(--ch-accent) 8%, transparent) 0%, color-mix(in oklab, var(--ch-accent) 2%, transparent) 100%)" }}
       >
-        <div className="flex items-start gap-[16px]">
+        <div className="flex items-start gap-4">
           <div
-            className="w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0"
+            className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: "color-mix(in oklab, var(--ch-accent) 12%, transparent)" }}
           >
             <Sparkles size={20} style={{ color: ACCENT }} />
           </div>
           <div>
-            <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)] mb-[4px] flex items-center gap-[6px]">
-              <span className="w-[6px] h-[6px] rounded-full animate-pulse inline-block" style={{ background: ACCENT }} />
+            <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mb-1 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: ACCENT }} />
               Daily Summary Pick
               <span
-                className="font-mono text-[8px] tracking-[0.1em] uppercase px-[6px] py-[2px] rounded-[4px]"
+                className="font-mono text-[8px] tracking-widest uppercase px-1.5 py-0.5 rounded"
                 style={{ background: "color-mix(in oklab, var(--ch-accent) 12%, transparent)", color: ACCENT }}
               >
                 {DAILY_PICK.category}
               </span>
             </div>
-            <h2 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[6px]">
-              {DAILY_PICK.title} <span className="font-normal text-[14px] text-[var(--ink-3)]">by {DAILY_PICK.author}</span>
+            <h2 className="text-[18px] font-semibold text-(--ink) m-0 mb-1.5">
+              {DAILY_PICK.title} <span className="font-normal text-[14px] text-muted-foreground">by {DAILY_PICK.author}</span>
             </h2>
-            <p className="text-[12px] leading-[1.5] text-[var(--ink-3)] m-0 max-w-[580px]">
+            <p className="text-[12px] leading-normal text-muted-foreground m-0 max-w-145">
               {DAILY_PICK.description}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-[8px] shrink-0 flex-wrap">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <button
             onClick={() =>
               setSummaryBook({
@@ -1180,7 +1180,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
                 previewContent: DAILY_PICK.content,
               })
             }
-            className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[8px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
+            className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.12em] uppercase font-semibold px-4 py-2.5 rounded-lg border-none cursor-pointer transition-all hover:opacity-90 text-(--ch-bg)"
             style={{ background: ACCENT }}
           >
             <FileText size={13} />
@@ -1190,23 +1190,23 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
       </div>
 
       {/* ── Filters ── */}
-      <div className="flex items-center gap-[12px] mb-[28px] flex-wrap">
-        <div className="relative flex-1 min-w-[140px]">
-          <Search size={14} className="absolute left-[12px] top-1/2 -translate-y-1/2 text-[var(--ink-3)]" />
+      <div className="flex items-center gap-3 mb-7 flex-wrap">
+        <div className="relative flex-1 min-w-35">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search books…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full h-[40px] pl-[36px] pr-[12px] rounded-[8px] text-[14px] outline-none bg-[var(--bg-2)] border border-[var(--rule)] text-[var(--ink)] focus:border-[var(--ink-2)] transition-colors"
+            className="w-full h-10 pl-9 pr-3 rounded-lg text-[14px] outline-none bg-(--bg-2) border border-(--rule) text-(--ink) focus:border-secondary-foreground transition-colors"
           />
         </div>
-        <div className="flex items-center gap-[6px] overflow-x-auto pb-[2px] scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {(["all", "unread", "reading", "finished", "on_hold", "abandoned"] as const).map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className="font-mono text-[9px] tracking-[0.1em] uppercase px-[10px] py-[6px] rounded-full border-none cursor-pointer transition-all whitespace-nowrap"
+              className="font-mono text-[9px] tracking-widest uppercase px-2.5 py-1.5 rounded-full border-none cursor-pointer transition-all whitespace-nowrap"
               style={
                 statusFilter === s
                   ? { background: ACCENT, color: "var(--ch-bg)" }
@@ -1221,15 +1221,15 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
 
       {/* ── Grid ── */}
       {filtered.length === 0 ? (
-        <div className="text-center py-[80px]">
-          <BookMarked size={48} className="mx-auto mb-[16px] opacity-20 text-[var(--ink)]" />
-          <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--ink-3)] mb-[20px]">
+        <div className="text-center py-20">
+          <BookMarked size={48} className="mx-auto mb-4 opacity-20 text-(--ink)" />
+          <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mb-5">
             {query || statusFilter !== "all" ? "No books match your filters" : "Your library is empty"}
           </div>
           {!query && statusFilter === "all" && (
             <button
               onClick={() => setShowUpload(true)}
-              className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[16px] py-[10px] rounded-[10px] text-(--bg) border-none cursor-pointer"
+              className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-4 py-2.5 rounded-[10px] text-(--bg) border-none cursor-pointer"
               style={{ background: ACCENT }}
             >
               <Plus size={14} /> Upload your first book
@@ -1237,7 +1237,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-5 max-[1300px]:grid-cols-4 max-[1000px]:grid-cols-3 max-[700px]:grid-cols-2 max-[400px]:grid-cols-2 gap-[20px]">
+        <div className="grid grid-cols-5 max-[1300px]:grid-cols-4 max-[1000px]:grid-cols-3 max-[700px]:grid-cols-2 max-[400px]:grid-cols-2 gap-5">
           {filtered.map((book) => (
             <BookCard
               key={book.id}
@@ -1283,12 +1283,12 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
   const cfg = STATUS_CONFIG[book.status] ?? STATUS_CONFIG.unread;
 
   return (
-    <div className="group relative block rounded-[14px] border border-[var(--rule)] bg-[var(--bg-2)] hover:border-[var(--ink-3)] hover:shadow-md transition-all duration-200 overflow-hidden">
+    <div className="group relative block rounded-[14px] border border-(--rule) bg-(--bg-2) hover:border-muted-foreground hover:shadow-md transition-all duration-200 overflow-hidden">
       {/* Action buttons — appear on hover */}
-      <div className="absolute top-[8px] right-[8px] z-10 flex items-center gap-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummary(); }}
-          className="w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
+          className="w-7 h-7 rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
           style={{ background: "color-mix(in oklab, var(--ch-accent) 90%, transparent)", color: "var(--ch-bg)" }}
           title="View summary"
         >
@@ -1296,7 +1296,7 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
         </button>
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(); }}
-          className="w-[28px] h-[28px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
+          className="w-7 h-7 rounded-full flex items-center justify-center border-none cursor-pointer shadow-md"
           style={{ background: "rgba(0,0,0,0.6)", color: "var(--ch-bg)" }}
           title="Edit book"
         >
@@ -1308,7 +1308,7 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
       <Link href={`/tools/chapterly/read/${book.id}`} className="block no-underline">
         {/* Local Indicator */}
         {book.file_url.startsWith("local://") && (
-          <div className="absolute top-[10px] left-[10px] z-10 w-[24px] h-[24px] rounded-full flex items-center justify-center shadow-md bg-[rgba(22,163,74,0.9)] text-[#fff]" title="Stored on this device">
+          <div className="absolute top-2.5 left-2.5 z-10 w-6 h-6 rounded-full flex items-center justify-center shadow-md bg-[rgba(22,163,74,0.9)] text-[#fff]" title="Stored on this device">
             <HardDrive size={12} />
           </div>
         )}
@@ -1330,18 +1330,18 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
         </div>
 
         {/* Meta */}
-        <div className="p-[12px]">
-          <div className="text-[13px] font-semibold text-[var(--ink)] line-clamp-2 leading-[1.3] mb-[4px]">
+        <div className="p-3">
+          <div className="text-[13px] font-semibold text-(--ink) line-clamp-2 leading-[1.3] mb-1">
             {book.title}
           </div>
           {book.author && (
-            <div className="font-mono text-[10px] text-[var(--ink-3)] truncate">
+            <div className="font-mono text-[10px] text-muted-foreground truncate">
               {book.author}
             </div>
           )}
 
           {/* Progress bar */}
-          <div className="mt-[10px] h-[3px] rounded-full bg-[var(--rule)]">
+          <div className="mt-2.5 h-0.75 rounded-full bg-(--rule)">
             <div
               className="h-full rounded-full transition-all"
               style={{ width: `${book.progress_pct}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
@@ -1349,33 +1349,33 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
           </div>
 
           {/* Status + % */}
-          <div className="flex items-center justify-between mt-[8px]">
+          <div className="flex items-center justify-between mt-2">
             <span
-              className="inline-flex items-center gap-[4px] font-mono text-[8px] tracking-[0.08em] uppercase px-[6px] py-[2px] rounded-full"
+              className="inline-flex items-center gap-1 font-mono text-[8px] tracking-[0.08em] uppercase px-1.5 py-0.5 rounded-full"
               style={{ background: cfg.color + "18", color: cfg.color }}
             >
               {cfg.icon}
               {cfg.label}
             </span>
-            <span className="font-mono text-[9px] text-[var(--ink-3)]">
+            <span className="font-mono text-[9px] text-muted-foreground">
               {Math.round(book.progress_pct)}%
             </span>
           </div>
 
           {/* Mini stats */}
-          <div className="flex items-center gap-[10px] mt-[8px] pt-[8px] border-t border-[var(--rule)]">
+          <div className="flex items-center gap-2.5 mt-2 pt-2 border-t border-(--rule)">
             {book.highlight_count > 0 && (
-              <span className="font-mono text-[8px] text-[var(--ink-3)]">
+              <span className="font-mono text-[8px] text-muted-foreground">
                 {book.highlight_count} ✦
               </span>
             )}
             {book.note_count > 0 && (
-              <span className="font-mono text-[8px] text-[var(--ink-3)]">
+              <span className="font-mono text-[8px] text-muted-foreground">
                 {book.note_count} notes
               </span>
             )}
             {book.total_reading_time_minutes > 0 && (
-              <span className="font-mono text-[8px] text-[var(--ink-3)]">
+              <span className="font-mono text-[8px] text-muted-foreground">
                 {book.total_reading_time_minutes}m read
               </span>
             )}

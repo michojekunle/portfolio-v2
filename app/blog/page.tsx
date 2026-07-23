@@ -38,7 +38,7 @@ export default async function BlogPage(): Promise<React.ReactElement> {
     <main id="main-content" tabIndex={-1} className="outline-none">
         <BlogHeroClient />
 
-        <section className="px-[var(--gutter)] py-[80px]">
+        <section className="px-(--gutter) py-20">
           <div className="v3-blog-list">
             <BlogListing initialPosts={posts as Parameters<typeof BlogListing>[0]["initialPosts"]} />
           </div>

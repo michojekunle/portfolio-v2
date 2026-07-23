@@ -104,7 +104,7 @@ export function TableOfContents({
       <div className="xl:hidden fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setIsOpen((v) => !v)}
-          className="bg-[var(--ink)] text-[var(--bg)] p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
+          className="bg-(--ink) text-(--bg) p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
           aria-label="Table of Contents"
         >
           {isOpen ? <X className="h-5 w-5" /> : <List className="h-5 w-5" />}
@@ -116,9 +116,9 @@ export function TableOfContents({
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              className="absolute bottom-14 right-0 w-64 bg-[var(--paper)] border border-[var(--rule)] rounded-[16px] shadow-2xl p-4 origin-bottom-right"
+              className="absolute bottom-14 right-0 w-64 bg-(--paper) border border-(--rule) rounded-2xl shadow-2xl p-4 origin-bottom-right"
             >
-              <h4 className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mb-3 border-b border-[var(--rule)] pb-2">Contents</h4>
+              <h4 className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-3 border-b border-(--rule) pb-2">Contents</h4>
               <nav className="max-h-[50vh] overflow-y-auto overscroll-contain pr-2 flex flex-col gap-2" data-lenis-prevent="true">
                 {headings.map((h) => (
                   <a
@@ -133,8 +133,8 @@ export function TableOfContents({
                       h.level === 3 && "pl-3",
                       h.level === 4 && "pl-6",
                       activeId === h.id
-                        ? "text-[var(--v3-accent)] font-medium"
-                        : "text-[var(--ink-2)] hover:text-[var(--ink)]"
+                        ? "text-(--v3-accent) font-medium"
+                        : "text-secondary-foreground hover:text-(--ink)"
                     )}
                   >
                     {h.text}
@@ -163,7 +163,7 @@ export function TableOfContents({
                 h.level === 3 && "pl-3",
                 h.level === 4 && "pl-6",
                 activeId === h.id
-                  ? "text-foreground font-medium border-l-2 border-foreground -ml-[1px] pl-[11px]"
+                  ? "text-foreground font-medium border-l-2 border-foreground -ml-0.25 pl-2.75"
                   : "text-muted-foreground/70 hover:text-foreground"
               )}
             >

@@ -52,30 +52,30 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
-      <div className="px-[24px] py-[28px] border-b border-[var(--rule)]">
-        <Link href="/tools" className="block no-underline mb-[20px]" onClick={onNavClick}>
-          <span className="font-mono text-[9px] tracking-[0.16em] uppercase text-[var(--ink-3)] transition-colors hover:text-[var(--ink)]">
+      <div className="px-6 py-7 border-b border-(--rule)">
+        <Link href="/tools" className="block no-underline mb-5" onClick={onNavClick}>
+          <span className="font-mono text-[9px] tracking-[0.16em] uppercase text-muted-foreground transition-colors hover:text-(--ink)">
             ← Creator Suite
           </span>
         </Link>
-        <div className="flex items-center gap-[10px]">
+        <div className="flex items-center gap-2.5">
           <div
-            className="w-[34px] h-[34px] rounded-[8px] flex items-center justify-center flex-shrink-0"
+            className="w-8.5 h-8.5 rounded-lg flex items-center justify-center flex-shrink-0"
             style={{ background: VELA_ACCENT_SOFT }}
           >
             <Compass size={18} style={{ color: VELA_ACCENT }} />
           </div>
           <div>
-            <div className="font-display text-[16px] font-normal tracking-[-0.01em] fvs-text leading-[1.1] text-[var(--ink)]">
+            <div className="font-display text-[16px] font-normal tracking-[-0.01em] fvs-text leading-[1.1] text-(--ink)">
               Vela
             </div>
-            <div className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+            <div className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground">
               Life Journal
             </div>
           </div>
         </div>
         <p
-          className="font-mono text-[9px] tracking-[0.08em] leading-[1.5] mt-[14px] mb-0 italic"
+          className="font-mono text-[9px] tracking-[0.08em] leading-normal mt-3.5 mb-0 italic"
           style={{ color: VELA_ACCENT, opacity: 0.75 }}
         >
           {tagline}
@@ -83,7 +83,7 @@ function SidebarContent({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-[16px] py-[20px] flex flex-col gap-[4px] overflow-y-auto">
+      <nav className="flex-1 px-4 py-5 flex flex-col gap-1 overflow-y-auto">
         {NAV_LINKS.map((link) => {
           const active = isActive(link.href);
           return (
@@ -91,7 +91,7 @@ function SidebarContent({
               key={link.href}
               href={link.href}
               onClick={onNavClick}
-              className="flex items-center gap-[10px] px-[12px] py-[9px] rounded-[8px] no-underline transition-all duration-150 text-[13px] font-medium relative"
+              className="flex items-center gap-2.5 px-3 py-2.25 rounded-lg no-underline transition-all duration-150 text-[13px] font-medium relative"
               style={{
                 background: active ? VELA_ACCENT_SOFT : "transparent",
                 color: active ? VELA_ACCENT : "var(--ink-2)",
@@ -101,7 +101,7 @@ function SidebarContent({
               {link.label}
               {active && (
                 <span
-                  className="absolute right-0 top-[50%] -translate-y-[50%] w-[3px] h-[60%] rounded-l-full"
+                  className="absolute right-0 top-[50%] -translate-y-[50%] w-0.75 h-[60%] rounded-l-full"
                   style={{ background: VELA_ACCENT }}
                 />
               )}
@@ -111,22 +111,22 @@ function SidebarContent({
       </nav>
 
       {/* Footer */}
-      <div className="px-[16px] pb-[24px] border-t border-[var(--rule)] pt-[16px] space-y-[10px]">
+      <div className="px-4 pb-6 border-t border-(--rule) pt-4 space-y-2.5">
         {streakCount > 0 && (
           <div
-            className="px-[12px] py-[10px] rounded-[10px] flex items-center gap-[10px]"
+            className="px-3 py-2.5 rounded-[10px] flex items-center gap-2.5"
             style={{ background: VELA_ACCENT_SOFT }}
           >
             <span className="text-[20px] leading-none select-none" aria-hidden="true">🔥</span>
             <div>
               <div
-                className="font-display text-[20px] font-normal tracking-[-0.02em] fvs-text leading-[1]"
+                className="font-display text-[20px] font-normal tracking-[-0.02em] fvs-text leading-none"
                 style={{ color: VELA_ACCENT }}
               >
                 {streakCount}
               </div>
               <div
-                className="font-mono text-[8px] tracking-[0.1em] uppercase"
+                className="font-mono text-[8px] tracking-widest uppercase"
                 style={{ color: VELA_ACCENT, opacity: 0.65 }}
               >
                 day streak
@@ -135,8 +135,8 @@ function SidebarContent({
           </div>
         )}
 
-        <div className="px-[12px] py-[8px]">
-          <div className="font-mono text-[10px] tracking-[0.08em] truncate text-[var(--ink-3)]">
+        <div className="px-3 py-2">
+          <div className="font-mono text-[10px] tracking-[0.08em] truncate text-muted-foreground">
             {shortEmail}
           </div>
         </div>
@@ -144,7 +144,7 @@ function SidebarContent({
         <button
           onClick={onSignOut}
           disabled={signingOut}
-          className="flex items-center gap-[10px] w-full px-[12px] py-[9px] rounded-[8px] text-[13px] font-medium transition-all duration-150 bg-transparent border-none cursor-pointer disabled:opacity-50"
+          className="flex items-center gap-2.5 w-full px-3 py-2.25 rounded-lg text-[13px] font-medium transition-all duration-150 bg-transparent border-none cursor-pointer disabled:opacity-50"
           style={{ color: "var(--ink-3)" }}
         >
           <LogOut size={15} />
@@ -195,7 +195,7 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
     <>
       {/* Desktop sidebar */}
       <aside
-        className="fixed top-0 left-0 h-screen w-[240px] z-30 border-r border-[var(--rule)] max-[1024px]:hidden"
+        className="fixed top-0 left-0 h-screen w-60 z-30 border-r border-(--rule) max-256:hidden"
         style={{ background: "var(--bg)" }}
       >
         <SidebarContent {...sharedProps} />
@@ -203,22 +203,22 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
 
       {/* Mobile top bar */}
       <header
-        className="hidden max-[1024px]:flex fixed top-0 left-0 right-0 h-[52px] z-30 items-center justify-between px-[20px] border-b border-[var(--rule)]"
+        className="hidden max-256:flex fixed top-0 left-0 right-0 h-13 z-30 items-center justify-between px-5 border-b border-(--rule)"
         style={{ background: "var(--bg)" }}
       >
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center gap-2">
           <div
-            className="w-[26px] h-[26px] rounded-[5px] flex items-center justify-center"
+            className="w-6.5 h-6.5 rounded-[5px] flex items-center justify-center"
             style={{ background: VELA_ACCENT_SOFT }}
           >
             <Compass size={14} style={{ color: VELA_ACCENT }} />
           </div>
-          <span className="font-display text-[15px] font-normal tracking-[-0.01em] fvs-text text-[var(--ink)]">
+          <span className="font-display text-[15px] font-normal tracking-[-0.01em] fvs-text text-(--ink)">
             Vela
           </span>
           {streakCount > 0 && (
             <span
-              className="font-mono text-[9px] tracking-[0.08em] uppercase px-[7px] py-[2px] rounded-full ml-[4px]"
+              className="font-mono text-[9px] tracking-[0.08em] uppercase px-1.75 py-0.5 rounded-full ml-1"
               style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
             >
               🔥 {streakCount}
@@ -227,7 +227,7 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
         </div>
         <button
           onClick={() => setMobileOpen((o) => !o)}
-          className="w-[36px] h-[36px] flex items-center justify-center rounded-[8px] bg-transparent border-none cursor-pointer"
+          className="w-9 h-9 flex items-center justify-center rounded-lg bg-transparent border-none cursor-pointer"
           style={{ color: "var(--ink-2)" }}
           aria-label="Toggle menu"
         >
@@ -238,12 +238,12 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
       {/* Mobile drawer */}
       {mobileOpen && (
         <div
-          className="hidden max-[1024px]:block fixed inset-0 z-40"
+          className="hidden max-256:block fixed inset-0 z-40"
           onClick={() => setMobileOpen(false)}
         >
           <div className="absolute inset-0 bg-black/40" style={{ top: "52px" }} aria-hidden="true" />
           <aside
-            className="absolute top-[52px] left-0 h-[calc(100vh-52px)] w-[240px] border-r border-[var(--rule)]"
+            className="absolute top-13 left-0 h-[calc(100vh-52px)] w-60 border-r border-(--rule)"
             style={{ background: "var(--bg)" }}
             onClick={(e) => e.stopPropagation()}
           >

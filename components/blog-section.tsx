@@ -18,14 +18,14 @@ export async function BlogSection(): Promise<React.ReactElement> {
   const items = posts ?? []
 
   return (
-    <section className="py-[120px] max-[720px]:py-[72px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)]" id="blog" aria-labelledby="blog-heading">
-      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">04 — WRITING</div>
+    <section className="py-30 max-180:py-18 max-w-(--maxw) mx-auto px-(--gutter)" id="blog" aria-labelledby="blog-heading">
+      <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
+        <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5">04 — WRITING</div>
         <div>
-          <h2 id="blog-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
-            Field <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">notes.</em>
+          <h2 id="blog-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+            Field <em className="not-italic italic text-(--v3-accent) fvs-soft">notes.</em>
           </h2>
-          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-[var(--ink-2)] mt-[18px]">
+          <div className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
             Short essays on engineering, ZK, and learning in public.
           </div>
         </div>
@@ -49,15 +49,15 @@ export async function BlogSection(): Promise<React.ReactElement> {
           ))}
         </div>
       ) : (
-        <p className="font-mono text-[13px] text-[var(--ink-3)]">
+        <p className="font-mono text-[13px] text-muted-foreground">
           No posts yet. Check back soon.
         </p>
       )}
 
-      <div className="flex justify-center mt-[80px] pt-[40px] border-t border-[var(--rule)] mb-[80px]">
+      <div className="flex justify-center mt-20 pt-10 border-t border-(--rule) mb-20">
         <MagneticWrapper strength={20}>
-          <Link href="/blog" className="group inline-flex items-center justify-center px-[32px] h-[52px] rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
-            Read all notes <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] ml-[10px] w-3 h-3" aria-hidden="true" />
+          <Link href="/blog" className="group inline-flex items-center justify-center px-8 h-13 rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+            Read all notes <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2.5 w-3 h-3" aria-hidden="true" />
           </Link>
         </MagneticWrapper>
       </div>

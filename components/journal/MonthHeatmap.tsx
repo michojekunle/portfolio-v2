@@ -71,17 +71,17 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
   return (
     <div>
       {/* Month navigation header */}
-      <div className="flex items-center justify-between mb-[14px]">
+      <div className="flex items-center justify-between mb-3.5">
         <span
           className="font-mono text-[11px] tracking-[0.12em] uppercase"
           style={{ color: "var(--ink-2)" }}
         >
           {monthLabel}
         </span>
-        <div className="flex items-center gap-[2px]">
+        <div className="flex items-center gap-0.5">
           <button
             onClick={goPrev}
-            className="w-[26px] h-[26px] flex items-center justify-center rounded-[6px] bg-transparent border-none cursor-pointer transition-colors"
+            className="w-6.5 h-6.5 flex items-center justify-center rounded-md bg-transparent border-none cursor-pointer transition-colors"
             style={{ color: "var(--ink-3)" }}
             aria-label="Previous month"
           >
@@ -90,7 +90,7 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
           <button
             onClick={goNext}
             disabled={!canGoNext}
-            className="w-[26px] h-[26px] flex items-center justify-center rounded-[6px] bg-transparent border-none cursor-pointer transition-colors disabled:opacity-25"
+            className="w-6.5 h-6.5 flex items-center justify-center rounded-md bg-transparent border-none cursor-pointer transition-colors disabled:opacity-25"
             style={{ color: "var(--ink-3)" }}
             aria-label="Next month"
           >
@@ -100,7 +100,7 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
       </div>
 
       {/* Day-of-week labels */}
-      <div className="grid grid-cols-7 gap-[3px] mb-[4px]">
+      <div className="grid grid-cols-7 gap-0.75 mb-1">
         {DOW.map((d, i) => (
           <div
             key={i}
@@ -113,7 +113,7 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-[3px]">
+      <div className="grid grid-cols-7 gap-0.75">
         {grid.map((dateStr, i) => {
           if (!dateStr) return <div key={`empty-${i}`} className="aspect-square" />;
           const done = doneSet.has(dateStr);
@@ -128,7 +128,7 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
                 month: "short",
                 day: "numeric",
               })}
-              className="aspect-square rounded-[4px] transition-all duration-300 cursor-default"
+              className="aspect-square rounded transition-all duration-300 cursor-default"
               style={{
                 background: done
                   ? VELA_ACCENT
@@ -149,10 +149,10 @@ export function MonthHeatmap({ entryDates }: Props): React.ReactElement {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-[8px] mt-[12px] justify-end">
-        <div className="w-[10px] h-[10px] rounded-[2px]" style={{ background: "var(--bg-2)" }} />
+      <div className="flex items-center gap-2 mt-3 justify-end">
+        <div className="w-2.5 h-2.5 rounded-sm" style={{ background: "var(--bg-2)" }} />
         <span className="font-mono text-[9px]" style={{ color: "var(--ink-4)" }}>No entry</span>
-        <div className="w-[10px] h-[10px] rounded-[2px] ml-[4px]" style={{ background: VELA_ACCENT }} />
+        <div className="w-2.5 h-2.5 rounded-sm ml-1" style={{ background: VELA_ACCENT }} />
         <span className="font-mono text-[9px]" style={{ color: "var(--ink-4)" }}>Logged</span>
       </div>
     </div>

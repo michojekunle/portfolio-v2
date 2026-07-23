@@ -71,18 +71,18 @@ export function CanvasClient() {
   const activeEntry = activeDate ? entries.find((e) => e.date === activeDate) : null;
 
   return (
-    <div className="max-w-[900px] mx-auto px-[32px] py-[48px] max-[640px]:px-[20px] max-[640px]:py-[32px]">
-      <div className="flex items-center gap-[12px] mb-[32px]">
-        <div className="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center text-[20px]" style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}>
+    <div className="max-w-[900px] mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[20px]" style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}>
           <Calendar size={20} />
         </div>
         <div>
           <h1 className="font-display text-[28px] font-normal m-0 tracking-[-0.02em] fvs-text" style={{ color: "var(--ink)" }}>Daily Canvas</h1>
-          <p className="font-mono text-[10px] tracking-[0.08em] uppercase m-0 mt-[4px]" style={{ color: "var(--ink-3)" }}>Your last {DAYS_BACK} days, at a glance</p>
+          <p className="font-mono text-[10px] tracking-[0.08em] uppercase m-0 mt-1" style={{ color: "var(--ink-3)" }}>Your last {DAYS_BACK} days, at a glance</p>
         </div>
       </div>
 
-      <div className="space-y-[16px]">
+      <div className="space-y-4">
         {days.map((date) => {
           const isExpanded = expandedDays[date] ?? true;
           const dayMilestones = milestones.filter((m) => m.due_date === date);
@@ -90,23 +90,23 @@ export function CanvasClient() {
           const hasEntry = Boolean(entry && (entry.top_priorities.length || entry.accomplished.length || entry.blockers || entry.notes || entry.energy_level));
 
           return (
-            <div key={date} className="rounded-[12px] overflow-hidden" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
+            <div key={date} className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
               <button
                 onClick={() => openDate(date)}
-                className="w-full flex items-center justify-between px-[20px] py-[16px] bg-transparent border-none cursor-pointer hover:bg-[var(--bg-3)] transition-colors"
+                className="w-full flex items-center justify-between px-5 py-4 bg-transparent border-none cursor-pointer hover:bg-(--bg-3) transition-colors"
               >
-                <div className="flex items-center gap-[12px]">
+                <div className="flex items-center gap-3">
                   {isExpanded ? <ChevronDown size={16} style={{ color: "var(--ink-3)" }} onClick={(e) => { e.stopPropagation(); toggleDay(date); }} /> : <ChevronRight size={16} style={{ color: "var(--ink-3)" }} onClick={(e) => { e.stopPropagation(); toggleDay(date); }} />}
-                  <span className="font-mono text-[12px] tracking-[0.1em] uppercase font-semibold" style={{ color: "var(--ink)" }}>
+                  <span className="font-mono text-[12px] tracking-widest uppercase font-semibold" style={{ color: "var(--ink)" }}>
                     {new Date(date).toLocaleDateString("en-GB", { weekday: 'long', month: 'short', day: 'numeric' })}
                   </span>
                   {dayMilestones.length > 0 && (
-                    <span className="font-mono text-[10px] px-[8px] py-[2px] rounded-full" style={{ background: "var(--bg-3)", color: "var(--ink-2)" }}>
+                    <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--bg-3)", color: "var(--ink-2)" }}>
                       {dayMilestones.length} tasks
                     </span>
                   )}
                   {hasEntry && (
-                    <span className="font-mono text-[10px] px-[8px] py-[2px] rounded-full" style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}>
+                    <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}>
                       Logged
                     </span>
                   )}
@@ -114,17 +114,17 @@ export function CanvasClient() {
               </button>
 
               {isExpanded && (
-                <div className="px-[20px] pb-[20px] pt-[4px] border-t border-[var(--rule)] cursor-pointer" onClick={() => openDate(date)}>
+                <div className="px-5 pb-5 pt-1 border-t border-(--rule) cursor-pointer" onClick={() => openDate(date)}>
                   {dayMilestones.length > 0 && (
-                    <div className="space-y-[8px] mt-[12px]">
+                    <div className="space-y-2 mt-3">
                       {dayMilestones.map((m) => {
                         const parentObj = objectives.find(o => o.id === m.objective_id);
                         return (
-                          <div key={m.id} className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] bg-[var(--bg)] border border-[var(--rule)]">
-                            <input type="checkbox" checked={m.is_done} readOnly className="w-[16px] h-[16px] rounded-[4px] accent-[var(--accent)]" />
+                          <div key={m.id} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-(--bg) border border-(--rule)">
+                            <input type="checkbox" checked={m.is_done} readOnly className="w-4 h-4 rounded accent-(--accent)" />
                             <div className="flex-1">
                               <div className="text-[14px]" style={{ color: m.is_done ? "var(--ink-3)" : "var(--ink)", textDecoration: m.is_done ? "line-through" : "none" }}>{m.title}</div>
-                              {parentObj && <div className="font-mono text-[9px] mt-[4px]" style={{ color: "var(--ink-4)" }}>{parentObj.title}</div>}
+                              {parentObj && <div className="font-mono text-[9px] mt-1" style={{ color: "var(--ink-4)" }}>{parentObj.title}</div>}
                             </div>
                           </div>
                         )
@@ -133,32 +133,32 @@ export function CanvasClient() {
                   )}
 
                   {hasEntry ? (
-                    <div className="mt-[12px] space-y-[10px]">
+                    <div className="mt-3 space-y-2.5">
                       {entry!.top_priorities.length > 0 && (
                         <div>
-                          <div className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[4px]" style={{ color: "var(--ink-4)" }}>Priorities</div>
-                          <ul className="m-0 pl-[18px] text-[13px]" style={{ color: "var(--ink)" }}>
+                          <div className="font-mono text-[9px] tracking-widest uppercase mb-1" style={{ color: "var(--ink-4)" }}>Priorities</div>
+                          <ul className="m-0 pl-4.5 text-[13px]" style={{ color: "var(--ink)" }}>
                             {entry!.top_priorities.map((p, i) => <li key={i}>{p}</li>)}
                           </ul>
                         </div>
                       )}
                       {entry!.accomplished.length > 0 && (
                         <div>
-                          <div className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[4px]" style={{ color: "var(--ink-4)" }}>Accomplished</div>
-                          <ul className="m-0 pl-[18px] text-[13px]" style={{ color: "var(--ink)" }}>
+                          <div className="font-mono text-[9px] tracking-widest uppercase mb-1" style={{ color: "var(--ink-4)" }}>Accomplished</div>
+                          <ul className="m-0 pl-4.5 text-[13px]" style={{ color: "var(--ink)" }}>
                             {entry!.accomplished.map((a, i) => <li key={i}>{a}</li>)}
                           </ul>
                         </div>
                       )}
                       {entry!.blockers && (
                         <div>
-                          <div className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[4px]" style={{ color: "var(--ink-4)" }}>Blockers</div>
+                          <div className="font-mono text-[9px] tracking-widest uppercase mb-1" style={{ color: "var(--ink-4)" }}>Blockers</div>
                           <p className="m-0 text-[13px]" style={{ color: "var(--ink)" }}>{entry!.blockers}</p>
                         </div>
                       )}
                       {entry!.notes && (
                         <div>
-                          <div className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[4px]" style={{ color: "var(--ink-4)" }}>Notes</div>
+                          <div className="font-mono text-[9px] tracking-widest uppercase mb-1" style={{ color: "var(--ink-4)" }}>Notes</div>
                           <p className="m-0 text-[13px] whitespace-pre-wrap" style={{ color: "var(--ink)" }}>{entry!.notes}</p>
                         </div>
                       )}
@@ -169,7 +169,7 @@ export function CanvasClient() {
                       )}
                     </div>
                   ) : dayMilestones.length === 0 ? (
-                    <div className="py-[32px] text-center font-mono text-[11px] uppercase tracking-[0.1em]" style={{ color: "var(--ink-4)" }}>
+                    <div className="py-8 text-center font-mono text-[11px] uppercase tracking-widest" style={{ color: "var(--ink-4)" }}>
                       No log for this day. Click to add notes.
                     </div>
                   ) : null}
@@ -183,27 +183,27 @@ export function CanvasClient() {
       {/* Notes editor sheet — plain-text, shares the same `notes` field as the daily log's reflection box */}
       {activeDate && (
         <div className="fixed inset-0 z-[100] flex justify-end bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-[640px] h-full bg-[var(--bg)] shadow-2xl border-l border-[var(--rule)] flex flex-col animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between px-[32px] py-[24px] border-b border-[var(--rule)] bg-[var(--bg-2)]">
+          <div className="w-full max-w-160 h-full bg-(--bg) shadow-2xl border-l border-(--rule) flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between px-8 py-6 border-b border-(--rule) bg-(--bg-2)">
               <div>
                 <h2 className="font-display text-[24px] tracking-[-0.01em] m-0" style={{ color: "var(--ink)" }}>
                   {new Date(activeDate).toLocaleDateString("en-GB", { weekday: 'long', month: 'long', day: 'numeric' })}
                 </h2>
-                <div className="font-mono text-[10px] tracking-[0.1em] uppercase mt-[4px]" style={{ color: "var(--ink-3)" }}>
+                <div className="font-mono text-[10px] tracking-widest uppercase mt-1" style={{ color: "var(--ink-3)" }}>
                   Canvas Notes
                 </div>
               </div>
               <button
                 onClick={() => setActiveDate(null)}
-                className="w-[40px] h-[40px] rounded-full border border-[var(--rule)] bg-transparent flex items-center justify-center cursor-pointer hover:bg-[var(--bg-3)] transition-colors"
+                className="w-10 h-10 rounded-full border border-(--rule) bg-transparent flex items-center justify-center cursor-pointer hover:bg-(--bg-3) transition-colors"
               >
                 <X size={18} style={{ color: "var(--ink-2)" }} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-[48px] py-[40px] max-[640px]:px-[20px] max-[640px]:py-[24px] flex flex-col gap-[24px]">
+            <div className="flex-1 overflow-y-auto px-12 py-10 max-160:px-5 max-160:py-6 flex flex-col gap-6">
               {activeEntry && (activeEntry.top_priorities.length > 0 || activeEntry.accomplished.length > 0) && (
-                <div className="rounded-[10px] px-[16px] py-[14px] text-[13px]" style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}>
+                <div className="rounded-[10px] px-4 py-3.5 text-[13px]" style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}>
                   This day already has priorities/accomplishments logged from the daily log — edit those from{" "}
                   <a href={`/tools/journal/log/${activeDate}`} style={{ color: VELA_ACCENT }}>the log page</a>. This box is for free-form notes only.
                 </div>
@@ -218,7 +218,7 @@ export function CanvasClient() {
               />
               <button
                 onClick={() => void handleNotesSave()}
-                className="self-end px-[20px] h-[40px] rounded-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer"
+                className="self-end px-5 h-10 rounded-lg font-mono text-[10px] tracking-[0.12em] uppercase font-semibold text-white border-none cursor-pointer"
                 style={{ background: VELA_ACCENT }}
               >
                 Save Notes

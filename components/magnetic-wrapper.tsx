@@ -12,7 +12,7 @@ interface MagneticWrapperProps {
 
 export function MagneticWrapper({ 
   children, 
-  className = "", 
+  className="", 
   strength = 15,
   tolerance = 15
 }: MagneticWrapperProps) {

@@ -19,7 +19,7 @@ interface Props {
   className?: string;
 }
 
-export function InstagramEmbed({ url, className = "" }: Props): React.ReactElement {
+export function InstagramEmbed({ url, className="" }: Props): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

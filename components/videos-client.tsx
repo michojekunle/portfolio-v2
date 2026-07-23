@@ -19,7 +19,7 @@ interface Platform {
 
 function YoutubeIcon(): React.ReactElement {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-[22px] h-[22px]">
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5.5 h-5.5">
       <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8ZM9.6 15.5V8.5l6.3 3.5-6.3 3.5Z" />
     </svg>
   );
@@ -27,7 +27,7 @@ function YoutubeIcon(): React.ReactElement {
 
 function InstagramIcon(): React.ReactElement {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-[22px] h-[22px]">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-5.5 h-5.5">
       <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
       <circle cx="12" cy="12" r="4.2" />
       <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
@@ -37,7 +37,7 @@ function InstagramIcon(): React.ReactElement {
 
 function TiktokIcon(): React.ReactElement {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-[20px] h-[20px]">
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
       <path d="M16.6 0c.4 2.7 2 4.4 4.7 4.6v3.3c-1.6.2-3-.3-4.6-1.2v6.6c0 5.6-6 9.1-10.8 6.4A6.6 6.6 0 0 1 8 7.4v3.5a3.3 3.3 0 1 0 2.4 3.2V0h6.2Z" />
     </svg>
   );
@@ -98,20 +98,20 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
   return (
     <>
       {/* ── Hero: heading left, intro + recent videos right ── */}
-      <section className="pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
-        <div className="grid grid-cols-[1.05fr_0.95fr] max-[960px]:grid-cols-1 gap-[56px] max-[960px]:gap-[40px] items-start">
+      <section className="pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+        <div className="grid grid-cols-[1.05fr_0.95fr] max-240:grid-cols-1 gap-14 max-240:gap-10 items-start">
           {/* Left: heading + copy */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+              className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
             >
               /VIDEOS · ELSEWHERE
             </motion.div>
 
-            <h1 className="m-0 font-display font-light text-[clamp(40px,6vw,88px)] leading-[0.9] tracking-[-0.04em] text-[var(--ink)] mb-[28px] text-balance fvs-display flex flex-wrap gap-x-[14px]">
+            <h1 className="m-0 font-display font-light text-[clamp(40px,6vw,88px)] leading-[0.9] tracking-[-0.04em] text-(--ink) mb-7 text-balance fvs-display flex flex-wrap gap-x-3.5">
               {titleWords.map((word, i) => {
                 const isBuild = word === "build.";
                 return (
@@ -124,7 +124,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                       ease: [0.16, 1, 0.3, 1],
                       delay: i * 0.1,
                     }}
-                    className={isBuild ? "italic text-[var(--v3-accent)] fvs-soft" : ""}
+                    className={isBuild ? "italic text-(--v3-accent) fvs-soft" : ""}
                   >
                     {word}
                   </motion.span>
@@ -136,7 +136,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="font-sans font-normal text-[18px] text-[var(--ink-2)] max-w-[42ch]"
+              className="font-sans font-normal text-[18px] text-secondary-foreground max-w-[42ch]"
             >
               Every platform where I share process over polish — the same
               projects you see here, shot as it happens.
@@ -148,10 +148,10 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.55 }}
-                className="mt-[36px] flex items-center gap-[10px]"
+                className="mt-9 flex items-center gap-2.5"
               >
                 <Sparkles size={13} style={{ color: "var(--v3-accent)" }} aria-hidden="true" />
-                <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+                <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
                   Recently posted — {featuredVideos.length === 1 ? "1 pick" : `${featuredVideos.length} picks`} on the right
                 </span>
               </motion.div>
@@ -163,41 +163,41 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col gap-[16px]"
+            className="flex flex-col gap-4"
           >
             {introVideo ? (
-              <div className="rounded-[16px] overflow-hidden border border-[var(--rule)]">
+              <div className="rounded-2xl overflow-hidden border border-(--rule)">
                 <PlatformEmbed video={introVideo} />
-                <div className="px-[16px] py-[12px] bg-[var(--bg-2)]">
-                  <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-[3px]" style={{ color: "var(--v3-accent)" }}>
+                <div className="px-4 py-3 bg-(--bg-2)">
+                  <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-0.75" style={{ color: "var(--v3-accent)" }}>
                     Start here
                   </div>
-                  <div className="text-[13px] font-medium text-[var(--ink)]">{introVideo.title}</div>
+                  <div className="text-[13px] font-medium text-(--ink)">{introVideo.title}</div>
                 </div>
               </div>
             ) : (
-              <div className="rounded-[16px] border border-dashed border-[var(--rule)] bg-[var(--bg-2)] aspect-video flex flex-col items-center justify-center gap-[10px] px-[24px] text-center">
+              <div className="rounded-2xl border border-dashed border-(--rule) bg-(--bg-2) aspect-video flex flex-col items-center justify-center gap-2.5 px-6 text-center">
                 <Sparkles size={20} style={{ color: "var(--ink-3)" }} aria-hidden="true" />
-                <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                <div className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
                   Intro video coming soon
                 </div>
-                <p className="text-[12px] text-[var(--ink-3)] max-w-[32ch] m-0">
+                <p className="text-[12px] text-muted-foreground max-w-[32ch] m-0">
                   A short walkthrough of what I do and what this whole thing is about.
                 </p>
               </div>
             )}
 
             {featuredVideos.length > 0 && (
-              <div className="grid grid-cols-2 max-[520px]:grid-cols-1 gap-[12px]">
+              <div className="grid grid-cols-2 max-130:grid-cols-1 gap-3">
                 {featuredVideos.map((video) => (
-                  <div key={video.id} className="rounded-[12px] overflow-hidden border border-[var(--rule)]">
+                  <div key={video.id} className="rounded-xl overflow-hidden border border-(--rule)">
                     {video.platform === "youtube" ? (
                       <YoutubeEmbed url={video.url} title={video.title} />
                     ) : (
                       <PlatformEmbed video={video} />
                     )}
-                    <div className="px-[10px] py-[8px] bg-[var(--bg-2)]">
-                      <div className="text-[11px] font-medium text-[var(--ink)] line-clamp-1">
+                    <div className="px-2.5 py-2 bg-(--bg-2)">
+                      <div className="text-[11px] font-medium text-(--ink) line-clamp-1">
                         {video.title}
                       </div>
                     </div>
@@ -210,20 +210,20 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       </section>
 
       {/* ── Highlights ── */}
-      <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[80px] max-[720px]:py-[48px] border-b border-[var(--rule)]">
-        <div className="flex items-center justify-between mb-[32px]">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-180:py-12 border-b border-(--rule)">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-[var(--ink-3)] mb-[6px]">
+            <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1.5">
               Highlights
             </div>
-            <h2 className="font-display text-[28px] font-normal tracking-[-0.02em] text-[var(--ink)] m-0">
+            <h2 className="font-display text-[28px] font-normal tracking-[-0.02em] text-(--ink) m-0">
               Recent clips
             </h2>
           </div>
         </div>
 
         {highlightVideos.length > 0 ? (
-          <div className="grid grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1 gap-[24px]">
+          <div className="grid grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1 gap-6">
             {highlightVideos.map((video, i) => (
               <motion.div
                 key={video.id}
@@ -231,14 +231,14 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.06 }}
-                className="rounded-[14px] overflow-hidden border border-[var(--rule)] bg-[var(--bg-2)]"
+                className="rounded-[14px] overflow-hidden border border-(--rule) bg-(--bg-2)"
               >
                 <PlatformEmbed video={video} />
-                <div className="px-[14px] py-[12px]">
-                  <div className="font-mono text-[8px] tracking-[0.1em] uppercase mb-[4px] text-[var(--ink-3)]">
+                <div className="px-3.5 py-3">
+                  <div className="font-mono text-[8px] tracking-widest uppercase mb-1 text-muted-foreground">
                     {video.platform}
                   </div>
-                  <div className="text-[13px] font-medium text-[var(--ink)] line-clamp-2">
+                  <div className="text-[13px] font-medium text-(--ink) line-clamp-2">
                     {video.title}
                   </div>
                 </div>
@@ -246,8 +246,8 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
             ))}
           </div>
         ) : (
-          <div className="rounded-[16px] border border-dashed border-[var(--rule)] py-[48px] text-center">
-            <p className="text-[13px] text-[var(--ink-3)] m-0">
+          <div className="rounded-2xl border border-dashed border-(--rule) py-12 text-center">
+            <p className="text-[13px] text-muted-foreground m-0">
               New clips get added here regularly — check back soon.
             </p>
           </div>
@@ -255,17 +255,17 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       </section>
 
       {/* ── Platform links ── */}
-      <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[80px] max-[720px]:py-[48px]">
-        <div className="mb-[32px]">
-          <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-[var(--ink-3)] mb-[6px]">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-180:py-12">
+        <div className="mb-8">
+          <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1.5">
             Follow along
           </div>
-          <h2 className="font-display text-[28px] font-normal tracking-[-0.02em] text-[var(--ink)] m-0">
+          <h2 className="font-display text-[28px] font-normal tracking-[-0.02em] text-(--ink) m-0">
             Everywhere I post
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 max-[820px]:grid-cols-1 gap-[24px]">
+        <div className="grid grid-cols-2 max-[820px]:grid-cols-1 gap-6">
           {PLATFORMS.map((platform, i) => (
             <motion.div
               key={platform.name}
@@ -280,18 +280,18 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Watch on ${platform.name} — ${platform.handle}`}
-                  className="group relative flex flex-col h-full no-underline p-[32px] max-[480px]:p-[24px] rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] overflow-hidden transition-colors duration-200 hover:border-[var(--ink-3)]"
+                  className="group relative flex flex-col h-full no-underline p-8 max-[480px]:p-6 rounded-[20px] border border-(--rule) bg-(--bg-2) overflow-hidden transition-colors duration-200 hover:border-muted-foreground"
                 >
                   {/* Accent glow, top-right */}
                   <div
-                    className="absolute -top-[60px] -right-[60px] w-[160px] h-[160px] rounded-full opacity-[0.12] blur-[10px] transition-opacity duration-300 group-hover:opacity-[0.2]"
+                    className="absolute -top-15 -right-15 w-40 h-40 rounded-full opacity-[0.12] blur-2.5 transition-opacity duration-300 group-hover:opacity-[0.2]"
                     style={{ background: platform.color }}
                     aria-hidden="true"
                   />
 
-                  <div className="flex items-center justify-between mb-[28px] relative">
+                  <div className="flex items-center justify-between mb-7 relative">
                     <div
-                      className="w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0"
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                       style={{
                         background: `color-mix(in srgb, ${platform.color} 14%, transparent)`,
                         color: platform.color === "#000000" ? "var(--ink)" : platform.color,
@@ -301,24 +301,24 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                     </div>
                     <ArrowUpRight
                       size={20}
-                      className="text-[var(--ink-3)] transition-all duration-200 group-hover:text-[var(--ink)] group-hover:translate-x-[3px] group-hover:-translate-y-[3px]"
+                      className="text-muted-foreground transition-all duration-200 group-hover:text-(--ink) group-hover:translate-x-0.75 group-hover:-translate-y-0.75"
                       aria-hidden="true"
                     />
                   </div>
 
-                  <h3 className="font-display text-[26px] font-normal tracking-[-0.02em] text-[var(--ink)] m-0 mb-[6px] fvs-text">
+                  <h3 className="font-display text-[26px] font-normal tracking-[-0.02em] text-(--ink) m-0 mb-1.5 fvs-text">
                     {platform.name}
                   </h3>
-                  <div className="font-mono text-[11px] tracking-[0.08em] text-[var(--ink-3)] mb-[16px]">
+                  <div className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground mb-4">
                     {platform.handle}
                   </div>
-                  <p className="font-sans text-[14px] leading-[1.6] text-[var(--ink-2)] m-0 mb-[24px] max-w-[38ch]">
+                  <p className="font-sans text-[14px] leading-[1.6] text-secondary-foreground m-0 mb-6 max-w-[38ch]">
                     {platform.tagline}
                   </p>
 
-                  <div className="mt-auto flex items-center gap-[8px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold text-[var(--ink)]">
+                  <div className="mt-auto flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase font-semibold text-(--ink)">
                     Watch on {platform.name}
-                    <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:translate-x-[2px] group-hover:-translate-y-[2px]" aria-hidden="true" />
+                    <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                   </div>
                 </a>
               </TiltCard>
@@ -331,16 +331,16 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-[56px] pt-[32px] border-t border-[var(--rule)] flex items-center justify-between max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-[16px]"
+          className="mt-14 pt-8 border-t border-(--rule) flex items-center justify-between max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-4"
         >
-          <p className="font-sans text-[14px] text-[var(--ink-3)] m-0">
+          <p className="font-sans text-[14px] text-muted-foreground m-0">
             New uploads land first on YouTube, then get cut down everywhere
             else.
           </p>
           <MagneticWrapper strength={15}>
             <a
               href="/contact"
-              className="inline-flex items-center gap-[8px] font-mono text-[11px] tracking-[0.1em] uppercase font-medium no-underline px-[18px] py-[10px] rounded-full border border-[var(--rule)] text-[var(--ink)] transition-all duration-200 hover:border-[var(--ink-3)] hover:-translate-y-[1px]"
+              className="inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase font-medium no-underline px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-0.25"
             >
               Suggest a topic
               <ArrowUpRight size={13} aria-hidden="true" />

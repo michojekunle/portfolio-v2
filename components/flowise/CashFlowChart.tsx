@@ -64,11 +64,11 @@ const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; in
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-[16px] mb-[12px] flex-wrap">
-        <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink-3)]">Cash Flow</div>
-        <div className="flex items-center gap-[12px] ml-auto">
-          <div className="flex items-center gap-[6px]"><div className="w-[12px] h-[2px] rounded-full bg-[#16A34A]" /><span className="font-mono text-[9px] text-[var(--ink-3)]">Income</span></div>
-          <div className="flex items-center gap-[6px]"><div className="w-[12px] h-[2px] rounded-full bg-[#EF4444]" /><span className="font-mono text-[9px] text-[var(--ink-3)]">Expenses</span></div>
+      <div className="flex items-center gap-4 mb-3 flex-wrap">
+        <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Cash Flow</div>
+        <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded-full bg-[#16A34A]" /><span className="font-mono text-[9px] text-muted-foreground">Income</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded-full bg-[#EF4444]" /><span className="font-mono text-[9px] text-muted-foreground">Expenses</span></div>
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -152,7 +152,7 @@ const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; in
       </div>
       {points.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="font-mono text-[11px] text-[var(--ink-4)]">No data yet — add transactions to see trends</div>
+          <div className="font-mono text-[11px] text-(--ink-4)">No data yet — add transactions to see trends</div>
         </div>
       )}
     </div>

@@ -196,24 +196,24 @@ export default function ThreadStudioPage(): React.ReactElement {
     >
       {/* Hero */}
       <section
-        className="pt-[140px] pb-[60px] max-[720px]:pt-[100px] max-[720px]:pb-[36px] border-b"
+        className="pt-35 pb-15 max-[720px]:pt-[100px] max-180:pb-9 border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div className="max-w-[1240px] mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-[32px] max-[720px]:flex-col max-[720px]:items-start">
+        <div className="max-w-310 mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-8 max-180:flex-col max-180:items-start">
           <div>
             <div
-              className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.16em] uppercase mb-[24px] px-[10px] py-[4px] rounded-full"
+              className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.16em] uppercase mb-6 px-2.5 py-1 rounded-full"
               style={{ background: ACCENT_SOFT, color: ACCENT, border: `1px solid ${ACCENT_BORDER}` }}
             >
               <span
-                className="w-[5px] h-[5px] rounded-full"
+                className="w-1.25 h-1.25 rounded-full"
                 style={{ background: ACCENT }}
                 aria-hidden="true"
               />
               Thread Studio
             </div>
             <h1
-              className="font-display font-normal leading-[0.9] tracking-[-0.04em] fvs-display m-0 mb-[20px]"
+              className="font-display font-normal leading-[0.9] tracking-[-0.04em] fvs-display m-0 mb-5"
               style={{ fontSize: "clamp(44px,7vw,80px)", color: "var(--ink)" }}
             >
               Engineer viral{" "}
@@ -230,11 +230,11 @@ export default function ThreadStudioPage(): React.ReactElement {
           </div>
 
           <div
-            className="flex items-center gap-[12px] p-[16px] rounded-[12px] max-w-[340px]"
+            className="flex items-center gap-3 p-4 rounded-xl max-w-85"
             style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
           >
             <Smartphone className="shrink-0" size={24} style={{ color: ACCENT }} />
-            <div className="text-[12px] leading-[1.4] text-[var(--ink-3)]">
+            <div className="text-[12px] leading-[1.4] text-muted-foreground">
               <strong>X Live Feed Preview:</strong> Experience your threads formatted as they would appear on Twitter with real-time length limit flags!
             </div>
           </div>
@@ -242,17 +242,17 @@ export default function ThreadStudioPage(): React.ReactElement {
       </section>
 
       {/* Workspace */}
-      <section className="max-w-[1240px] mx-auto px-[var(--gutter,24px)] py-[48px]">
-        <div className="grid grid-cols-[1.2fr_0.8fr] gap-[40px] max-[960px]:grid-cols-1">
+      <section className="max-w-310 mx-auto px-[var(--gutter,24px)] py-12">
+        <div className="grid grid-cols-[1.2fr_0.8fr] gap-10 max-240:grid-cols-1">
           {/* Left Column: Editor */}
-          <div className="space-y-[32px]">
+          <div className="space-y-8">
             {/* Input Config Card */}
             <div
-              className="rounded-[16px] p-[32px] max-[720px]:p-[20px] space-y-[24px]"
+              className="rounded-2xl p-8 max-180:p-5 space-y-6"
               style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
             >
               {/* Modes Tabs */}
-              <div className="flex border-b border-[var(--rule)] pb-[1px] gap-[24px] overflow-x-auto" data-lenis-prevent="true">
+              <div className="flex border-b border-(--rule) pb-0.25 gap-6 overflow-x-auto" data-lenis-prevent="true">
                 {[
                   { id: "topic", label: "From Topic" },
                   { id: "refine", label: "Refine Raw Draft" },
@@ -265,7 +265,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                       setInputMode(tab.id as "topic" | "refine" | "manual");
                       if (tab.id === "manual") initManualThread();
                     }}
-                    className="pb-[12px] font-mono text-[10px] uppercase tracking-[0.14em] font-semibold cursor-pointer border-b-2 transition-colors duration-150 shrink-0"
+                    className="pb-3 font-mono text-[10px] uppercase tracking-[0.14em] font-semibold cursor-pointer border-b-2 transition-colors duration-150 shrink-0"
                     style={{
                       color: inputMode === tab.id ? ACCENT : "var(--ink-3)",
                       borderColor: inputMode === tab.id ? ACCENT : "transparent",
@@ -277,11 +277,11 @@ export default function ThreadStudioPage(): React.ReactElement {
               </div>
 
               {inputMode === "topic" && (
-                <div className="space-y-[20px]">
+                <div className="space-y-5">
                   <div>
                     <label
                       htmlFor="topic"
-                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                       style={{ color: "var(--ink-3)" }}
                     >
                       Topic
@@ -292,7 +292,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                       placeholder="e.g. How compound interest actually works, Why most todo apps fail, The psychology of viral content..."
                       value={topic}
                       onChange={(e) => setTopic(e.target.value)}
-                      className="w-full rounded-[10px] px-[16px] py-[12px] text-[15px] leading-[1.6] resize-none transition-colors duration-150 outline-none"
+                      className="w-full rounded-[10px] px-4 py-3 text-[15px] leading-[1.6] resize-none transition-colors duration-150 outline-none"
                       style={{
                         background: "var(--bg)",
                         border: "1px solid var(--rule)",
@@ -306,11 +306,11 @@ export default function ThreadStudioPage(): React.ReactElement {
               )}
 
               {inputMode === "refine" && (
-                <div className="space-y-[20px]">
+                <div className="space-y-5">
                   <div>
                     <label
                       htmlFor="notes"
-                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                       style={{ color: "var(--ink-3)" }}
                     >
                       Rough Notes / Transcript / Copy Outline
@@ -321,7 +321,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                       placeholder="Paste your rough outline ideas, transcript paragraphs, raw copy notes, or brainstorm concepts here (up to 5,000 characters). AI will structure and write a viral thread stack from it."
                       value={roughNotes}
                       onChange={(e) => setRoughNotes(e.target.value)}
-                      className="w-full rounded-[10px] px-[16px] py-[12px] text-[14px] leading-[1.6] resize-none transition-colors duration-150 outline-none font-sans"
+                      className="w-full rounded-[10px] px-4 py-3 text-[14px] leading-[1.6] resize-none transition-colors duration-150 outline-none font-sans"
                       style={{
                         background: "var(--bg)",
                         border: "1px solid var(--rule)",
@@ -338,25 +338,25 @@ export default function ThreadStudioPage(): React.ReactElement {
                 <>
                   <div>
                     <div
-                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                       style={{ color: "var(--ink-3)" }}
                     >
                       Tone
                     </div>
-                    <div className="grid grid-cols-2 max-[520px]:grid-cols-1 gap-[8px]">
+                    <div className="grid grid-cols-2 max-130:grid-cols-1 gap-2">
                       {TONES.map((t) => (
                         <button
                           key={t}
                           type="button"
                           onClick={() => setTone(t)}
-                          className="text-left px-[16px] py-[12px] rounded-[8px] transition-all duration-150 border cursor-pointer"
+                          className="text-left px-4 py-3 rounded-lg transition-all duration-150 border cursor-pointer"
                           style={{
                             background: tone === t ? ACCENT_SOFT : "var(--bg)",
                             borderColor: tone === t ? ACCENT : "var(--rule)",
                             color: tone === t ? ACCENT : "var(--ink-2)",
                           }}
                         >
-                          <div className="font-mono text-[11px] tracking-[0.08em] uppercase font-semibold mb-[2px]">
+                          <div className="font-mono text-[11px] tracking-[0.08em] uppercase font-semibold mb-0.5">
                             {t}
                           </div>
                           <div className="text-[12px] leading-[1.4]" style={{ color: "var(--ink-3)" }}>
@@ -370,12 +370,12 @@ export default function ThreadStudioPage(): React.ReactElement {
                   <div>
                     <label
                       htmlFor="thread-length"
-                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-[10px]"
+                      className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                       style={{ color: "var(--ink-3)" }}
                     >
                       Thread length — {threadLength} tweets
                     </label>
-                    <div className="flex items-center gap-[16px]">
+                    <div className="flex items-center gap-4">
                       <input
                         id="thread-length"
                         type="range"
@@ -383,14 +383,14 @@ export default function ThreadStudioPage(): React.ReactElement {
                         max={15}
                         value={threadLength}
                         onChange={(e) => setThreadLength(Number(e.target.value))}
-                        className="flex-1 h-[4px] rounded-full appearance-none cursor-pointer"
+                        className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
                         style={{
                           background: `linear-gradient(90deg, ${ACCENT} ${((threadLength - 3) / (15 - 3)) * 100}%, var(--rule) ${((threadLength - 3) / (15 - 3)) * 100}%)`,
                           accentColor: ACCENT
                         }}
                       />
                       <span
-                        className="font-mono text-[14px] font-semibold w-[28px] text-center"
+                        className="font-mono text-[14px] font-semibold w-7 text-center"
                         style={{ color: ACCENT }}
                       >
                         {threadLength}
@@ -402,7 +402,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                     type="button"
                     onClick={() => void generate()}
                     disabled={loading || (inputMode === "topic" ? !topic.trim() : !roughNotes.trim())}
-                    className="w-full h-[52px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-white"
+                    className="w-full h-13 rounded-lg font-mono text-[11px] uppercase tracking-[0.14em] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-white"
                     style={{
                       background: (inputMode === "topic" ? topic.trim() : roughNotes.trim()) && !loading ? ACCENT : "var(--rule)",
                     }}
@@ -413,9 +413,9 @@ export default function ThreadStudioPage(): React.ReactElement {
               )}
 
               {inputMode === "manual" && (
-                <div className="p-[16px] rounded-[10px] border border-[var(--rule)] bg-[var(--bg)] flex items-center gap-[12px]">
+                <div className="p-4 rounded-[10px] border border-(--rule) bg-(--bg) flex items-center gap-3">
                   <ChevronRight size={16} style={{ color: ACCENT }} />
-                  <span className="text-[12px] text-[var(--ink-2)]">
+                  <span className="text-[12px] text-secondary-foreground">
                     Create tweets manually using the list tools below. Your prefixes will automatically synchronize!
                   </span>
                 </div>
@@ -424,32 +424,32 @@ export default function ThreadStudioPage(): React.ReactElement {
 
             {/* Custom Brand Mockup Setup */}
             <div
-              className="rounded-[16px] p-[24px] space-y-[16px]"
+              className="rounded-2xl p-6 space-y-4"
               style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
             >
-              <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+              <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
                 Mockup Identity Settings
               </div>
-              <div className="grid grid-cols-2 gap-[16px] max-[520px]:grid-cols-1">
+              <div className="grid grid-cols-2 gap-4 max-130:grid-cols-1">
                 <div>
-                  <label htmlFor="mock-name" className="block text-[11px] text-[var(--ink-3)] mb-[6px]">Display Name</label>
+                  <label htmlFor="mock-name" className="block text-[11px] text-muted-foreground mb-1.5">Display Name</label>
                   <input
                     id="mock-name"
                     type="text"
                     value={creatorName}
                     onChange={(e) => setCreatorName(e.target.value)}
-                    className="w-full h-[40px] px-[12px] rounded-[8px] text-[13px] outline-none"
+                    className="w-full h-10 px-3 rounded-lg text-[13px] outline-none"
                     style={{ background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink)" }}
                   />
                 </div>
                 <div>
-                  <label htmlFor="mock-handle" className="block text-[11px] text-[var(--ink-3)] mb-[6px]">Twitter @Handle</label>
+                  <label htmlFor="mock-handle" className="block text-[11px] text-muted-foreground mb-1.5">Twitter @Handle</label>
                   <input
                     id="mock-handle"
                     type="text"
                     value={creatorHandle}
                     onChange={(e) => setCreatorHandle(e.target.value)}
-                    className="w-full h-[40px] px-[12px] rounded-[8px] text-[13px] outline-none"
+                    className="w-full h-10 px-3 rounded-lg text-[13px] outline-none"
                     style={{ background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink)" }}
                   />
                 </div>
@@ -459,7 +459,7 @@ export default function ThreadStudioPage(): React.ReactElement {
             {/* Error output */}
             {error && (
               <div
-                className="rounded-[8px] px-[20px] py-[16px] text-[14px] leading-[1.5]"
+                className="rounded-lg px-5 py-4 text-[14px] leading-normal"
                 style={{
                   background: "rgba(239,68,68,0.08)",
                   border: "1px solid rgba(239,68,68,0.25)",
@@ -472,15 +472,15 @@ export default function ThreadStudioPage(): React.ReactElement {
 
             {/* Thread Editor output list */}
             {hasThread && (
-              <div className="space-y-[20px]">
-                <div className="flex items-center justify-between border-b pb-[12px] border-[var(--rule)]">
-                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+              <div className="space-y-5">
+                <div className="flex items-center justify-between border-b pb-3 border-(--rule)">
+                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
                     Tweet Stack Editor
                   </div>
                   <button
                     type="button"
                     onClick={() => void copyAll()}
-                    className="inline-flex items-center gap-[8px] px-[16px] py-[8px] rounded-full font-mono text-[9px] uppercase tracking-[0.12em] font-semibold transition-all duration-200 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-mono text-[9px] uppercase tracking-[0.12em] font-semibold transition-all duration-200 cursor-pointer"
                     style={{
                       background: copied ? "rgba(34,197,94,0.12)" : ACCENT_SOFT,
                       color: copied ? "#16a34a" : ACCENT,
@@ -491,7 +491,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                   </button>
                 </div>
 
-                <div className="flex flex-col gap-[16px]">
+                <div className="flex flex-col gap-4">
                   {editedTweets.map((tweet, i) => (
                     <TweetCard
                       key={tweetIds[i] ?? i}
@@ -518,33 +518,33 @@ export default function ThreadStudioPage(): React.ReactElement {
           {/* Right Column: Live Feed Mockup */}
           <div>
             <div 
-              className="rounded-[16px] border p-[24px] sticky top-[110px] space-y-[20px]"
+              className="rounded-2xl border p-6 sticky top-[110px] space-y-5"
               style={{ background: "var(--bg-2)", borderColor: "var(--rule)" }}
             >
-              <div className="flex items-center justify-between border-b pb-[14px] border-[var(--rule)]">
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--ink-2)]">
+              <div className="flex items-center justify-between border-b pb-3.5 border-(--rule)">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-secondary-foreground">
                   Live Feed Preview
                 </span>
-                <div className="flex items-center gap-[6px]">
-                  <div className="w-[8px] h-[8px] rounded-full bg-green-500 animate-pulse" />
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-[10px] font-mono text-green-500 font-semibold uppercase">Realtime</span>
                 </div>
               </div>
 
               {/* X Feed scroll container */}
-              <div className="max-h-[520px] overflow-y-auto pr-[4px] space-y-0 relative scrollbar-custom overscroll-contain" data-lenis-prevent="true">
+              <div className="max-h-130 overflow-y-auto pr-1 space-y-0 relative scrollbar-custom overscroll-contain" data-lenis-prevent="true">
                 {/* Loading skeleton during generation */}
                 {loading && (
-                  <div className="space-y-[24px] py-[8px]">
+                  <div className="space-y-6 py-2">
                     {Array.from({ length: threadLength }).map((_, i) => (
-                      <div key={i} className="flex gap-[12px]">
+                      <div key={i} className="flex gap-3">
                         <div className="shrink-0">
-                          <div className="w-[36px] h-[36px] rounded-full animate-pulse" style={{ background: "var(--rule)" }} />
+                          <div className="w-9 h-9 rounded-full animate-pulse" style={{ background: "var(--rule)" }} />
                         </div>
-                        <div className="flex-1 space-y-[8px] pt-[4px]">
-                          <div className="h-[10px] rounded-full animate-pulse" style={{ background: "var(--rule)", width: "40%" }} />
-                          <div className="h-[10px] rounded-full animate-pulse" style={{ background: "var(--rule)", width: "90%" }} />
-                          <div className="h-[10px] rounded-full animate-pulse" style={{ background: "var(--rule)", width: "75%" }} />
+                        <div className="flex-1 space-y-2 pt-1">
+                          <div className="h-2.5 rounded-full animate-pulse" style={{ background: "var(--rule)", width: "40%" }} />
+                          <div className="h-2.5 rounded-full animate-pulse" style={{ background: "var(--rule)", width: "90%" }} />
+                          <div className="h-2.5 rounded-full animate-pulse" style={{ background: "var(--rule)", width: "75%" }} />
                         </div>
                       </div>
                     ))}
@@ -552,43 +552,43 @@ export default function ThreadStudioPage(): React.ReactElement {
                 )}
 
                 {editedTweets.map((tweet, i) => (
-                  <div key={tweetIds[i] ?? i} className="flex gap-[12px] relative group">
+                  <div key={tweetIds[i] ?? i} className="flex gap-3 relative group">
                     {/* Left: Avatar & connecting thread line */}
                     <div className="flex flex-col items-center shrink-0">
                       <div 
-                        className="w-[36px] h-[36px] rounded-full flex items-center justify-center font-display text-[14px] font-semibold select-none shrink-0"
+                        className="w-9 h-9 rounded-full flex items-center justify-center font-display text-[14px] font-semibold select-none shrink-0"
                         style={{ background: ACCENT_SOFT, color: ACCENT, border: `1px solid ${ACCENT_BORDER}` }}
                       >
                         {creatorName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0,2)}
                       </div>
                       {i < editedTweets.length - 1 && (
                         <div 
-                          className="w-[2px] flex-1 my-[4px]"
+                          className="w-0.5 flex-1 my-1"
                           style={{ background: "var(--rule)" }}
                         />
                       )}
                     </div>
 
                     {/* Right: Tweet Content */}
-                    <div className="flex-1 pb-[24px]">
-                      <div className="flex items-center gap-[6px] mb-[4px]">
-                        <span className="font-bold text-[14px] text-[var(--ink)] leading-none">
+                    <div className="flex-1 pb-6">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="font-bold text-[14px] text-(--ink) leading-none">
                           {creatorName}
                         </span>
-                        <span className="text-[12px] text-[var(--ink-3)] leading-none">
+                        <span className="text-[12px] text-muted-foreground leading-none">
                           {creatorHandle}
                         </span>
-                        <span className="text-[12px] text-[var(--ink-4)] leading-none">· 1m</span>
+                        <span className="text-[12px] text-(--ink-4) leading-none">· 1m</span>
                       </div>
 
-                      <p className="text-[14px] leading-[1.5] m-0 text-[var(--ink-2)] whitespace-pre-wrap font-sans">
+                      <p className="text-[14px] leading-normal m-0 text-secondary-foreground whitespace-pre-wrap font-sans">
                         {tweet}
                       </p>
                     </div>
                   </div>
                 ))}
                 {editedTweets.length === 0 && (
-                  <div className="py-[64px] text-center text-[12px] font-mono text-[var(--ink-4)]">
+                  <div className="py-16 text-center text-[12px] font-mono text-(--ink-4)">
                     Draft or generate a thread to preview it in realtime.
                   </div>
                 )}
@@ -638,60 +638,60 @@ function TweetCard({
 
   return (
     <div
-      className="rounded-[12px] p-[20px] transition-all duration-150 space-y-[12px]"
+      className="rounded-xl p-5 transition-all duration-150 space-y-3"
       style={{
         background: "var(--bg-2)",
         border: `1px solid ${isOver ? "rgba(239,68,68,0.4)" : "var(--rule)"}`,
       }}
     >
-      <div className="flex items-center gap-[10px]">
+      <div className="flex items-center gap-2.5">
         <span
-          className="font-mono text-[10px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full font-semibold"
+          className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.75 rounded-full font-semibold"
           style={{ background: accentSoft, color: accent, border: `1px solid ${accentBorder}` }}
         >
           {index + 1}
         </span>
         
         {/* Helper Action Buttons */}
-        <div className="flex items-center gap-[6px]">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={onMoveUp}
             disabled={index === 0}
-            className="p-[6px] rounded hover:bg-[var(--bg)] transition-colors duration-100 disabled:opacity-30 cursor-pointer"
+            className="p-1.5 rounded hover:bg-(--bg) transition-colors duration-100 disabled:opacity-30 cursor-pointer"
             title="Move Up"
           >
-            <ArrowUp size={12} className="text-[var(--ink-3)]" />
+            <ArrowUp size={12} className="text-muted-foreground" />
           </button>
           <button
             type="button"
             onClick={onMoveDown}
             disabled={index === totalCount - 1}
-            className="p-[6px] rounded hover:bg-[var(--bg)] transition-colors duration-100 disabled:opacity-30 cursor-pointer"
+            className="p-1.5 rounded hover:bg-(--bg) transition-colors duration-100 disabled:opacity-30 cursor-pointer"
             title="Move Down"
           >
-            <ArrowDown size={12} className="text-[var(--ink-3)]" />
+            <ArrowDown size={12} className="text-muted-foreground" />
           </button>
           <button
             type="button"
             onClick={onAdd}
-            className="p-[6px] rounded hover:bg-[var(--bg)] transition-colors duration-100 cursor-pointer"
+            className="p-1.5 rounded hover:bg-(--bg) transition-colors duration-100 cursor-pointer"
             title="Add Tweet After"
           >
-            <Plus size={12} className="text-[var(--ink-2)]" />
+            <Plus size={12} className="text-secondary-foreground" />
           </button>
           <button
             type="button"
             onClick={onDelete}
             disabled={totalCount <= 1}
-            className="p-[6px] rounded hover:bg-[var(--bg)] transition-colors duration-100 disabled:opacity-30 cursor-pointer"
+            className="p-1.5 rounded hover:bg-(--bg) transition-colors duration-100 disabled:opacity-30 cursor-pointer"
             title="Delete Tweet"
           >
             <Trash size={12} className="text-red-500" />
           </button>
         </div>
 
-        <div className="flex items-center gap-[12px] ml-auto">
+        <div className="flex items-center gap-3 ml-auto">
           <span
             className="font-mono text-[10px]"
             style={{
@@ -705,7 +705,7 @@ function TweetCard({
           <button
             type="button"
             onClick={onCopy}
-            className="p-[6px] rounded hover:bg-[var(--bg)] transition-colors duration-100 cursor-pointer flex items-center gap-[4px] font-mono text-[9px] uppercase tracking-[0.05em] font-semibold"
+            className="p-1.5 rounded hover:bg-(--bg) transition-colors duration-100 cursor-pointer flex items-center gap-1 font-mono text-[9px] uppercase tracking-wider font-semibold"
             style={{ color: copied ? "#16a34a" : "var(--ink-3)" }}
           >
             {copied ? <Check size={11} /> : <Copy size={11} />}
@@ -718,7 +718,7 @@ function TweetCard({
         rows={3}
         value={value}
         onChange={(e) => onChange(index, e.target.value)}
-        className="w-full bg-[var(--bg)] text-[14px] leading-[1.65] resize-none outline-none border border-[var(--rule)] rounded-[8px] p-[12px] focus:border-[var(--ink-3)] transition-colors font-sans"
+        className="w-full bg-(--bg) text-[14px] leading-[1.65] resize-none outline-none border border-(--rule) rounded-lg p-3 focus:border-muted-foreground transition-colors font-sans"
         style={{ color: "var(--ink)" }}
         aria-label={`Tweet ${index + 1}`}
       />

@@ -213,14 +213,14 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
   };
 
   return (
-    <div className="flex flex-col gap-[24px]">
+    <div className="flex flex-col gap-6">
       {/* Core Premise */}
       {summary.corePremise && (
         <section>
-          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[8px]" style={{ color: "var(--ch-accent)" }}>
+          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-2" style={{ color: "var(--ch-accent)" }}>
             Core Premise
           </div>
-          <p className="text-[14px] leading-[1.75] text-[var(--ink-2)] m-0">
+          <p className="text-[14px] leading-[1.75] text-secondary-foreground m-0">
             {renderInline(summary.corePremise)}
           </p>
         </section>
@@ -229,10 +229,10 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
       {/* Why It Matters */}
       {summary.whyItMatters && (
         <section>
-          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[8px]" style={{ color: "var(--ch-accent)" }}>
+          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-2" style={{ color: "var(--ch-accent)" }}>
             Why This Book Matters
           </div>
-          <p className="text-[14px] leading-[1.75] text-[var(--ink-2)] m-0">
+          <p className="text-[14px] leading-[1.75] text-secondary-foreground m-0">
             {renderInline(summary.whyItMatters)}
           </p>
         </section>
@@ -241,11 +241,11 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
       {/* Key Insights — swipeable cards */}
       {insights.length > 0 && (
         <section>
-          <div className="flex items-center justify-between mb-[12px]">
+          <div className="flex items-center justify-between mb-3">
             <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold" style={{ color: "var(--ch-accent)" }}>
               Key Insights
             </div>
-            <span className="font-mono text-[9px] text-[var(--ink-3)]">
+            <span className="font-mono text-[9px] text-muted-foreground">
               {insightIdx + 1} / {insights.length}
             </span>
           </div>
@@ -253,7 +253,7 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
           {/* Card */}
           <div
             ref={cardsRef}
-            className="rounded-[14px] border border-[var(--rule)] bg-[var(--bg-2)] p-[20px] select-none"
+            className="rounded-[14px] border border-(--rule) bg-(--bg-2) p-5 select-none"
             style={{ minHeight: "160px" }}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
@@ -261,15 +261,15 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
             {current && (
               <div>
                 <div
-                  className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center mb-[12px] font-display text-[16px] font-bold"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mb-3 font-display text-[16px] font-bold"
                   style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)`, color: ACCENT }}
                 >
                   {current.number}
                 </div>
-                <div className="text-[15px] font-semibold text-[var(--ink)] mb-[8px] leading-[1.35]">
+                <div className="text-[15px] font-semibold text-(--ink) mb-2 leading-[1.35]">
                   {current.title}
                 </div>
-                <p className="text-[13px] leading-[1.7] text-[var(--ink-2)] m-0">
+                <p className="text-[13px] leading-[1.7] text-secondary-foreground m-0">
                   {current.body}
                 </p>
               </div>
@@ -277,17 +277,17 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
           </div>
 
           {/* Nav dots + arrows */}
-          <div className="flex items-center justify-between mt-[10px]">
+          <div className="flex items-center justify-between mt-2.5">
             <button
               onClick={prev}
               disabled={insightIdx === 0}
-              className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 bg-transparent"
+              className="w-8 h-8 rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 bg-transparent"
               style={{ color: "var(--ink-2)" }}
               aria-label="Previous insight"
             >
               <ChevronLeft size={18} />
             </button>
-            <div className="flex items-center gap-[5px]">
+            <div className="flex items-center gap-1.25">
               {insights.map((_, i) => (
                 <button
                   key={i}
@@ -305,7 +305,7 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
             <button
               onClick={next}
               disabled={insightIdx === insights.length - 1}
-              className="w-[32px] h-[32px] rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 bg-transparent"
+              className="w-8 h-8 rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-20 bg-transparent"
               style={{ color: "var(--ink-2)" }}
               aria-label="Next insight"
             >
@@ -318,14 +318,14 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
       {/* Memorable Quotes */}
       {summary.quotes.length > 0 && (
         <section>
-          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[12px]" style={{ color: "var(--ch-accent)" }}>
+          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-3" style={{ color: "var(--ch-accent)" }}>
             Memorable Quotes
           </div>
-          <div className="flex flex-col gap-[12px]">
+          <div className="flex flex-col gap-3">
             {summary.quotes.map((q, i) => (
               <blockquote
                 key={i}
-                className="m-0 rounded-[10px] px-[16px] py-[12px] text-[13px] leading-[1.7] italic text-[var(--ink-2)]"
+                className="m-0 rounded-[10px] px-4 py-3 text-[13px] leading-[1.7] italic text-secondary-foreground"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 5%, transparent)` }}
               >
                 &ldquo;{q}&rdquo;
@@ -338,19 +338,19 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
       {/* Action Steps */}
       {summary.actionSteps.length > 0 && (
         <section>
-          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[12px]" style={{ color: "var(--ch-accent)" }}>
+          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-3" style={{ color: "var(--ch-accent)" }}>
             Action Steps
           </div>
-          <ol className="m-0 p-0 list-none flex flex-col gap-[10px]">
+          <ol className="m-0 p-0 list-none flex flex-col gap-2.5">
             {summary.actionSteps.map((step, i) => (
-              <li key={i} className="flex items-start gap-[12px]">
+              <li key={i} className="flex items-start gap-3">
                 <span
-                  className="shrink-0 w-[22px] h-[22px] rounded-full flex items-center justify-center font-mono text-[9px] font-bold mt-[1px]"
+                  className="shrink-0 w-5.5 h-5.5 rounded-full flex items-center justify-center font-mono text-[9px] font-bold mt-0.25"
                   style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)`, color: ACCENT }}
                 >
                   {i + 1}
                 </span>
-                <span className="text-[13px] leading-[1.7] text-[var(--ink-2)]">
+                <span className="text-[13px] leading-[1.7] text-secondary-foreground">
                   {renderInline(step)}
                 </span>
               </li>
@@ -362,13 +362,13 @@ function ReadTab({ summary }: { summary: ParsedSummary }): React.ReactElement {
       {/* One-Line Takeaway */}
       {summary.takeaway && (
         <section
-          className="rounded-[14px] px-[20px] py-[16px]"
+          className="rounded-[14px] px-5 py-4"
           style={{ background: `color-mix(in srgb, var(--ch-accent) 6%, transparent)` }}
         >
-          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-[8px]" style={{ color: "var(--ch-accent)" }}>
+          <div className="font-mono text-[9px] tracking-[0.18em] uppercase font-bold mb-2" style={{ color: "var(--ch-accent)" }}>
             One-Line Takeaway
           </div>
-          <p className="text-[15px] font-semibold text-[var(--ink)] leading-[1.5] m-0 italic">
+          <p className="text-[15px] font-semibold text-(--ink) leading-normal m-0 italic">
             &ldquo;{summary.takeaway}&rdquo;
           </p>
         </section>
@@ -479,18 +479,18 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
   const estMinutes = totalChars > 0 ? Math.ceil(totalChars / CHARS_PER_SECOND / 60 * (1 / speed)) : 0;
 
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-5">
       {/* Progress + time estimate */}
       <div>
-        <div className="flex justify-between items-center mb-[8px]">
-          <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--ink-3)]">
+        <div className="flex justify-between items-center mb-2">
+          <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
             {playState === "playing" ? "Playing…" : playState === "paused" ? "Paused" : "Ready to play"}
           </span>
-          <span className="font-mono text-[9px] text-[var(--ink-3)]">
+          <span className="font-mono text-[9px] text-muted-foreground">
             ~{estMinutes}m {progressPct > 0 ? `· ${progressPct}%` : ""}
           </span>
         </div>
-        <div className="h-[4px] rounded-full overflow-hidden" style={{ background: "var(--rule)" }}>
+        <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--rule)" }}>
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${ACCENT}, color-mix(in srgb, var(--ch-accent) 60%, white))` }}
@@ -499,10 +499,10 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
       </div>
 
       {/* Main controls */}
-      <div className="flex items-center justify-center gap-[16px]">
+      <div className="flex items-center justify-center gap-4">
         <button
           onClick={skipBack}
-          className="w-[44px] h-[44px] rounded-full flex items-center justify-center border border-[var(--rule)] cursor-pointer transition-colors hover:border-[var(--ink-2)] bg-transparent"
+          className="w-11 h-11 rounded-full flex items-center justify-center border border-(--rule) cursor-pointer transition-colors hover:border-secondary-foreground bg-transparent"
           style={{ color: "var(--ink-2)" }}
           aria-label="Skip back 15s"
           title="−15s"
@@ -512,7 +512,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
 
         <button
           onClick={toggle}
-          className="w-[56px] h-[56px] rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-85 shadow-lg"
+          className="w-14 h-14 rounded-full flex items-center justify-center border-none cursor-pointer transition-opacity hover:opacity-85 shadow-lg"
           style={{ background: ACCENT, color: "var(--ch-bg)" }}
           aria-label={playState === "playing" ? "Pause" : "Play"}
         >
@@ -521,7 +521,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
 
         <button
           onClick={skipForward}
-          className="w-[44px] h-[44px] rounded-full flex items-center justify-center border border-[var(--rule)] cursor-pointer transition-colors hover:border-[var(--ink-2)] bg-transparent"
+          className="w-11 h-11 rounded-full flex items-center justify-center border border-(--rule) cursor-pointer transition-colors hover:border-secondary-foreground bg-transparent"
           style={{ color: "var(--ink-2)" }}
           aria-label="Skip forward 15s"
           title="+15s"
@@ -532,7 +532,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
         <button
           onClick={stop}
           disabled={playState === "idle"}
-          className="w-[36px] h-[36px] rounded-full flex items-center justify-center border border-[var(--rule)] cursor-pointer transition-colors hover:border-[var(--ink-2)] disabled:opacity-25 disabled:cursor-not-allowed bg-transparent"
+          className="w-9 h-9 rounded-full flex items-center justify-center border border-(--rule) cursor-pointer transition-colors hover:border-secondary-foreground disabled:opacity-25 disabled:cursor-not-allowed bg-transparent"
           style={{ color: "var(--ink-2)" }}
           aria-label="Stop"
         >
@@ -541,14 +541,14 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
       </div>
 
       {/* Speed + Voice */}
-      <div className="flex items-center gap-[10px]">
+      <div className="flex items-center gap-2.5">
         {/* Speed selector */}
-        <div className="flex items-center rounded-[8px] overflow-hidden border border-[var(--rule)]">
+        <div className="flex items-center rounded-lg overflow-hidden border border-(--rule)">
           {SPEEDS.map((s) => (
             <button
               key={s}
               onClick={() => setSpeed(s)}
-              className="h-[32px] px-[9px] font-mono text-[9px] font-semibold border-none cursor-pointer transition-all"
+              className="h-8 px-2.25 font-mono text-[9px] font-semibold border-none cursor-pointer transition-all"
               style={
                 speed === s
                   ? { background: ACCENT, color: "var(--ch-bg)" }
@@ -566,7 +566,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
           <div className="relative flex-1">
             <button
               onClick={() => setShowVoices((v) => !v)}
-              className="w-full flex items-center justify-between px-[10px] py-[6px] rounded-[8px] border cursor-pointer text-left transition-colors bg-transparent"
+              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg border cursor-pointer text-left transition-colors bg-transparent"
               style={{ borderColor: "var(--rule)", color: "var(--ink-2)" }}
             >
               <span className="font-mono text-[9px] truncate opacity-80">
@@ -575,12 +575,12 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
               <ChevronDown size={11} className="opacity-50 shrink-0" style={{ transform: showVoices ? "rotate(180deg)" : undefined, transition: "transform 0.15s" }} />
             </button>
             {showVoices && (
-              <div className="absolute bottom-[calc(100%+4px)] left-0 right-0 rounded-[8px] border border-[var(--rule)] shadow-xl overflow-y-auto max-h-[160px] z-10 bg-[var(--bg)]" data-lenis-prevent="true">
+              <div className="absolute bottom-[calc(100%+4px)] left-0 right-0 rounded-lg border border-(--rule) shadow-xl overflow-y-auto max-h-40 z-10 bg-(--bg)" data-lenis-prevent="true">
                 {voices.map((v, i) => (
                   <button
                     key={v.name}
                     onClick={() => { setVoiceIdx(i); setShowVoices(false); }}
-                    className="w-full text-left px-[12px] py-[8px] font-mono text-[9px] tracking-[0.06em] cursor-pointer border-none bg-transparent transition-colors hover:bg-[var(--bg-2)]"
+                    className="w-full text-left px-3 py-2 font-mono text-[9px] tracking-[0.06em] cursor-pointer border-none bg-transparent transition-colors hover:bg-(--bg-2)"
                     style={i === voiceIdx ? { color: ACCENT, fontWeight: 600 } : { color: "var(--ink-2)" }}
                   >
                     {v.short}
@@ -593,7 +593,7 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
       </div>
 
       {/* Hint */}
-      <p className="m-0 text-[12px] leading-[1.5] text-[var(--ink-3)] text-center">
+      <p className="m-0 text-[12px] leading-normal text-muted-foreground text-center">
         The full summary will be read aloud. Use skip buttons to jump ±15 seconds.
       </p>
     </div>
@@ -604,11 +604,11 @@ function ListenTab({ text }: { text: string }): React.ReactElement {
 
 function LoadingPulse(): React.ReactElement {
   return (
-    <div className="flex flex-col gap-[16px] pt-[8px]">
+    <div className="flex flex-col gap-4 pt-2">
       {[80, 60, 100, 70, 90].map((w, i) => (
         <div
           key={i}
-          className="h-[14px] rounded-full animate-pulse"
+          className="h-3.5 rounded-full animate-pulse"
           style={{ width: `${w}%`, background: "var(--rule)" }}
         />
       ))}
@@ -694,7 +694,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px]"
+        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-0.5"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -714,14 +714,14 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
       >
         {/* ── Header ── */}
         <div
-          className="shrink-0 flex items-center justify-between px-[20px] py-[16px] border-b border-[var(--rule)]"
+          className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-(--rule)"
         >
-          <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+          <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-muted-foreground">
             Book Summary
           </div>
           <button
             onClick={onClose}
-            className="w-[30px] h-[30px] rounded-[7px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+            className="w-7.5 h-7.5 rounded-[7px] flex items-center justify-center border-none bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"
             aria-label="Close summary"
           >
             <X size={16} />
@@ -729,9 +729,9 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
         </div>
 
         {/* ── Book cover + info ── */}
-        <div className="shrink-0 flex items-center gap-[16px] px-[20px] py-[20px] border-b border-[var(--rule)]">
+        <div className="shrink-0 flex items-center gap-4 px-5 py-5 border-b border-(--rule)">
           <div
-            className="w-[72px] h-[96px] rounded-[10px] flex items-center justify-center overflow-hidden shrink-0 shadow-md"
+            className="w-18 h-24 rounded-[10px] flex items-center justify-center overflow-hidden shrink-0 shadow-md"
             style={{ background: `color-mix(in srgb, var(--ch-accent) 13%, transparent)` }}
           >
             {book.cover_url ? (
@@ -746,17 +746,17 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
             )}
           </div>
           <div className="min-w-0">
-            <h2 className="text-[17px] font-semibold leading-[1.3] text-[var(--ink)] m-0 mb-[4px] line-clamp-2">
+            <h2 className="text-[17px] font-semibold leading-[1.3] text-(--ink) m-0 mb-1 line-clamp-2">
               {book.title}
             </h2>
             {book.author && (
-              <div className="font-mono text-[10px] tracking-[0.08em] text-[var(--ink-3)] mb-[10px]">
+              <div className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground mb-2.5">
                 {book.author}
               </div>
             )}
-            <div className="flex items-center gap-[8px] flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               <div
-                className="inline-flex items-center gap-[5px] font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full"
+                className="inline-flex items-center gap-1.25 font-mono text-[8px] tracking-widest uppercase px-2 py-0.75 rounded-full"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)`, color: ACCENT }}
               >
                 <Lightbulb size={9} />
@@ -766,7 +766,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
                 <button
                   onClick={() => void handleAddToLibrary()}
                   disabled={addState !== "idle"}
-                  className="inline-flex items-center gap-[5px] font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full border cursor-pointer transition-all disabled:cursor-default"
+                  className="inline-flex items-center gap-1.25 font-mono text-[8px] tracking-widest uppercase px-2 py-0.75 rounded-full border cursor-pointer transition-all disabled:cursor-default"
                   style={
                     addState === "added"
                       ? { background: "#16A34A14", color: "#16A34A", borderColor: "#16A34A40" }
@@ -789,12 +789,12 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
         </div>
 
         {/* ── Tabs ── */}
-        <div className="shrink-0 flex border-b border-[var(--rule)]">
+        <div className="shrink-0 flex border-b border-(--rule)">
           {(["read", "listen"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="flex-1 flex items-center justify-center gap-[8px] h-[44px] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold border-none cursor-pointer transition-all bg-transparent"
+              className="flex-1 flex items-center justify-center gap-2 h-11 font-mono text-[9px] tracking-[0.12em] uppercase font-semibold border-none cursor-pointer transition-all bg-transparent"
               style={
                 activeTab === tab
                   ? { color: ACCENT, boxShadow: `inset 0 -2px 0 ${ACCENT}` }
@@ -808,11 +808,11 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
         </div>
 
         {/* ── Tab content (scrollable) ── */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[24px]" data-lenis-prevent="true">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-6" data-lenis-prevent="true">
           {loading && !summary && <LoadingPulse />}
           {error && (
             <div
-              className="rounded-[10px] px-[16px] py-[14px] text-[13px]"
+              className="rounded-[10px] px-4 py-3.5 text-[13px]"
               style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}
             >
               {error}
@@ -821,7 +821,7 @@ export function SummaryDrawer({ book, onClose, onAddToLibrary, isAdded }: Props)
           {summary && activeTab === "read" && <ReadTab summary={summary} />}
           {activeTab === "listen" && rawContent && <ListenTab text={stripMarkdown(rawContent)} />}
           {activeTab === "listen" && !rawContent && !loading && (
-            <p className="text-[13px] text-[var(--ink-3)] text-center py-[40px]">
+            <p className="text-[13px] text-muted-foreground text-center py-10">
               Summary is still loading — switch to Read tab and come back.
             </p>
           )}

@@ -80,39 +80,39 @@ function LoginContent(): React.ReactElement {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-[24px] py-[80px]"
+      className="min-h-screen flex items-center justify-center px-6 py-20"
       style={{ background: "var(--bg)" }}
     >
-      <div className="w-full max-w-[420px]">
+      <div className="w-full max-w-105">
         {/* Header */}
-        <div className="mb-[40px]">
-          <Link href="/tools" className="inline-flex items-center gap-[8px] no-underline mb-[32px]">
-            <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] transition-colors hover:text-[var(--ink)]">
+        <div className="mb-10">
+          <Link href="/tools" className="inline-flex items-center gap-2 no-underline mb-8">
+            <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground transition-colors hover:text-(--ink)">
               <ArrowLeft className="w-3 h-3 mr-1 inline-block" /> Creator Suite
             </span>
           </Link>
 
-          <div className="flex items-center gap-[12px] mb-[12px]">
+          <div className="flex items-center gap-3 mb-3">
             <div
-              className="w-[40px] h-[40px] rounded-[8px] flex items-center justify-center"
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
               style={{ background: ACCENT_SOFT }}
             >
               <Wallet className="w-5 h-5" style={{ color: ACCENT }} />
             </div>
             <div>
-              <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-[1] text-[var(--ink)]">
+              <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-none text-(--ink)">
                 Flowise
               </div>
-              <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+              <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
                 Your Finance OS
               </div>
             </div>
           </div>
 
-          <h1 className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0 text-[var(--ink)]">
+          <h1 className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0 text-(--ink)">
             {mode === "signin" ? "Welcome back." : "Take control of your money."}
           </h1>
-          <p className="text-[14px] leading-[1.6] mt-[8px] m-0 text-[var(--ink-3)]">
+          <p className="text-[14px] leading-[1.6] mt-2 m-0 text-muted-foreground">
             {mode === "signin"
               ? "Sign in to access your accounts, budgets, and spending insights."
               : "Free to start — track up to 3 accounts and 100 transactions per month."}
@@ -124,11 +124,11 @@ function LoginContent(): React.ReactElement {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isDisabled}
-          className="w-full h-[52px] rounded-[8px] flex items-center justify-center gap-[12px] text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-[1px]"
+          className="w-full h-13 rounded-lg flex items-center justify-center gap-3 text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-0.25"
           style={{ background: "#FFFFFF", color: "#2C2C2C", border: "1.5px solid #CBD5DC", fontFamily: "inherit" }}
         >
           {googleLoading ? (
-            <span className="w-[18px] h-[18px] rounded-full border-[2px] animate-spin" style={{ borderColor: "#CBD5DC", borderTopColor: "transparent" }} aria-hidden="true" />
+            <span className="w-4.5 h-4.5 rounded-full border-0.5 animate-spin" style={{ borderColor: "#CBD5DC", borderTopColor: "transparent" }} aria-hidden="true" />
           ) : (
             <GoogleIcon />
           )}
@@ -136,16 +136,16 @@ function LoginContent(): React.ReactElement {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-[12px] my-[24px]">
-          <div className="flex-1 h-[1px]" style={{ background: "var(--rule)" }} />
-          <span className="font-mono text-[10px] tracking-[0.12em] uppercase shrink-0 text-[var(--ink-3)]">or</span>
-          <div className="flex-1 h-[1px]" style={{ background: "var(--rule)" }} />
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-0.25" style={{ background: "var(--rule)" }} />
+          <span className="font-mono text-[10px] tracking-[0.12em] uppercase shrink-0 text-muted-foreground">or</span>
+          <div className="flex-1 h-0.25" style={{ background: "var(--rule)" }} />
         </div>
 
         {/* Email form */}
-        <form onSubmit={handleSubmit} className="space-y-[16px]">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+            <label htmlFor="email" className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
               Email address
             </label>
             <input
@@ -157,11 +157,11 @@ function LoginContent(): React.ReactElement {
               required
               disabled={isDisabled}
               autoComplete="email"
-              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)]"
+              className="w-full h-12 px-4 rounded-lg text-[14px] outline-none transition-all duration-200 bg-(--bg-2) border-[1.5px] border-(--rule) text-(--ink)"
             />
           </div>
           <div>
-            <label htmlFor="password" className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+            <label htmlFor="password" className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
               Password
             </label>
             <input
@@ -174,17 +174,17 @@ function LoginContent(): React.ReactElement {
               disabled={isDisabled}
               autoComplete={mode === "signin" ? "current-password" : "new-password"}
               minLength={6}
-              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)]"
+              className="w-full h-12 px-4 rounded-lg text-[14px] outline-none transition-all duration-200 bg-(--bg-2) border-[1.5px] border-(--rule) text-(--ink)"
             />
           </div>
 
           {error && (
-            <div className="rounded-[8px] px-[16px] py-[12px] text-[13px] font-mono" style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}>
+            <div className="rounded-lg px-4 py-3 text-[13px] font-mono" style={{ background: "rgba(220,38,38,0.08)", color: "#DC2626", border: "1px solid rgba(220,38,38,0.2)" }}>
               {error}
             </div>
           )}
           {success && (
-            <div className="rounded-[8px] px-[16px] py-[12px] text-[13px] leading-[1.5]" style={{ background: ACCENT_SOFT, color: ACCENT, border: `1px solid ${ACCENT}40`, fontFamily: "inherit" }}>
+            <div className="rounded-lg px-4 py-3 text-[13px] leading-normal" style={{ background: ACCENT_SOFT, color: ACCENT, border: `1px solid ${ACCENT}40`, fontFamily: "inherit" }}>
               {success}
             </div>
           )}
@@ -192,7 +192,7 @@ function LoginContent(): React.ReactElement {
           <button
             type="submit"
             disabled={isDisabled}
-            className="w-full h-[52px] rounded-[8px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 border-none cursor-pointer flex items-center justify-center gap-[6px]"
+            className="w-full h-13 rounded-lg font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 border-none cursor-pointer flex items-center justify-center gap-1.5"
             style={{ background: ACCENT }}
           >
             {loading ? "Please wait…" : mode === "signin" ? <>Sign In <ArrowRight className="w-3 h-3" /></> : <>Create Account <ArrowRight className="w-3 h-3" /></>}
@@ -200,8 +200,8 @@ function LoginContent(): React.ReactElement {
         </form>
 
         {/* Toggle */}
-        <div className="mt-[24px] text-center">
-          <span className="text-[13px] text-[var(--ink-2)]">
+        <div className="mt-6 text-center">
+          <span className="text-[13px] text-secondary-foreground">
             {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
           </span>
           <button
@@ -214,13 +214,13 @@ function LoginContent(): React.ReactElement {
         </div>
 
         {mode === "signup" && (
-          <div className="mt-[24px] rounded-[10px] px-[16px] py-[12px] text-center text-[12px] leading-[1.6] text-[var(--ink-3)]" style={{ background: ACCENT_SOFT }}>
-            Free plan: <strong className="text-[var(--ink)]">3 accounts</strong>, <strong className="text-[var(--ink)]">100 transactions/month</strong>, <strong className="text-[var(--ink)]">3 goals</strong>. No credit card required.
+          <div className="mt-6 rounded-[10px] px-4 py-3 text-center text-[12px] leading-[1.6] text-muted-foreground" style={{ background: ACCENT_SOFT }}>
+            Free plan: <strong className="text-(--ink)">3 accounts</strong>, <strong className="text-(--ink)">100 transactions/month</strong>, <strong className="text-(--ink)">3 goals</strong>. No credit card required.
           </div>
         )}
 
-        <div className="mt-[48px] pt-[24px] border-t border-[var(--rule)]">
-          <p className="text-center text-[12px] leading-[1.6] m-0 text-[var(--ink-3)]">
+        <div className="mt-12 pt-6 border-t border-(--rule)">
+          <p className="text-center text-[12px] leading-[1.6] m-0 text-muted-foreground">
             Part of{" "}
             <Link href="/tools" className="underline" style={{ color: ACCENT }}>
               michaelojekunle.dev/tools
@@ -246,7 +246,7 @@ function GoogleIcon(): React.ReactElement {
 
 export default function FlowiseLoginPage(): React.ReactElement {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--ink-3)]">Loading…</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-(--bg) text-muted-foreground">Loading…</div>}>
       <LoginContent />
     </Suspense>
   );

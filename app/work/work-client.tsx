@@ -31,8 +31,8 @@ export function WorkClient(): React.ReactElement {
     filter === "all" ? dbProjects : dbProjects.filter((p) => p.category === filter)
 
   return (
-    <section className="v3-container pb-[160px] max-[720px]:pb-[100px]">
-      <div className="v3-work-filters mb-[80px] max-[720px]:mb-[48px]">
+    <section className="v3-container pb-40 max-[720px]:pb-[100px]">
+      <div className="v3-work-filters mb-20 max-180:mb-12">
         <span className="lbl">Filter archive</span>
         {CATS.map((c) => (
           <button
@@ -46,38 +46,38 @@ export function WorkClient(): React.ReactElement {
       </div>
 
       {/* Featured / Masterpieces */}
-      <div className="mb-[120px] max-[720px]:mb-[80px]">
-        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[16px] items-baseline mb-[48px]">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] uppercase pt-[8px]">Selection</div>
-          <h2 className="m-0 font-normal text-[clamp(44px,6vw,64px)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
+      <div className="mb-30 max-180:mb-20">
+        <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-4 items-baseline mb-12">
+          <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase pt-2">Selection</div>
+          <h2 className="m-0 font-normal text-[clamp(44px,6vw,64px)] leading-[0.95] tracking-[-0.03em] text-(--ink)">
             Selected <em>Masterpieces.</em>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-[32px]">
+        <div className="grid grid-cols-1 gap-8">
           {filteredCaseStudies.map((p) => (
             <Link 
               key={p.slug} 
               href={`/work/${p.slug}`} 
-              className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-[64px] max-[920px]:gap-[32px] p-[48px] max-[720px]:p-[32px] rounded-[24px] border border-[var(--rule)] bg-[var(--paper)] overflow-hidden transition-all duration-300 hover:border-[var(--v3-accent-soft)] hover:shadow-[0_24px_64px_-12px_color-mix(in_oklab,var(--ink)_10%,transparent)]"
+              className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-16 max-[920px]:gap-8 p-12 max-180:p-8 rounded-3xl border border-(--rule) bg-(--paper) overflow-hidden transition-all duration-300 hover:border-(--v3-accent-soft) hover:shadow-[0_24px_64px_-12px_color-mix(in_oklab,var(--ink)_10%,transparent)]"
             >
               <div className="flex flex-col justify-center">
-                <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--v3-accent)] mb-[16px]">{p.idx} · {p.year}</div>
-                <h3 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.05] mb-[20px]">{p.name}</h3>
-                <p className="text-[18px] text-[var(--ink-2)] leading-[1.6] m-0 max-w-[40ch] mb-[32px]">
+                <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-(--v3-accent) mb-4">{p.idx} · {p.year}</div>
+                <h3 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.05] mb-5">{p.name}</h3>
+                <p className="text-[18px] text-secondary-foreground leading-[1.6] m-0 max-w-[40ch] mb-8">
                   {p.desc}
                 </p>
-                <div className="flex flex-wrap gap-[8px] mt-auto">
+                <div className="flex flex-wrap gap-2 mt-auto">
                   {p.stack.slice(0, 4).map(s => (
-                    <span key={s} className="font-mono text-[10px] px-[12px] py-[5px] border border-[var(--rule)] rounded-[6px] text-[var(--ink-3)] uppercase">{s}</span>
+                    <span key={s} className="font-mono text-[10px] px-3 py-1.25 border border-(--rule) rounded-md text-muted-foreground uppercase">{s}</span>
                   ))}
                 </div>
               </div>
-              <div className="relative aspect-[16/10] rounded-[12px] overflow-hidden bg-[var(--bg-2)] border border-[var(--rule)]">
+              <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-(--bg-2) border border-(--rule)">
                 {p.image ? (
                   <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[3000ms] group-hover:scale-105" sizes="(max-width: 920px) 100vw, 40vw" />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center font-mono text-[12px] text-[var(--ink-4)] uppercase tracking-widest">Preview pending</div>
+                  <div className="absolute inset-0 flex items-center justify-center font-mono text-[12px] text-(--ink-4) uppercase tracking-widest">Preview pending</div>
                 )}
               </div>
             </Link>
@@ -87,19 +87,19 @@ export function WorkClient(): React.ReactElement {
 
       {/* Archive List */}
       <div>
-        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[16px] items-baseline mb-[48px]">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] uppercase pt-[8px]">Archive</div>
-          <h2 className="m-0 font-normal text-[clamp(32px,4vw,48px)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
+        <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-4 items-baseline mb-12">
+          <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase pt-2">Archive</div>
+          <h2 className="m-0 font-normal text-[clamp(32px,4vw,48px)] leading-[0.95] tracking-[-0.03em] text-(--ink)">
             Everything <em>shipped.</em>
           </h2>
         </div>
 
         {loading ? (
-          <div className="py-[40px] font-mono text-[11px] text-[var(--ink-4)] uppercase tracking-widest">Synchronizing archive...</div>
+          <div className="py-10 font-mono text-[11px] text-(--ink-4) uppercase tracking-widest">Synchronizing archive...</div>
         ) : (
           <div className="v3-work-list">
             {filteredDbProjects.length === 0 && filteredCaseStudies.length === 0 && (
-              <div className="py-[40px] text-[var(--ink-3)] italic">No projects found in this category.</div>
+              <div className="py-10 text-muted-foreground italic">No projects found in this category.</div>
             )}
             {filteredDbProjects.map((p) => (
               <div key={p.id} className="v3-work-row group">
@@ -107,7 +107,7 @@ export function WorkClient(): React.ReactElement {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3 mb-1">
                     <div className="name">{p.title}</div>
-                    {p.github_url && <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-[var(--ink-4)] hover:text-[var(--v3-accent)] transition-colors">GH <ArrowUpRight className="inline w-3 h-3 ml-1" /></a>}
+                    {p.github_url && <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-(--ink-4) hover:text-(--v3-accent) transition-colors">GH <ArrowUpRight className="inline w-3 h-3 ml-1" /></a>}
                   </div>
                   <div className="desc">{p.description}</div>
                 </div>

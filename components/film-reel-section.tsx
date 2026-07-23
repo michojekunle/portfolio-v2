@@ -14,37 +14,37 @@ const PROJECT_COLORS: Record<string, string> = {
 export function FilmReelSection(): React.ReactElement {
   return (
     <section
-      className="py-[120px] max-[720px]:py-[72px] relative overflow-hidden"
+      className="py-30 max-180:py-18 relative overflow-hidden"
       id="all-work"
       aria-labelledby="reel-heading"
     >
-      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[24px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-2)] pt-[18px]">03 — ARCHIVE</div>
-        <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-[24px]">
-          <h2 id="reel-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
-            Everything I&apos;ve <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">shipped.</em>
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
+        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — ARCHIVE</div>
+        <div className="flex justify-between items-end max-180:flex-col max-180:items-start gap-6">
+          <h2 id="reel-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+            Everything I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
           <MagneticWrapper strength={20}>
-            <Link href="/work" className="group inline-flex items-center gap-[12px] px-[28px] py-[14px] rounded-full font-mono text-[11px] uppercase tracking-[0.12em] font-medium cursor-pointer border border-[var(--rule)] bg-transparent text-[var(--ink)] transition-all duration-300 no-underline hover:border-[var(--v3-accent)] hover:text-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-[12px]">
-              View full index <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-[4px] w-3 h-3" aria-hidden="true" />
+            <Link href="/work" className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full font-mono text-[11px] uppercase tracking-[0.12em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-3">
+              View full index <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 w-3 h-3" aria-hidden="true" />
             </Link>
           </MagneticWrapper>
         </div>
       </div>
 
       <div className="w-full overflow-x-auto snap-x snap-mandatory [scroll-padding:var(--gutter)] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="list" aria-label="All case studies" data-lenis-prevent="true">
-        <div className="flex gap-[24px] px-[var(--gutter)] w-max pb-[32px]">
+        <div className="flex gap-6 px-(--gutter) w-max pb-8">
           {CASE_STUDIES.map((p) => (
             <Link
               key={p.slug}
               href={`/work/${p.slug}`}
-              className="snap-start w-[340px] flex flex-col no-underline text-inherit group"
+              className="snap-start w-85 flex flex-col no-underline text-inherit group"
               role="listitem"
               aria-label={`View ${p.name} case study`}
             >
-              <div className="aspect-[16/10] rounded-[12px] overflow-hidden bg-[var(--bg-2)] relative border border-[var(--rule)] transition-colors duration-200 group-hover:border-[var(--ink-3)]">
+              <div className="aspect-[16/10] rounded-xl overflow-hidden bg-(--bg-2) relative border border-(--rule) transition-colors duration-200 group-hover:border-muted-foreground">
                 <div
-                  className="absolute top-0 left-0 right-0 h-[4px] z-[1]"
+                  className="absolute top-0 left-0 right-0 h-1 z-[1]"
                   style={{ background: PROJECT_COLORS[p.slug] ?? "var(--v3-accent)" }}
                 />
                 {p.image ? (
@@ -80,10 +80,10 @@ export function FilmReelSection(): React.ReactElement {
                   </div>
                 )}
               </div>
-              <div className="py-[20px] flex flex-col gap-[8px]">
-                <div className="font-display font-normal text-[22px] text-[var(--ink)] leading-[1.1] fvs-text">{p.name}</div>
-                <div className="text-[14px] text-[var(--ink-2)] leading-[1.5] line-clamp-2 overflow-hidden">{p.desc}</div>
-                <div className="flex gap-[12px] mt-[4px] font-mono text-[10px] text-[var(--ink-3)] uppercase tracking-[0.1em]">
+              <div className="py-5 flex flex-col gap-2">
+                <div className="font-display font-normal text-[22px] text-(--ink) leading-[1.1] fvs-text">{p.name}</div>
+                <div className="text-[14px] text-secondary-foreground leading-normal line-clamp-2 overflow-hidden">{p.desc}</div>
+                <div className="flex gap-3 mt-1 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
                   <span>{p.year}</span>
                   <span>{p.cat.toUpperCase()}</span>
                 </div>

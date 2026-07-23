@@ -160,7 +160,7 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
         </section>
 
         {/* Prev/next nav */}
-        <section className="v3-container flex justify-center py-[80px]">
+        <section className="v3-container flex justify-center py-20">
           <MagneticWrapper>
             <Link href="/blog" className="v3-case-next inline-block text-center decoration-none text-inherit">
               <div className="lbl flex items-center justify-center gap-2"><ArrowLeft className="w-3 h-3" /> All notes</div>

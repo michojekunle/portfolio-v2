@@ -277,7 +277,7 @@ export function PdfReader({
   return (
     <>
       <style>{TEXT_LAYER_CSS}</style>
-      <div className="flex flex-col items-center pb-[88px] pt-[32px]" data-lenis-prevent="true">
+      <div className="flex flex-col items-center pb-[88px] pt-8" data-lenis-prevent="true">
         {/* Page canvas + text layer */}
         <div className="relative shadow-lg" onMouseUp={handleMouseUp}>
           <canvas ref={canvasRef} className="block" />
@@ -289,7 +289,7 @@ export function PdfReader({
           )}
           {renderError && !rendering && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-black/60">
-              <p className="font-mono text-[11px] tracking-[0.08em] text-center px-[24px]" style={{ color: "#DC2626" }}>
+              <p className="font-mono text-[11px] tracking-[0.08em] text-center px-6" style={{ color: "#DC2626" }}>
                 {renderError}
               </p>
             </div>
@@ -299,7 +299,7 @@ export function PdfReader({
         {/* Floating highlight toolbar */}
         {textSel && (
           <div
-            className="fixed z-50 flex items-center gap-[6px] px-[10px] py-[8px] rounded-[10px] shadow-xl border"
+            className="fixed z-50 flex items-center gap-1.5 px-2.5 py-2 rounded-[10px] shadow-xl border"
             style={{
               left: `${textSel.x}px`,
               top: `${textSel.y}px`,
@@ -308,14 +308,14 @@ export function PdfReader({
               borderColor: "rgba(255,255,255,0.1)",
             }}
           >
-            <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-white opacity-40 mr-[2px]">
+            <span className="font-mono text-[9px] tracking-widest uppercase text-white opacity-40 mr-0.5">
               Highlight
             </span>
             {HIGHLIGHT_COLORS.map(({ id, bg, ring }) => (
               <button
                 key={id}
                 onClick={() => void saveHighlight(id)}
-                className="w-[20px] h-[20px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+                className="w-5 h-5 rounded-full border-0.5 cursor-pointer transition-transform hover:scale-110"
                 style={{ background: bg, borderColor: ring }}
                 aria-label={`Highlight ${id}`}
               />
@@ -323,7 +323,7 @@ export function PdfReader({
             {onMakeFlashcard && (
               <button
                 onClick={() => void saveAsFlashcard()}
-                className="ml-[4px] px-[8px] py-[4px] rounded bg-[var(--ch-accent)] hover:opacity-90 text-[var(--ch-bg)] font-mono text-[9px] uppercase tracking-[0.05em] font-semibold cursor-pointer border-none flex items-center gap-[4px] transition-colors"
+                className="ml-1 px-2 py-1 rounded bg-(--ch-accent) hover:opacity-90 text-(--ch-bg) font-mono text-[9px] uppercase tracking-wider font-semibold cursor-pointer border-none flex items-center gap-1 transition-colors"
                 title="Add to flashcards"
               >
                 <Brain size={11} />
@@ -332,7 +332,7 @@ export function PdfReader({
             )}
             <button
               onClick={() => setTextSel(null)}
-              className="ml-[2px] w-[16px] h-[16px] flex items-center justify-center rounded-full border-none cursor-pointer text-white opacity-40 hover:opacity-80 bg-transparent"
+              className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full border-none cursor-pointer text-white opacity-40 hover:opacity-80 bg-transparent"
               aria-label="Dismiss"
             >
               <X size={10} />
@@ -341,40 +341,40 @@ export function PdfReader({
         )}
 
         {/* Controls: zoom + pagination */}
-        <div className="fixed bottom-[16px] max-[1024px]:bottom-[32px] left-1/2 -translate-x-1/2 z-40 flex items-center gap-[6px] px-[18px] py-[10px] rounded-[16px] shadow-xl border border-[var(--rule)] bg-[var(--bg-2)] max-[480px]:w-[92%] max-[480px]:justify-between">
+        <div className="fixed bottom-4 max-256:bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 px-4.5 py-2.5 rounded-2xl shadow-xl border border-(--rule) bg-(--bg-2) max-[480px]:w-[92%] max-[480px]:justify-between">
           <button
             onClick={() => setScale((s) => Math.max(0.5, +(s - 0.2).toFixed(1)))}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"
             aria-label="Zoom out"
           >
             <ZoomOut size={14} />
           </button>
-          <span className="font-mono text-[10px] text-[var(--ink-3)] w-[36px] text-center">
+          <span className="font-mono text-[10px] text-muted-foreground w-9 text-center">
             {Math.round(scale * 100)}%
           </span>
           <button
             onClick={() => setScale((s) => Math.min(3, +(s + 0.2).toFixed(1)))}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"
             aria-label="Zoom in"
           >
             <ZoomIn size={14} />
           </button>
-          <div className="w-px h-[20px] bg-[var(--rule)] mx-[4px]" />
+          <div className="w-px h-5 bg-(--rule) mx-1" />
           <button
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="Previous page"
           >
             <ChevronLeft size={16} />
           </button>
-          <span className="font-mono text-[10px] text-[var(--ink-3)] min-w-[56px] text-center tabular-nums">
+          <span className="font-mono text-[10px] text-muted-foreground min-w-14 text-center tabular-nums">
             {currentPage} / {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-7.5 h-7.5 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="Next page"
           >
             <ChevronRight size={16} />

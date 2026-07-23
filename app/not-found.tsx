@@ -17,11 +17,11 @@ export default function NotFound(): React.ReactElement {
         padding: "80px var(--gutter)",
       }}
     >
-      <div className="v3-serif text-[clamp(120px,25vw,240px)] font-normal leading-[0.9] tracking-[-0.04em] text-[var(--rule)] select-none mb-8">
+      <div className="v3-serif text-[clamp(120px,25vw,240px)] font-normal leading-[0.9] tracking-[-0.04em] text-(--rule) select-none mb-8">
         404
       </div>
 
-      <h1 className="font-display fvs-text text-[clamp(28px,4vw,48px)] font-normal tracking-[-0.02em] text-[var(--ink)] m-0 mb-4">
+      <h1 className="font-display fvs-text text-[clamp(28px,4vw,48px)] font-normal tracking-[-0.02em] text-(--ink) m-0 mb-4">
         Off the grid.
       </h1>
 

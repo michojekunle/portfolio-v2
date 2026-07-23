@@ -91,28 +91,28 @@ function LoginContent(): React.ReactElement {
   const isDisabled = loading || googleLoading;
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-[24px] py-[80px] bg-[var(--bg)]">
-      <div className="w-full max-w-[420px]">
+    <div className="min-h-screen flex items-center justify-center px-6 py-20 bg-(--bg)">
+      <div className="w-full max-w-105">
         {/* Logo mark */}
-        <div className="mb-[40px]">
+        <div className="mb-10">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-[8px] no-underline mb-[32px] group"
+            className="inline-flex items-center gap-2 no-underline mb-8 group"
           >
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase transition-colors">
               <ArrowLeft className="w-3 h-3 mr-1 inline-block" /> Creator Suite
             </span>
           </Link>
 
-          <div className="flex items-center gap-[12px] mb-[12px]">
+          <div className="flex items-center gap-3 mb-3">
             <div
-              className="w-[40px] h-[40px] rounded-[8px] flex items-center justify-center text-[20px]"
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-[20px]"
               style={{ background: "rgba(200,90,44,0.15)" }}
             >
-              <BookOpen className="w-5 h-5 text-[var(--v3-accent)]" />
+              <BookOpen className="w-5 h-5 text-(--v3-accent)" />
             </div>
             <div>
-              <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-[1]">
+              <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-none">
                 BookBreaks
               </div>
               <div className="font-mono text-[10px] tracking-[0.12em] uppercase">
@@ -124,7 +124,7 @@ function LoginContent(): React.ReactElement {
           <h1 className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0">
             {mode === "signin" ? "Welcome back." : "Start your journey."}
           </h1>
-          <p className="text-[14px] leading-[1.6] mt-[8px] m-0">
+          <p className="text-[14px] leading-[1.6] mt-2 m-0">
             {mode === "signin"
               ? "Sign in to access your books and generated content."
               : "Create an account to start turning books into content."}
@@ -136,7 +136,7 @@ function LoginContent(): React.ReactElement {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isDisabled}
-          className="w-full h-[52px] rounded-[8px] flex items-center justify-center gap-[12px] text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-md hover:-translate-y-[1px]"
+          className="w-full h-13 rounded-lg flex items-center justify-center gap-3 text-[13px] font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border-none hover:shadow-md hover:-translate-y-0.25"
           style={{
             background: "var(--bg-2)",
             color: "var(--ink)",
@@ -146,7 +146,7 @@ function LoginContent(): React.ReactElement {
         >
           {googleLoading ? (
             <span
-              className="w-[18px] h-[18px] rounded-full border-[2px] border-t-transparent animate-spin"
+              className="w-4.5 h-4.5 rounded-full border-0.5 border-t-transparent animate-spin"
               style={{
                 borderColor: "var(--rule)",
                 borderTopColor: "transparent",
@@ -164,9 +164,9 @@ function LoginContent(): React.ReactElement {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-[12px] my-[24px]">
+        <div className="flex items-center gap-3 my-6">
           <div
-            className="flex-1 h-[1px]"
+            className="flex-1 h-0.25"
             style={{ background: "var(--rule)" }}
           />
           <span
@@ -176,17 +176,17 @@ function LoginContent(): React.ReactElement {
             or
           </span>
           <div
-            className="flex-1 h-[1px]"
+            className="flex-1 h-0.25"
             style={{ background: "var(--rule)" }}
           />
         </div>
 
         {/* Email / password form */}
-        <form onSubmit={handleSubmit} className="space-y-[16px]">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
               htmlFor="email"
-              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
+              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2"
             >
               Email address
             </label>
@@ -199,14 +199,14 @@ function LoginContent(): React.ReactElement {
               required
               disabled={isDisabled}
               autoComplete="email"
-              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
+              className="w-full h-12 px-4 rounded-lg text-[14px] outline-none transition-all duration-200 bg-(--bg-2) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent)"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px]"
+              className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2"
             >
               Password
             </label>
@@ -222,13 +222,13 @@ function LoginContent(): React.ReactElement {
                 mode === "signin" ? "current-password" : "new-password"
               }
               minLength={6}
-              className="w-full h-[48px] px-[16px] rounded-[8px] text-[14px] outline-none transition-all duration-200 bg-[var(--bg-2)] border-[1.5px] border-[var(--rule)] text-[var(--ink)] focus:border-[var(--v3-accent)]"
+              className="w-full h-12 px-4 rounded-lg text-[14px] outline-none transition-all duration-200 bg-(--bg-2) border-[1.5px] border-(--rule) text-(--ink) focus:border-(--v3-accent)"
             />
           </div>
 
           {error && (
             <div
-              className="rounded-[8px] px-[16px] py-[12px] text-[13px] font-mono"
+              className="rounded-lg px-4 py-3 text-[13px] font-mono"
               style={{
                 background: "rgba(220,38,38,0.08)",
                 color: "#DC2626",
@@ -241,7 +241,7 @@ function LoginContent(): React.ReactElement {
 
           {success && (
             <div
-              className="rounded-[8px] px-[16px] py-[12px] text-[13px] leading-[1.5]"
+              className="rounded-lg px-4 py-3 text-[13px] leading-normal"
               style={{
                 background: "rgba(45,80,22,0.1)",
                 color: "#2D5016",
@@ -256,7 +256,7 @@ function LoginContent(): React.ReactElement {
           <button
             type="submit"
             disabled={isDisabled}
-            className="w-full h-[52px] rounded-[8px] font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-(--bg) transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 hover:scale-[1.01]"
+            className="w-full h-13 rounded-lg font-mono text-[11px] tracking-[0.14em] uppercase font-semibold text-(--bg) transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 hover:scale-[1.01]"
             style={{ background: "var(--v3-accent)" }}
           >
             {loading ? (
@@ -276,8 +276,8 @@ function LoginContent(): React.ReactElement {
         </form>
 
         {/* Toggle mode */}
-        <div className="mt-[24px] text-center">
-          <span className="text-[13px] text-[var(--ink-3)]">
+        <div className="mt-6 text-center">
+          <span className="text-[13px] text-muted-foreground">
             {mode === "signin"
               ? "Don't have an account? "
               : "Already have an account? "}
@@ -297,10 +297,10 @@ function LoginContent(): React.ReactElement {
 
         {/* Footer */}
         <div
-          className="mt-[48px] pt-[24px]"
+          className="mt-12 pt-6"
           style={{ borderTop: "1px solid var(--rule)" }}
         >
-          <p className="text-center text-[12px] leading-[1.6] m-0 text-[var(--ink-4)]">
+          <p className="text-center text-[12px] leading-[1.6] m-0 text-(--ink-4)">
             Part of{" "}
             <Link
               href="/tools"
@@ -344,7 +344,7 @@ export default function BookBreaksLoginPage(): React.ReactElement {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--ink-3)]">
+        <div className="min-h-screen flex items-center justify-center bg-(--bg) text-muted-foreground">
           Loading...
         </div>
       }

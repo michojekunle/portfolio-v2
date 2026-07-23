@@ -39,11 +39,11 @@ export function FreezeStreakButton({ frozenUntil, freezesUsed, freezesMax }: Pro
   };
 
   return (
-    <div className="flex items-center gap-[8px] flex-wrap">
+    <div className="flex items-center gap-2 flex-wrap">
       <button
         onClick={() => void toggleFreeze()}
         disabled={loading || (!isFrozen && freezesLeft === 0)}
-        className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-full border cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase px-3 py-1.5 rounded-full border cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         style={
           isFrozen
             ? { background: "#0EA5E915", color: "#0EA5E9", borderColor: "#0EA5E950" }

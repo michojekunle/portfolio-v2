@@ -89,20 +89,20 @@ const { weeks, monthLabels, maxSpend } = useMemo(() => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-[16px]">
-        <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink-3)]">Spending Heatmap</div>
-        <div className="flex items-center gap-[16px]">
-          <div className="font-mono text-[10px] text-[var(--ink-4)]">{activeDays} active days · {(hidden ? "****" : formatCurrency(totalSpend, "NGN", true))} total</div>
-          <div className="flex items-center gap-[4px]">
-            <span className="font-mono text-[9px] text-[var(--ink-4)]">Less</span>
+      <div className="flex items-center justify-between mb-4">
+        <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Spending Heatmap</div>
+        <div className="flex items-center gap-4">
+          <div className="font-mono text-[10px] text-(--ink-4)">{activeDays} active days · {(hidden ? "****" : formatCurrency(totalSpend, "NGN", true))} total</div>
+          <div className="flex items-center gap-1">
+            <span className="font-mono text-[9px] text-(--ink-4)">Less</span>
             {[0, 0.2, 0.5, 0.8, 1].map((v, i) => (
-              <div key={i} className="w-[10px] h-[10px] rounded-[2px]" style={{ background: intensityColor(v) }} />
+              <div key={i} className="w-2.5 h-2.5 rounded-sm" style={{ background: intensityColor(v) }} />
             ))}
-            <span className="font-mono text-[9px] text-[var(--ink-4)]">More</span>
+            <span className="font-mono text-[9px] text-(--ink-4)">More</span>
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto pb-[4px]" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="overflow-x-auto pb-1" style={{ WebkitOverflowScrolling: "touch" }}>
         <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} style={{ width: "100%", minWidth: Math.min(SVG_W, 500), height: SVG_H }}>
           {/* Month labels */}
           {monthLabels.map(({ label, weekIdx }) => (

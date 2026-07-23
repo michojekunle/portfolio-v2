@@ -8,12 +8,12 @@ export default async function SettingsPage(): Promise<React.ReactElement> {
   const goal = await getOrCreateGoal();
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px] max-w-[640px]">
-      <div className="mb-[40px]">
-        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[6px]">
+    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8 max-w-160">
+      <div className="mb-10">
+        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
           Preferences
         </div>
-        <h1 className="font-display text-[32px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] m-0 leading-[1.1]">
+        <h1 className="font-display text-[32px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
           Settings
         </h1>
       </div>

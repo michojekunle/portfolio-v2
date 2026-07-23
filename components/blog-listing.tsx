@@ -49,20 +49,20 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
   }, [initialPosts, searchQuery, activeCategory]);
 
   return (
-    <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] pb-[120px]">
+    <div className="max-w-(--maxw) mx-auto px-(--gutter) pb-30">
       {/* Search + Filter */}
-      <div className="flex flex-col gap-[24px] mb-[64px]">
+      <div className="flex flex-col gap-6 mb-16">
         <div className="relative w-full max-w-[480px]">
-          <Search className="absolute left-[16px] top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none" size={16} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
           <input
-            className="w-full bg-[var(--bg-2)] border border-[var(--rule)] rounded-full py-[12px] pl-[44px] pr-[40px] text-[15px] text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--ink-3)] focus:bg-[var(--paper)] transition-all duration-200"
+            className="w-full bg-(--bg-2) border border-(--rule) rounded-full py-3 pl-11 pr-10 text-[15px] text-(--ink) placeholder:text-muted-foreground focus:outline-none focus:border-muted-foreground focus:bg-(--paper) transition-all duration-200"
             placeholder="Search notes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
             <button
-              className="absolute right-[16px] top-1/2 -translate-y-1/2 text-[var(--ink-3)] hover:text-[var(--ink)] p-[4px] cursor-pointer"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-(--ink) p-1 cursor-pointer"
               onClick={() => setSearchQuery("")}
               aria-label="Clear search"
             >
@@ -71,11 +71,11 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
           )}
         </div>
 
-        <div className="flex flex-wrap gap-[10px]">
+        <div className="flex flex-wrap gap-2.5">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              className={`px-[16px] py-[8px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] transition-all duration-200 cursor-pointer ${activeCategory === cat ? "bg-[var(--ink)] text-[var(--bg)] border border-[var(--ink)]" : "bg-transparent text-[var(--ink-2)] border border-[var(--rule)] hover:border-[var(--ink-3)] hover:text-[var(--ink)]"}`}
+              className={`px-4 py-2 rounded-full font-mono text-[11px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeCategory === cat ? "bg-(--ink) text-(--bg) border border-(--ink)" : "bg-transparent text-secondary-foreground border border-(--rule) hover:border-muted-foreground hover:text-(--ink)"}`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
@@ -83,7 +83,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
           ))}
           {(searchQuery || activeCategory !== "All") && (
             <button
-              className="px-[16px] py-[8px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] transition-all duration-200 cursor-pointer text-[var(--v3-accent)] border border-[var(--v3-accent)] hover:bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)]"
+              className="px-4 py-2 rounded-full font-mono text-[11px] uppercase tracking-widest transition-all duration-200 cursor-pointer text-(--v3-accent) border border-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)]"
               onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
             >
               Clear ×
@@ -94,13 +94,13 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
 
       {/* Post rows */}
       {!filteredPosts.length ? (
-        <div className="py-[80px] text-center border-t border-[var(--rule)]">
-          <p className="font-display italic text-[18px] text-[var(--ink-3)]">
+        <div className="py-20 text-center border-t border-(--rule)">
+          <p className="font-display italic text-[18px] text-muted-foreground">
             No notes found{searchQuery ? ` matching "${searchQuery}"` : ""}{activeCategory !== "All" ? ` in ${activeCategory}` : ""}.
           </p>
         </div>
       ) : (
-        <div className="border-t border-[var(--rule)]">
+        <div className="border-t border-(--rule)">
           {filteredPosts.map((post) => {
             const isExternal = !!post.external_url;
             const href = isExternal ? post.external_url! : `/blog/${post.slug}`;
@@ -115,32 +115,32 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                 target={isExternal ? "_blank" : undefined}
                 rel={isExternal ? "noopener noreferrer" : undefined}
                 onClick={isExternal ? () => handleExternalClick(post.id) : undefined}
-                className="group flex flex-col sm:grid sm:grid-cols-[120px_1fr_100px_40px] items-start sm:items-center gap-[12px] sm:gap-[24px] py-[32px] border-b border-[var(--rule)] no-underline transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--bg-2)_50%,transparent)]"
+                className="group flex flex-col sm:grid sm:grid-cols-[120px_1fr_100px_40px] items-start sm:items-center gap-3 sm:gap-6 py-8 border-b border-(--rule) no-underline transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--bg-2)_50%,transparent)]"
               >
-                <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--ink-3)] mt-[4px] sm:mt-0">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-1 sm:mt-0">
                   {dateStr}
                 </span>
                 
-                <div className="flex flex-col gap-[6px]">
-                  <div className="font-display text-[22px] leading-[1.2] text-[var(--ink)] group-hover:text-[var(--v3-accent)] transition-colors duration-200 fvs-text">
+                <div className="flex flex-col gap-1.5">
+                  <div className="font-display text-[22px] leading-[1.2] text-(--ink) group-hover:text-(--v3-accent) transition-colors duration-200 fvs-text">
                     {post.title}
-                    <span className="inline-flex items-center ml-[12px] font-mono text-[10px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded bg-[var(--bg-2)] border border-[var(--rule)] text-[var(--ink-3)] align-middle">
-                      {isExternal && <ExternalLink size={10} className="mr-[4px]" />}
+                    <span className="inline-flex items-center ml-3 font-mono text-[10px] uppercase tracking-widest px-2 py-0.75 rounded bg-(--bg-2) border border-(--rule) text-muted-foreground align-middle">
+                      {isExternal && <ExternalLink size={10} className="mr-1" />}
                       {post.category}
                     </span>
                   </div>
                   {post.excerpt && (
-                    <span className="text-[15px] text-[var(--ink-2)] leading-[1.5] max-w-[64ch]">
+                    <span className="text-[15px] text-secondary-foreground leading-normal max-w-[64ch]">
                       {post.excerpt}
                     </span>
                   )}
                 </div>
                 
-                <span className="hidden sm:block font-mono text-[11px] text-[var(--ink-3)] text-right">
+                <span className="hidden sm:block font-mono text-[11px] text-muted-foreground text-right">
                   {post.read_time ?? ""}
                 </span>
                 
-                <span className="hidden sm:flex justify-end text-[var(--ink-3)] transition-transform duration-300 group-hover:translate-x-[4px] group-hover:text-[var(--v3-accent)]" aria-hidden="true">
+                <span className="hidden sm:flex justify-end text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-(--v3-accent)" aria-hidden="true">
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>

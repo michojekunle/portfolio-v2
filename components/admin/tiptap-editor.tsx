@@ -54,7 +54,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         </Toggle>
       </div>
 
-      <div className="w-[1px] h-4 bg-border mx-1" />
+      <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5 mr-1">
         <Toggle size="sm" pressed={editor.isActive("heading", { level: 1 })} onPressedChange={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} title="Heading 1">
@@ -68,7 +68,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         </Toggle>
       </div>
 
-      <div className="w-[1px] h-4 bg-border mx-1" />
+      <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5 mr-1">
         <Toggle size="sm" pressed={editor.isActive("bulletList")} onPressedChange={() => editor.chain().focus().toggleBulletList().run()} title="Bullet List">
@@ -82,7 +82,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         </Toggle>
       </div>
 
-      <div className="w-[1px] h-4 bg-border mx-1" />
+      <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5 mr-1">
         <Toggle size="sm" pressed={editor.isActive("blockquote")} onPressedChange={() => editor.chain().focus().toggleBlockquote().run()} title="Blockquote">
@@ -104,7 +104,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         </button>
       </div>
 
-      <div className="w-[1px] h-4 bg-border mx-1" />
+      <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5">
         <button 

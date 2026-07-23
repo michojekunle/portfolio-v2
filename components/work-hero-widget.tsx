@@ -60,15 +60,15 @@ export function WorkHeroWidget() {
   const [hovered, setHovered] = useState<string | null>(null)
 
   return (
-    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-[var(--rule)] bg-[var(--paper)] p-[24px] overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md">
+    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md">
       {/* Decorative gradient flare */}
-      <div className="absolute top-0 right-0 w-[120px] h-[120px] bg-gradient-to-br from-[var(--v3-accent-soft)] to-transparent rounded-full blur-[40px] opacity-60 pointer-events-none transition-all duration-500 group-hover:scale-125" />
+      <div className="absolute top-0 right-0 w-30 h-30 bg-gradient-to-br from-(--v3-accent-soft) to-transparent rounded-full blur-10 opacity-60 pointer-events-none transition-all duration-500 group-hover:scale-125" />
       
       <div className="flex items-center justify-between mb-6">
-        <h4 className="m-0 font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] uppercase">Core Stack Radar</h4>
+        <h4 className="m-0 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">Core Stack Radar</h4>
         <div className="flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--v3-accent)] animate-pulse" />
-          <span className="font-mono text-[10px] text-[var(--ink-3)]">Interactive metrics</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) animate-pulse" />
+          <span className="font-mono text-[10px] text-muted-foreground">Interactive metrics</span>
         </div>
       </div>
 
@@ -85,17 +85,17 @@ export function WorkHeroWidget() {
               onMouseLeave={() => setHovered(null)}
             >
               <div className="flex items-center justify-between text-[13px]">
-                <div className="flex items-center gap-2 font-display text-[var(--ink)] font-medium transition-colors duration-200">
-                  <Icon className="w-4 h-4 text-[var(--ink-3)]" />
+                <div className="flex items-center gap-2 font-display text-(--ink) font-medium transition-colors duration-200">
+                  <Icon className="w-4 h-4 text-muted-foreground" />
                   <span>{tech.name}</span>
                 </div>
-                <span className="font-mono text-[11px] text-[var(--ink-3)]">
+                <span className="font-mono text-[11px] text-muted-foreground">
                   {tech.projects} {tech.projects === 1 ? "project" : "projects"}
                 </span>
               </div>
 
               {/* Progress bar background */}
-              <div className="w-full h-1.5 bg-[var(--bg-2)] rounded-full overflow-hidden border border-[var(--rule)]">
+              <div className="w-full h-1.5 bg-(--bg-2) rounded-full overflow-hidden border border-(--rule)">
                 <motion.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: tech.color }}
@@ -113,9 +113,9 @@ export function WorkHeroWidget() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute z-10 top-[28px] left-0 right-0 p-3 rounded-[12px] bg-[var(--bg-2)] border border-[var(--rule)] shadow-lg"
+                    className="absolute z-10 top-7 left-0 right-0 p-3 rounded-xl bg-(--bg-2) border border-(--rule) shadow-lg"
                   >
-                    <p className="m-0 text-[11px] leading-[1.5] text-[var(--ink-2)]">
+                    <p className="m-0 text-[11px] leading-normal text-secondary-foreground">
                       {tech.desc}
                     </p>
                   </motion.div>

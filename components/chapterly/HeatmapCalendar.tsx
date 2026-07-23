@@ -65,15 +65,15 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
   });
 
   return (
-    <div className="overflow-x-auto scrollbar-custom pb-[10px]">
+    <div className="overflow-x-auto scrollbar-custom pb-2.5">
       {/* Month labels */}
-      <div className="flex gap-[4px] mb-[6px] pl-[26px]">
+      <div className="flex gap-1 mb-1.5 pl-6.5">
         {weeks.map((_, i) => {
           const label = monthLabels.find((ml) => ml.weekIndex === i);
           return (
-            <div key={i} className="w-[12px] shrink-0 relative">
+            <div key={i} className="w-3 shrink-0 relative">
               {label ? (
-                <span className="absolute left-0 top-0 font-mono text-[8px] tracking-[0.08em] uppercase text-[var(--ink-3)] whitespace-nowrap">
+                <span className="absolute left-0 top-0 font-mono text-[8px] tracking-[0.08em] uppercase text-muted-foreground whitespace-nowrap">
                   {label.label}
                 </span>
               ) : null}
@@ -82,13 +82,13 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
         })}
       </div>
 
-      <div className="flex gap-[4px]">
+      <div className="flex gap-1">
         {/* Day-of-week labels */}
-        <div className="flex flex-col gap-[3px] mr-[2px] shrink-0">
+        <div className="flex flex-col gap-0.75 mr-0.5 shrink-0">
           {DAYS_OF_WEEK.map((d, i) => (
             <div
               key={d}
-              className="h-[12px] flex items-center font-mono text-[7px] text-[var(--ink-3)]"
+              className="h-3 flex items-center font-mono text-[7px] text-muted-foreground"
               style={{ opacity: i % 2 === 0 ? 0 : 1 }}
             >
               {d}
@@ -98,7 +98,7 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
 
         {/* Week columns */}
         {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-[3px] shrink-0">
+          <div key={wi} className="flex flex-col gap-0.75 shrink-0">
             {week.map((dayMs) => {
               const key = new Date(dayMs).toISOString().slice(0, 10);
               const minutes = data[key] ?? 0;
@@ -108,7 +108,7 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
               return (
                 <div
                   key={key}
-                  className="w-[12px] h-[12px] rounded-[2px]"
+                  className="w-3 h-3 rounded-sm"
                   style={{
                     background:
                       isFuture
@@ -129,20 +129,20 @@ export function HeatmapCalendar({ data }: Props): React.ReactElement {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-[6px] mt-[12px] justify-end">
-        <span className="font-mono text-[8px] tracking-[0.08em] uppercase text-[var(--ink-3)]">
+      <div className="flex items-center gap-1.5 mt-3 justify-end">
+        <span className="font-mono text-[8px] tracking-[0.08em] uppercase text-muted-foreground">
           Less
         </span>
         {[0, 0.2, 0.45, 0.65, 0.85, 1].map((op) => (
           <div
             key={op}
-            className="w-[10px] h-[10px] rounded-[2px]"
+            className="w-2.5 h-2.5 rounded-sm"
             style={{
               background: op === 0 ? "var(--rule)" : `rgba(79,109,122,${op})`,
             }}
           />
         ))}
-        <span className="font-mono text-[8px] tracking-[0.08em] uppercase text-[var(--ink-3)]">
+        <span className="font-mono text-[8px] tracking-[0.08em] uppercase text-muted-foreground">
           More
         </span>
       </div>

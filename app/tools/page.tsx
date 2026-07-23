@@ -78,13 +78,13 @@ export default function CreatorSuitePage(): React.ReactElement {
     >
       {/* ── Hero ── */}
       <section
-        className="pt-[160px] pb-[100px] max-[720px]:pt-[120px] max-[720px]:pb-[64px] border-b"
+        className="pt-40 pb-[100px] max-180:pt-30 max-180:pb-16 border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
-          <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-[48px] items-end">
+        <div className="max-w-(--maxw) mx-auto px-(--gutter)">
+          <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-12 items-end">
             <div>
-              <div className="v3-eyebrow mb-[28px]">CREATOR SUITE · TOOLS</div>
+              <div className="v3-eyebrow mb-7">CREATOR SUITE · TOOLS</div>
               <h1
                 className="m-0 font-display font-normal leading-[0.88] tracking-[-0.04em] text-balance fvs-display"
                 style={{
@@ -113,11 +113,11 @@ export default function CreatorSuitePage(): React.ReactElement {
                 viral threads, design carousel slides — and read anything with
                 an AI that remembers your highlights.
               </p>
-              <div className="mt-[32px] flex items-center gap-[16px] flex-wrap">
+              <div className="mt-8 flex items-center gap-4 flex-wrap">
                 <MagneticWrapper>
                   <Link
                     href="/tools/bookbreaks"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "var(--v3-accent)" }}
                   >
                     Launch BookBreaks{" "}
@@ -129,7 +129,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 <MagneticWrapper>
                   <Link
                     href="/tools/journal"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "rgba(124,58,237,0.12)", color: "#7C3AED", border: "1px solid rgba(124,58,237,0.25)" }}
                   >
                     Try Vela{" "}
@@ -139,7 +139,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 <MagneticWrapper>
                   <Link
                     href="/tools/chapterly"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "rgba(79,109,122,0.12)", color: "#4F6D7A", border: "1px solid rgba(79,109,122,0.25)" }}
                   >
                     Try Chapterly{" "}
@@ -149,7 +149,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 <MagneticWrapper>
                   <Link
                     href="/tools/flowise"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "rgba(22,163,74,0.12)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.25)" }}
                   >
                     Try Flowise{" "}
@@ -159,7 +159,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 <MagneticWrapper>
                   <Link
                     href="/tools/thread-studio"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "rgba(99,102,241,0.12)", color: "#6366F1", border: "1px solid rgba(99,102,241,0.25)" }}
                   >
                     Try Thread Studio{" "}
@@ -169,7 +169,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 <MagneticWrapper>
                   <Link
                     href="/tools/carousel-lab"
-                    className="inline-flex items-center gap-[8px] h-[48px] px-[24px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                     style={{ background: "rgba(255,107,53,0.12)", color: "#FF6B35", border: "1px solid rgba(255,107,53,0.25)" }}
                   >
                     Try Carousel Lab{" "}
@@ -183,8 +183,8 @@ export default function CreatorSuitePage(): React.ReactElement {
       </section>
 
       {/* ── Tool grid: 2×2 + full-width Flowise ── */}
-      <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[100px] max-[720px]:py-[64px]">
-        <div className="border border-[var(--rule)] rounded-[2px]">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-[100px] max-180:py-16">
+        <div className="border border-(--rule) rounded-sm">
           {/* Top 4 tools — 2 column */}
           <div className="grid grid-cols-2 max-[900px]:grid-cols-1">
             {TOOLS.map((tool, i) => (
@@ -200,14 +200,14 @@ export default function CreatorSuitePage(): React.ReactElement {
 
       {/* ── Philosophy strip ── */}
       <section
-        className="border-y py-[80px] max-[720px]:py-[56px]"
+        className="border-y py-20 max-180:py-14"
         style={{
           borderColor: "var(--rule)",
           background: "var(--bg-2)",
         }}
       >
-        <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
-          <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-[48px]">
+        <div className="max-w-(--maxw) mx-auto px-(--gutter)">
+          <div className="grid grid-cols-3 max-180:grid-cols-1 gap-12">
             {[
               {
                 num: "01",
@@ -227,13 +227,13 @@ export default function CreatorSuitePage(): React.ReactElement {
             ].map((p) => (
               <div key={p.num}>
                 <div
-                  className="font-mono text-[10px] tracking-[0.18em] uppercase mb-[16px]"
+                  className="font-mono text-[10px] tracking-[0.18em] uppercase mb-4"
                   style={{ color: "var(--ink-4)" }}
                 >
                   {p.num}
                 </div>
                 <h3
-                  className="font-display font-normal text-[28px] leading-[1.1] tracking-[-0.02em] mb-[12px] fvs-text m-0"
+                  className="font-display font-normal text-[28px] leading-[1.1] tracking-[-0.02em] mb-3 fvs-text m-0"
                   style={{ color: "var(--ink)" }}
                 >
                   {p.head}
@@ -276,15 +276,15 @@ function ToolCard({
     >
       {/* Accent hover background */}
       <div
-        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[2px]"
+        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none rounded-sm"
         style={{ background: tool.accentSoft }}
       />
 
       <div className="relative z-10">
         {/* Header row */}
-        <div className="flex items-start justify-between mb-[32px]">
+        <div className="flex items-start justify-between mb-8">
           <div
-            className="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[24px] font-mono select-none"
+            className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
             style={{
               background: tool.accentSoft,
               border: `1px solid ${tool.accent}22`,
@@ -298,13 +298,13 @@ function ToolCard({
 
         {/* Name + tagline */}
         <h2
-          className="font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.05] tracking-[-0.025em] mb-[8px] fvs-text m-0"
+          className="font-display font-normal text-[36px] max-180:text-[28px] leading-[1.05] tracking-tight mb-2 fvs-text m-0"
           style={{ color: "var(--ink)" }}
         >
           {tool.name}
         </h2>
         <div
-          className="font-mono text-[12px] tracking-[0.08em] uppercase mb-[20px]"
+          className="font-mono text-[12px] tracking-[0.08em] uppercase mb-5"
           style={{ color: tool.accent }}
         >
           {tool.tagline}
@@ -312,18 +312,18 @@ function ToolCard({
 
         {/* Description */}
         <p
-          className="text-[15px] leading-[1.65] mb-[28px] max-w-[44ch] m-0"
+          className="text-[15px] leading-[1.65] mb-7 max-w-[44ch] m-0"
           style={{ color: "var(--ink-2)" }}
         >
           {tool.description}
         </p>
 
         {/* Stats pills */}
-        <div className="flex flex-wrap gap-[8px] mb-[36px]">
+        <div className="flex flex-wrap gap-2 mb-9">
           {tool.stats.map((s) => (
             <span
               key={s}
-              className="font-mono text-[10px] tracking-[0.1em] uppercase px-[10px] py-[4px] rounded-full"
+              className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full"
               style={{
                 background: "var(--bg-2)",
                 color: "var(--ink-3)",
@@ -336,16 +336,16 @@ function ToolCard({
         </div>
 
         {/* CTA */}
-        <div className="flex items-center gap-[16px] flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap">
           {isLive ? (
             <Link
               href={tool.href}
-              className="inline-flex items-center gap-[8px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 group/link"
+              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 group/link"
               style={{ color: tool.accent }}
             >
               {tool.cta}
               <span
-                className="inline-block transition-transform duration-200 group-hover/link:translate-x-[4px]"
+                className="inline-block transition-transform duration-200 group-hover/link:translate-x-1"
                 aria-hidden="true"
               >
                 →
@@ -353,11 +353,11 @@ function ToolCard({
             </Link>
           ) : (
             <span
-              className="inline-flex items-center gap-[6px] font-mono text-[11px] uppercase tracking-[0.14em]"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]"
               style={{ color: "var(--ink-4)" }}
             >
               <span
-                className="w-[6px] h-[6px] rounded-full inline-block"
+                className="w-1.5 h-1.5 rounded-full inline-block"
                 style={{ background: "var(--ink-4)" }}
                 aria-hidden="true"
               />
@@ -367,7 +367,7 @@ function ToolCard({
           {"bridge" in tool && tool.bridge === "bookbreaks" && (
             <Link
               href="/tools/bookbreaks"
-              className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline transition-colors px-[8px] py-[3px] rounded-full"
+              className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline transition-colors px-2 py-0.75 rounded-full"
               style={{
                 color: "#C85A2C",
                 background: "rgba(200,90,44,0.1)",
@@ -397,11 +397,11 @@ function VelaCard(): React.ReactElement {
         style={{ background: accentSoft }}
       />
       <div className="relative z-10">
-        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-[40px] items-start">
+        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-10 items-start">
           <div>
-            <div className="flex items-center gap-[16px] mb-[24px] flex-wrap">
+            <div className="flex items-center gap-4 mb-6 flex-wrap">
               <div
-                className="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[24px] font-mono select-none"
+                className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
                 style={{ background: accentSoft, border: `1px solid ${accent}22` }}
                 aria-hidden="true"
               >
@@ -409,7 +409,7 @@ function VelaCard(): React.ReactElement {
               </div>
               <StatusBadge status="live" />
               <span
-                className="font-mono text-[9px] tracking-[0.12em] uppercase px-[8px] py-[3px] rounded-full"
+                className="font-mono text-[9px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full"
                 style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
               >
                 ★ Daily driver
@@ -417,20 +417,20 @@ function VelaCard(): React.ReactElement {
             </div>
 
             <h2
-              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-[8px] fvs-text m-0"
+              className="font-display font-normal text-[42px] max-180:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
               style={{ color: "var(--ink)" }}
             >
               Vela
             </h2>
             <div
-              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-[20px]"
+              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-5"
               style={{ color: accent }}
             >
               Set your course. Log your progress.
             </div>
 
             <p
-              className="text-[15px] leading-[1.65] mb-[28px] max-w-[56ch] m-0"
+              className="text-[15px] leading-[1.65] mb-7 max-w-[56ch] m-0"
               style={{ color: "var(--ink-2)" }}
             >
               A structured life journal for people who want to move with intention. Set clear
@@ -438,7 +438,7 @@ function VelaCard(): React.ReactElement {
               accomplished, and track where your energy really goes — day by day.
             </p>
 
-            <div className="flex flex-wrap gap-[8px]">
+            <div className="flex flex-wrap gap-2">
               {[
                 "Objectives + milestones",
                 "Daily structured logs",
@@ -449,7 +449,7 @@ function VelaCard(): React.ReactElement {
               ].map((s) => (
                 <span
                   key={s}
-                  className="font-mono text-[10px] tracking-[0.1em] uppercase px-[10px] py-[4px] rounded-full"
+                  className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full"
                   style={{
                     background: "var(--bg-2)",
                     color: "var(--ink-3)",
@@ -462,32 +462,32 @@ function VelaCard(): React.ReactElement {
             </div>
           </div>
 
-          <div className="flex flex-col gap-[12px] max-[900px]:flex-row max-[900px]:flex-wrap">
+          <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
             <Link
               href="/tools/journal"
-              className="inline-flex items-center justify-center gap-[8px] h-[48px] px-[28px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
               style={{ background: accent }}
             >
               Set my first objective
               <span
-                className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]"
+                className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75"
                 aria-hidden="true"
               >
                 →
               </span>
             </Link>
             <div
-              className="px-[16px] py-[12px] rounded-[10px] text-center"
+              className="px-4 py-3 rounded-[10px] text-center"
               style={{ background: accentSoft }}
             >
               <div
-                className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[2px]"
+                className="font-mono text-[9px] tracking-widest uppercase mb-0.5"
                 style={{ color: accent }}
               >
                 Free tier includes
               </div>
               <div
-                className="text-[12px] leading-[1.5]"
+                className="text-[12px] leading-normal"
                 style={{ color: "var(--ink-2)" }}
               >
                 Unlimited logs · All objectives · Streaks
@@ -516,12 +516,12 @@ function FlowiseCard(): React.ReactElement {
       />
 
       <div className="relative z-10">
-        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-[40px] items-start">
+        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-10 items-start">
           <div>
             {/* Header */}
-            <div className="flex items-center gap-[16px] mb-[24px] flex-wrap">
+            <div className="flex items-center gap-4 mb-6 flex-wrap">
               <div
-                className="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[24px] font-mono select-none"
+                className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
                 style={{ background: accentSoft, border: `1px solid ${accent}22` }}
                 aria-hidden="true"
               >
@@ -529,7 +529,7 @@ function FlowiseCard(): React.ReactElement {
               </div>
               <StatusBadge status="live" />
               <span
-                className="font-mono text-[9px] tracking-[0.12em] uppercase px-[8px] py-[3px] rounded-full"
+                className="font-mono text-[9px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full"
                 style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
               >
                 🇳🇬 Nigeria-first
@@ -537,20 +537,20 @@ function FlowiseCard(): React.ReactElement {
             </div>
 
             <h2
-              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-[8px] fvs-text m-0"
+              className="font-display font-normal text-[42px] max-180:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
               style={{ color: "var(--ink)" }}
             >
               Flowise
             </h2>
             <div
-              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-[20px]"
+              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-5"
               style={{ color: accent }}
             >
               Your money, mapped.
             </div>
 
             <p
-              className="text-[15px] leading-[1.65] mb-[28px] max-w-[56ch] m-0"
+              className="text-[15px] leading-[1.65] mb-7 max-w-[56ch] m-0"
               style={{ color: "var(--ink-2)" }}
             >
               A personal finance OS. Log transactions manually, import bank statements, scan
@@ -560,11 +560,11 @@ function FlowiseCard(): React.ReactElement {
             </p>
 
             {/* Stats pills */}
-            <div className="flex flex-wrap gap-[8px]">
+            <div className="flex flex-wrap gap-2">
               {["Multi-account", "AI categorization", "Budget & goals", "NGN-first", "CSV import"].map((s) => (
                 <span
                   key={s}
-                  className="font-mono text-[10px] tracking-[0.1em] uppercase px-[10px] py-[4px] rounded-full"
+                  className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full"
                   style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
                 >
                   {s}
@@ -574,25 +574,25 @@ function FlowiseCard(): React.ReactElement {
           </div>
 
           {/* CTA block */}
-          <div className="flex flex-col gap-[12px] max-[900px]:flex-row max-[900px]:flex-wrap">
+          <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
             <Link
               href="/tools/flowise"
-              className="inline-flex items-center justify-center gap-[8px] h-[48px] px-[28px] rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
               style={{ background: accent }}
             >
               Take control of my money
-              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-[3px]" aria-hidden="true">
+              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75" aria-hidden="true">
                 →
               </span>
             </Link>
             <div
-              className="px-[16px] py-[12px] rounded-[10px] text-center"
+              className="px-4 py-3 rounded-[10px] text-center"
               style={{ background: accentSoft }}
             >
-              <div className="font-mono text-[9px] tracking-[0.1em] uppercase mb-[2px]" style={{ color: accent }}>
+              <div className="font-mono text-[9px] tracking-widest uppercase mb-0.5" style={{ color: accent }}>
                 Free tier includes
               </div>
-              <div className="text-[12px] text-[var(--ink-2)] leading-[1.5]">
+              <div className="text-[12px] text-secondary-foreground leading-normal">
                 3 accounts · 100 tx/month · 3 goals
               </div>
             </div>
@@ -611,7 +611,7 @@ function StatusBadge({
   if (status === "live") {
     return (
       <span
-        className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.14em] uppercase px-[10px] py-[4px] rounded-full font-semibold"
+        className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.14em] uppercase px-2.5 py-1 rounded-full font-semibold"
         style={{
           background: "rgba(45,80,22,0.15)",
           color: "#2D5016",
@@ -619,7 +619,7 @@ function StatusBadge({
         }}
       >
         <span
-          className="w-[5px] h-[5px] rounded-full"
+          className="w-1.25 h-1.25 rounded-full"
           style={{ background: "#2D5016" }}
           aria-hidden="true"
         />
@@ -630,7 +630,7 @@ function StatusBadge({
 
   return (
     <span
-      className="inline-flex items-center gap-[6px] font-mono text-[9px] tracking-[0.14em] uppercase px-[10px] py-[4px] rounded-full font-semibold"
+      className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.14em] uppercase px-2.5 py-1 rounded-full font-semibold"
       style={{
         background: "var(--bg-2)",
         color: "var(--ink-3)",

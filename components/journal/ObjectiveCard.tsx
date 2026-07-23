@@ -131,29 +131,29 @@ export function ObjectiveCard({
 
   return (
     <div
-      className="rounded-[12px] border overflow-hidden transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.07)]"
+      className="rounded-xl border overflow-hidden transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.07)]"
       style={{
         borderColor: "var(--rule)",
         background: "var(--bg-2)",
       }}
     >
       {/* Top colour stripe */}
-      <div className="h-[3px]" style={{ background: objective.color }} />
+      <div className="h-0.75" style={{ background: objective.color }} />
 
-      <div className="p-[18px]">
+      <div className="p-4.5">
         {editing ? (
-          <div className="space-y-[14px]">
-            <div className="flex gap-[16px] flex-wrap">
+          <div className="space-y-3.5">
+            <div className="flex gap-4 flex-wrap">
               <div>
-                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
                   Icon
                 </label>
-                <div className="flex flex-wrap gap-[6px]">
+                <div className="flex flex-wrap gap-1.5">
                   {ICONS.map((ic) => (
                     <button
                       key={ic}
                       onClick={() => setEditIcon(ic)}
-                      className="w-[30px] h-[30px] text-[16px] rounded-[6px] flex items-center justify-center border cursor-pointer transition-all"
+                      className="w-7.5 h-7.5 text-[16px] rounded-md flex items-center justify-center border cursor-pointer transition-all"
                       style={{
                         background: editIcon === ic ? VELA_ACCENT_SOFT : "var(--bg)",
                         borderColor: editIcon === ic ? VELA_ACCENT : "var(--rule)",
@@ -165,15 +165,15 @@ export function ObjectiveCard({
                 </div>
               </div>
               <div>
-                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]">
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-2 text-muted-foreground">
                   Colour
                 </label>
-                <div className="flex flex-wrap gap-[6px]">
+                <div className="flex flex-wrap gap-1.5">
                   {OBJECTIVE_COLORS.map((c) => (
                     <button
                       key={c}
                       onClick={() => setEditColor(c)}
-                      className="w-[22px] h-[22px] rounded-full border-[2px] cursor-pointer transition-transform hover:scale-110"
+                      className="w-5.5 h-5.5 rounded-full border-0.5 cursor-pointer transition-transform hover:scale-110"
                       style={{
                         background: c,
                         borderColor: editColor === c ? "var(--ink)" : "transparent",
@@ -186,7 +186,7 @@ export function ObjectiveCard({
             </div>
 
             <div>
-              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
                 Title
               </label>
               <input
@@ -195,42 +195,42 @@ export function ObjectiveCard({
                 onChange={(e) => setEditTitle(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") void handleSaveEdit(); if (e.key === "Escape") setEditing(false); }}
                 autoFocus
-                className="w-full h-[38px] px-[12px] rounded-[7px] text-[14px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
+                className="w-full h-9.5 px-3 rounded-[7px] text-[14px] border border-(--rule) bg-(--bg) text-(--ink) outline-none"
               />
             </div>
 
             <div>
-              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+              <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
                 Description
               </label>
               <textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
                 rows={2}
-                className="w-full px-[12px] py-[8px] rounded-[7px] text-[13px] leading-[1.5] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none resize-none"
+                className="w-full px-3 py-2 rounded-[7px] text-[13px] leading-normal border border-(--rule) bg-(--bg) text-(--ink) outline-none resize-none"
               />
             </div>
 
-            <div className="flex gap-[12px] flex-wrap">
+            <div className="flex gap-3 flex-wrap">
               <div className="flex-1 min-w-[150px]">
-                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
                   Target Date
                 </label>
                 <input
                   type="date"
                   value={editTargetDate}
                   onChange={(e) => setEditTargetDate(e.target.value)}
-                  className="w-full h-[38px] px-[12px] rounded-[7px] text-[13px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none"
+                  className="w-full h-9.5 px-3 rounded-[7px] text-[13px] border border-(--rule) bg-(--bg) text-(--ink) outline-none"
                 />
               </div>
               <div className="flex-1 min-w-[150px]">
-                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-[6px] text-[var(--ink-3)]">
+                <label className="block font-mono text-[9px] tracking-[0.12em] uppercase mb-1.5 text-muted-foreground">
                   Priority
                 </label>
                 <select
                   value={editPriority}
                   onChange={(e) => setEditPriority(e.target.value as "high" | "medium" | "low")}
-                  className="w-full h-[38px] px-[12px] rounded-[7px] text-[13px] border border-[var(--rule)] bg-[var(--bg)] text-[var(--ink)] outline-none cursor-pointer"
+                  className="w-full h-9.5 px-3 rounded-[7px] text-[13px] border border-(--rule) bg-(--bg) text-(--ink) outline-none cursor-pointer"
                 >
                   <option value="high">High</option>
                   <option value="medium">Medium</option>
@@ -239,11 +239,11 @@ export function ObjectiveCard({
               </div>
             </div>
 
-            <div className="flex gap-[8px] pt-[2px]">
+            <div className="flex gap-2 pt-0.5">
               <button
                 onClick={() => void handleSaveEdit()}
                 disabled={editSaving || !editTitle.trim()}
-                className="flex items-center gap-[6px] px-[16px] h-[34px] rounded-[7px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-50 transition-opacity hover:opacity-90"
+                className="flex items-center gap-1.5 px-4 h-8.5 rounded-[7px] font-mono text-[9px] tracking-widest uppercase font-semibold text-white border-none cursor-pointer disabled:opacity-50 transition-opacity hover:opacity-90"
                 style={{ background: VELA_ACCENT }}
               >
                 {editSaving ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
@@ -252,18 +252,18 @@ export function ObjectiveCard({
               <button
                 onClick={() => setEditing(false)}
                 disabled={editSaving}
-                className="px-[14px] h-[34px] rounded-[7px] font-mono text-[9px] tracking-[0.1em] uppercase border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] transition-opacity hover:opacity-70"
+                className="px-3.5 h-8.5 rounded-[7px] font-mono text-[9px] tracking-widest uppercase border border-(--rule) bg-transparent cursor-pointer text-muted-foreground transition-opacity hover:opacity-70"
               >
                 Cancel
               </button>
             </div>
           </div>
         ) : (
-        <div className="flex items-start gap-[12px]">
+        <div className="flex items-start gap-3">
 
           {/* Icon */}
           <div
-            className="w-[40px] h-[40px] rounded-[9px] flex items-center justify-center text-[20px] flex-shrink-0 mt-[1px]"
+            className="w-10 h-10 rounded-[9px] flex items-center justify-center text-[20px] flex-shrink-0 mt-0.25"
             style={{
               background: `${objective.color}15`,
               border: `1px solid ${objective.color}25`,
@@ -274,21 +274,21 @@ export function ObjectiveCard({
 
           <div className="flex-1 min-w-0">
             {/* Title + pills */}
-            <div className="flex items-center gap-[7px] flex-wrap mb-[2px]">
-              <h3 className="font-medium text-[14px] leading-[1.3] text-[var(--ink)] m-0 truncate">
+            <div className="flex items-center gap-1.75 flex-wrap mb-0.5">
+              <h3 className="font-medium text-[14px] leading-[1.3] text-(--ink) m-0 truncate">
                 {objective.title}
               </h3>
               <button
                 onClick={() => void handleStatusCycle()}
                 disabled={statusBusy}
-                className="flex-shrink-0 font-mono text-[8px] tracking-[0.1em] uppercase px-[7px] py-[2px] rounded-full border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-50"
+                className="flex-shrink-0 font-mono text-[8px] tracking-widest uppercase px-1.75 py-0.5 rounded-full border-none cursor-pointer transition-opacity hover:opacity-70 disabled:opacity-50"
                 style={{ background: `${statusCfg.color}15`, color: statusCfg.color }}
                 title="Click to toggle status"
               >
                 {statusBusy ? "…" : statusCfg.label}
               </button>
               <span
-                className="flex-shrink-0 font-mono text-[8px] tracking-[0.1em] uppercase px-[7px] py-[2px] rounded-full"
+                className="flex-shrink-0 font-mono text-[8px] tracking-widest uppercase px-1.75 py-0.5 rounded-full"
                 style={{ background: `${priorityCfg.color}12`, color: priorityCfg.color }}
               >
                 {priorityCfg.label}
@@ -296,16 +296,16 @@ export function ObjectiveCard({
             </div>
 
             {objective.description && (
-              <p className="text-[12px] leading-[1.5] mt-[4px] mb-0 text-[var(--ink-3)]">
+              <p className="text-[12px] leading-normal mt-1 mb-0 text-muted-foreground">
                 {objective.description}
               </p>
             )}
 
             {/* Progress bar — only when milestones exist */}
             {totalMilestones > 0 && (
-              <div className="mt-[10px]">
-                <div className="flex items-center justify-between mb-[5px]">
-                  <span className="font-mono text-[9px] text-[var(--ink-4)]">
+              <div className="mt-2.5">
+                <div className="flex items-center justify-between mb-1.25">
+                  <span className="font-mono text-[9px] text-(--ink-4)">
                     {doneMilestones}/{totalMilestones} milestones
                   </span>
                   <span
@@ -316,7 +316,7 @@ export function ObjectiveCard({
                   </span>
                 </div>
                 <div
-                  className="h-[4px] rounded-full overflow-hidden"
+                  className="h-1 rounded-full overflow-hidden"
                   style={{ background: "var(--rule)" }}
                 >
                   <div
@@ -328,7 +328,7 @@ export function ObjectiveCard({
             )}
 
             {/* Meta row */}
-            <div className="flex items-center gap-[14px] mt-[8px] flex-wrap">
+            <div className="flex items-center gap-3.5 mt-2 flex-wrap">
               {daysUntilTarget !== null && (
                 <span
                   className="font-mono text-[9px] tracking-[0.06em]"
@@ -342,16 +342,16 @@ export function ObjectiveCard({
                 </span>
               )}
               {totalMilestones === 0 && (
-                <span className="font-mono text-[9px] text-[var(--ink-4)]">No milestones yet</span>
+                <span className="font-mono text-[9px] text-(--ink-4)">No milestones yet</span>
               )}
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-[1px] flex-shrink-0">
+          <div className="flex items-center gap-0.25 flex-shrink-0">
             <button
               onClick={startEdit}
-              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent"
+              className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-all bg-transparent"
               style={{ color: "var(--ink-4)" }}
               title="Edit objective"
               aria-label="Edit objective"
@@ -361,7 +361,7 @@ export function ObjectiveCard({
             <button
               onClick={() => void handleDelete()}
               disabled={deleteBusy}
-              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent disabled:opacity-50"
+              className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-all bg-transparent disabled:opacity-50"
               style={{ color: confirmDelete ? "#DC2626" : "var(--ink-4)" }}
               title={confirmDelete ? "Click again to confirm" : "Delete objective"}
             >
@@ -369,7 +369,7 @@ export function ObjectiveCard({
             </button>
             <button
               onClick={() => setExpanded((e) => !e)}
-              className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all bg-transparent"
+              className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-all bg-transparent"
               style={{ color: "var(--ink-4)" }}
               aria-label={expanded ? "Collapse" : "Expand milestones"}
             >
@@ -383,25 +383,25 @@ export function ObjectiveCard({
       {/* Milestones */}
       {expanded && !editing && (
         <div
-          className="border-t px-[18px] py-[16px]"
+          className="border-t px-4.5 py-4"
           style={{ borderColor: "var(--rule)", background: "var(--bg)" }}
         >
           <div
-            className="font-mono text-[9px] tracking-[0.14em] uppercase mb-[10px]"
+            className="font-mono text-[9px] tracking-[0.14em] uppercase mb-2.5"
             style={{ color: "var(--ink-4)" }}
           >
             Milestones
           </div>
 
           {milestones.length === 0 && (
-            <p className="text-[12px] text-[var(--ink-3)] m-0 pb-[4px]">No milestones yet.</p>
+            <p className="text-[12px] text-muted-foreground m-0 pb-1">No milestones yet.</p>
           )}
 
-          <div className="space-y-[2px]">
+          <div className="space-y-0.5">
             {milestones.map((m: JoMilestone) => (
               <div
                 key={m.id}
-                className="flex items-center gap-[9px] group px-[8px] py-[7px] rounded-[6px] hover:bg-[var(--bg-2)] transition-colors"
+                className="flex items-center gap-2.25 group px-2 py-1.75 rounded-md hover:bg-(--bg-2) transition-colors"
               >
                 <button
                   onClick={() => void handleMilestoneToggle(m.id, !m.is_done)}
@@ -426,7 +426,7 @@ export function ObjectiveCard({
                   {m.title}
                 </span>
                 {m.due_date && (
-                  <span className="font-mono text-[9px] text-[var(--ink-4)] shrink-0">
+                  <span className="font-mono text-[9px] text-(--ink-4) shrink-0">
                     {new Date(m.due_date).toLocaleDateString("en-GB", {
                       month: "short",
                       day: "numeric",
@@ -435,7 +435,7 @@ export function ObjectiveCard({
                 )}
                 <button
                   onClick={() => void onMilestoneDelete(m.id)}
-                  className="w-[18px] h-[18px] flex items-center justify-center border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="w-4.5 h-4.5 flex items-center justify-center border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ color: "var(--ink-4)" }}
                   aria-label="Delete milestone"
                 >
@@ -447,7 +447,7 @@ export function ObjectiveCard({
 
           {/* Add milestone */}
           {addingMilestone ? (
-            <div className="flex items-center gap-[8px] mt-[10px]">
+            <div className="flex items-center gap-2 mt-2.5">
               <input
                 autoFocus
                 type="text"
@@ -461,7 +461,7 @@ export function ObjectiveCard({
                   }
                 }}
                 placeholder="Milestone title…"
-                className="flex-1 h-[34px] px-[10px] rounded-[6px] text-[13px] border outline-none"
+                className="flex-1 h-8.5 px-2.5 rounded-md text-[13px] border outline-none"
                 style={{
                   borderColor: "var(--rule)",
                   background: "var(--bg-2)",
@@ -471,7 +471,7 @@ export function ObjectiveCard({
               <button
                 onClick={() => void handleAddMilestone()}
                 disabled={busy || !newMilestone.trim()}
-                className="h-[34px] px-[12px] rounded-[6px] text-[11px] font-mono font-semibold border-none cursor-pointer disabled:opacity-50 transition-opacity"
+                className="h-8.5 px-3 rounded-md text-[11px] font-mono font-semibold border-none cursor-pointer disabled:opacity-50 transition-opacity"
                 style={{ background: VELA_ACCENT, color: "#fff" }}
               >
                 Add
@@ -481,7 +481,7 @@ export function ObjectiveCard({
                   setAddingMilestone(false);
                   setNewMilestone("");
                 }}
-                className="h-[34px] px-[10px] rounded-[6px] text-[11px] border cursor-pointer bg-transparent"
+                className="h-8.5 px-2.5 rounded-md text-[11px] border cursor-pointer bg-transparent"
                 style={{ borderColor: "var(--rule)", color: "var(--ink-3)" }}
               >
                 Cancel
@@ -490,7 +490,7 @@ export function ObjectiveCard({
           ) : (
             <button
               onClick={() => setAddingMilestone(true)}
-              className="flex items-center gap-[5px] text-[12px] font-medium border-none bg-transparent cursor-pointer mt-[10px] transition-opacity hover:opacity-70"
+              className="flex items-center gap-1.25 text-[12px] font-medium border-none bg-transparent cursor-pointer mt-2.5 transition-opacity hover:opacity-70"
               style={{ color: VELA_ACCENT }}
             >
               <Plus size={12} />

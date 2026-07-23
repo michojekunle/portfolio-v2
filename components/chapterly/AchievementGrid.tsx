@@ -94,13 +94,13 @@ export function AchievementGrid({ earned }: Props): React.ReactElement {
   const allDefs = Object.fromEntries(BADGE_LIST.map((d) => [d.id, d]));
 
   return (
-    <div className="space-y-[32px]">
+    <div className="space-y-8">
       {BADGE_GROUPS.map((group) => (
         <div key={group.label}>
-          <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[12px]">
+          <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
             {group.label}
           </div>
-          <div className="grid grid-cols-5 max-[900px]:grid-cols-4 max-[640px]:grid-cols-3 max-[400px]:grid-cols-2 gap-[10px]">
+          <div className="grid grid-cols-5 max-[900px]:grid-cols-4 max-160:grid-cols-3 max-[400px]:grid-cols-2 gap-2.5">
             {group.ids.map((id) => {
               const badgeId = id as BadgeId;
               const def = allDefs[badgeId];
@@ -112,7 +112,7 @@ export function AchievementGrid({ earned }: Props): React.ReactElement {
               return (
                 <div
                   key={badgeId}
-                  className="rounded-[12px] p-[14px] flex flex-col items-center text-center gap-[8px] border transition-all"
+                  className="rounded-xl p-3.5 flex flex-col items-center text-center gap-2 border transition-all"
                   style={
                     isEarned
                       ? { background: accent + "12", borderColor: accent + "40" }
@@ -125,7 +125,7 @@ export function AchievementGrid({ earned }: Props): React.ReactElement {
                   }
                 >
                   <div
-                    className="w-[38px] h-[38px] rounded-full flex items-center justify-center"
+                    className="w-9.5 h-9.5 rounded-full flex items-center justify-center"
                     style={
                       isEarned
                         ? { background: accent + "20", color: accent }
@@ -134,11 +134,11 @@ export function AchievementGrid({ earned }: Props): React.ReactElement {
                   >
                     {isEarned ? BADGE_ICONS[badgeId] : <Library size={18} />}
                   </div>
-                  <div className="font-mono text-[9px] tracking-[0.08em] uppercase font-semibold text-[var(--ink-2)] leading-[1.3]">
+                  <div className="font-mono text-[9px] tracking-[0.08em] uppercase font-semibold text-secondary-foreground leading-[1.3]">
                     {def.label}
                   </div>
                   <div
-                    className="font-mono text-[8px] text-[var(--ink-3)] leading-[1.4]"
+                    className="font-mono text-[8px] text-muted-foreground leading-[1.4]"
                     style={{ fontSize: "8px" }}
                   >
                     {isEarned ? "✓ Earned" : "Locked"}

@@ -7,7 +7,7 @@ interface Props {
   className?: string;
 }
 
-export function TiktokEmbed({ url, className = "" }: Props): React.ReactElement {
+export function TiktokEmbed({ url, className="" }: Props): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

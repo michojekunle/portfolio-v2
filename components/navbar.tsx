@@ -107,17 +107,17 @@ export function Navbar(): React.ReactNode {
 
   return (
     <nav
-      className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-[14px] border-b border-[var(--rule)]"
+      className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-3.5 border-b border-(--rule)"
       aria-label="Main navigation"
     >
-      <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[18px] flex justify-between items-center gap-[32px]">
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) py-4.5 flex justify-between items-center gap-8">
         <MagneticWrapper strength={10}>
           <Link
             href="/"
             aria-label="Michael Ojekunle — home"
-            className="flex items-center gap-[16px] font-display italic text-[22px] font-normal cursor-pointer text-[var(--ink)] no-underline fvs-soft group"
+            className="flex items-center gap-4 font-display italic text-[22px] font-normal cursor-pointer text-(--ink) no-underline fvs-soft group"
           >
-            <div className="flex items-center justify-center w-[32px] h-[32px] bg-[var(--ink)] text-[var(--bg)] font-display not-italic text-[16px] font-medium leading-[0.9] tracking-[0.1em] uppercase transition-transform duration-300 group-hover:scale-105">
+            <div className="flex items-center justify-center w-8 h-8 bg-(--ink) text-(--bg) font-display not-italic text-[16px] font-medium leading-[0.9] tracking-widest uppercase transition-transform duration-300 group-hover:scale-105">
               <span>m</span>
               <span>i</span>
             </div>
@@ -128,25 +128,25 @@ export function Navbar(): React.ReactNode {
         </MagneticWrapper>
 
         {/* Center: Desktop Nav Links */}
-        <div className="flex gap-[24px] max-[820px]:hidden items-center">
+        <div className="flex gap-6 max-[820px]:hidden items-center">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               data-active={isActive(link.href)}
-              className="font-mono text-[10px] uppercase tracking-[0.1em] font-medium transition-colors duration-150 no-underline text-[var(--ink-2)] hover:text-[var(--ink)] data-[active=true]:text-[var(--v3-accent)] data-[active=true]:font-bold"
+              className="font-mono text-[10px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) data-[active=true]:font-bold"
             >
               {link.name}
             </Link>
           ))}
         </div>
 
-        <div className="flex gap-[12px] items-center">
+        <div className="flex gap-3 items-center">
           <CommandPaletteTrigger />
 
           <MagneticWrapper strength={15}>
             <button
-              className="w-[38px] h-[38px] rounded-full border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
+              className="w-9.5 h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
               onClick={() => setTheme(isDark ? "light" : "dark")}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               suppressHydrationWarning
@@ -158,17 +158,17 @@ export function Navbar(): React.ReactNode {
           <MagneticWrapper strength={20}>
             <Link
               href="/contact"
-              className="group max-[820px]:hidden inline-flex items-center justify-center px-[20px] h-[38px] rounded-full font-mono text-[11px] uppercase tracking-[0.1em] font-medium cursor-pointer border border-[var(--rule)] transition-all duration-200 no-underline bg-[var(--ink)] text-[var(--bg)] hover:-translate-y-[1px] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 h-9.5 rounded-full font-mono text-[11px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
               aria-label="Book a call"
             >
               Book a call{" "}
-              <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-[4px] ml-[6px] w-4 h-4" aria-hidden="true" />
+              <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-1 ml-1.5 w-4 h-4" aria-hidden="true" />
             </Link>
           </MagneticWrapper>
 
           <button
             ref={triggerRef}
-            className="hidden max-[820px]:flex items-center justify-center w-[38px] h-[38px] rounded-[8px] border border-[var(--rule)] bg-transparent text-[var(--ink-2)] cursor-pointer transition-all duration-150 hover:border-[var(--ink-3)] hover:text-[var(--ink)]"
+            className="hidden max-[820px]:flex items-center justify-center w-9.5 h-9.5 rounded-lg border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer transition-all duration-150 hover:border-muted-foreground hover:text-(--ink)"
             onClick={() => setIsOpen((v) => !v)}
             aria-expanded={isOpen}
             aria-controls="v3-mobile-menu"
@@ -188,7 +188,7 @@ export function Navbar(): React.ReactNode {
       <div
         ref={menuRef}
         id="v3-mobile-menu"
-        className={`${isOpen ? "flex" : "hidden"} flex-col pt-[16px] px-[var(--gutter)] pb-[24px] border-t border-[var(--rule)] bg-[var(--bg)] gap-[2px]`}
+        className={`${isOpen ? "flex" : "hidden"} flex-col pt-4 px-(--gutter) pb-6 border-t border-(--rule) bg-(--bg) gap-0.5`}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
@@ -199,20 +199,20 @@ export function Navbar(): React.ReactNode {
             href={link.href}
             aria-current={isActive(link.href) ? "page" : undefined}
             data-active={isActive(link.href)}
-            className="py-[12px] text-[16px] font-medium text-[var(--ink-2)] no-underline border-b border-[var(--rule-2)] transition-colors duration-150 hover:text-[var(--ink)] data-[active=true]:text-[var(--ink)]"
+            className="py-3 text-[16px] font-medium text-secondary-foreground no-underline border-b border-(--rule-2) transition-colors duration-150 hover:text-(--ink) data-[active=true]:text-(--ink)"
             onClick={() => setIsOpen(false)}
           >
             {link.name}
           </Link>
         ))}
-        <div className="flex items-center gap-[12px] pt-[16px] mt-[8px]">
+        <div className="flex items-center gap-3 pt-4 mt-2">
           <Link
             href="/contact"
-            className="group inline-flex items-center gap-[10px] px-[16px] py-[9px] rounded-full font-sans text-[13px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-[var(--v3-accent)] text-[var(--bg)] hover:bg-[var(--v3-accent-2)]"
+            className="group inline-flex items-center gap-2.5 px-4 py-2.25 rounded-full font-sans text-[13px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-(--v3-accent) text-(--bg) hover:bg-(--v3-accent-2)"
             onClick={() => setIsOpen(false)}
           >
             Book a call{" "}
-            <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-[4px] w-4 h-4 ml-1" aria-hidden="true" />
+            <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-1 w-4 h-4 ml-1" aria-hidden="true" />
           </Link>
         </div>
       </div>

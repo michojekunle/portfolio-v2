@@ -56,7 +56,7 @@ const [hovered, setHovered] = useState<string | null>(null);
   const activeSlice = hovered ? slices.find((s) => s.id === hovered) : null;
 
   return (
-    <div className="flex items-start gap-[32px] flex-wrap">
+    <div className="flex items-start gap-8 flex-wrap">
       {/* SVG donut */}
       <div className="relative shrink-0">
         <svg viewBox="0 0 180 180" width={180} height={180}>
@@ -95,21 +95,21 @@ const [hovered, setHovered] = useState<string | null>(null);
       </div>
 
       {/* Legend */}
-      <div className="flex-1 min-w-[160px] space-y-[6px]">
+      <div className="flex-1 min-w-40 space-y-1.5">
         {slices.length === 0 ? (
-          <div className="text-[13px] text-[var(--ink-3)] py-[20px]">No expense data</div>
+          <div className="text-[13px] text-muted-foreground py-5">No expense data</div>
         ) : slices.map((s) => (
           <div
             key={s.id}
-            className="flex items-center gap-[10px] cursor-default"
+            className="flex items-center gap-2.5 cursor-default"
             onMouseEnter={() => setHovered(s.id)}
             onMouseLeave={() => setHovered(null)}
             style={{ opacity: hovered && hovered !== s.id ? 0.4 : 1, transition: "opacity 0.15s" }}
           >
-            <div className="w-[8px] h-[8px] rounded-full shrink-0" style={{ background: s.color }} />
-            <span className="text-[11px] text-[var(--ink-3)] mr-auto truncate">{s.icon} {s.name}</span>
-            <span className="font-mono text-[10px] font-semibold text-[var(--ink)] shrink-0">{(hidden ? "****" : formatCurrency(s.amount, "NGN", true))}</span>
-            <span className="font-mono text-[9px] text-[var(--ink-4)] w-[30px] text-right shrink-0">{Math.round(s.pct * 100)}%</span>
+            <div className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} />
+            <span className="text-[11px] text-muted-foreground mr-auto truncate">{s.icon} {s.name}</span>
+            <span className="font-mono text-[10px] font-semibold text-(--ink) shrink-0">{(hidden ? "****" : formatCurrency(s.amount, "NGN", true))}</span>
+            <span className="font-mono text-[9px] text-(--ink-4) w-7.5 text-right shrink-0">{Math.round(s.pct * 100)}%</span>
           </div>
         ))}
       </div>

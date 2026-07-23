@@ -95,48 +95,48 @@ const [transactions, setTransactions] = useState(initialTransactions);
   const expenses = transactions.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[60px] max-[1024px]:pt-[80px] max-[720px]:px-[20px]">
+    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
       {deleteError && (
-        <div className="mb-[16px] px-[14px] py-[10px] rounded-[10px] bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] font-mono text-[11px] flex items-center justify-between">
+        <div className="mb-4 px-3.5 py-2.5 rounded-[10px] bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] font-mono text-[11px] flex items-center justify-between">
           {deleteError}
-          <button onClick={() => setDeleteError(null)} className="ml-[12px] text-[#DC2626] bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100">✕</button>
+          <button onClick={() => setDeleteError(null)} className="ml-3 text-[#DC2626] bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100">✕</button>
         </div>
       )}
       {/* Header */}
-      <div className="flex items-center justify-between mb-[32px] gap-[16px] flex-wrap">
-        <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-[var(--ink)]">
+      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
+        <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)">
           Transactions
         </h1>
-        <div className="flex items-center gap-[8px]">
-          <button onClick={() => setShowScanner(true)} className="inline-flex items-center gap-[6px] h-[36px] px-[14px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold border-none cursor-pointer" style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }} title="Scan receipt or bank alert">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowScanner(true)} className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold border-none cursor-pointer" style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }} title="Scan receipt or bank alert">
             <Camera size={12} /> Scan
           </button>
-          <button onClick={() => setShowImport(true)} className="inline-flex items-center gap-[6px] h-[36px] px-[14px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold border-none cursor-pointer" style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }} title="Import CSV bank statement">
+          <button onClick={() => setShowImport(true)} className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold border-none cursor-pointer" style={{ background: "var(--bg-2)", color: "var(--ink-2)", border: "1px solid var(--rule)" }} title="Import CSV bank statement">
             <Upload size={12} /> Import
           </button>
-          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-[8px] h-[40px] px-[18px] rounded-full font-mono text-[10px] uppercase tracking-[0.14em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
+          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 h-10 px-4.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
             <Plus size={13} /> Add
           </button>
         </div>
       </div>
 
       {/* Month nav */}
-      <div className="flex items-center gap-[16px] mb-[24px]">
-        <button onClick={() => shiftMonth(-1)} className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-2)] hover:bg-[var(--bg-2)] transition-colors">
+      <div className="flex items-center gap-4 mb-6">
+        <button onClick={() => shiftMonth(-1)} className="w-8 h-8 rounded-lg flex items-center justify-center border-none bg-transparent cursor-pointer text-secondary-foreground hover:bg-(--bg-2) transition-colors">
           <ChevronLeft size={16} />
         </button>
-        <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text text-[var(--ink)] min-w-[140px] text-center">
+        <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text text-(--ink) min-w-35 text-center">
           {MONTHS[mon - 1]} {year}
         </div>
-        <button onClick={() => shiftMonth(1)} disabled={month >= new Date().toISOString().slice(0, 7)} className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-2)] hover:bg-[var(--bg-2)] transition-colors disabled:opacity-30">
+        <button onClick={() => shiftMonth(1)} disabled={month >= new Date().toISOString().slice(0, 7)} className="w-8 h-8 rounded-lg flex items-center justify-center border-none bg-transparent cursor-pointer text-secondary-foreground hover:bg-(--bg-2) transition-colors disabled:opacity-30">
           <ChevronRight size={16} />
         </button>
 
-        <div className="flex gap-[12px] ml-auto">
-          <span className="font-mono text-[11px] text-[var(--ink-3)]">
+        <div className="flex gap-3 ml-auto">
+          <span className="font-mono text-[11px] text-muted-foreground">
             In: <span style={{ color: ACCENT }}>+{(hidden ? "****" : formatCurrency(income, "NGN", true))}</span>
           </span>
-          <span className="font-mono text-[11px] text-[var(--ink-3)]">
+          <span className="font-mono text-[11px] text-muted-foreground">
             Out: <span style={{ color: "#DC2626" }}>−{(hidden ? "****" : formatCurrency(expenses, "NGN", true))}</span>
           </span>
         </div>
@@ -144,17 +144,17 @@ const [transactions, setTransactions] = useState(initialTransactions);
 
       {/* List */}
       {loading ? (
-        <div className="text-center py-[60px] text-[var(--ink-3)] font-mono text-[12px]">Loading…</div>
+        <div className="text-center py-15 text-muted-foreground font-mono text-[12px]">Loading…</div>
       ) : transactions.length === 0 ? (
-        <div className="rounded-[12px] py-[60px] text-center" style={{ border: "1px dashed var(--rule)" }}>
-          <div className="text-[32px] mb-[12px]">📋</div>
-          <div className="text-[15px] font-medium text-[var(--ink)] mb-[6px]">No transactions this month</div>
-          <button onClick={() => setShowForm(true)} className="mt-[16px] inline-flex items-center gap-[6px] h-[36px] px-[16px] rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
+        <div className="rounded-xl py-15 text-center" style={{ border: "1px dashed var(--rule)" }}>
+          <div className="text-[32px] mb-3">📋</div>
+          <div className="text-[15px] font-medium text-(--ink) mb-1.5">No transactions this month</div>
+          <button onClick={() => setShowForm(true)} className="mt-4 inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
             <Plus size={12} /> Add one
           </button>
         </div>
       ) : (
-        <div className="rounded-[12px] overflow-hidden" style={{ border: "1px solid var(--rule)" }}>
+        <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--rule)" }}>
           {transactions.map((tx, i) => {
             const cat = tx.category ?? categories.find(c => c.id === tx.category_id);
             const isIncome = tx.amount > 0;
@@ -162,20 +162,20 @@ const [transactions, setTransactions] = useState(initialTransactions);
             return (
               <div
                 key={tx.id}
-                className="flex items-center gap-[14px] px-[16px] py-[14px] bg-[var(--bg)] hover:bg-[var(--bg-2)] transition-colors group"
+                className="flex items-center gap-3.5 px-4 py-3.5 bg-(--bg) hover:bg-(--bg-2) transition-colors group"
                 style={{ borderBottom: i < transactions.length - 1 ? "1px solid var(--rule)" : undefined }}
               >
-                <div className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[16px] shrink-0" style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)" }}>
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center text-[16px] shrink-0" style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)" }}>
                   {cat?.icon ?? (isIncome ? "💰" : "💸")}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[14px] font-medium text-[var(--ink)] truncate">{tx.description}</div>
-                  <div className="font-mono text-[10px] text-[var(--ink-3)] mt-[1px]">
+                  <div className="text-[14px] font-medium text-(--ink) truncate">{tx.description}</div>
+                  <div className="font-mono text-[10px] text-muted-foreground mt-0.25">
                     {cat?.name ?? "Uncategorized"} · {date.toLocaleDateString("en-NG", { month: "short", day: "numeric", timeZone: "UTC" })}
                     {tx.account && ` · ${tx.account.icon} ${tx.account.name}`}
                   </div>
                 </div>
-                <div className="shrink-0 text-right flex items-center gap-[12px]">
+                <div className="shrink-0 text-right flex items-center gap-3">
                   <div className="text-right">
                     <div className="text-[15px] font-semibold tabular-nums" style={{ color: isIncome ? "#16A34A" : "var(--ink)" }}>
                       {isIncome ? "+" : "−"}{hidden ? "****" : formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
@@ -185,7 +185,7 @@ const [transactions, setTransactions] = useState(initialTransactions);
                     <button
                       onClick={() => void handleDelete(tx.id)}
                       disabled={deletingId === tx.id}
-                      className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none cursor-pointer text-[#DC2626] bg-[rgba(220,38,38,0.12)] transition-all text-[9px] font-mono font-semibold"
+                      className="w-7 h-7 rounded-md flex items-center justify-center border-none cursor-pointer text-[#DC2626] bg-[rgba(220,38,38,0.12)] transition-all text-[9px] font-mono font-semibold"
                       aria-label="Confirm delete"
                       title="Click again to confirm"
                     >
@@ -195,7 +195,7 @@ const [transactions, setTransactions] = useState(initialTransactions);
                     <button
                       onClick={() => void handleDelete(tx.id)}
                       disabled={deletingId === tx.id}
-                      className="opacity-0 group-hover:opacity-100 w-[28px] h-[28px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer text-[var(--ink-4)] hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)] transition-all"
+                      className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer text-(--ink-4) hover:text-[#DC2626] hover:bg-[rgba(220,38,38,0.08)] transition-all"
                       aria-label="Delete transaction"
                     >
                       <Trash2 size={13} />

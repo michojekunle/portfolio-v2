@@ -57,7 +57,7 @@ function formatDate(iso: string): string {
 
 function renderNoteContent(md: string): React.ReactElement {
   return (
-    <div className="text-[14px] leading-[1.7] text-[var(--ink)]">
+    <div className="text-[14px] leading-[1.7] text-(--ink)">
       <Markdown text={md} accent="var(--ch-accent, var(--ch-accent))" />
     </div>
   );
@@ -91,7 +91,7 @@ function NoteEditor({
 }: NoteEditorProps): React.ReactElement {
   return (
     <div
-      className="rounded-[12px] border p-[16px] space-y-[12px]"
+      className="rounded-xl border p-4 space-y-3"
       style={{ borderColor: "color-mix(in srgb, var(--ch-accent) 25%, transparent)", background: "color-mix(in srgb, var(--ch-accent) 2%, transparent)" }}
     >
       <input
@@ -99,7 +99,7 @@ function NoteEditor({
         value={chapter}
         onChange={(e) => onChapter(e.target.value)}
         placeholder="Chapter or section (optional)"
-        className="w-full text-[12px] font-mono tracking-[0.06em] px-[12px] py-[8px] rounded-[6px] border outline-none bg-[var(--bg)] text-[var(--ink)] placeholder:text-[var(--ink-3)]"
+        className="w-full text-[12px] font-mono tracking-[0.06em] px-3 py-2 rounded-md border outline-none bg-(--bg) text-(--ink) placeholder:text-muted-foreground"
         style={{ borderColor: "var(--rule)" }}
       />
       <textarea
@@ -108,7 +108,7 @@ function NoteEditor({
         placeholder={placeholder}
         rows={5}
         autoFocus
-        className="w-full resize-none text-[14px] leading-[1.65] px-[12px] py-[10px] rounded-[8px] border outline-none bg-[var(--bg)] text-[var(--ink)] placeholder:text-[var(--ink-3)]"
+        className="w-full resize-none text-[14px] leading-[1.65] px-3 py-2.5 rounded-lg border outline-none bg-(--bg) text-(--ink) placeholder:text-muted-foreground"
         style={{ borderColor: "var(--rule)" }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.metaKey) void onSave();
@@ -116,20 +116,20 @@ function NoteEditor({
         }}
       />
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+        <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground">
           ⌘↵ to save · Esc to cancel
         </span>
-        <div className="flex gap-[8px]">
+        <div className="flex gap-2">
           <button
             onClick={onCancel}
-            className="font-mono text-[10px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+            className="font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={() => void onSave()}
             disabled={saving || !content.trim()}
-            className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[12px] py-[6px] rounded-[6px] border-none cursor-pointer font-semibold text-(--bg) transition-all disabled:opacity-40"
+            className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-md border-none cursor-pointer font-semibold text-(--bg) transition-all disabled:opacity-40"
             style={{ background: ACCENT }}
           >
             {saving ? (
@@ -516,42 +516,42 @@ export function ChNotesClient({
   };
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px] max-w-[800px]">
+    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8 max-w-[800px]">
       {/* ── Header ── */}
-      <div className="mb-[40px]">
-        <div className="flex items-center gap-[12px] mb-[16px]">
+      <div className="mb-10">
+        <div className="flex items-center gap-3 mb-4">
           <Link
             href={`/tools/chapterly/read/${book.id}`}
-            className="inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] no-underline transition-colors"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground hover:text-(--ink) no-underline transition-colors"
           >
             <ArrowLeft size={12} />
             Back to reader
           </Link>
-          <span className="text-[var(--rule)]">·</span>
+          <span className="text-(--rule)">·</span>
           <Link
             href={`/tools/chapterly/chat/${book.id}`}
-            className="inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] no-underline transition-colors"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground hover:text-(--ink) no-underline transition-colors"
           >
             <BookMarked size={12} />
             AI chat
           </Link>
         </div>
 
-        <div className="flex items-start justify-between gap-[16px] flex-wrap">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] mb-[6px]">
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
               {book.author ? `${book.author} · ` : ""}Notes & Highlights
             </div>
-            <h1 className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text text-[var(--ink)] m-0 leading-[1.1]">
+            <h1 className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
               {book.title}
             </h1>
           </div>
-          <div className="flex items-center gap-[8px] flex-wrap mt-[12px] sm:mt-0">
-            <div className="flex flex-col items-end gap-[4px]">
+          <div className="flex items-center gap-2 flex-wrap mt-3 sm:mt-0">
+            <div className="flex flex-col items-end gap-1">
               <button
                 onClick={() => void copyForBookBreaks()}
                 disabled={highlights.length === 0 && notes.length === 0}
-                className="shrink-0 inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="shrink-0 inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase font-semibold px-3.5 py-2 rounded-lg border-none cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 style={
                   bridgeCopied
                     ? { background: "#16A34A", color: "var(--ch-bg)" }
@@ -563,7 +563,7 @@ export function ChNotesClient({
                 {bridgeCopied ? "Copied — paste in BookBreaks" : "Create content in BookBreaks"}
               </button>
               {!bridgeCopied && (highlights.length > 0 || notes.length > 0) && (
-                <span className="font-mono text-[8px] tracking-[0.08em] text-[var(--ink-3)] opacity-60 max-w-[240px] text-right leading-[1.4]">
+                <span className="font-mono text-[8px] tracking-[0.08em] text-muted-foreground opacity-60 max-w-60 text-right leading-[1.4]">
                   Copies your {highlights.length > 0 ? `${highlights.length} highlight${highlights.length !== 1 ? "s" : ""}` : "notes"} as Markdown · Paste into Thread Studio or Carousel Lab
                 </span>
               )}
@@ -571,7 +571,7 @@ export function ChNotesClient({
             <button
               onClick={exportMarkdown}
               disabled={notes.length === 0 && highlights.length === 0}
-              className="shrink-0 inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold px-[14px] py-[8px] rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="shrink-0 inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase font-semibold px-3.5 py-2 rounded-lg border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) hover:border-secondary-foreground transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <Download size={13} />
               Export .md
@@ -581,12 +581,12 @@ export function ChNotesClient({
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex gap-[2px] mb-[32px] p-[4px] rounded-[10px] bg-[var(--bg-2)] w-full sm:w-fit border border-[var(--rule)] flex-wrap">
+      <div className="flex gap-0.5 mb-8 p-1 rounded-[10px] bg-(--bg-2) w-full sm:w-fit border border-(--rule) flex-wrap">
         {(["notes", "highlights", "quiz", "shorts"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="flex items-center gap-[7px] px-[14px] py-[8px] rounded-[7px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold border-none cursor-pointer transition-all"
+            className="flex items-center gap-1.75 px-3.5 py-2 rounded-[7px] font-mono text-[10px] tracking-widest uppercase font-semibold border-none cursor-pointer transition-all"
             style={
               tab === t
                 ? { background: ACCENT, color: "var(--ch-bg)" }
@@ -607,7 +607,7 @@ export function ChNotesClient({
 
       {/* ── Notes tab ── */}
       {tab === "notes" && (
-        <div className="space-y-[16px]">
+        <div className="space-y-4">
           {/* Add new */}
           {addingNew ? (
             <NoteEditor
@@ -630,7 +630,7 @@ export function ChNotesClient({
                 setAddingNew(true);
                 setEditingId(null);
               }}
-              className="w-full flex items-center gap-[10px] h-[52px] px-[16px] rounded-[12px] border border-dashed border-[var(--rule)] bg-transparent cursor-pointer font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-all"
+              className="w-full flex items-center gap-2.5 h-13 px-4 rounded-xl border border-dashed border-(--rule) bg-transparent cursor-pointer font-mono text-[11px] tracking-widest uppercase text-muted-foreground hover:text-(--ink) hover:border-secondary-foreground transition-all"
             >
               <Plus size={14} style={{ color: ACCENT }} />
               Add a note
@@ -639,15 +639,15 @@ export function ChNotesClient({
 
           {/* Note list */}
           {notes.length === 0 && !addingNew ? (
-            <div className="text-center py-[64px]">
+            <div className="text-center py-16">
               <StickyNote
                 size={36}
-                className="mx-auto mb-[16px] text-[var(--ink-3)] opacity-30"
+                className="mx-auto mb-4 text-muted-foreground opacity-30"
               />
-              <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+              <div className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
                 No notes yet
               </div>
-              <div className="text-[13px] text-[var(--ink-3)] mt-[6px]">
+              <div className="text-[13px] text-muted-foreground mt-1.5">
                 Use the sticky note button in the reader, or add one above.
               </div>
             </div>
@@ -655,10 +655,10 @@ export function ChNotesClient({
             notes.map((note) => (
               <div
                 key={note.id}
-                className="rounded-[12px] border border-[var(--rule)] bg-[var(--bg-2)] overflow-hidden"
+                className="rounded-xl border border-(--rule) bg-(--bg-2) overflow-hidden"
               >
                 {editingId === note.id ? (
-                  <div className="p-[16px]">
+                  <div className="p-4">
                     <NoteEditor
                       content={editContent}
                       chapter={editChapter}
@@ -671,25 +671,25 @@ export function ChNotesClient({
                     />
                   </div>
                 ) : (
-                  <div className="p-[20px]">
+                  <div className="p-5">
                     {note.chapter_ref && (
                       <div
-                        className="font-mono text-[9px] tracking-[0.12em] uppercase mb-[10px] px-[8px] py-[3px] rounded-full inline-block"
+                        className="font-mono text-[9px] tracking-[0.12em] uppercase mb-2.5 px-2 py-0.75 rounded-full inline-block"
                         style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", color: ACCENT }}
                       >
                         {note.chapter_ref}
                       </div>
                     )}
                     {renderNoteContent(note.content_md)}
-                    <div className="flex items-center justify-between mt-[16px]">
-                      <span className="font-mono text-[10px] text-[var(--ink-3)]">
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="font-mono text-[10px] text-muted-foreground">
                         {formatDate(note.created_at)}
                         {note.updated_at !== note.created_at && " · edited"}
                       </span>
-                      <div className="flex gap-[6px]">
+                      <div className="flex gap-1.5">
                         <button
                           onClick={() => startEdit(note)}
-                          className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+                          className="w-7 h-7 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"
                           aria-label="Edit note"
                         >
                           <Edit3 size={12} />
@@ -697,7 +697,7 @@ export function ChNotesClient({
                         <button
                           onClick={() => void deleteNote(note.id)}
                           disabled={deletingNoteId === note.id}
-                          className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-red-500 transition-colors disabled:opacity-40"
+                          className="w-7 h-7 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-40"
                           aria-label="Delete note"
                         >
                           {deletingNoteId === note.id ? (
@@ -718,17 +718,17 @@ export function ChNotesClient({
 
       {/* ── Highlights tab ── */}
       {tab === "highlights" && (
-        <div className="space-y-[12px]">
+        <div className="space-y-3">
           {highlights.length === 0 ? (
-            <div className="text-center py-[64px]">
+            <div className="text-center py-16">
               <BookOpen
                 size={36}
-                className="mx-auto mb-[16px] text-[var(--ink-3)] opacity-30"
+                className="mx-auto mb-4 text-muted-foreground opacity-30"
               />
-              <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+              <div className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
                 No highlights yet
               </div>
-              <div className="text-[13px] text-[var(--ink-3)] mt-[6px]">
+              <div className="text-[13px] text-muted-foreground mt-1.5">
                 Select text in the reader and choose a highlight color.
               </div>
             </div>
@@ -738,38 +738,38 @@ export function ChNotesClient({
               return (
                 <div
                   key={h.id}
-                  className="rounded-[12px] p-[20px] border"
+                  className="rounded-xl p-5 border"
                   style={{
                     background: style.bg,
                     borderColor: style.border + "60",
                   }}
                 >
                   <blockquote
-                    className="m-0 text-[15px] leading-[1.7] text-[var(--ink)] italic"
+                    className="m-0 text-[15px] leading-[1.7] text-(--ink) italic"
                     style={{ borderLeft: "none" }}
                   >
                     "{h.text}"
                   </blockquote>
                   {h.note && (
-                    <p className="mt-[10px] text-[13px] text-[var(--ink-2)] not-italic">
+                    <p className="mt-2.5 text-[13px] text-secondary-foreground not-italic">
                       {h.note}
                     </p>
                   )}
-                  <div className="flex items-center justify-between mt-[14px]">
-                    <div className="flex items-center gap-[8px]">
+                  <div className="flex items-center justify-between mt-3.5">
+                    <div className="flex items-center gap-2">
                       <div
-                        className="w-[10px] h-[10px] rounded-full"
+                        className="w-2.5 h-2.5 rounded-full"
                         style={{ background: style.border }}
                       />
-                      <span className="font-mono text-[10px] text-[var(--ink-3)]">
+                      <span className="font-mono text-[10px] text-muted-foreground">
                         {style.label} · {formatDate(h.created_at)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-[6px]">
+                    <div className="flex items-center gap-1.5">
                       {/* Share card */}
                       <button
                         onClick={() => setShareHighlight(h)}
-                        className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[#C85A2C] hover:border-[#C85A2C] transition-colors"
+                        className="w-7 h-7 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-[#C85A2C] hover:border-[#C85A2C] transition-colors"
                         aria-label="Share as card"
                         title="Share as card"
                       >
@@ -779,7 +779,7 @@ export function ChNotesClient({
                       <button
                         onClick={() => void makeFlashcard(h)}
                         disabled={h.is_flashcard || flashcardingId === h.id}
-                        className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-7 h-7 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         style={
                           h.is_flashcard
                             ? { color: ACCENT, borderColor: "color-mix(in srgb, var(--ch-accent) 25%, transparent)" }
@@ -797,7 +797,7 @@ export function ChNotesClient({
                       <button
                         onClick={() => void deleteHighlight(h.id)}
                         disabled={deletingHighlightId === h.id}
-                        className="w-[28px] h-[28px] flex items-center justify-center rounded-[6px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-red-500 transition-colors disabled:opacity-40"
+                        className="w-7 h-7 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-40"
                         aria-label="Delete highlight"
                       >
                         {deletingHighlightId === h.id ? (
@@ -820,27 +820,27 @@ export function ChNotesClient({
         <div>
           {/* Empty / loading / generate state */}
           {shortsCards.length === 0 && !shortsLoading && (
-            <div className="text-center py-[64px] rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[480px] mx-auto">
+            <div className="text-center py-16 rounded-[20px] border border-(--rule) bg-(--bg-2) p-8 max-w-[480px] mx-auto">
               <div
-                className="w-[60px] h-[60px] rounded-[16px] flex items-center justify-center mx-auto mb-[20px]"
+                className="w-15 h-15 rounded-2xl flex items-center justify-center mx-auto mb-5"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 8%, transparent)` }}
               >
                 <Zap size={28} style={{ color: ACCENT }} />
               </div>
-              <h3 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[8px]">
+              <h3 className="text-[18px] font-semibold text-(--ink) m-0 mb-2">
                 Concept Shorts
               </h3>
-              <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 mb-[24px]">
+              <p className="text-[13px] leading-[1.6] text-muted-foreground m-0 mb-6">
                 AI extracts the 6 most powerful concepts from &ldquo;{book.title}&rdquo; — distilled into snackable cards you can swipe through.
               </p>
               {shortsError && (
-                <p className="text-[12px] text-red-500 mb-[16px] px-[12px] py-[8px] rounded-[8px] bg-[rgba(220,38,38,0.06)] border border-[rgba(220,38,38,0.15)]">
+                <p className="text-[12px] text-red-500 mb-4 px-3 py-2 rounded-lg bg-[rgba(220,38,38,0.06)] border border-[rgba(220,38,38,0.15)]">
                   {shortsError}
                 </p>
               )}
               <button
                 onClick={() => void generateShorts()}
-                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
+                className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-5 py-3 rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-(--ch-bg)"
                 style={{ background: ACCENT }}
               >
                 <Sparkles size={13} />
@@ -850,30 +850,30 @@ export function ChNotesClient({
           )}
 
           {shortsLoading && (
-            <div className="text-center py-[80px] rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[480px] mx-auto">
-              <Loader2 size={32} className="animate-spin mx-auto mb-[16px]" style={{ color: ACCENT }} />
-              <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+            <div className="text-center py-20 rounded-[20px] border border-(--rule) bg-(--bg-2) p-8 max-w-[480px] mx-auto">
+              <Loader2 size={32} className="animate-spin mx-auto mb-4" style={{ color: ACCENT }} />
+              <div className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
                 Extracting Concepts…
               </div>
-              <div className="text-[13px] text-[var(--ink-3)] mt-[6px]">
+              <div className="text-[13px] text-muted-foreground mt-1.5">
                 Analyzing highlights and book themes. Give it a moment.
               </div>
             </div>
           )}
 
           {shortsCards.length > 0 && (
-            <div className="max-w-[520px] mx-auto">
+            <div className="max-w-130 mx-auto">
               {/* Progress */}
-              <div className="flex items-center justify-between mb-[20px]">
-                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+              <div className="flex items-center justify-between mb-5">
+                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
                   Concept {shortsIndex + 1} of {shortsCards.length}
                 </div>
-                <div className="flex items-center gap-[6px]">
+                <div className="flex items-center gap-1.5">
                   {shortsCards.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => { setShortsIndex(i); setDragDelta(0); }}
-                      className="w-[6px] h-[6px] rounded-full border-none cursor-pointer transition-all p-0"
+                      className="w-1.5 h-1.5 rounded-full border-none cursor-pointer transition-all p-0"
                       style={{ background: i === shortsIndex ? ACCENT : "var(--rule)", transform: i === shortsIndex ? "scale(1.4)" : "scale(1)" }}
                       aria-label={`Go to card ${i + 1}`}
                     />
@@ -881,7 +881,7 @@ export function ChNotesClient({
                 </div>
                 <button
                   onClick={() => void generateShorts()}
-                  className="flex items-center gap-[5px] font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer transition-colors"
+                  className="flex items-center gap-1.25 font-mono text-[9px] tracking-widest uppercase text-muted-foreground hover:text-(--ink) border-none bg-transparent cursor-pointer transition-colors"
                 >
                   <RefreshCw size={10} />
                   Redo
@@ -889,14 +889,14 @@ export function ChNotesClient({
               </div>
 
               {/* Card stack — decorative background cards */}
-              <div className="relative h-[360px] mb-[24px]">
+              <div className="relative h-90 mb-6">
                 {/* Back cards (decorative) */}
                 {[2, 1].map((offset) => {
                   const nextIdx = (shortsIndex + offset) % shortsCards.length;
                   return (
                     <div
                       key={offset}
-                      className="absolute inset-x-0 rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)]"
+                      className="absolute inset-x-0 rounded-[20px] border border-(--rule) bg-(--bg-2)"
                       style={{
                         top: `${offset * 10}px`,
                         bottom: `-${offset * 4}px`,
@@ -907,11 +907,11 @@ export function ChNotesClient({
                       aria-hidden="true"
                     >
                       {shortsCards[nextIdx] && (
-                        <div className="p-[28px] opacity-20 pointer-events-none">
-                          <div className="font-mono text-[9px] tracking-[0.12em] uppercase mb-[10px]" style={{ color: ACCENT }}>
+                        <div className="p-7 opacity-20 pointer-events-none">
+                          <div className="font-mono text-[9px] tracking-[0.12em] uppercase mb-2.5" style={{ color: ACCENT }}>
                             concept
                           </div>
-                          <div className="text-[16px] font-semibold text-[var(--ink)] leading-[1.3]">
+                          <div className="text-[16px] font-semibold text-(--ink) leading-[1.3]">
                             {shortsCards[nextIdx].title}
                           </div>
                         </div>
@@ -927,7 +927,7 @@ export function ChNotesClient({
                   const saving = shortsSaving === shortsIndex;
                   return (
                     <div
-                      className="absolute inset-0 rounded-[20px] border border-[var(--rule)] bg-[var(--bg-2)] p-[28px] flex flex-col z-20 select-none"
+                      className="absolute inset-0 rounded-[20px] border border-(--rule) bg-(--bg-2) p-7 flex flex-col z-20 select-none"
                       style={{
                         transform: isDragging ? `translateX(${dragDelta}px) rotate(${dragDelta * 0.04}deg)` : "translateX(0) rotate(0)",
                         transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
@@ -977,35 +977,35 @@ export function ChNotesClient({
                       }}
                     >
                       <div
-                        className="font-mono text-[9px] tracking-[0.14em] uppercase mb-[12px] inline-block"
+                        className="font-mono text-[9px] tracking-[0.14em] uppercase mb-3 inline-block"
                         style={{ color: ACCENT }}
                       >
                         concept {shortsIndex + 1} / {shortsCards.length}
                       </div>
-                      <h2 className="text-[20px] font-semibold text-[var(--ink)] leading-[1.3] m-0 mb-[10px]">
+                      <h2 className="text-[20px] font-semibold text-(--ink) leading-[1.3] m-0 mb-2.5">
                         {card.title}
                       </h2>
-                      <p className="text-[13px] font-medium text-[var(--ink-2)] leading-[1.5] m-0 mb-[14px]">
+                      <p className="text-[13px] font-medium text-secondary-foreground leading-normal m-0 mb-3.5">
                         <MarkdownInline text={card.concept} />
                       </p>
-                      <p className="text-[13px] leading-[1.7] text-[var(--ink-3)] m-0 flex-1">
+                      <p className="text-[13px] leading-[1.7] text-muted-foreground m-0 flex-1">
                         <MarkdownInline text={card.insight} />
                       </p>
                       {card.quote && (
                         <blockquote
-                          className="mt-[14px] mb-0 pl-[12px] text-[12px] italic leading-[1.6] text-[var(--ink-3)]"
+                          className="mt-3.5 mb-0 pl-3 text-[12px] italic leading-[1.6] text-muted-foreground"
                           style={{ borderLeft: "none", borderTop: "1px solid var(--rule)", paddingTop: "12px" }}
                         >
                           &ldquo;{card.quote}&rdquo;
                         </blockquote>
                       )}
-                      <div className="mt-[16px] flex items-center justify-between gap-[8px]">
+                      <div className="mt-4 flex items-center justify-between gap-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setShareConceptIdx(shortsIndex);
                           }}
-                          className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[7px] rounded-[8px] border cursor-pointer transition-all"
+                          className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase font-semibold px-3 py-1.75 rounded-lg border cursor-pointer transition-all"
                           style={{ background: "transparent", color: "var(--ink-3)", borderColor: "var(--rule)" }}
                           title="Share this concept"
                         >
@@ -1018,7 +1018,7 @@ export function ChNotesClient({
                             void saveConceptAsNote(card, shortsIndex);
                           }}
                           disabled={isSaved || saving}
-                          className="flex items-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold px-[12px] py-[7px] rounded-[8px] border cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase font-semibold px-3 py-1.75 rounded-lg border cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           style={
                             isSaved
                               ? { background: "#16A34A", color: "var(--ch-bg)", borderColor: "#16A34A" }
@@ -1046,18 +1046,18 @@ export function ChNotesClient({
                 <button
                   onClick={() => advanceCard("prev")}
                   disabled={shortsIndex === 0}
-                  className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[14px] py-[9px] rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-3.5 py-2.25 rounded-lg border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) hover:border-secondary-foreground transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft size={13} />
                   Prev
                 </button>
-                <span className="font-mono text-[9px] text-[var(--ink-3)] opacity-60">
+                <span className="font-mono text-[9px] text-muted-foreground opacity-60">
                   drag or click to navigate
                 </span>
                 <button
                   onClick={() => advanceCard("next")}
                   disabled={shortsIndex === shortsCards.length - 1}
-                  className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase px-[14px] py-[9px] rounded-[8px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase px-3.5 py-2.25 rounded-lg border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) hover:border-secondary-foreground transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   Next
                   <ChevronRight size={13} />
@@ -1070,24 +1070,24 @@ export function ChNotesClient({
 
       {/* ── AI Quiz tab ── */}
       {tab === "quiz" && (
-        <div className="space-y-[24px]">
+        <div className="space-y-6">
           {quizQuestions.length === 0 && !generatingQuiz && (
-            <div className="text-center py-[64px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto">
+            <div className="text-center py-16 rounded-2xl border border-(--rule) bg-(--bg-2) p-8 max-w-[500px] mx-auto">
               <div
-                className="w-[56px] h-[56px] rounded-full flex items-center justify-center mx-auto mb-[20px]"
+                className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)` }}
               >
                 <HelpCircle size={26} style={{ color: ACCENT }} />
               </div>
-              <h3 className="text-[18px] font-semibold text-[var(--ink)] m-0 mb-[8px]">
+              <h3 className="text-[18px] font-semibold text-(--ink) m-0 mb-2">
                 AI Comprehension Quiz
               </h3>
-              <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 mb-[24px]">
+              <p className="text-[13px] leading-[1.6] text-muted-foreground m-0 mb-6">
                 Test your understanding, themes, and key concepts of &ldquo;{book.title}&rdquo; with a custom generated 5-question quiz.
               </p>
               <button
                 onClick={generateQuiz}
-                className="inline-flex items-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
+                className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-5 py-3 rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-(--ch-bg)"
                 style={{ background: ACCENT }}
               >
                 <Sparkles size={13} />
@@ -1097,22 +1097,22 @@ export function ChNotesClient({
           )}
 
           {generatingQuiz && (
-            <div className="text-center py-[80px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto">
-              <Loader2 size={32} className="animate-spin mx-auto mb-[16px]" style={{ color: ACCENT }} />
-              <div className="font-mono text-[11px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+            <div className="text-center py-20 rounded-2xl border border-(--rule) bg-(--bg-2) p-8 max-w-[500px] mx-auto">
+              <Loader2 size={32} className="animate-spin mx-auto mb-4" style={{ color: ACCENT }} />
+              <div className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
                 Creating Quiz Questions…
               </div>
-              <div className="text-[13px] text-[var(--ink-3)] mt-[6px]">
+              <div className="text-[13px] text-muted-foreground mt-1.5">
                 Analyzing book chapters and highlights. Please wait…
               </div>
             </div>
           )}
 
           {quizQuestions.length > 0 && !quizFinished && (
-            <div className="rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-[480px]:p-[20px] max-w-[640px] mx-auto space-y-[24px]">
+            <div className="rounded-2xl border border-(--rule) bg-(--bg-2) p-8 max-[480px]:p-5 max-w-160 mx-auto space-y-6">
               {/* Progress */}
-              <div className="flex items-center justify-between border-b border-[var(--rule)] pb-[16px]">
-                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+              <div className="flex items-center justify-between border-b border-(--rule) pb-4">
+                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
                   Question {currentQuestionIndex + 1} of {quizQuestions.length}
                 </div>
                 <div className="font-mono text-[10px] tracking-[0.12em] uppercase" style={{ color: ACCENT }}>
@@ -1121,12 +1121,12 @@ export function ChNotesClient({
               </div>
 
               {/* Question text */}
-              <div className="text-[16px] font-medium leading-[1.5] text-[var(--ink)]">
+              <div className="text-[16px] font-medium leading-normal text-(--ink)">
                 {quizQuestions[currentQuestionIndex].question}
               </div>
 
               {/* Options */}
-              <div className="space-y-[10px]">
+              <div className="space-y-2.5">
                 {quizQuestions[currentQuestionIndex].options.map((opt: string, oIdx: number) => {
                   const isSelected = selectedOptionIndex === oIdx;
                   const isCorrect = oIdx === quizQuestions[currentQuestionIndex].correctIndex;
@@ -1155,7 +1155,7 @@ export function ChNotesClient({
                       key={oIdx}
                       disabled={quizSubmitted}
                       onClick={() => setSelectedOptionIndex(oIdx)}
-                      className="w-full text-left p-[16px] rounded-[10px] border text-[13px] leading-[1.5] transition-all cursor-pointer disabled:cursor-default"
+                      className="w-full text-left p-4 rounded-[10px] border text-[13px] leading-normal transition-all cursor-pointer disabled:cursor-default"
                       style={{
                         background: optionBg,
                         borderColor: optionBorder,
@@ -1163,8 +1163,8 @@ export function ChNotesClient({
                         fontWeight: isSelected ? 500 : 400,
                       }}
                     >
-                      <div className="flex items-start gap-[12px]">
-                        <span className="font-mono text-[11px] mt-[1px] opacity-60">
+                      <div className="flex items-start gap-3">
+                        <span className="font-mono text-[11px] mt-0.25 opacity-60">
                           {String.fromCharCode(65 + oIdx)}.
                         </span>
                         <span>{opt}</span>
@@ -1177,28 +1177,28 @@ export function ChNotesClient({
               {/* Explanation block */}
               {quizSubmitted && (
                 <div
-                  className="rounded-[10px] p-[16px] text-[13px] leading-[1.6]"
+                  className="rounded-[10px] p-4 text-[13px] leading-[1.6]"
                   style={{
                     background: "color-mix(in oklab, var(--ch-accent) 5%, transparent)",
                     borderLeft: `3px solid ${ACCENT}`,
                   }}
                 >
-                  <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-2)] mb-[4px] font-semibold">
+                  <div className="font-mono text-[10px] tracking-widest uppercase text-secondary-foreground mb-1 font-semibold">
                     Explanation
                   </div>
-                  <div className="text-[var(--ink-2)]">
+                  <div className="text-secondary-foreground">
                     {quizQuestions[currentQuestionIndex].explanation}
                   </div>
                 </div>
               )}
 
               {/* Action buttons */}
-              <div className="flex justify-end pt-[8px]">
+              <div className="flex justify-end pt-2">
                 {!quizSubmitted ? (
                   <button
                     disabled={selectedOptionIndex === null}
                     onClick={handleAnswerSubmit}
-                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-[var(--ch-bg)] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-5 py-3 rounded-[10px] border-none cursor-pointer text-(--ch-bg) transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ background: ACCENT }}
                   >
                     Submit Answer
@@ -1206,7 +1206,7 @@ export function ChNotesClient({
                 ) : (
                   <button
                     onClick={handleNextQuestion}
-                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer text-[var(--ch-bg)] transition-all"
+                    className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-5 py-3 rounded-[10px] border-none cursor-pointer text-(--ch-bg) transition-all"
                     style={{ background: ACCENT }}
                   >
                     {currentQuestionIndex + 1 === quizQuestions.length ? "Finish Quiz" : "Next Question"}
@@ -1217,21 +1217,21 @@ export function ChNotesClient({
           )}
 
           {quizFinished && (
-            <div className="text-center py-[64px] rounded-[16px] border border-[var(--rule)] bg-[var(--bg-2)] p-[32px] max-w-[500px] mx-auto space-y-[24px]">
+            <div className="text-center py-16 rounded-2xl border border-(--rule) bg-(--bg-2) p-8 max-w-[500px] mx-auto space-y-6">
               <div
-                className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto"
+                className="w-18 h-18 rounded-full flex items-center justify-center mx-auto"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)` }}
               >
                 <Sparkles size={32} style={{ color: ACCENT }} />
               </div>
               <div>
-                <h3 className="text-[22px] font-semibold text-[var(--ink)] m-0 mb-[6px]">
+                <h3 className="text-[22px] font-semibold text-(--ink) m-0 mb-1.5">
                   Quiz Completed
                 </h3>
-                <div className="text-[32px] font-bold text-[var(--ink)] leading-[1] my-[12px]" style={{ color: ACCENT }}>
+                <div className="text-[32px] font-bold text-(--ink) leading-none my-3" style={{ color: ACCENT }}>
                   {quizScore} / {quizQuestions.length} Correct
                 </div>
-                <p className="text-[13px] leading-[1.6] text-[var(--ink-3)] m-0 max-w-[360px] mx-auto">
+                <p className="text-[13px] leading-[1.6] text-muted-foreground m-0 max-w-90 mx-auto">
                   {quizScore === quizQuestions.length
                     ? "Perfect! You have a masterful understanding of this book's concepts."
                     : quizScore >= 3
@@ -1240,16 +1240,16 @@ export function ChNotesClient({
                 </p>
               </div>
 
-              <div className="flex gap-[10px] justify-center pt-[8px]">
+              <div className="flex gap-2.5 justify-center pt-2">
                 <button
                   onClick={() => setTab("notes")}
-                  className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-2)] transition-colors"
+                  className="font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-5 py-3 rounded-[10px] border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) hover:border-secondary-foreground transition-colors"
                 >
                   Back to Notes
                 </button>
                 <button
                   onClick={generateQuiz}
-                  className="inline-flex items-center gap-[6px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-[20px] py-[12px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-[var(--ch-bg)]"
+                  className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold px-5 py-3 rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 text-(--ch-bg)"
                   style={{ background: ACCENT }}
                 >
                   <RefreshCw size={12} />
@@ -1335,23 +1335,23 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-[20px] pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-5 pointer-events-none">
         <div
-          className="w-full max-w-[520px] rounded-[24px] border border-[var(--rule)] shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
+          className="w-full max-w-130 rounded-3xl border border-(--rule) shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
           style={{ background: "var(--bg)" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)]">
+          <div className="flex items-center justify-between px-6 py-4.5 border-b border-(--rule)">
             <div>
-              <div className="font-semibold text-[15px] text-[var(--ink)]">Share Highlight</div>
-              <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mt-[2px]">
+              <div className="font-semibold text-[15px] text-(--ink)">Share Highlight</div>
+              <div className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mt-0.5">
                 BookBreaks × Chapterly · 1080×1080 PNG
               </div>
             </div>
             <button
               onClick={onClose}
-              className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none cursor-pointer bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+              className="w-7.5 h-7.5 flex items-center justify-center rounded-lg border-none cursor-pointer bg-transparent text-muted-foreground hover:text-(--ink) transition-colors"
               aria-label="Close"
             >
               <X size={16} />
@@ -1359,34 +1359,34 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
           </div>
 
           {/* Card preview */}
-          <div className="px-[24px] pt-[20px]">
+          <div className="px-6 pt-5">
             <div
-              className="w-full rounded-[16px] p-[22px] relative overflow-hidden flex flex-col"
+              className="w-full rounded-2xl p-5.5 relative overflow-hidden flex flex-col"
               style={{ background: "#141010", minHeight: "280px" }}
             >
               {/* Top gradient stripe */}
               <div
-                className="absolute top-0 left-0 right-0 h-[3px]"
+                className="absolute top-0 left-0 right-0 h-0.75"
                 style={{ background: `linear-gradient(90deg, ${BB_ORANGE}, ${ps.dot})` }}
               />
 
               {/* Logo */}
-              <div className="flex items-center gap-[8px] mb-[16px]">
+              <div className="flex items-center gap-2 mb-4">
                 <div
-                  className="w-[22px] h-[22px] rounded-[5px] flex items-center justify-center font-bold text-[10px]"
+                  className="w-5.5 h-5.5 rounded-[5px] flex items-center justify-center font-bold text-[10px]"
                   style={{ background: BB_ORANGE, color: "var(--ch-bg)" }}
                 >
                   B
                 </div>
                 <span className="font-semibold text-[12px]" style={{ color: "var(--ch-bg)" }}>BookBreaks</span>
-                <span className="font-mono text-[8px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.3)" }}>
+                <span className="font-mono text-[8px] uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
                   × Chapterly
                 </span>
               </div>
 
               {/* Quote */}
               <div
-                className="rounded-[10px] p-[14px] mb-[14px] flex-1"
+                className="rounded-[10px] p-3.5 mb-3.5 flex-1"
                 style={{ background: ps.quoteBg }}
               >
                 <p
@@ -1402,14 +1402,14 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
                 <div>
                   <div className="text-[11px] font-semibold" style={{ color: "var(--ch-bg)" }}>{book.title}</div>
                   {book.author && (
-                    <div className="text-[9px] font-mono mt-[2px]" style={{ color: "rgba(255,255,255,0.4)" }}>
+                    <div className="text-[9px] font-mono mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
                       by {book.author}
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-[5px]">
-                  <div className="w-[6px] h-[6px] rounded-full" style={{ background: ps.dot }} />
-                  <span className="font-mono text-[8px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.3)" }}>
+                <div className="flex items-center gap-1.25">
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: ps.dot }} />
+                  <span className="font-mono text-[8px] uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
                     {highlight.color}
                   </span>
                 </div>
@@ -1418,11 +1418,11 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
           </div>
 
           {/* Actions */}
-          <div className="px-[24px] py-[16px] flex items-center gap-[10px]">
+          <div className="px-6 py-4 flex items-center gap-2.5">
             <button
               onClick={() => void downloadCard()}
               disabled={downloading}
-              className="flex-1 flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.12em] uppercase font-semibold h-[44px] rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 text-white"
+              className="flex-1 flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.12em] uppercase font-semibold h-11 rounded-[10px] border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 text-white"
               style={{ background: BB_ORANGE }}
             >
               {downloading ? (
@@ -1434,14 +1434,14 @@ function ShareCardModal({ highlight, book, onClose }: ShareCardModalProps): Reac
             </button>
             <button
               onClick={onClose}
-              className="h-[44px] px-[20px] rounded-[10px] border border-[var(--rule)] bg-transparent font-mono text-[10px] tracking-[0.1em] uppercase cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] transition-all"
+              className="h-11 px-5 rounded-[10px] border border-(--rule) bg-transparent font-mono text-[10px] tracking-widest uppercase cursor-pointer text-muted-foreground hover:text-(--ink) transition-all"
             >
               Close
             </button>
           </div>
 
-          <div className="pb-[14px]">
-            <p className="font-mono text-[9px] text-[var(--ink-3)] text-center tracking-[0.08em] m-0">
+          <div className="pb-3.5">
+            <p className="font-mono text-[9px] text-muted-foreground text-center tracking-[0.08em] m-0">
               Perfect for Instagram · Twitter · Stories
             </p>
           </div>
@@ -1684,24 +1684,24 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
   return (
     <>
       <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-[16px] pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div
-          className="w-full max-w-[500px] max-h-[90vh] rounded-[24px] border border-[var(--rule)] shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
+          className="w-full max-w-[500px] max-h-[90vh] rounded-3xl border border-(--rule) shadow-2xl pointer-events-auto flex flex-col overflow-hidden"
           style={{ background: "var(--bg)" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--rule)] shrink-0">
+          <div className="flex items-center justify-between px-6 py-4.5 border-b border-(--rule) shrink-0">
             <div>
-              <div className="font-semibold text-[15px] text-[var(--ink)]">Share Concept</div>
-              <div className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--ink-3)] mt-[2px]">
+              <div className="font-semibold text-[15px] text-(--ink)">Share Concept</div>
+              <div className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mt-0.5">
                 Chapterly · Concept Short
               </div>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px] border-none cursor-pointer bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+              className="w-7.5 h-7.5 flex items-center justify-center rounded-lg border-none cursor-pointer bg-transparent text-muted-foreground hover:text-(--ink) transition-colors"
               aria-label="Close"
             >
               <X size={16} />
@@ -1711,24 +1711,24 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
           {/* Scrollable body */}
           <div className="overflow-y-auto flex-1">
             {/* Card preview */}
-            <div className="px-[24px] pt-[20px]">
+            <div className="px-6 pt-5">
               <div
-                className="rounded-[16px] p-[20px] flex flex-col gap-[10px] relative overflow-hidden"
+                className="rounded-2xl p-5 flex flex-col gap-2.5 relative overflow-hidden"
                 style={{ background: "#F4F7F8", borderTop: `3px solid ${CH_ACCENT}` }}
               >
-                <div className="flex items-center gap-[6px]">
+                <div className="flex items-center gap-1.5">
                   <span
-                    className="font-mono text-[9px] tracking-[0.12em] uppercase px-[10px] py-[3px] rounded-full font-semibold"
+                    className="font-mono text-[9px] tracking-[0.12em] uppercase px-2.5 py-0.75 rounded-full font-semibold"
                     style={{ background: `${CH_ACCENT}18`, color: CH_ACCENT }}
                   >
                     ⚡ CHAPTERLY
                   </span>
-                  <span className="font-mono text-[9px] text-[var(--ink-3)]">💡 Concept Short</span>
+                  <span className="font-mono text-[9px] text-muted-foreground">💡 Concept Short</span>
                 </div>
                 <h3 className="text-[16px] font-bold m-0 leading-[1.3]" style={{ color: "#1a2a30" }}>
                   {card.title}
                 </h3>
-                <p className="text-[13px] font-medium m-0 leading-[1.5]" style={{ color: "#2d4a55" }}>
+                <p className="text-[13px] font-medium m-0 leading-normal" style={{ color: "#2d4a55" }}>
                   <MarkdownInline text={card.concept} />
                 </p>
                 {card.insight && (
@@ -1738,21 +1738,21 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                 )}
                 {card.quote && (
                   <div
-                    className="text-[11px] italic leading-[1.6] px-[12px] py-[8px] rounded-[8px]"
+                    className="text-[11px] italic leading-[1.6] px-3 py-2 rounded-lg"
                     style={{ background: `${CH_ACCENT}10`, color: CH_ACCENT }}
                   >
                     &ldquo;{card.quote}&rdquo;
                   </div>
                 )}
                 <div
-                  className="flex items-center justify-between pt-[10px] mt-[4px]"
+                  className="flex items-center justify-between pt-2.5 mt-1"
                   style={{ borderTop: `1px solid ${CH_ACCENT}20` }}
                 >
                   <span className="font-mono text-[9px] tracking-[0.06em]" style={{ color: `${CH_ACCENT}88` }}>
                     {book.author ? `by ${book.author}` : book.title}
                   </span>
                   <span
-                    className="font-mono text-[8px] tracking-[0.1em] uppercase px-[8px] py-[3px] rounded-full text-[var(--ch-bg)]"
+                    className="font-mono text-[8px] tracking-widest uppercase px-2 py-0.75 rounded-full text-(--ch-bg)"
                     style={{ background: CH_ACCENT }}
                   >
                     Try Chapterly →
@@ -1762,13 +1762,13 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
             </div>
 
             {/* Export & Share actions */}
-            <div className="px-[24px] pt-[16px] pb-[4px] flex flex-col gap-[10px]">
+            <div className="px-6 pt-4 pb-1 flex flex-col gap-2.5">
               {/* Primary: Save image */}
               <button
                 type="button"
                 onClick={() => void handleDownload()}
                 disabled={imgLoading}
-                className="w-full h-[44px] flex items-center justify-center gap-[8px] font-mono text-[10px] tracking-[0.1em] uppercase font-semibold rounded-[12px] border-none cursor-pointer transition-all text-[var(--ch-bg)] disabled:opacity-60"
+                className="w-full h-11 flex items-center justify-center gap-2 font-mono text-[10px] tracking-widest uppercase font-semibold rounded-xl border-none cursor-pointer transition-all text-(--ch-bg) disabled:opacity-60"
                 style={{ background: CH_ACCENT }}
               >
                 <Download size={13} />
@@ -1776,13 +1776,13 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
               </button>
 
               {/* Platform share row */}
-              <div className="grid grid-cols-3 gap-[8px]">
+              <div className="grid grid-cols-3 gap-2">
                 {/* X / Twitter */}
                 <a
                   href={`https://twitter.com/intent/tweet?text=${twitterText}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all no-underline"
+                  className="h-10 flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all no-underline"
                   style={{
                     background: "#000000",
                     color: "#ffffff",
@@ -1799,7 +1799,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                   href={`https://wa.me/?text=${whatsappText}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all no-underline"
+                  className="h-10 flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all no-underline"
                   style={{ background: "#25D366", color: "#ffffff" }}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -1814,7 +1814,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                     type="button"
                     onClick={() => void handleNativeShare()}
                     disabled={sharing}
-                    className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border disabled:opacity-60"
+                    className="h-10 flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border disabled:opacity-60"
                     style={{
                       background: "var(--bg-2)",
                       borderColor: "var(--rule)",
@@ -1829,7 +1829,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                     type="button"
                     onClick={() => void handleDownload()}
                     disabled={imgLoading}
-                    className="h-[40px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border disabled:opacity-60"
+                    className="h-10 flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-[0.08em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border disabled:opacity-60"
                     style={{
                       background: "var(--bg-2)",
                       borderColor: "var(--rule)",
@@ -1846,7 +1846,7 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
               <button
                 type="button"
                 onClick={() => void handleCopy()}
-                className="w-full h-[36px] flex items-center justify-center gap-[6px] font-mono text-[9px] tracking-[0.1em] uppercase font-semibold rounded-[10px] cursor-pointer transition-all border"
+                className="w-full h-9 flex items-center justify-center gap-1.5 font-mono text-[9px] tracking-widest uppercase font-semibold rounded-[10px] cursor-pointer transition-all border"
                 style={{
                   background: copied ? "#16A34A08" : "transparent",
                   borderColor: copied ? "#16A34A40" : "var(--rule)",
@@ -1858,14 +1858,14 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
             </div>
 
             {/* Text preview (collapsed) */}
-            <div className="px-[24px] pb-[20px] pt-[4px]">
+            <div className="px-6 pb-5 pt-1">
               <details className="group">
-                <summary className="font-mono text-[9px] tracking-[0.08em] text-[var(--ink-4)] cursor-pointer list-none flex items-center gap-[4px] pb-[8px]">
+                <summary className="font-mono text-[9px] tracking-[0.08em] text-(--ink-4) cursor-pointer list-none flex items-center gap-1 pb-2">
                   <ChevronRight size={10} className="group-open:rotate-90 transition-transform" />
                   Preview share text
                 </summary>
                 <div
-                  className="rounded-[10px] p-[12px] text-[11px] leading-[1.7] whitespace-pre-wrap font-mono"
+                  className="rounded-[10px] p-3 text-[11px] leading-[1.7] whitespace-pre-wrap font-mono"
                   style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}
                 >
                   {shareText}

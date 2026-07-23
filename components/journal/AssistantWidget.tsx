@@ -375,7 +375,7 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
     <>
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-[24px] right-[24px] z-50 w-[56px] h-[56px] rounded-full flex items-center justify-center border-none cursor-pointer shadow-[0_8px_32px_rgba(124,58,237,0.25)] transition-all duration-300 hover:scale-[1.08] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)]"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center border-none cursor-pointer shadow-[0_8px_32px_rgba(124,58,237,0.25)] transition-all duration-300 hover:scale-[1.08] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)]"
         style={{ background: ACCENT, color: "#fff" }}
         aria-label="Open Vela Guide"
       >
@@ -385,39 +385,39 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
       {open && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px]"
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-0.5"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
 
           <div
-            className="fixed top-0 right-0 h-screen w-full max-w-[420px] z-50 flex flex-col shadow-2xl transition-all duration-300 animate-slide-in"
+            className="fixed top-0 right-0 h-screen w-full max-w-105 z-50 flex flex-col shadow-2xl transition-all duration-300 animate-slide-in"
             style={{ background: "var(--bg)", borderLeft: "1px solid var(--rule)" }}
           >
-            <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-[var(--rule)] bg-[var(--bg-2)]">
-              <div className="flex items-center gap-[10px]">
-                <div className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center" style={{ background: ACCENT_BG }}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-(--rule) bg-(--bg-2)">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: ACCENT_BG }}>
                   <Sparkles size={14} style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <div className="font-display text-[15px] font-semibold text-[var(--ink)]">Vela Guide</div>
-                  <div className="font-mono text-[8px] tracking-[0.1em] uppercase text-[var(--ink-3)]">
+                  <div className="font-display text-[15px] font-semibold text-(--ink)">Vela Guide</div>
+                  <div className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
                     Day planner · Coach · Logger
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-[6px]">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setTtsEnabled(!ttsEnabled)}
-                  className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-[var(--bg-3)] text-[var(--ink-3)] transition-all"
+                  className="w-7.5 h-7.5 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-(--bg-3) text-muted-foreground transition-all"
                   title={ttsEnabled ? "Disable voice replies" : "Enable voice replies"}
                 >
                   {ttsEnabled ? <Volume2 size={16} style={{ color: ACCENT }} /> : <VolumeX size={16} />}
                 </button>
                 <button
                   onClick={() => setOpen(false)}
-                  className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-[var(--bg-3)] text-[var(--ink-3)]"
+                  className="w-7.5 h-7.5 rounded-md flex items-center justify-center border-none bg-transparent cursor-pointer hover:bg-(--bg-3) text-muted-foreground"
                   aria-label="Close Vela Guide"
                 >
                   <X size={16} />
@@ -425,11 +425,11 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[20px] space-y-[16px] scrollbar-thin" data-lenis-prevent="true">
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 space-y-4 scrollbar-thin" data-lenis-prevent="true">
               {messages.map((m, idx) => (
                 <div key={idx} className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"}`}>
                   <div
-                    className={`max-w-[85%] rounded-[14px] px-[16px] py-[12px] text-[13px] leading-[1.6] ${m.role === "user" ? "text-white" : "bg-[var(--bg-2)] text-[var(--ink)]"}`}
+                    className={`max-w-[85%] rounded-[14px] px-4 py-3 text-[13px] leading-[1.6] ${m.role === "user" ? "text-white" : "bg-(--bg-2) text-(--ink)"}`}
                     style={
                       m.role === "user"
                         ? { background: ACCENT, borderRadius: "14px 14px 2px 14px" }
@@ -441,11 +441,11 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
 
                   {/* Executed action chips */}
                   {m.executed && m.executed.length > 0 && (
-                    <div className="max-w-[85%] mt-[8px] flex flex-wrap gap-[6px]">
+                    <div className="max-w-[85%] mt-2 flex flex-wrap gap-1.5">
                       {m.executed.map((action, i) => (
                         <span
                           key={i}
-                          className="inline-flex items-center gap-[5px] font-mono text-[9px] tracking-[0.04em] px-[10px] py-[5px] rounded-full"
+                          className="inline-flex items-center gap-1.25 font-mono text-[9px] tracking-[0.04em] px-2.5 py-1.25 rounded-full"
                           style={
                             action.ok
                               ? { background: "rgba(22,163,74,0.10)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.25)" }
@@ -463,9 +463,9 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
 
               {loading && (
                 <div className="flex justify-start">
-                  <div className="bg-[var(--bg-2)] border border-[var(--rule)] rounded-[14px] rounded-bl-[2px] px-[16px] py-[12px] flex items-center gap-[8px]">
+                  <div className="bg-(--bg-2) border border-(--rule) rounded-[14px] rounded-bl-sm px-4 py-3 flex items-center gap-2">
                     <Loader2 className="animate-spin" size={14} style={{ color: ACCENT }} />
-                    <span className="font-mono text-[10px] text-[var(--ink-3)]">Thinking…</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">Thinking…</span>
                   </div>
                 </div>
               )}
@@ -473,7 +473,7 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
               {listening && (
                 <div className="flex justify-end">
                   <div
-                    className="text-white rounded-[14px] rounded-br-[2px] px-[16px] py-[12px] flex items-center gap-[8px] animate-pulse"
+                    className="text-white rounded-[14px] rounded-br-sm px-4 py-3 flex items-center gap-2 animate-pulse"
                     style={{ background: ACCENT }}
                   >
                     <Mic className="animate-bounce" size={14} />
@@ -487,7 +487,7 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
               {!listening && interimTranscript && (
                 <div className="flex justify-end">
                   <div
-                    className="rounded-[14px] rounded-br-[2px] px-[16px] py-[12px] flex items-center gap-[8px]"
+                    className="rounded-[14px] rounded-br-sm px-4 py-3 flex items-center gap-2"
                     style={{ background: ACCENT_BG, color: ACCENT }}
                   >
                     <Loader2 className="animate-spin" size={14} />
@@ -500,12 +500,12 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
 
             {/* Quick suggestions */}
             {!loading && (
-              <div className="px-[20px] pb-[10px] flex gap-[8px] flex-wrap">
+              <div className="px-5 pb-2.5 flex gap-2 flex-wrap">
                 {SUGGESTIONS.map((s) => (
                   <button
                     key={s}
                     onClick={() => void handleSendMessage(s)}
-                    className="font-mono text-[9px] tracking-[0.06em] uppercase px-[10px] py-[6px] rounded-full border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:text-[var(--ink)] hover:border-[var(--ink-3)] transition-all"
+                    className="font-mono text-[9px] tracking-[0.06em] uppercase px-2.5 py-1.5 rounded-full border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) hover:border-muted-foreground transition-all"
                   >
                     {s}
                   </button>
@@ -513,17 +513,17 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
               </div>
             )}
 
-            <div className="p-[16px] border-t border-[var(--rule)] bg-[var(--bg-2)]">
+            <div className="p-4 border-t border-(--rule) bg-(--bg-2)">
               <div
-                className="flex items-end gap-[8px] rounded-[12px] p-[8px] bg-[var(--bg)] border transition-all duration-200 focus-within:border-[var(--ink-3)]"
+                className="flex items-end gap-2 rounded-xl p-2 bg-(--bg) border transition-all duration-200 focus-within:border-muted-foreground"
                 style={{ borderColor: "var(--rule)" }}
               >
                 <button
                   type="button"
                   onClick={() => void toggleSpeechRecognition()}
                   disabled={!listening && Boolean(interimTranscript)}
-                  className={`w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
-                    listening ? "text-white" : "hover:bg-[var(--bg-2)] text-[var(--ink-3)] bg-transparent"
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                    listening ? "text-white" : "hover:bg-(--bg-2) text-muted-foreground bg-transparent"
                   }`}
                   style={listening ? { background: "#DC2626" } : undefined}
                   title={listening ? "Stop listening" : !listening && interimTranscript ? "Transcribing…" : "Speak to Vela"}
@@ -546,7 +546,7 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
                   placeholder={listening ? "Listening…" : "Plan, log, or ask anything…"}
                   disabled={loading}
                   rows={1}
-                  className="flex-1 bg-transparent border-none outline-none resize-none font-sans text-[13px] leading-[1.5] py-[8px] text-[var(--ink)] placeholder:text-[var(--ink-4)]"
+                  className="flex-1 bg-transparent border-none outline-none resize-none font-sans text-[13px] leading-normal py-2 text-(--ink) placeholder:text-(--ink-4)"
                   style={{ maxHeight: "120px" }}
                 />
 
@@ -554,18 +554,18 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
                   type="button"
                   onClick={() => void handleSendMessage(input)}
                   disabled={!input.trim() || loading}
-                  className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed text-white"
+                  className="w-9 h-9 rounded-lg flex items-center justify-center border-none shrink-0 cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed text-white"
                   style={{ background: ACCENT }}
                   aria-label="Send message"
                 >
                   <Send size={14} />
                 </button>
               </div>
-              <div className="flex items-center justify-between mt-[10px] px-[4px]">
-                <span className="font-mono text-[8px] text-[var(--ink-4)] flex items-center gap-[3px]">
+              <div className="flex items-center justify-between mt-2.5 px-1">
+                <span className="font-mono text-[8px] text-(--ink-4) flex items-center gap-0.75">
                   <CornerDownLeft size={8} /> Enter to send
                 </span>
-                <span className="font-mono text-[8px] text-[var(--ink-4)]">
+                <span className="font-mono text-[8px] text-(--ink-4)">
                   Tap the mic to speak
                 </span>
               </div>

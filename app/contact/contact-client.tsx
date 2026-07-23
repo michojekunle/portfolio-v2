@@ -53,17 +53,17 @@ export function ContactPage(): React.ReactElement {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
       {/* Hero */}
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-[48px] items-center pt-[160px] pb-[80px] max-[720px]:pt-[80px] max-[720px]:pb-[56px] max-w-[var(--maxw)] mx-auto px-[var(--gutter)] border-b border-[var(--rule)]">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] mb-[24px]"
+            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
           >
             05 — CONTACT · BOOKING
           </motion.div>
-          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-[var(--ink)] mb-[32px] text-balance fvs-display flex flex-wrap gap-x-[16px] gap-y-[16px] max-[720px]:gap-x-[10px] max-[720px]:gap-y-[8px]">
+          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-4 max-[720px]:gap-x-2.5 max-[720px]:gap-y-2">
             <motion.span
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
@@ -75,7 +75,7 @@ export function ContactPage(): React.ReactElement {
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-              className="italic text-[var(--v3-accent)] fvs-soft"
+              className="italic text-(--v3-accent) fvs-soft"
             >
               build.
             </motion.span>
@@ -84,7 +84,7 @@ export function ContactPage(): React.ReactElement {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-[18px] text-[var(--ink-2)] max-w-[52ch] leading-[1.65] m-0"
+            className="text-[18px] text-secondary-foreground max-w-[52ch] leading-[1.65] m-0"
           >
             Pick a slot below or send a note. Open to contract work, full-time roles in
             protocol-adjacent teams, and conversations that aren&apos;t either.
@@ -101,7 +101,7 @@ export function ContactPage(): React.ReactElement {
         </motion.div>
       </section>
 
-        <section className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)] py-[120px] max-[720px]:py-[72px]">
+        <section className="max-w-(--maxw) mx-auto px-(--gutter) py-30 max-180:py-18">
           <div className="v3-booking-section">
             {/* Calendar card */}
             <div className="v3-calendar-card">
@@ -216,34 +216,34 @@ export function ContactPage(): React.ReactElement {
 
             {/* Info column */}
             <div className="v3-booking-info">
-              <p className="font-display italic text-[clamp(24px,3vw,34px)] leading-[1.2] text-[var(--ink)] mb-[48px] fvs-text-soft">
+              <p className="font-display italic text-[clamp(24px,3vw,34px)] leading-[1.2] text-(--ink) mb-12 fvs-text-soft">
                 Good conversations start with a clear problem. Tell me what you&apos;re building.
               </p>
 
               <div className="body">
-                <div className="mb-[48px]">
-                  <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--ink-3)] mb-[16px] font-bold">
+                <div className="mb-12">
+                  <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-4 font-bold">
                     Email
                   </div>
-                  <a href="mailto:michojekunle1@gmail.com" className="text-[22px] font-display text-[var(--v3-accent)] no-underline hover:underline fvs-text">
+                  <a href="mailto:michojekunle1@gmail.com" className="text-[22px] font-display text-(--v3-accent) no-underline hover:underline fvs-text">
                     michojekunle1@gmail.com
                   </a>
-                  <p className="text-[14px] font-mono tracking-tight text-[var(--ink-3)] mt-[10px]">Lagos, Nigeria · WAT (UTC+1)</p>
+                  <p className="text-[14px] font-mono tracking-tight text-muted-foreground mt-2.5">Lagos, Nigeria · WAT (UTC+1)</p>
                 </div>
 
                 <div className="flex flex-wrap gap-4 mt-8">
                   <MagneticWrapper>
-                    <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-[var(--rule)] rounded-full hover:bg-[var(--paper)] transition-colors no-underline text-[14px]">
+                    <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-(--rule) rounded-full hover:bg-(--paper) transition-colors no-underline text-[14px]">
                       GitHub <ArrowUpRight className="inline w-3 h-3 ml-1" />
                     </a>
                   </MagneticWrapper>
                   <MagneticWrapper>
-                    <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-[var(--rule)] rounded-full hover:bg-[var(--paper)] transition-colors no-underline text-[14px]">
+                    <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-(--rule) rounded-full hover:bg-(--paper) transition-colors no-underline text-[14px]">
                       Twitter <ArrowUpRight className="inline w-3 h-3 ml-1" />
                     </a>
                   </MagneticWrapper>
                   <MagneticWrapper>
-                    <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-[var(--rule)] rounded-full hover:bg-[var(--paper)] transition-colors no-underline text-[14px]">
+                    <a href="https://linkedin.com/in/michael-ojekunle" target="_blank" rel="noopener noreferrer" className="v3-social-chip inline-block px-4 py-2 border border-(--rule) rounded-full hover:bg-(--paper) transition-colors no-underline text-[14px]">
                       LinkedIn <ArrowUpRight className="inline w-3 h-3 ml-1" />
                     </a>
                   </MagneticWrapper>
@@ -254,24 +254,24 @@ export function ContactPage(): React.ReactElement {
         </section>
 
         {/* FAQs */}
-        <section className="py-[120px] max-[720px]:py-[72px] bg-[var(--bg-2)] border-y border-[var(--rule)]">
-          <div className="max-w-[var(--maxw)] mx-auto px-[var(--gutter)]">
-            <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-[48px] max-[720px]:gap-[12px] items-baseline mb-[80px] max-[720px]:mb-[48px]">
-              <div className="font-mono text-[11px] tracking-[0.18em] text-[var(--ink-3)] pt-[18px]">06 — FAQS</div>
+        <section className="py-30 max-180:py-18 bg-(--bg-2) border-y border-(--rule)">
+          <div className="max-w-(--maxw) mx-auto px-(--gutter)">
+            <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-3 items-baseline mb-20 max-180:mb-12">
+              <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5">06 — FAQS</div>
               <div>
-                <h2 className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-[-0.025em] text-[var(--ink)] text-balance fvs-display">
-                  Common <em className="not-italic italic text-[var(--v3-accent)] fvs-soft">questions.</em>
+                <h2 className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+                  Common <em className="not-italic italic text-(--v3-accent) fvs-soft">questions.</em>
                 </h2>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 max-[920px]:grid-cols-1 gap-x-[80px] gap-y-[48px]">
+            <div className="grid grid-cols-2 max-[920px]:grid-cols-1 gap-x-20 gap-y-12">
               {FAQS.map((faq, i) => (
                 <div key={i} className="group">
-                  <h4 className="font-display font-normal text-[22px] leading-[1.3] text-[var(--ink)] mb-[16px] fvs-text group-hover:text-[var(--v3-accent)] transition-colors">
+                  <h4 className="font-display font-normal text-[22px] leading-[1.3] text-(--ink) mb-4 fvs-text group-hover:text-(--v3-accent) transition-colors">
                     {faq.q}
                   </h4>
-                  <p className="text-[15px] text-[var(--ink-2)] leading-[1.65] m-0 max-w-[48ch]">
+                  <p className="text-[15px] text-secondary-foreground leading-[1.65] m-0 max-w-[48ch]">
                     {faq.a}
                   </p>
                 </div>

@@ -11,7 +11,7 @@ export default async function LibraryPage(): Promise<React.ReactElement> {
   const books = await getUserBooks();
 
   return (
-    <div className="px-[40px] pt-[48px] pb-[48px] max-[1024px]:pt-[80px] max-[720px]:px-[24px] max-[720px]:pb-[32px]">
+    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8">
       <Suspense>
         <ChLibraryClient books={books} />
       </Suspense>

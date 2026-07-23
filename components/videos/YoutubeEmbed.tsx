@@ -10,7 +10,7 @@ interface Props {
   className?: string;
 }
 
-export function YoutubeEmbed({ url, title, className = "" }: Props): React.ReactElement {
+export function YoutubeEmbed({ url, title, className="" }: Props): React.ReactElement {
   const [playing, setPlaying] = useState(false);
   const id = extractYoutubeId(url);
   const thumbnail = getYoutubeThumbnail(url);
@@ -18,16 +18,16 @@ export function YoutubeEmbed({ url, title, className = "" }: Props): React.React
   if (!id) {
     return (
       <div
-        className={`flex items-center justify-center aspect-video rounded-[16px] bg-[var(--bg-2)] border border-[var(--rule)] ${className}`}
+        className={`flex items-center justify-center aspect-video rounded-2xl bg-(--bg-2) border border-(--rule) ${className}`}
       >
-        <span className="font-mono text-[11px] text-[var(--ink-3)]">Invalid YouTube URL</span>
+        <span className="font-mono text-[11px] text-muted-foreground">Invalid YouTube URL</span>
       </div>
     );
   }
 
   if (playing) {
     return (
-      <div className={`relative aspect-video rounded-[16px] overflow-hidden bg-black ${className}`}>
+      <div className={`relative aspect-video rounded-2xl overflow-hidden bg-black ${className}`}>
         <iframe
           src={`https://www.youtube.com/embed/${id}?autoplay=1&rel=0`}
           title={title}
@@ -43,7 +43,7 @@ export function YoutubeEmbed({ url, title, className = "" }: Props): React.React
     <button
       onClick={() => setPlaying(true)}
       aria-label={`Play video: ${title}`}
-      className="group relative block w-full aspect-video rounded-[16px] overflow-hidden border-none cursor-pointer p-0 bg-[var(--bg-2)]"
+      className="group relative block w-full aspect-video rounded-2xl overflow-hidden border-none cursor-pointer p-0 bg-(--bg-2)"
     >
       {thumbnail && (
         // eslint-disable-next-line @next/next/no-img-element
@@ -57,8 +57,8 @@ export function YoutubeEmbed({ url, title, className = "" }: Props): React.React
       )}
       <div className="absolute inset-0 bg-black/25 transition-colors duration-200 group-hover:bg-black/35" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[56px] h-[56px] rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110">
-          <Play size={22} fill="#FF0000" color="#FF0000" className="ml-[3px]" />
+        <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110">
+          <Play size={22} fill="#FF0000" color="#FF0000" className="ml-0.75" />
         </div>
       </div>
     </button>

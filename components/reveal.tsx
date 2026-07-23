@@ -9,7 +9,7 @@ interface RevealProps {
   delay?: number
 }
 
-export function Reveal({ children, className = "", delay = 0 }: RevealProps): React.ReactElement {
+export function Reveal({ children, className="", delay = 0 }: RevealProps): React.ReactElement {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

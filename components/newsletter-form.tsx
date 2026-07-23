@@ -82,12 +82,12 @@ export function NewsletterForm(): React.ReactElement {
         onChange={(e) => setEmail(e.target.value)}
         required
         disabled={status !== "idle"}
-        className="flex-1 bg-[var(--bg)] border-[var(--rule)] h-[48px] rounded-[6px] focus:ring-0 focus:border-[var(--v3-accent)] text-[14px]"
+        className="flex-1 bg-(--bg) border-(--rule) h-12 rounded-md focus:ring-0 focus:border-(--v3-accent) text-[14px]"
       />
       <button 
         type="submit" 
         disabled={status !== "idle"}
-        className="h-[48px] px-[24px] bg-[var(--ink)] text-[var(--bg)] rounded-[6px] font-mono text-[11px] uppercase tracking-[0.15em] font-medium transition-all duration-300 hover:bg-[var(--v3-accent)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[120px]"
+        className="h-12 px-6 bg-(--ink) text-(--bg) rounded-md font-mono text-[11px] uppercase tracking-[0.15em] font-medium transition-all duration-300 hover:bg-(--v3-accent) disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-30"
       >
         {status === "loading" ? (
           <Loader2 className="animate-spin w-4 h-4" />

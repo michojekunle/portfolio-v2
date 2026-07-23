@@ -298,22 +298,22 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       "var(--bg-2)";
 
     return (
-      <div className="flex flex-col h-[100dvh] bg-[var(--bg)] max-[1024px]:pt-[60px]">
+      <div className="flex flex-col h-[100dvh] bg-(--bg) max-256:pt-15">
         {/* Header */}
-        <div className="flex items-center justify-between px-[20px] h-[56px] border-b border-[var(--rule)] bg-[var(--bg-2)] shrink-0">
-          <div className="flex items-center gap-[10px]">
+        <div className="flex items-center justify-between px-5 h-14 border-b border-(--rule) bg-(--bg-2) shrink-0">
+          <div className="flex items-center gap-2.5">
             <BookMarked size={16} style={{ color: ACCENT }} />
-            <span className="font-mono text-[11px] text-[var(--ink-2)] truncate max-w-[220px]">{book.title}</span>
+            <span className="font-mono text-[11px] text-secondary-foreground truncate max-w-[220px]">{book.title}</span>
           </div>
-          <div className="flex items-center gap-[6px] font-mono text-[10px] tracking-[0.1em] uppercase" style={{ color: ACCENT }}>
-            <span className="w-[6px] h-[6px] rounded-full animate-pulse inline-block" style={{ background: ACCENT }} />
+          <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase" style={{ color: ACCENT }}>
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: ACCENT }} />
             Live Voice
           </div>
         </div>
 
         {/* Orb */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-[28px] px-[32px]">
-          <div className="relative flex items-center justify-center w-[160px] h-[160px]">
+        <div className="flex-1 flex flex-col items-center justify-center gap-7 px-8">
+          <div className="relative flex items-center justify-center w-40 h-40">
             {(voiceState === "listening") && (
               <>
                 <div className="absolute inset-0 rounded-full animate-ping" style={{ background: ACCENT, opacity: 0.18, animationDuration: "1.4s" }} />
@@ -327,7 +327,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
               </>
             )}
             <div
-              className="w-[112px] h-[112px] rounded-full flex items-center justify-center transition-all duration-500 shadow-xl"
+              className="w-28 h-28 rounded-full flex items-center justify-center transition-all duration-500 shadow-xl"
               style={{ background: orbColor, border: "1.5px solid var(--rule)" }}
             >
               {voiceState === "listening" && <Mic size={42} color="#fff" />}
@@ -338,32 +338,32 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           </div>
 
           {/* State label */}
-          <div className="text-center min-h-[60px]">
-            <div className="font-display text-[26px] tracking-[-0.02em] fvs-text text-[var(--ink)]">
+          <div className="text-center min-h-15">
+            <div className="font-display text-[26px] tracking-[-0.02em] fvs-text text-(--ink)">
               {voiceState === "listening" && "Listening…"}
               {voiceState === "thinking"  && "Thinking…"}
               {voiceState === "speaking"  && "Speaking…"}
               {voiceState === "idle"      && "Ready"}
             </div>
             {interimTranscript && (
-              <p className="mt-[8px] text-[14px] text-[var(--ink-3)] italic">
+              <p className="mt-2 text-[14px] text-muted-foreground italic">
                 &ldquo;{interimTranscript}…&rdquo;
               </p>
             )}
           </div>
 
           {/* Last exchange preview */}
-          <div className="w-full max-w-[460px] space-y-[8px]">
+          <div className="w-full max-w-[460px] space-y-2">
             {lastUser && (
-              <div className="rounded-[10px] px-[14px] py-[10px]" style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", border: `1px solid color-mix(in srgb, var(--ch-accent) 19%, transparent)` }}>
-                <div className="font-mono text-[9px] uppercase tracking-[0.12em] mb-[4px]" style={{ color: ACCENT }}>You</div>
-                <div className="text-[13px] text-[var(--ink)] leading-[1.6]">{lastUser.content}</div>
+              <div className="rounded-[10px] px-3.5 py-2.5" style={{ background: "color-mix(in srgb, var(--ch-accent) 8%, transparent)", border: `1px solid color-mix(in srgb, var(--ch-accent) 19%, transparent)` }}>
+                <div className="font-mono text-[9px] uppercase tracking-[0.12em] mb-1" style={{ color: ACCENT }}>You</div>
+                <div className="text-[13px] text-(--ink) leading-[1.6]">{lastUser.content}</div>
               </div>
             )}
             {lastAI && (
-              <div className="rounded-[10px] px-[14px] py-[10px]" style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}>
-                <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink-3)] mb-[4px]">AI</div>
-                <div className="text-[13px] text-[var(--ink)] leading-[1.6]">
+              <div className="rounded-[10px] px-3.5 py-2.5" style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}>
+                <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground mb-1">AI</div>
+                <div className="text-[13px] text-(--ink) leading-[1.6]">
                   {(() => {
                     const plain = stripMarkdown(lastAI.content);
                     return plain.length > 200 ? `${plain.slice(0, 200)}…` : plain;
@@ -375,16 +375,16 @@ export function ChChatClient({ book }: Props): React.ReactElement {
         </div>
 
         {/* End call */}
-        <div className="pb-[44px] flex flex-col items-center gap-[10px]">
+        <div className="pb-11 flex flex-col items-center gap-2.5">
           <button
             onClick={exitVoiceMode}
-            className="w-[64px] h-[64px] rounded-full flex items-center justify-center border-none cursor-pointer transition-transform hover:scale-105 shadow-lg"
+            className="w-16 h-16 rounded-full flex items-center justify-center border-none cursor-pointer transition-transform hover:scale-105 shadow-lg"
             style={{ background: "#DC2626" }}
             aria-label="End voice chat"
           >
             <PhoneOff size={26} color="#fff" />
           </button>
-          <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--ink-3)]">End call</span>
+          <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground">End call</span>
         </div>
       </div>
     );
@@ -392,28 +392,28 @@ export function ChChatClient({ book }: Props): React.ReactElement {
 
   // ─── Text chat UI ─────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-[100dvh] bg-[var(--bg)] max-[1024px]:pt-[60px]">
+    <div className="flex flex-col h-[100dvh] bg-(--bg) max-256:pt-15">
       {/* Header */}
-      <div className="flex items-center justify-between px-[16px] sm:px-[20px] h-[56px] border-b border-[var(--rule)] bg-[var(--bg-2)] shrink-0">
-        <div className="flex items-center gap-[16px]">
+      <div className="flex items-center justify-between px-4 sm:px-5 h-14 border-b border-(--rule) bg-(--bg-2) shrink-0">
+        <div className="flex items-center gap-4">
           <Link
             href={`/tools/chapterly/read/${book.id}`}
-            className="flex items-center gap-[6px] no-underline font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+            className="flex items-center gap-1.5 no-underline font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground hover:text-(--ink) transition-colors"
           >
             <ArrowLeft size={14} /> Back to reader
           </Link>
-          <span className="text-[var(--rule)]">·</span>
-          <div className="flex items-center gap-[8px]">
+          <span className="text-(--rule)">·</span>
+          <div className="flex items-center gap-2">
             <BookMarked size={16} style={{ color: ACCENT }} />
-            <span className="font-mono text-[11px] text-[var(--ink-2)] truncate max-[480px]:max-w-[100px] max-w-[200px]">
+            <span className="font-mono text-[11px] text-secondary-foreground truncate max-[480px]:max-w-[100px] max-w-[200px]">
               {book.title}
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setTtsEnabled((v) => !v)}
-            className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] border-none cursor-pointer transition-all"
+            className="w-8 h-8 flex items-center justify-center rounded-md border-none cursor-pointer transition-all"
             style={{ background: ttsEnabled ? `color-mix(in srgb, var(--ch-accent) 13%, transparent)` : "var(--bg)", color: ttsEnabled ? ACCENT : "var(--ink-3)" }}
             aria-label={ttsEnabled ? "Disable read-aloud" : "Enable read-aloud"}
             title="Read responses aloud"
@@ -422,7 +422,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           </button>
           <button
             onClick={enterVoiceMode}
-            className="inline-flex items-center gap-[6px] h-[32px] px-[12px] rounded-[6px] border-none cursor-pointer font-mono text-[9px] tracking-[0.1em] uppercase font-semibold transition-all hover:opacity-80"
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border-none cursor-pointer font-mono text-[9px] tracking-widest uppercase font-semibold transition-all hover:opacity-80"
             style={{ background: `color-mix(in srgb, var(--ch-accent) 9%, transparent)`, color: ACCENT }}
             title="Switch to live voice dialogue"
           >
@@ -432,19 +432,19 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-[20px] py-[24px] space-y-[20px]" data-lenis-prevent="true">
+      <div className="flex-1 min-h-0 overflow-y-auto px-5 py-6 space-y-5" data-lenis-prevent="true">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             {msg.role === "assistant" && (
               <div
-                className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0 mr-[10px] mt-[2px]"
+                className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mr-2.5 mt-0.5"
                 style={{ background: `color-mix(in srgb, var(--ch-accent) 13%, transparent)` }}
               >
                 <BookMarked size={14} style={{ color: ACCENT }} />
               </div>
             )}
             <div
-              className="max-w-[80%] max-[480px]:max-w-[92%] rounded-[12px] px-[14px] sm:px-[16px] py-[12px] text-[13px] sm:text-[14px] leading-[1.65]"
+              className="max-w-[80%] max-[480px]:max-w-[92%] rounded-xl px-3.5 sm:px-4 py-3 text-[13px] sm:text-[14px] leading-[1.65]"
               style={
                 msg.role === "user"
                   ? { background: ACCENT, color: "var(--ch-bg)" }
@@ -468,12 +468,12 @@ export function ChChatClient({ book }: Props): React.ReactElement {
 
       {/* Suggested prompts (first load only) */}
       {messages.length === 1 && (
-        <div className="px-[20px] pb-[12px] flex gap-[8px] flex-wrap">
+        <div className="px-5 pb-3 flex gap-2 flex-wrap">
           {SUGGESTED_PROMPTS.map((p) => (
             <button
               key={p}
               onClick={() => void sendMessage(p)}
-              className="font-mono text-[9px] tracking-[0.08em] uppercase px-[10px] py-[6px] rounded-full border border-[var(--rule)] bg-transparent cursor-pointer text-[var(--ink-3)] hover:border-[var(--ink-2)] hover:text-[var(--ink)] transition-all"
+              className="font-mono text-[9px] tracking-[0.08em] uppercase px-2.5 py-1.5 rounded-full border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:border-secondary-foreground hover:text-(--ink) transition-all"
             >
               {p}
             </button>
@@ -482,11 +482,11 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       )}
 
       {/* Input bar */}
-      <div className="px-[16px] sm:px-[20px] pb-[20px] pt-[12px] border-t border-[var(--rule)] bg-[var(--bg-2)] shrink-0">
-        <div className="flex items-end gap-[8px]">
+      <div className="px-4 sm:px-5 pb-5 pt-3 border-t border-(--rule) bg-(--bg-2) shrink-0">
+        <div className="flex items-end gap-2">
           <div className="flex-1 relative">
             {interimTranscript && (
-              <div className="absolute inset-x-[14px] top-[12px] text-[14px] text-[var(--ink-3)] italic pointer-events-none leading-[1.5] truncate">
+              <div className="absolute inset-x-3.5 top-3 text-[14px] text-muted-foreground italic pointer-events-none leading-normal truncate">
                 {interimTranscript}…
               </div>
             )}
@@ -498,7 +498,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
               placeholder={listening ? "Listening…" : `Ask anything about "${book.title}"…`}
               rows={1}
               disabled={loading || listening}
-              className="w-full resize-none rounded-[10px] px-[14px] py-[12px] text-[14px] outline-none bg-[var(--bg)] border border-[var(--rule)] text-[var(--ink)] placeholder:text-[var(--ink-3)] disabled:opacity-50 max-h-[120px] overflow-y-auto transition-colors focus:border-[var(--ink-2)]"
+              className="w-full resize-none rounded-[10px] px-3.5 py-3 text-[14px] outline-none bg-(--bg) border border-(--rule) text-(--ink) placeholder:text-muted-foreground disabled:opacity-50 max-h-30 overflow-y-auto transition-colors focus:border-secondary-foreground"
               style={{ lineHeight: "1.5", borderColor: listening ? ACCENT : undefined }}
               onInput={(e) => {
                 const el = e.currentTarget;
@@ -510,7 +510,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           <button
             onClick={toggleTextVoice}
             disabled={loading}
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-[10px] border-none cursor-pointer transition-all shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-11 h-11 flex items-center justify-center rounded-[10px] border-none cursor-pointer transition-all shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
             style={{
               background: listening ? "#EA580C20" : "var(--bg)",
               color: listening ? "#EA580C" : "var(--ink-3)",
@@ -523,14 +523,14 @@ export function ChChatClient({ book }: Props): React.ReactElement {
           <button
             onClick={() => void sendMessage(input)}
             disabled={!input.trim() || loading}
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-[10px] border-none cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            className="w-11 h-11 flex items-center justify-center rounded-[10px] border-none cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             style={{ background: ACCENT, color: "var(--ch-bg)" }}
             aria-label="Send message"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
           </button>
         </div>
-        <div className="mt-[8px] font-mono text-[9px] tracking-[0.08em] uppercase text-[var(--ink-3)]">
+        <div className="mt-2 font-mono text-[9px] tracking-[0.08em] uppercase text-muted-foreground">
           Enter to send · Shift+Enter new line · Mic to dictate · Voice Chat for live dialogue
         </div>
       </div>

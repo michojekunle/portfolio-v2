@@ -36,7 +36,7 @@ export function BBAddBookButton(): React.ReactElement {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-[8px] h-[44px] px-[20px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 hover:opacity-90 border-none cursor-pointer bg-[var(--v3-accent)]"
+        className="inline-flex items-center gap-2 h-11 px-5 rounded-lg font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 hover:opacity-90 border-none cursor-pointer bg-(--v3-accent)"
       >
         <Plus size={14} /> Add Book
       </motion.button>
@@ -129,7 +129,7 @@ function AddBookModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-[20px] bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/40 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.div
@@ -137,29 +137,29 @@ function AddBookModal({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.98 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="w-full max-w-[580px] max-h-[90vh] overflow-y-auto overscroll-contain rounded-[16px] bg-[var(--bg-2)] border border-[var(--rule)]"
+        className="w-full max-w-145 max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl bg-(--bg-2) border border-(--rule)"
         data-lenis-prevent="true"
       >
         <div
-          className="sticky top-0 flex items-center justify-between px-[28px] py-[20px] z-10 bg-[var(--bg-2)] border-b border-[var(--rule)]"
+          className="sticky top-0 flex items-center justify-between px-7 py-5 z-10 bg-(--bg-2) border-b border-(--rule)"
         >
           <div
-            className="font-display text-[20px] fvs-text text-[var(--ink)]"
+            className="font-display text-[20px] fvs-text text-(--ink)"
           >
             Add a Book
           </div>
           <button
             onClick={onClose}
-            className="w-[32px] h-[32px] flex items-center justify-center rounded-[8px] border-none bg-transparent cursor-pointer font-mono text-[14px] text-[var(--ink-2)] hover:bg-[color-mix(in_oklab,var(--bg)_80%,var(--ink))] hover:text-[var(--v3-accent)]"
+            className="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent cursor-pointer font-mono text-[14px] text-secondary-foreground hover:bg-[color-mix(in_oklab,var(--bg)_80%,var(--ink))] hover:text-(--v3-accent)"
             aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-[28px] space-y-[20px]">
+        <form onSubmit={handleSubmit} className="p-7 space-y-5">
           {/* Title + Author */}
-          <div className="grid grid-cols-2 max-[480px]:grid-cols-1 gap-[16px]">
+          <div className="grid grid-cols-2 max-[480px]:grid-cols-1 gap-4">
             <Field label="Book Title" required>
               <input
                 type="text"
@@ -184,16 +184,16 @@ function AddBookModal({
 
           {/* Theme */}
           <Field label="Visual Theme">
-            <div className="flex flex-wrap gap-[8px]">
+            <div className="flex flex-wrap gap-2">
               {THEME_OPTIONS.map((t) => (
                 <button
                   key={t.value}
                   type="button"
                   onClick={() => setTheme(t.value)}
-                  className={`flex items-center gap-[8px] px-[12px] h-[36px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.08em] transition-all cursor-pointer border-none ${
+                  className={`flex items-center gap-2 px-3 h-9 rounded-lg font-mono text-[10px] uppercase tracking-[0.08em] transition-all cursor-pointer border-none ${
                     theme === t.value
                       ? "ring-2 ring-offset-2 ring-offset-transparent"
-                      : "bg-[var(--bg-2)] text-[var(--ink-2)]"
+                      : "bg-(--bg-2) text-secondary-foreground"
                   }`}
                   style={
                     theme === t.value
@@ -202,7 +202,7 @@ function AddBookModal({
                   }
                 >
                   <span
-                    className="w-[8px] h-[8px] rounded-full flex-shrink-0"
+                    className="w-2 h-2 rounded-full flex-shrink-0"
                     style={{ background: t.accent }}
                     aria-hidden="true"
                   />
@@ -211,7 +211,7 @@ function AddBookModal({
               ))}
             </div>
             <div
-              className="mt-[8px] h-[4px] rounded-full"
+              className="mt-2 h-1 rounded-full"
               style={{ background: selectedTheme.bg }}
               aria-hidden="true"
             />
@@ -219,16 +219,16 @@ function AddBookModal({
 
           {/* Rating */}
           <Field label="Your Rating">
-            <div className="flex gap-[8px]">
+            <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => setRating(rating === n ? 0 : n)}
-                  className={`w-[36px] h-[36px] rounded-[6px] font-mono text-[16px] transition-all cursor-pointer border-none ${
+                  className={`w-9 h-9 rounded-md font-mono text-[16px] transition-all cursor-pointer border-none ${
                     n <= rating
-                      ? "bg-[var(--v3-accent)]/15 text-[var(--v3-accent)] ring-1 ring-[var(--v3-accent)]/30"
-                      : "bg-[var(--bg-2)] text-[var(--ink-3)]"
+                      ? "bg-(--v3-accent)/15 text-(--v3-accent) ring-1 ring-(--v3-accent)/30"
+                      : "bg-(--bg-2) text-muted-foreground"
                   }`}
                   aria-label={`${n} star${n !== 1 ? "s" : ""}`}
                 >
@@ -240,17 +240,17 @@ function AddBookModal({
 
           {/* Genres */}
           <Field label="Genres">
-            <div className="flex flex-wrap gap-[6px] mb-[8px]">
+            <div className="flex flex-wrap gap-1.5 mb-2">
               {genres.map((g) => (
                 <span
                   key={g}
-                  className="inline-flex items-center gap-[4px] font-mono text-[10px] uppercase tracking-[0.08em] px-[8px] py-[3px] rounded-full bg-[var(--v3-accent)]/10 text-[var(--v3-accent)]"
+                  className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.08em] px-2 py-0.75 rounded-full bg-(--v3-accent)/10 text-(--v3-accent)"
                 >
                   {g}
                   <button
                     type="button"
                     onClick={() => removeGenre(g)}
-                    className="bg-transparent border-none cursor-pointer p-0 leading-none text-[11px] text-[var(--v3-accent)] hover:opacity-70 transition-opacity"
+                    className="bg-transparent border-none cursor-pointer p-0 leading-none text-[11px] text-(--v3-accent) hover:opacity-70 transition-opacity"
                     aria-label={`Remove ${g}`}
                   >
                     <X size={10} />
@@ -258,7 +258,7 @@ function AddBookModal({
                 </span>
               ))}
             </div>
-            <div className="flex gap-[8px]">
+            <div className="flex gap-2">
               <input
                 type="text"
                 value={genreInput}
@@ -273,14 +273,14 @@ function AddBookModal({
                 className="bb-input flex-1"
               />
             </div>
-            <div className="flex flex-wrap gap-[6px] mt-[8px]">
+            <div className="flex flex-wrap gap-1.5 mt-2">
               {GENRE_SUGGESTIONS.filter((g) => !genres.includes(g)).map(
                 (g) => (
                   <button
                     key={g}
                     type="button"
                     onClick={() => addGenre(g)}
-                    className="font-mono text-[9px] uppercase tracking-[0.1em] px-[8px] py-[3px] rounded-full cursor-pointer border-none transition-all bg-[var(--bg-2)] text-[var(--ink-3)] hover:text-[var(--ink)]"
+                    className="font-mono text-[9px] uppercase tracking-widest px-2 py-0.75 rounded-full cursor-pointer border-none transition-all bg-(--bg-2) text-muted-foreground hover:text-(--ink)"
                   >
                     + {g}
                   </button>
@@ -291,11 +291,11 @@ function AddBookModal({
 
           {/* Key insights */}
           <Field label="Key Insights (up to 5)">
-            <div className="space-y-[8px]">
+            <div className="space-y-2">
               {insights.map((ins, i) => (
-                <div key={i} className="flex items-start gap-[8px]">
+                <div key={i} className="flex items-start gap-2">
                   <span
-                    className="font-mono text-[10px] mt-[14px] flex-shrink-0 w-[16px] text-[var(--ink-3)]"
+                    className="font-mono text-[10px] mt-3.5 flex-shrink-0 w-4 text-muted-foreground"
                   >
                     {i + 1}.
                   </span>
@@ -325,7 +325,7 @@ function AddBookModal({
 
           {error && (
             <div
-              className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px]"
+              className="rounded-lg px-3.5 py-2.5 font-mono text-[11px]"
               style={{
                 background: "color-mix(in oklab, #ef4444 10%, transparent)",
                 color: "color-mix(in oklab, #dc2626 100%, transparent)",
@@ -336,13 +336,13 @@ function AddBookModal({
             </div>
           )}
 
-          <div className="flex gap-[12px] pt-[8px]">
+          <div className="flex gap-3 pt-2">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={loading}
-              className="flex-1 h-[48px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 bg-[var(--v3-accent)]"
+              className="flex-1 h-12 rounded-lg font-mono text-[11px] uppercase tracking-[0.12em] font-semibold text-(--bg) transition-all duration-150 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 bg-(--v3-accent)"
             >
               {loading ? "Saving…" : "Save Book"}
             </motion.button>
@@ -351,7 +351,7 @@ function AddBookModal({
               whileTap={{ scale: 0.95 }}
               type="button"
               onClick={onClose}
-              className="h-[48px] px-[20px] rounded-[8px] font-mono text-[11px] uppercase tracking-[0.12em] cursor-pointer border-none transition-all bg-[var(--bg-2)] text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[color-mix(in_oklab,var(--bg)_80%,var(--ink))]"
+              className="h-12 px-5 rounded-lg font-mono text-[11px] uppercase tracking-[0.12em] cursor-pointer border-none transition-all bg-(--bg-2) text-muted-foreground hover:text-(--ink) hover:bg-[color-mix(in_oklab,var(--bg)_80%,var(--ink))]"
             >
               Cancel
             </motion.button>
@@ -393,11 +393,11 @@ function Field({
   return (
     <div>
       <label
-        className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-[8px] text-[var(--ink-3)]"
+        className="block font-mono text-[10px] tracking-[0.12em] uppercase mb-2 text-muted-foreground"
       >
         {label}
         {required && (
-          <span className="ml-[4px] text-[var(--v3-accent)]">
+          <span className="ml-1 text-(--v3-accent)">
             *
           </span>
         )}

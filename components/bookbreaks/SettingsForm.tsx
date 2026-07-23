@@ -97,7 +97,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
   ];
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
 
       {/* ─── Website & Branding ─────────────────────────────────── */}
       <SettingsSection icon={<Globe size={14} />} title="Website & Branding">
@@ -134,16 +134,16 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
       {/* ─── AI Generation ──────────────────────────────────────── */}
       <SettingsSection icon={<Sparkles size={14} />} title="AI Generation">
         <Field label="Preferred AI Provider">
-          <div className="grid grid-cols-3 gap-[8px]">
+          <div className="grid grid-cols-3 gap-2">
             {AI_PROVIDERS.map((p) => (
               <button
                 key={p.value}
                 type="button"
                 onClick={() => setAiProvider(p.value as AIProvider)}
-                className={`flex flex-col items-start gap-[3px] py-[10px] px-[12px] rounded-[8px] font-mono text-[10px] uppercase tracking-[0.08em] cursor-pointer border transition-all duration-150 ${
+                className={`flex flex-col items-start gap-0.75 py-2.5 px-3 rounded-lg font-mono text-[10px] uppercase tracking-[0.08em] cursor-pointer border transition-all duration-150 ${
                   aiProvider === p.value
-                    ? "border-[var(--v3-accent)] bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-[var(--v3-accent)]"
-                    : "border-[var(--rule)] bg-transparent text-[var(--ink-3)] hover:border-[var(--v3-accent)] hover:text-[var(--ink-2)]"
+                    ? "border-(--v3-accent) bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-(--v3-accent)"
+                    : "border-(--rule) bg-transparent text-muted-foreground hover:border-(--v3-accent) hover:text-secondary-foreground"
                 }`}
               >
                 <div className="font-semibold">{p.label}</div>
@@ -155,7 +155,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
           </div>
         </Field>
 
-        <div className="grid grid-cols-2 max-[480px]:grid-cols-1 gap-[12px]">
+        <div className="grid grid-cols-2 max-[480px]:grid-cols-1 gap-3">
           <Field label="Default Tone">
             <select
               value={defaultTone}
@@ -199,7 +199,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
       {/* ─── Error ──────────────────────────────────────────────── */}
       {error && (
         <div
-          className="rounded-[8px] px-[14px] py-[10px] font-mono text-[11px]"
+          className="rounded-lg px-3.5 py-2.5 font-mono text-[11px]"
           style={{
             background: "color-mix(in oklab, var(--v3-accent) 10%, transparent)",
             color: "var(--v3-accent)",
@@ -214,7 +214,7 @@ export function BBSettingsForm({ initialSettings }: Props): React.ReactElement {
       <button
         type="submit"
         disabled={saving}
-        className="w-full h-[52px] rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) transition-all duration-200 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 flex items-center justify-center gap-2"
+        className="w-full h-13 rounded-[10px] font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) transition-all duration-200 disabled:opacity-60 cursor-pointer border-none hover:opacity-90 flex items-center justify-center gap-2"
         style={{
           background: saved
             ? "color-mix(in oklab, #22c55e 60%, var(--v3-accent))"
@@ -267,20 +267,20 @@ function SettingsSection({
 }): React.ReactElement {
   return (
     <section
-      className="rounded-[12px] overflow-hidden"
+      className="rounded-xl overflow-hidden"
       style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}
     >
       {/* Section header */}
       <div
-        className="flex items-center gap-[8px] px-[20px] py-[14px]"
+        className="flex items-center gap-2 px-5 py-3.5"
         style={{ borderBottom: "1px solid var(--rule)", background: "color-mix(in oklab, var(--bg-2) 80%, var(--bg))" }}
       >
-        <span className="text-[var(--v3-accent)]">{icon}</span>
-        <span className="font-mono text-[10px] tracking-[0.16em] uppercase font-semibold text-[var(--ink-3)]">
+        <span className="text-(--v3-accent)">{icon}</span>
+        <span className="font-mono text-[10px] tracking-[0.16em] uppercase font-semibold text-muted-foreground">
           {title}
         </span>
       </div>
-      <div className="px-[20px] py-[20px] flex flex-col gap-[16px]">{children}</div>
+      <div className="px-5 py-5 flex flex-col gap-4">{children}</div>
     </section>
   );
 }
@@ -295,13 +295,13 @@ function Field({
   children: React.ReactNode;
 }): React.ReactElement {
   return (
-    <div className="flex flex-col gap-[6px]">
-      <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+    <div className="flex flex-col gap-1.5">
+      <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
         {label}
       </label>
       {children}
       {hint && (
-        <p className="font-mono text-[10px] m-0 text-[var(--ink-4)] leading-[1.5]">
+        <p className="font-mono text-[10px] m-0 text-(--ink-4) leading-normal">
           {hint}
         </p>
       )}

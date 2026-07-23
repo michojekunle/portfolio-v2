@@ -195,7 +195,7 @@ export function BBContentActions({
   };
 
   return (
-    <div className="flex items-center gap-[8px] flex-wrap relative">
+    <div className="flex items-center gap-2 flex-wrap relative">
       {/* Error strip */}
       <AnimatePresence>
         {shareError && (
@@ -203,7 +203,7 @@ export function BBContentActions({
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="absolute -top-[36px] left-0 right-0 flex items-center gap-[6px] px-[10px] py-[6px] rounded-[6px] text-[11px] font-mono"
+            className="absolute -top-9 left-0 right-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-mono"
             style={{ background: "rgba(239,68,68,0.12)", color: "#dc2626" }}
           >
             <AlertTriangle size={11} />
@@ -224,7 +224,7 @@ export function BBContentActions({
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         onClick={handleCopy}
-        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none"
+        className="inline-flex items-center gap-1.25 h-8 px-3 rounded-md font-mono text-[9px] uppercase tracking-widest transition-all cursor-pointer border-none"
         style={
           copied
             ? { background: "color-mix(in oklab, var(--v3-accent) 12%, transparent)", color: "var(--v3-accent)" }
@@ -240,7 +240,7 @@ export function BBContentActions({
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
           onClick={() => setShowShareMenu((v) => !v)}
-          className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none"
+          className="inline-flex items-center gap-1.25 h-8 px-3 rounded-md font-mono text-[9px] uppercase tracking-widest transition-all cursor-pointer border-none"
           style={{ background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}
         >
           <Share2 size={12} />
@@ -259,14 +259,14 @@ export function BBContentActions({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -6 }}
                 transition={{ duration: 0.12 }}
-                className="absolute top-full left-0 mt-[6px] w-[200px] rounded-[10px] border shadow-xl overflow-hidden z-50"
+                className="absolute top-full left-0 mt-1.5 w-[200px] rounded-[10px] border shadow-xl overflow-hidden z-50"
                 style={{ background: "var(--bg-2)", borderColor: "var(--rule)" }}
               >
                 {shareCardUrl && (
                   <button
                     onClick={handleDownloadShareImage}
                     disabled={sharingImage}
-                    className="w-full flex items-center gap-[10px] px-[14px] py-[10px] font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left disabled:opacity-50"
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left disabled:opacity-50"
                     style={{ background: "transparent", color: "var(--ink-2)" }}
                     onMouseOver={(e) => (e.currentTarget.style.background = "var(--bg)")}
                     onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
@@ -277,7 +277,7 @@ export function BBContentActions({
                 )}
                 <button
                   onClick={handleShareToX}
-                  className="w-full flex items-center gap-[10px] px-[14px] py-[10px] font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2.5 font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left"
                   style={{ background: "transparent", color: "var(--ink-2)" }}
                   onMouseOver={(e) => (e.currentTarget.style.background = "var(--bg)")}
                   onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
@@ -287,7 +287,7 @@ export function BBContentActions({
                 </button>
                 <button
                   onClick={handleShareToWhatsApp}
-                  className="w-full flex items-center gap-[10px] px-[14px] py-[10px] font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2.5 font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left"
                   style={{ background: "transparent", color: "var(--ink-2)" }}
                   onMouseOver={(e) => (e.currentTarget.style.background = "var(--bg)")}
                   onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
@@ -297,7 +297,7 @@ export function BBContentActions({
                 </button>
                 <button
                   onClick={"share" in navigator ? handleNativeShare : handleCopyShareLink}
-                  className="w-full flex items-center gap-[10px] px-[14px] py-[10px] font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2.5 font-mono text-[10px] tracking-[0.06em] uppercase border-none cursor-pointer transition-colors text-left"
                   style={{ background: "transparent", color: "var(--ink-2)" }}
                   onMouseOver={(e) => (e.currentTarget.style.background = "var(--bg)")}
                   onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
@@ -317,7 +317,7 @@ export function BBContentActions({
         whileTap={{ scale: 0.96 }}
         onClick={handleToggleStatus}
         disabled={toggling}
-        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50"
+        className="inline-flex items-center gap-1.25 h-8 px-3 rounded-md font-mono text-[9px] uppercase tracking-widest transition-all cursor-pointer border-none disabled:opacity-50"
         style={
           status === "published"
             ? { background: "color-mix(in oklab, #22c55e 10%, transparent)", color: "#15803d" }
@@ -337,7 +337,7 @@ export function BBContentActions({
         whileTap={{ scale: 0.96 }}
         onClick={handleSendToChapterly}
         disabled={sending}
-        className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50 text-white"
+        className="inline-flex items-center gap-1.25 h-8 px-3 rounded-md font-mono text-[9px] uppercase tracking-widest transition-all cursor-pointer border-none disabled:opacity-50 text-white"
         style={{ background: "color-mix(in oklab, #4F6D7A 100%, transparent)" }}
       >
         {sending ? "Sending…" : <><BookOpen size={12} /> Read in Chapterly</>}
@@ -349,7 +349,7 @@ export function BBContentActions({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-[6px]"
+            className="flex items-center gap-1.5"
           >
             <span className="font-mono text-[9px] tracking-[0.06em] uppercase" style={{ color: "var(--ink-3)" }}>
               Sure?
@@ -357,14 +357,14 @@ export function BBContentActions({
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="h-[28px] px-[10px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] border-none cursor-pointer disabled:opacity-50"
+              className="h-7 px-2.5 rounded-md font-mono text-[9px] uppercase tracking-widest border-none cursor-pointer disabled:opacity-50"
               style={{ background: "rgba(239,68,68,0.15)", color: "#dc2626" }}
             >
               {deleting ? "…" : "Delete"}
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="h-[28px] px-[10px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] border-none cursor-pointer"
+              className="h-7 px-2.5 rounded-md font-mono text-[9px] uppercase tracking-widest border-none cursor-pointer"
               style={{ background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}
             >
               Cancel
@@ -376,7 +376,7 @@ export function BBContentActions({
             whileTap={{ scale: 0.96 }}
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleting}
-            className="inline-flex items-center gap-[5px] h-[32px] px-[12px] rounded-[6px] font-mono text-[9px] uppercase tracking-[0.1em] transition-all cursor-pointer border-none disabled:opacity-50"
+            className="inline-flex items-center gap-1.25 h-8 px-3 rounded-md font-mono text-[9px] uppercase tracking-widest transition-all cursor-pointer border-none disabled:opacity-50"
             style={{ background: "color-mix(in oklab, #ef4444 10%, transparent)", color: "#dc2626" }}
           >
             <Trash2 size={12} /> Delete

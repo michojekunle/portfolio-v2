@@ -69,10 +69,10 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
   if (slides.length === 0) {
     return (
       <div
-        className="rounded-[12px] flex items-center justify-center h-[320px] text-center p-[32px]"
+        className="rounded-xl flex items-center justify-center h-80 text-center p-8"
         style={{ background: bookTheme.bg, color: bookTheme.text, opacity: 0.7 }}
       >
-        <p className="font-mono text-[11px] tracking-[0.1em] uppercase">
+        <p className="font-mono text-[11px] tracking-widest uppercase">
           Carousel slides will appear here after generation
         </p>
       </div>
@@ -87,7 +87,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
     <div className="w-full">
       {/* Slide viewer */}
       <div
-        className="carousel-slide-card relative w-full rounded-[16px] overflow-hidden flex flex-col items-center justify-center text-center p-[40px] max-[640px]:p-[24px]"
+        className="carousel-slide-card relative w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center text-center p-10 max-160:p-6"
         style={{
           background: gradient,
           color: bookTheme.text,
@@ -96,7 +96,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
       >
         {/* Slide number */}
         <div
-          className="absolute top-[20px] right-[24px] font-mono text-[11px] tracking-[0.12em] uppercase opacity-60"
+          className="absolute top-5 right-6 font-mono text-[11px] tracking-[0.12em] uppercase opacity-60"
           style={{ color: bookTheme.text }}
         >
           {active + 1} / {slides.length}
@@ -105,7 +105,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
         {/* Book label on slide 1 */}
         {active === 0 && (
           <div
-            className="absolute top-[20px] left-[24px] font-mono text-[9px] tracking-[0.14em] uppercase opacity-70 max-w-[50%] text-left leading-[1.4]"
+            className="absolute top-5 left-6 font-mono text-[9px] tracking-[0.14em] uppercase opacity-70 max-w-[50%] text-left leading-[1.4]"
             style={{ color: bookTheme.accent }}
           >
             {bookTitle}
@@ -114,14 +114,14 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
 
         {/* CTA slide icon */}
         {isCTA && (
-          <div className="text-[40px] mb-[16px]" aria-hidden="true">
+          <div className="text-[40px] mb-4" aria-hidden="true">
             📚
           </div>
         )}
 
         {/* Headline */}
         <h2
-          className="font-bold leading-[1.15] tracking-[-0.02em] mb-[14px] max-w-[80%]"
+          className="font-bold leading-[1.15] tracking-[-0.02em] mb-3.5 max-w-[80%]"
           style={{
             fontSize: current.headline.length > 40 ? "clamp(22px, 4vw, 28px)" : "clamp(26px, 5vw, 36px)",
             color: isCTA ? bookTheme.accent : bookTheme.text,
@@ -142,11 +142,11 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
 
         {/* Bullets */}
         {current.bullets.length > 0 && (
-          <ul className="mt-[8px] space-y-[10px] max-w-[80%] text-left">
+          <ul className="mt-2 space-y-2.5 max-w-[80%] text-left">
             {current.bullets.map((b, i) => (
-              <li key={i} className="flex items-start gap-[10px] text-[14px] leading-[1.5]">
+              <li key={i} className="flex items-start gap-2.5 text-[14px] leading-normal">
                 <span
-                  className="mt-[4px] shrink-0 w-[6px] h-[6px] rounded-full"
+                  className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full"
                   style={{ background: bookTheme.accent }}
                   aria-hidden="true"
                 />
@@ -159,7 +159,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
         {/* CTA website decoration */}
         {isCTA && (
           <div
-            className="mt-[20px] px-[20px] py-[10px] rounded-full font-mono text-[11px] tracking-[0.12em] uppercase font-semibold"
+            className="mt-5 px-5 py-2.5 rounded-full font-mono text-[11px] tracking-[0.12em] uppercase font-semibold"
             style={{ background: bookTheme.accent, color: "#fff" }}
           >
             michaelojekunle.dev
@@ -168,7 +168,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
       </div>
 
       {/* Slide navigation dots */}
-      <div className="flex items-center justify-center gap-[8px] mt-[20px]">
+      <div className="flex items-center justify-center gap-2 mt-5">
         {slides.map((_, i) => (
           <button
             key={i}
@@ -190,22 +190,22 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
       </div>
 
       {/* Prev / Next controls */}
-      <div className="flex items-center justify-between mt-[16px]">
+      <div className="flex items-center justify-between mt-4">
         <button
           onClick={() => setActive((v) => Math.max(0, v - 1))}
           disabled={active === 0}
-          className="font-mono text-[10px] tracking-[0.12em] uppercase px-[16px] py-[8px] rounded-full cursor-pointer border-none transition-all disabled:opacity-30"
+          className="font-mono text-[10px] tracking-[0.12em] uppercase px-4 py-2 rounded-full cursor-pointer border-none transition-all disabled:opacity-30"
           style={{ background: `${bookTheme.bg}20`, color: bookTheme.bg }}
         >
           ← Prev
         </button>
-        <span className="font-mono text-[10px] tracking-[0.1em] uppercase" style={{ color: `${bookTheme.bg}70` }}>
+        <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: `${bookTheme.bg}70` }}>
           Slide {active + 1} of {slides.length}
         </span>
         <button
           onClick={() => setActive((v) => Math.min(slides.length - 1, v + 1))}
           disabled={active === slides.length - 1}
-          className="font-mono text-[10px] tracking-[0.12em] uppercase px-[16px] py-[8px] rounded-full cursor-pointer border-none transition-all disabled:opacity-30"
+          className="font-mono text-[10px] tracking-[0.12em] uppercase px-4 py-2 rounded-full cursor-pointer border-none transition-all disabled:opacity-30"
           style={{ background: `${bookTheme.bg}20`, color: bookTheme.bg }}
         >
           Next →
@@ -214,7 +214,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
 
       {/* Slide count summary */}
       <p
-        className="text-center font-mono text-[9px] tracking-[0.1em] uppercase mt-[12px] opacity-50"
+        className="text-center font-mono text-[9px] tracking-widest uppercase mt-3 opacity-50"
         style={{ color: bookTheme.bg }}
       >
         {slides.length} slides · Instagram 1:1 format · {bookTheme.label} theme

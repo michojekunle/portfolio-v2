@@ -132,7 +132,7 @@ export function BlogComments({ postId }: BlogCommentsProps): React.ReactElement 
                 className="v3-comment"
               >
                 <div className="v3-comment-avatar">
-                  <span className="font-display fvs-text text-[18px] text-[var(--v3-accent)]">
+                  <span className="font-display fvs-text text-[18px] text-(--v3-accent)">
                     {getInitial(comment.name)}
                   </span>
                 </div>
