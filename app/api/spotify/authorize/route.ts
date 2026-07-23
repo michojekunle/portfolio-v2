@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { requireAdminAuth } from "@/lib/admin/auth";
+import { getSpotifyRedirectUri } from "@/lib/spotify";
 
 // Read-only "now playing" is all the widget needs — no playback control scopes.
 const SCOPE = "user-read-currently-playing";
@@ -11,13 +12,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (auth.unauthorized) return NextResponse.redirect(new URL("/admin/login", request.url));
 
   const client_id = process.env.SPOTIFY_CLIENT_ID;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!client_id || !siteUrl) {
+  const redirect_uri = getSpotifyRedirectUri();
+  if (!client_id || !redirect_uri) {
     return NextResponse.json({ error: "SPOTIFY_CLIENT_ID or NEXT_PUBLIC_SITE_URL not configured" }, { status: 500 });
   }
 
   const state = randomBytes(16).toString("hex");
-  const redirect_uri = `${siteUrl}/api/spotify/callback`;
 
   const authUrl = new URL("https://accounts.spotify.com/authorize");
   authUrl.searchParams.set("response_type", "code");

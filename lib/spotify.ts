@@ -17,6 +17,18 @@ interface SpotifyAuthRecord {
   authorized_at: string; // ISO
 }
 
+/**
+ * Builds the OAuth callback URL from NEXT_PUBLIC_SITE_URL, stripping any
+ * trailing slash first — Spotify's redirect_uri match is byte-exact, and a
+ * trailing slash on the env var silently produces a double slash
+ * (".dev//api/...") that won't match what's registered on the app.
+ */
+export function getSpotifyRedirectUri(): string | null {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) return null;
+  return `${siteUrl.replace(/\/+$/, "")}/api/spotify/callback`;
+}
+
 export async function getSpotifyAuth(): Promise<SpotifyAuthRecord | null> {
   if (!redis) return null;
   try {

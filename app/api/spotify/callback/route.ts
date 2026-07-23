@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/admin/auth";
-import { setSpotifyAuth } from "@/lib/spotify";
+import { getSpotifyRedirectUri, setSpotifyAuth } from "@/lib/spotify";
 
 /** GET /api/spotify/callback — Spotify redirects here after the user approves access; must exactly match a Redirect URI registered on the Spotify app. */
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -9,6 +9,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const redirectTarget = new URL("/admin/now", siteUrl ?? request.url);
+  const redirect_uri = getSpotifyRedirectUri();
 
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const client_id = process.env.SPOTIFY_CLIENT_ID;
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
-  if (!client_id || !client_secret || !siteUrl) return fail("not_configured");
+  if (!client_id || !client_secret || !redirect_uri) return fail("not_configured");
 
   try {
     const basic = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       body: new URLSearchParams({
         grant_type: "authorization_code",
         code,
-        redirect_uri: `${siteUrl}/api/spotify/callback`,
+        redirect_uri,
       }),
       cache: "no-store",
     });
