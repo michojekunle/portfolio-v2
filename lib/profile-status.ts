@@ -14,6 +14,8 @@ export interface ProfileStatusData {
   focus1_pct: number;
   focus2_name: string;
   focus2_pct: number;
+  /** Where I'm heading next — shown as the "horizon" line under Active Focuses. */
+  next_focus: string;
   spotify_override_title: string;
   spotify_override_artist: string;
   spotify_override_playlist: string;
@@ -23,10 +25,11 @@ export interface ProfileStatusData {
 
 const DEFAULT_STATUS: ProfileStatusData = {
   status: "Available",
-  focus1_name: "zk-SNARKs & Circuits",
-  focus1_pct: 85,
-  focus2_name: "Rust Systems & WebAssembly",
-  focus2_pct: 60,
+  focus1_name: "Flutter (mobile)",
+  focus1_pct: 35,
+  focus2_name: "Rust systems",
+  focus2_pct: 55,
+  next_focus: "zkML",
   spotify_override_title: "Metanoia (feat. Lofi Chill)",
   spotify_override_artist: "Michael's Focus Mix",
   spotify_override_playlist: "Spotify Track",

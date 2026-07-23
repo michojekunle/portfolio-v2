@@ -125,6 +125,19 @@ export function StatusManager({ initialStatus }: Props): React.ReactElement {
           </div>
         </div>
 
+        {/* Next / Horizon */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Next — Horizon
+          </label>
+          <Input
+            value={form.next_focus}
+            onChange={(e) => set("next_focus")(e.target.value)}
+            placeholder="e.g. zkML"
+            className="bg-muted/30"
+          />
+        </div>
+
         {/* Spotify Override */}
         <div className="rounded-xl border border-border p-4 bg-muted/10 space-y-4">
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">

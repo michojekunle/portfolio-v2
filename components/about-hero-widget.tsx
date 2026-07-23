@@ -118,22 +118,30 @@ export function AboutHeroWidget() {
         <div className="flex flex-col gap-2">
           <div>
             <div className="flex justify-between text-[11px] mb-1 font-mono text-secondary-foreground">
-              <span>{status?.focus1_name || "zk-SNARKs & Circuits"}</span>
-              <span>{status?.focus1_pct ?? 85}%</span>
+              <span>{status?.focus1_name || "Flutter (mobile)"}</span>
+              <span>{status?.focus1_pct ?? 35}%</span>
             </div>
             <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
-              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus1_pct ?? 85}%` }} />
+              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus1_pct ?? 35}%` }} />
             </div>
           </div>
           <div>
             <div className="flex justify-between text-[11px] mb-1 font-mono text-secondary-foreground">
-              <span>{status?.focus2_name || "Rust Systems & WebAssembly"}</span>
-              <span>{status?.focus2_pct ?? 60}%</span>
+              <span>{status?.focus2_name || "Rust systems"}</span>
+              <span>{status?.focus2_pct ?? 55}%</span>
             </div>
             <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
-              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus2_pct ?? 60}%` }} />
+              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus2_pct ?? 55}%` }} />
             </div>
           </div>
+        </div>
+
+        {/* Horizon — where I'm heading next */}
+        <div className="flex items-center gap-2 mt-3.5 pt-3.5 border-t border-(--rule)">
+          <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-muted-foreground">Next</span>
+          <span className="w-1 h-1 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
+          <span className="font-mono text-[11px] font-medium text-(--v3-accent)">{status?.next_focus || "zkML"}</span>
+          <span className="font-mono text-[10px] text-muted-foreground ml-auto">the horizon</span>
         </div>
       </div>
 
