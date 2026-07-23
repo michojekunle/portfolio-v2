@@ -3,9 +3,15 @@ import { BooksManager } from "./books-manager";
 import { LearningManager } from "./learning-manager";
 import { BuildingManager } from "./building-manager";
 import { StatusManager } from "./status-manager";
+import { SpotifyConnectionCard } from "./spotify-connection-card";
 import { getProfileStatus } from "@/lib/profile-status";
 
-export default async function AdminNowPage(): Promise<React.ReactElement> {
+interface Props {
+  searchParams: Promise<{ spotify_connected?: string; spotify_error?: string }>;
+}
+
+export default async function AdminNowPage({ searchParams }: Props): Promise<React.ReactElement> {
+  const { spotify_connected, spotify_error } = await searchParams;
   const supabase = await createClient();
 
   const [
@@ -30,6 +36,11 @@ export default async function AdminNowPage(): Promise<React.ReactElement> {
           Books, learning progress, and active projects
         </p>
       </div>
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Spotify</h2>
+        <SpotifyConnectionCard connectedNotice={spotify_connected} errorCode={spotify_error} />
+      </section>
 
       <section>
         <h2 className="text-sm font-medium mb-4">Availability & Focuses</h2>
