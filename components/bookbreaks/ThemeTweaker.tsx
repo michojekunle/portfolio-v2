@@ -26,7 +26,7 @@ export function ThemeTweaker() {
     const next = isDark ? "light" : "dark";
     setTheme(next);
     // Also keep the ThemeSelector's palette in sync
-    const current = localStorage.getItem("portfolio-theme") ?? "ochre";
+    const current = localStorage.getItem("portfolio-theme") ?? "noir";
     // Dispatch a class change so the existing MutationObserver in ThemeSelector picks it up
     if (next === "dark") {
       document.documentElement.classList.add("dark");

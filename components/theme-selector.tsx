@@ -96,7 +96,7 @@ function applyMarginalia(show: boolean): void {
 }
 
 export function ThemeSelector(): React.ReactElement {
-  const [activeTheme, setActiveTheme] = useState<string>("ochre")
+  const [activeTheme, setActiveTheme] = useState<string>("noir")
   const [activeFont, setActiveFont] = useState<string>("fraunces")
   const [showMarginalia, setShowMarginalia] = useState<boolean>(true)
   const [isDark, setIsDark] = useState<boolean>(false)
@@ -115,7 +115,7 @@ export function ThemeSelector(): React.ReactElement {
       document.documentElement.classList.remove("dark")
     }
     localStorage.setItem("portfolio-dark", dark ? "1" : "0")
-    const current = localStorage.getItem("portfolio-theme") ?? "ochre"
+    const current = localStorage.getItem("portfolio-theme") ?? "noir"
     applyPalette(current, dark)
   }, [])
 
@@ -132,7 +132,7 @@ export function ThemeSelector(): React.ReactElement {
   }, [])
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("portfolio-theme") ?? "ochre"
+    const savedTheme = localStorage.getItem("portfolio-theme") ?? "noir"
     const savedFont = localStorage.getItem("portfolio-font") ?? "fraunces"
     const savedMarginalia = localStorage.getItem("portfolio-marginalia") !== "off"
     const savedDark = localStorage.getItem("portfolio-dark")
@@ -152,7 +152,7 @@ export function ThemeSelector(): React.ReactElement {
     const observer = new MutationObserver(() => {
       const nowDark = document.documentElement.classList.contains("dark")
       setIsDark(nowDark)
-      const current = localStorage.getItem("portfolio-theme") ?? "ochre"
+      const current = localStorage.getItem("portfolio-theme") ?? "noir"
       applyPalette(current, nowDark)
     })
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
