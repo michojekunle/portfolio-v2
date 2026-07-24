@@ -20,7 +20,7 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
       {/* Hero */}
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
           <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6">03 — READING LOG</div>
           <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">
@@ -61,7 +61,7 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
       )}
 
       {/* Bookshelf */}
-      <section className="py-20 max-180:py-14">
+      <section className="py-20 max-[720px]:py-14">
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
           {books.length === 0 && (
             <p className="text-muted-foreground text-[16px] py-20 text-center font-serif italic">

@@ -341,7 +341,7 @@ export function PdfReader({
         )}
 
         {/* Controls: zoom + pagination */}
-        <div className="fixed bottom-4 max-256:bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 px-4.5 py-2.5 rounded-2xl shadow-xl border border-(--rule) bg-(--bg-2) max-[480px]:w-[92%] max-[480px]:justify-between">
+        <div className="fixed bottom-4 max-[1024px]:bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 px-4.5 py-2.5 rounded-2xl shadow-xl border border-(--rule) bg-(--bg-2) max-[480px]:w-[92%] max-[480px]:justify-between">
           <button
             onClick={() => setScale((s) => Math.max(0.5, +(s - 0.2).toFixed(1)))}
             className="w-7.5 h-7.5 flex items-center justify-center rounded-md border border-(--rule) bg-transparent cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors"

@@ -39,13 +39,13 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
   const isEmpty = books.length === 0;
 
   return (
-    <div className="px-12 py-12 max-256:pt-20 max-180:px-6 max-180:pb-6 max-180:pt-20">
+    <div className="px-12 py-12 max-[1024px]:pt-20 max-[720px]:px-6 max-[720px]:pb-6 max-[720px]:pt-20">
       {/* Header */}
       <div className="mb-12">
         <div className="font-mono text-[10px] tracking-[0.16em] uppercase mb-2 text-muted-foreground">
           Dashboard
         </div>
-        <h1 className="font-display font-normal text-[40px] max-180:text-[28px] leading-[1.05] tracking-tight fvs-text m-0 text-(--ink)">
+        <h1 className="font-display font-normal text-[40px] max-[720px]:text-[28px] leading-[1.05] tracking-tight fvs-text m-0 text-(--ink)">
           Good{getTimeOfDay()},{" "}
           <em className="not-italic italic fvs-text-soft text-(--v3-accent)">
             {firstName}.
@@ -62,7 +62,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
 
       {/* Seed prompt for new users */}
       {isEmpty && (
-        <div className="rounded-xl p-8 mb-12 flex flex-col max-180:flex-col gap-5 items-start bg-[color-mix(in_oklab,var(--v3-accent)_10%,var(--bg))] border border-[color-mix(in_oklab,var(--v3-accent)_20%,var(--bg))]">
+        <div className="rounded-xl p-8 mb-12 flex flex-col max-[720px]:flex-col gap-5 items-start bg-[color-mix(in_oklab,var(--v3-accent)_10%,var(--bg))] border border-[color-mix(in_oklab,var(--v3-accent)_20%,var(--bg))]">
           <div>
             <h2 className="font-display text-[22px] fvs-text m-0 mb-2 text-(--ink)">
               Start with 4 pre-loaded books
@@ -78,7 +78,7 @@ export default async function BookBreaksDashboard(): Promise<React.ReactElement>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 max-192:grid-cols-1 gap-4 mb-12">
+      <div className="grid grid-cols-3 max-[768px]:grid-cols-1 gap-4 mb-12">
         <StatCard
           label="Books Read"
           value={stats.book_count}

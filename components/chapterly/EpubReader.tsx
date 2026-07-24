@@ -432,7 +432,7 @@ export function EpubReader({
       {/* Highlight color picker — appears at bottom when epub text is selected */}
       {pendingSelection && (
         <div
-          className="fixed bottom-18 max-256:bottom-24 left-1/2 z-50 flex items-center gap-2 px-3 py-2.5 rounded-[14px] shadow-2xl border"
+          className="fixed bottom-18 max-[1024px]:bottom-24 left-1/2 z-50 flex items-center gap-2 px-3 py-2.5 rounded-[14px] shadow-2xl border"
           style={{
             transform: "translateX(-50%)",
             background: "#1A1A1A",

@@ -87,7 +87,7 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
     <div className="w-full">
       {/* Slide viewer */}
       <div
-        className="carousel-slide-card relative w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center text-center p-10 max-160:p-6"
+        className="carousel-slide-card relative w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center text-center p-10 max-[640px]:p-6"
         style={{
           background: gradient,
           color: bookTheme.text,

@@ -195,7 +195,7 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
     <>
       {/* Desktop sidebar */}
       <aside
-        className="fixed top-0 left-0 h-screen w-60 z-30 border-r border-(--rule) max-256:hidden"
+        className="fixed top-0 left-0 h-screen w-60 z-30 border-r border-(--rule) max-[1024px]:hidden"
         style={{ background: "var(--bg)" }}
       >
         <SidebarContent {...sharedProps} />
@@ -203,7 +203,7 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
 
       {/* Mobile top bar */}
       <header
-        className="hidden max-256:flex fixed top-0 left-0 right-0 h-13 z-30 items-center justify-between px-5 border-b border-(--rule)"
+        className="hidden max-[1024px]:flex fixed top-0 left-0 right-0 h-13 z-30 items-center justify-between px-5 border-b border-(--rule)"
         style={{ background: "var(--bg)" }}
       >
         <div className="flex items-center gap-2">
@@ -238,7 +238,7 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
       {/* Mobile drawer */}
       {mobileOpen && (
         <div
-          className="hidden max-256:block fixed inset-0 z-40"
+          className="hidden max-[1024px]:block fixed inset-0 z-40"
           onClick={() => setMobileOpen(false)}
         >
           <div className="absolute inset-0 bg-black/40" style={{ top: "52px" }} aria-hidden="true" />

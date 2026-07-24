@@ -26,7 +26,7 @@ export default async function BookDetailPage({ params }: Props): Promise<React.R
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-      <div className="max-w-(--maxw) mx-auto px-(--gutter) pt-40 pb-30 max-[720px]:pt-[100px] max-180:pb-20">
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) pt-40 pb-30 max-[720px]:pt-[100px] max-[720px]:pb-20">
         <Link
           href="/reading"
           className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground hover:text-(--v3-accent) transition-colors no-underline mb-10"

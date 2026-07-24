@@ -52,8 +52,8 @@ export default async function JournalLayout({
   return (
     <div className="min-h-screen flex bg-(--bg) text-(--ink)">
       <JournalSidebarNav userEmail={user.email ?? ""} streakCount={streakCount} />
-      <div className="flex-1 min-w-0 max-256:ml-0 ml-60 flex flex-col relative">
-        <main className="flex-1 min-h-screen max-256:pt-13">{children}</main>
+      <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-60 flex flex-col relative">
+        <main className="flex-1 min-h-screen max-[1024px]:pt-13">{children}</main>
       </div>
       <AssistantWidget hasObjectives={objectives.length > 0} />
       <SyncBootstrap />

@@ -44,7 +44,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
   return (
     <div ref={containerRef}>
       {/* Hero */}
-      <section className="v3-case-hero v3-container relative z-10 pt-40 pb-20 max-180:pt-20 max-180:pb-14 border-b border-(--rule)">
+      <section className="v3-case-hero v3-container relative z-10 pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 border-b border-(--rule)">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           Project {p.idx}
         </motion.div>
         
-        <div className="flex flex-wrap gap-12 max-180:gap-6 mb-16">
+        <div className="flex flex-wrap gap-12 max-[720px]:gap-6 mb-16">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="flex flex-col gap-2">
             <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Role</div>
             <div className="text-[15px] font-medium text-(--ink)">{p.role}</div>
@@ -78,7 +78,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
               transition={{ duration: 0.8, delay: j * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="inline-block mr-4 max-180:mr-2"
+              className="inline-block mr-4 max-[720px]:mr-2"
             >
               {j === arr.length - 1 ? <em className="text-(--v3-accent) fvs-soft italic">{w}.</em> : w}
             </motion.span>
@@ -96,7 +96,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
       </section>
 
       {/* Image with Parallax */}
-      <section ref={imageRef} className="v3-container mb-30 max-180:mb-20 overflow-hidden rounded-3xl">
+      <section ref={imageRef} className="v3-container mb-30 max-[720px]:mb-20 overflow-hidden rounded-3xl">
         {p.image ? (
           <motion.div style={{ scale: imageScale, y: imageY }} className="relative w-full aspect-[16/9] bg-(--bg-2) origin-center">
             <Image src={p.image} alt={p.name} fill className="object-cover object-top" sizes="(max-width: 1320px) 100vw, 1320px" priority />
@@ -137,7 +137,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
         </aside>
 
         {/* Main Content */}
-        <div className="flex flex-col gap-20 max-180:gap-16">
+        <div className="flex flex-col gap-20 max-[720px]:gap-16">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
             <h2 className="font-display font-light text-[clamp(40px,5vw,64px)] leading-none text-(--ink) mb-8 tracking-[-0.03em] fvs-display">
               The <em className="text-(--v3-accent) italic fvs-soft">problem.</em>
@@ -190,7 +190,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
             whileInView={{ opacity: 1, scale: 1 }} 
             viewport={{ once: true, margin: "-100px" }} 
             transition={{ duration: 0.8 }}
-            className="my-20 p-16 max-180:p-8 bg-(--ink) text-(--bg) rounded-3xl relative overflow-hidden"
+            className="my-20 p-16 max-[720px]:p-8 bg-(--ink) text-(--bg) rounded-3xl relative overflow-hidden"
           >
             <div className="font-display text-[120px] leading-[0.5] text-(--bg-2) opacity-20 absolute top-10 left-6">
               ❝
@@ -207,7 +207,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
 
       {/* Next project nav */}
       <section className="v3-container border-t border-(--rule)">
-        <div className="flex max-180:flex-col justify-between items-center py-20 max-180:py-12 max-180:gap-12">
+        <div className="flex max-[720px]:flex-col justify-between items-center py-20 max-[720px]:py-12 max-[720px]:gap-12">
           <MagneticWrapper strength={20}>
             <Link href="/work" className="group flex flex-col items-center gap-2">
               <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1"><ArrowLeft className="w-3 h-3" /> All work</div>

@@ -20,7 +20,7 @@ export function AboutClientContent() {
   return (
     <div className="overflow-x-hidden">
       {/* Hero */}
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -62,10 +62,10 @@ export function AboutClientContent() {
 
       {/* Origin + current stack — a balanced two-column pairing, not a
           length-mismatched sidebar */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-180:py-16 border-b border-(--rule)">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16 border-b border-(--rule)">
         <motion.div
           {...fadeUp}
-          className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-180:mb-7"
+          className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-[720px]:mb-7"
         >
           ORIGIN
         </motion.div>
@@ -73,7 +73,7 @@ export function AboutClientContent() {
           <div className="flex flex-col gap-7">
             <motion.p
               {...fadeUp}
-              className="font-sans text-[24px] max-180:text-[20px] leading-normal text-(--ink) font-normal"
+              className="font-sans text-[24px] max-[720px]:text-[20px] leading-normal text-(--ink) font-normal"
             >
               I came to software through a long detour. My background is in the sciences —
               the kind of education that teaches you to follow evidence, question assumptions,
@@ -137,10 +137,10 @@ export function AboutClientContent() {
           Tinted background breaks the visual rhythm from the sections
           above and below it. */}
       <section className="bg-(--bg-2) border-b border-(--rule)">
-        <div className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-180:py-16">
+        <div className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16">
           <motion.div
             {...fadeUp}
-            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-180:mb-7 max-w-[68ch] mx-auto"
+            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-[720px]:mb-7 max-w-[68ch] mx-auto"
           >
             NOW
           </motion.div>
@@ -167,7 +167,7 @@ export function AboutClientContent() {
               >
                 &ldquo;
               </span>
-              <p className="relative font-sans text-[26px] max-[720px]:text-[21px] leading-[1.45] text-(--ink) font-normal italic pl-9 max-180:pl-7">
+              <p className="relative font-sans text-[26px] max-[720px]:text-[21px] leading-[1.45] text-(--ink) font-normal italic pl-9 max-[720px]:pl-7">
                 Once these feel like second nature, the real destination is zkML — making
                 zero-knowledge machine learning legible and shippable, not mythical.
               </p>
@@ -224,10 +224,10 @@ export function AboutClientContent() {
       </section>
 
       {/* Elsewhere — bento strip, full width */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-180:py-16 border-b border-(--rule)">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16 border-b border-(--rule)">
         <motion.div
           {...fadeUp}
-          className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-180:mb-7"
+          className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-[720px]:mb-7"
         >
           ELSEWHERE
         </motion.div>
@@ -268,11 +268,11 @@ export function AboutClientContent() {
 
       {/* CTA — standalone, never inside a transformed wrapper so it can
           never drift past its layout box */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-180:py-16">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16">
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.8 }}
-          className="rounded-[20px] border border-(--rule) bg-(--paper) px-12 py-12 max-180:px-7 max-180:py-9 flex flex-wrap items-center justify-between gap-7 max-[600px]:justify-start"
+          className="rounded-[20px] border border-(--rule) bg-(--paper) px-12 py-12 max-[720px]:px-7 max-[720px]:py-9 flex flex-wrap items-center justify-between gap-7 max-[600px]:justify-start"
         >
           <p className="font-sans text-[22px] max-[600px]:text-[18px] leading-normal text-(--ink) font-normal m-0 max-w-[40ch]">
             That&apos;s the short version. The long version is in the work.

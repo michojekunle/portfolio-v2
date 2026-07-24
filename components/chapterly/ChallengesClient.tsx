@@ -161,7 +161,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
   const completedEntries = entries.filter((e) => e.completed_at);
 
   return (
-    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8 max-w-[900px]">
+    <div className="px-10 pt-12 pb-12 max-[1024px]:pt-20 max-[720px]:px-6 max-[720px]:pb-8 max-w-[900px]">
       {/* Header */}
       <div className="mb-10">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
@@ -214,7 +214,7 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
 
       {/* Browse tab — pre-built challenges grid */}
       {tab === "browse" && (
-        <div className="grid grid-cols-2 max-160:grid-cols-1 gap-4">
+        <div className="grid grid-cols-2 max-[640px]:grid-cols-1 gap-4">
           {PREBUILT_CHALLENGES.map((ch) => {
             const entry = entryMap.get(ch.id);
             const joined = !!entry;

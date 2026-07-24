@@ -32,7 +32,7 @@ export function WorkClient(): React.ReactElement {
 
   return (
     <section className="v3-container pb-40 max-[720px]:pb-[100px]">
-      <div className="v3-work-filters mb-20 max-180:mb-12">
+      <div className="v3-work-filters mb-20 max-[720px]:mb-12">
         <span className="lbl">Filter archive</span>
         {CATS.map((c) => (
           <button
@@ -46,8 +46,8 @@ export function WorkClient(): React.ReactElement {
       </div>
 
       {/* Featured / Masterpieces */}
-      <div className="mb-30 max-180:mb-20">
-        <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-4 items-baseline mb-12">
+      <div className="mb-30 max-[720px]:mb-20">
+        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-4 items-baseline mb-12">
           <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase pt-2">Selection</div>
           <h2 className="m-0 font-normal text-[clamp(44px,6vw,64px)] leading-[0.95] tracking-[-0.03em] text-(--ink)">
             Selected <em>Masterpieces.</em>
@@ -59,7 +59,7 @@ export function WorkClient(): React.ReactElement {
             <Link 
               key={p.slug} 
               href={`/work/${p.slug}`} 
-              className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-16 max-[920px]:gap-8 p-12 max-180:p-8 rounded-3xl border border-(--rule) bg-(--paper) overflow-hidden transition-all duration-300 hover:border-(--v3-accent-soft) hover:shadow-[0_24px_64px_-12px_color-mix(in_oklab,var(--ink)_10%,transparent)]"
+              className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-16 max-[920px]:gap-8 p-12 max-[720px]:p-8 rounded-3xl border border-(--rule) bg-(--paper) overflow-hidden transition-all duration-300 hover:border-(--v3-accent-soft) hover:shadow-[0_24px_64px_-12px_color-mix(in_oklab,var(--ink)_10%,transparent)]"
             >
               <div className="flex flex-col justify-center">
                 <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-(--v3-accent) mb-4">{p.idx} · {p.year}</div>
@@ -87,7 +87,7 @@ export function WorkClient(): React.ReactElement {
 
       {/* Archive List */}
       <div>
-        <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-4 items-baseline mb-12">
+        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-4 items-baseline mb-12">
           <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase pt-2">Archive</div>
           <h2 className="m-0 font-normal text-[clamp(32px,4vw,48px)] leading-[0.95] tracking-[-0.03em] text-(--ink)">
             Everything <em>shipped.</em>

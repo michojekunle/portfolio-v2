@@ -46,7 +46,7 @@ export default async function FlowiseLayout({
           netWorth={netWorth}
           currency="NGN"
         />
-        <div className="flex-1 min-w-0 max-256:ml-0 ml-[260px] flex flex-col relative">
+        <div className="flex-1 min-w-0 max-[1024px]:ml-0 ml-[260px] flex flex-col relative">
           <main className="flex-1 min-h-screen">{children}</main>
         </div>
         <AssistantWidget />

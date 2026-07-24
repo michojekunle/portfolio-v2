@@ -587,7 +587,7 @@ function EditBookModal({ book, onClose, onSaved, onDeleted }: EditModalProps): R
             <label className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground block mb-2.5">
               Reading Status
             </label>
-            <div className="grid grid-cols-3 max-90:grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 max-[360px]:grid-cols-2 gap-2">
               {(Object.keys(STATUS_CONFIG) as ReadingStatus[]).map((s) => {
                 const cfg = STATUS_CONFIG[s];
                 const active = status === s;
@@ -1000,7 +1000,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
           <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
             {books.length} {books.length === 1 ? "book" : "books"}
           </div>
-          <h1 className="font-display text-[32px] max-180:text-[26px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
+          <h1 className="font-display text-[32px] max-[720px]:text-[26px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
             Library
           </h1>
         </div>
@@ -1140,7 +1140,7 @@ export function ChLibraryClient({ books: initialBooks }: Props): React.ReactElem
 
       {/* ── Daily Pick Banner ── */}
       <div
-        className="mb-8 rounded-2xl border p-6 flex items-center justify-between gap-6 max-180:flex-col max-180:items-start max-180:gap-4"
+        className="mb-8 rounded-2xl border p-6 flex items-center justify-between gap-6 max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-4"
         style={{ borderColor: "var(--rule)", background: "linear-gradient(135deg, color-mix(in oklab, var(--ch-accent) 8%, transparent) 0%, color-mix(in oklab, var(--ch-accent) 2%, transparent) 100%)" }}
       >
         <div className="flex items-start gap-4">

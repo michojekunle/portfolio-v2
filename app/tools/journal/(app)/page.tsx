@@ -127,7 +127,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
   const entryDates = entries.map((e) => e.date);
 
   return (
-    <div className="max-w-190 mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
+    <div className="max-w-190 mx-auto px-8 py-12 max-[640px]:px-5 max-[640px]:py-8">
 
       {/* ── Header ── */}
       <div className="mb-9">

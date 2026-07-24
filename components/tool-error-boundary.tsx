@@ -33,7 +33,7 @@ export function ToolErrorBoundary({
         {toolName} Error
       </div>
       
-      <h2 className="font-display text-[26px] max-160:text-[22px] font-normal tracking-[-0.02em] text-(--ink) m-0 mb-2.5 leading-[1.2] fvs-text">
+      <h2 className="font-display text-[26px] max-[640px]:text-[22px] font-normal tracking-[-0.02em] text-(--ink) m-0 mb-2.5 leading-[1.2] fvs-text">
         Something went wrong
       </h2>
       

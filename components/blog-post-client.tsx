@@ -32,7 +32,7 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
         className="fixed top-0 left-0 right-0 h-0.75 bg-(--v3-accent) z-[500] origin-left" 
         style={{ scaleX }} 
       />
-      <section className="v3-post-hero v3-container-narrow pt-40 pb-20 max-180:pt-20 max-180:pb-14 relative">
+      <section className="v3-post-hero v3-container-narrow pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 relative">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

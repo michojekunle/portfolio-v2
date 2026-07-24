@@ -26,18 +26,18 @@ const ROLES = [
 
 export function AboutPreviewSection(): React.ReactElement {
   return (
-    <section className="py-30 max-180:py-18 max-w-(--maxw) mx-auto px-(--gutter)" aria-labelledby="about-preview-heading">
+    <section className="py-30 max-[720px]:py-18 max-w-(--maxw) mx-auto px-(--gutter)" aria-labelledby="about-preview-heading">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12"
+        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12"
       >
         <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">01 — IDENTITY</div>
         <div>
           <h2 id="about-preview-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
-            <TextReveal delay={0.1}>Engineering with</TextReveal> <br className="max-180:hidden" />
+            <TextReveal delay={0.1}>Engineering with</TextReveal> <br className="max-[720px]:hidden" />
             <TextReveal delay={0.3} className="italic text-(--v3-accent) fvs-soft">precision.</TextReveal>
           </h2>
           <motion.div 
@@ -45,7 +45,7 @@ export function AboutPreviewSection(): React.ReactElement {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
+            className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
           >
             I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface — and increasingly, the business around it.
           </motion.div>

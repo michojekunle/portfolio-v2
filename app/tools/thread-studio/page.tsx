@@ -196,10 +196,10 @@ export default function ThreadStudioPage(): React.ReactElement {
     >
       {/* Hero */}
       <section
-        className="pt-35 pb-15 max-[720px]:pt-[100px] max-180:pb-9 border-b"
+        className="pt-35 pb-15 max-[720px]:pt-[100px] max-[720px]:pb-9 border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div className="max-w-310 mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-8 max-180:flex-col max-180:items-start">
+        <div className="max-w-310 mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-8 max-[720px]:flex-col max-[720px]:items-start">
           <div>
             <div
               className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.16em] uppercase mb-6 px-2.5 py-1 rounded-full"
@@ -243,12 +243,12 @@ export default function ThreadStudioPage(): React.ReactElement {
 
       {/* Workspace */}
       <section className="max-w-310 mx-auto px-[var(--gutter,24px)] py-12">
-        <div className="grid grid-cols-[1.2fr_0.8fr] gap-10 max-240:grid-cols-1">
+        <div className="grid grid-cols-[1.2fr_0.8fr] gap-10 max-[960px]:grid-cols-1">
           {/* Left Column: Editor */}
           <div className="space-y-8">
             {/* Input Config Card */}
             <div
-              className="rounded-2xl p-8 max-180:p-5 space-y-6"
+              className="rounded-2xl p-8 max-[720px]:p-5 space-y-6"
               style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
             >
               {/* Modes Tabs */}
@@ -343,7 +343,7 @@ export default function ThreadStudioPage(): React.ReactElement {
                     >
                       Tone
                     </div>
-                    <div className="grid grid-cols-2 max-130:grid-cols-1 gap-2">
+                    <div className="grid grid-cols-2 max-[520px]:grid-cols-1 gap-2">
                       {TONES.map((t) => (
                         <button
                           key={t}
@@ -430,7 +430,7 @@ export default function ThreadStudioPage(): React.ReactElement {
               <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
                 Mockup Identity Settings
               </div>
-              <div className="grid grid-cols-2 gap-4 max-130:grid-cols-1">
+              <div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1">
                 <div>
                   <label htmlFor="mock-name" className="block text-[11px] text-muted-foreground mb-1.5">Display Name</label>
                   <input

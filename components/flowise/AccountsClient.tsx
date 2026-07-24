@@ -32,7 +32,7 @@ const [accounts, setAccounts] = useState(initialAccounts);
   const atLimit = accounts.length >= FREE_ACCOUNT_LIMIT;
 
   return (
-    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
+    <div className="px-10 pt-12 pb-15 max-[1024px]:pt-20 max-[720px]:px-5">
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)">
           Accounts

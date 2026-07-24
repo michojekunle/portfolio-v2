@@ -52,7 +52,7 @@ export function SettingsClient({ accounts, categories }: Props): React.ReactElem
   const userCategories = categories.filter((c) => !c.is_system);
 
   return (
-    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5 max-w-180">
+    <div className="px-10 pt-12 pb-15 max-[1024px]:pt-20 max-[720px]:px-5 max-w-180">
       <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 mb-10 text-(--ink)">
         Settings
       </h1>

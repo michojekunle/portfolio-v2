@@ -5,7 +5,7 @@ export default async function SettingsPage(): Promise<React.ReactElement> {
   const settings = await getBBSettings();
 
   return (
-    <div className="px-12 py-12 max-256:pt-20 max-180:px-6 max-180:pb-6 max-180:pt-20 max-w-160">
+    <div className="px-12 py-12 max-[1024px]:pt-20 max-[720px]:px-6 max-[720px]:pb-6 max-[720px]:pt-20 max-w-160">
       {/* Page header */}
       <div className="mb-10">
         <div className="font-mono text-[10px] tracking-[0.16em] uppercase mb-2 text-muted-foreground">

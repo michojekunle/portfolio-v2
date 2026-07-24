@@ -112,24 +112,24 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
 
   return (
     <section
-      className="py-30 max-180:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
+      className="py-30 max-[720px]:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
       id="open-source"
       aria-labelledby="bento-heading"
     >
-      <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
+      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
         <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — OSS</div>
         <div>
           <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Other notable <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
           </h2>
-          <div className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
             Open source projects on GitHub — tools, experiments, and things I built
             to scratch my own itch.
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-180:grid-cols-1 gap-4 mb-16">
+      <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-1 gap-4 mb-16">
         {repos.slice(0, 6).map((repo, i) => {
           const langColor = LANGUAGE_COLORS[repo.language ?? ""] ?? "var(--v3-accent)"
           const isWide = i === 0 || i === 4

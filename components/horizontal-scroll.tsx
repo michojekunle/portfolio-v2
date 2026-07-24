@@ -24,7 +24,7 @@ export function HorizontalScroll({ children, title }: HorizontalScrollProps) {
   // If there's only 1 child, no need for horizontal scroll mechanics
   if (children.length <= 1) {
     return (
-      <div className="mb-30 max-180:mb-20">
+      <div className="mb-30 max-[720px]:mb-20">
         {title && <div className="mb-12">{title}</div>}
         <div className="flex flex-col gap-10">
           {children}
@@ -34,7 +34,7 @@ export function HorizontalScroll({ children, title }: HorizontalScrollProps) {
   }
 
   return (
-    <div className="mb-30 max-180:mb-20">
+    <div className="mb-30 max-[720px]:mb-20">
       {title && <div className="mb-12">{title}</div>}
       
       {/* 

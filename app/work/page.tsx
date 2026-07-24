@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function WorkPage(): React.ReactElement {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
-          <div className="grid grid-cols-[1.4fr_1fr] max-[900px]:grid-cols-1 gap-16 max-180:gap-8 items-center">
+        <section className="pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+          <div className="grid grid-cols-[1.4fr_1fr] max-[900px]:grid-cols-1 gap-16 max-[720px]:gap-8 items-center">
             <div>
               <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6">SELECTED WORK · 2024 — 2026</div>
               <h1 className="m-0 font-display font-normal text-[clamp(48px,8vw,100px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">

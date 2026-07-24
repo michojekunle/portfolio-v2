@@ -100,7 +100,7 @@ const [month, setMonth] = useState(initialMonth);
   );
 
   return (
-    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
+    <div className="px-10 pt-12 pb-15 max-[1024px]:pt-20 max-[720px]:px-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <h1 className="font-display font-normal text-[36px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)">
@@ -130,7 +130,7 @@ const [month, setMonth] = useState(initialMonth);
 
       {/* Summary */}
       {budgets.length > 0 && (
-        <div className="grid grid-cols-3 max-180:grid-cols-1 gap-3 mb-7">
+        <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-3 mb-7">
           <SummaryPill label="Total Budgeted" value={(hidden ? "****" : formatCurrency(totalBudgeted, "NGN"))} color="var(--ink)" />
           <SummaryPill label="Total Spent" value={(hidden ? "****" : formatCurrency(totalSpent, "NGN"))} color={totalSpent > totalBudgeted ? "#DC2626" : "var(--ink)"} />
           <SummaryPill label="Remaining" value={(hidden ? "****" : formatCurrency(Math.max(0, totalBudgeted - totalSpent)), "NGN")} color={ACCENT} />

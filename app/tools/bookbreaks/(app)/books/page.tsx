@@ -8,9 +8,9 @@ export default async function BooksPage(): Promise<React.ReactElement> {
   const books = await getBBBooks();
 
   return (
-    <div className="px-12 py-12 max-256:pt-20 max-180:px-6 max-180:pb-6 max-180:pt-20">
+    <div className="px-12 py-12 max-[1024px]:pt-20 max-[720px]:px-6 max-[720px]:pb-6 max-[720px]:pt-20">
       {/* Header */}
-      <div className="flex items-end justify-between mb-10 max-180:flex-col max-180:items-start max-180:gap-5">
+      <div className="flex items-end justify-between mb-10 max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-5">
         <div>
           <div
             className="font-mono text-[10px] tracking-[0.16em] uppercase mb-2 text-muted-foreground"
@@ -18,7 +18,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
             Library
           </div>
           <h1
-            className="font-display font-normal text-[36px] max-180:text-[28px] leading-[1.05] tracking-tight fvs-text m-0 text-(--ink)"
+            className="font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.05] tracking-tight fvs-text m-0 text-(--ink)"
           >
             My Books
           </h1>
@@ -33,7 +33,7 @@ export default async function BooksPage(): Promise<React.ReactElement> {
 
       {/* Grid */}
       {books.length > 0 ? (
-        <div className="grid grid-cols-3 max-[1100px]:grid-cols-2 max-160:grid-cols-1 gap-4">
+        <div className="grid grid-cols-3 max-[1100px]:grid-cols-2 max-[640px]:grid-cols-1 gap-4">
           {books.map((book) => {
             const theme = BOOK_THEMES[book.theme] ?? BOOK_THEMES.custom;
             return (

@@ -244,7 +244,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
       role="main"
     >
       {/* Header — adds extra top clearance on mobile for the fixed topbar */}
-      <div className="flex items-center justify-between px-8 py-5 max-256:pt-20 border-b border-(--rule) max-180:px-5">
+      <div className="flex items-center justify-between px-8 py-5 max-[1024px]:pt-20 border-b border-(--rule) max-[720px]:px-5">
         <Link
           href="/tools/chapterly"
           className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground hover:text-(--ink) no-underline transition-colors"
@@ -279,7 +279,7 @@ export function ChFlashcardClient({ initialCards, totalCount, studyAll }: Props)
       </div>
 
       {/* Card */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 max-180:py-8">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 max-[720px]:py-8">
         {/* Source book */}
         {card.ch_books && (
           <div className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-6 text-center">

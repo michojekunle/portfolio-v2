@@ -83,9 +83,9 @@ export async function NowSection(): Promise<React.ReactElement> {
   const books = (booksRaw ?? []) as BookItem[]
 
   return (
-    <section className="relative py-30 max-180:py-18 bg-(--bg-2) border-y border-(--rule)" id="now" aria-labelledby="now-heading">
+    <section className="relative py-30 max-[720px]:py-18 bg-(--bg-2) border-y border-(--rule)" id="now" aria-labelledby="now-heading">
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-        <div className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
+        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
           <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) animate-pulse" />
             04 — NOW
@@ -94,7 +94,7 @@ export async function NowSection(): Promise<React.ReactElement> {
             <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
               Currently <em className="not-italic italic text-(--v3-accent) fvs-soft">working on.</em>
             </h2>
-            <div className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+            <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
               A live snapshot — Spotify updates in real time, everything else the moment it changes.
             </div>
           </div>

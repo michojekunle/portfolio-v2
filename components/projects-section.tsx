@@ -30,7 +30,7 @@ export function ProjectsSection(): React.ReactElement {
   return (
     <section
       ref={containerRef}
-      className="py-30 max-180:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
+      className="py-30 max-[720px]:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
       id="projects"
       aria-labelledby="projects-heading"
     >
@@ -39,14 +39,14 @@ export function ProjectsSection(): React.ReactElement {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12"
+        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12"
       >
         <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">02 — FEATURED</div>
         <div>
           <h2 id="projects-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Masterpieces, I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
-          <div className="col-start-2 max-180:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
             Three I&apos;d most want to talk about. Full case studies inside — process,
             wrong turns, what shipped.
           </div>

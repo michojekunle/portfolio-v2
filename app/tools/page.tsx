@@ -78,7 +78,7 @@ export default function CreatorSuitePage(): React.ReactElement {
     >
       {/* ── Hero ── */}
       <section
-        className="pt-40 pb-[100px] max-180:pt-30 max-180:pb-16 border-b"
+        className="pt-40 pb-[100px] max-[720px]:pt-30 max-[720px]:pb-16 border-b"
         style={{ borderColor: "var(--rule)" }}
       >
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
@@ -183,7 +183,7 @@ export default function CreatorSuitePage(): React.ReactElement {
       </section>
 
       {/* ── Tool grid: 2×2 + full-width Flowise ── */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-[100px] max-180:py-16">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-[100px] max-[720px]:py-16">
         <div className="border border-(--rule) rounded-sm">
           {/* Top 4 tools — 2 column */}
           <div className="grid grid-cols-2 max-[900px]:grid-cols-1">
@@ -200,14 +200,14 @@ export default function CreatorSuitePage(): React.ReactElement {
 
       {/* ── Philosophy strip ── */}
       <section
-        className="border-y py-20 max-180:py-14"
+        className="border-y py-20 max-[720px]:py-14"
         style={{
           borderColor: "var(--rule)",
           background: "var(--bg-2)",
         }}
       >
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-          <div className="grid grid-cols-3 max-180:grid-cols-1 gap-12">
+          <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-12">
             {[
               {
                 num: "01",
@@ -298,7 +298,7 @@ function ToolCard({
 
         {/* Name + tagline */}
         <h2
-          className="font-display font-normal text-[36px] max-180:text-[28px] leading-[1.05] tracking-tight mb-2 fvs-text m-0"
+          className="font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.05] tracking-tight mb-2 fvs-text m-0"
           style={{ color: "var(--ink)" }}
         >
           {tool.name}
@@ -417,7 +417,7 @@ function VelaCard(): React.ReactElement {
             </div>
 
             <h2
-              className="font-display font-normal text-[42px] max-180:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
+              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
               style={{ color: "var(--ink)" }}
             >
               Vela
@@ -537,7 +537,7 @@ function FlowiseCard(): React.ReactElement {
             </div>
 
             <h2
-              className="font-display font-normal text-[42px] max-180:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
+              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
               style={{ color: "var(--ink)" }}
             >
               Flowise

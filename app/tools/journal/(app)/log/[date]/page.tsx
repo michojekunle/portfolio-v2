@@ -48,7 +48,7 @@ export default async function LogDatePage({ params, searchParams }: Props): Prom
   const hasNext = nextDate <= today;
 
   return (
-    <div className="max-w-180 mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
+    <div className="max-w-180 mx-auto px-8 py-12 max-[640px]:px-5 max-[640px]:py-8">
       {/* Date navigation */}
       <div className="flex items-center justify-between mb-8">
         <Link

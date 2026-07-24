@@ -95,7 +95,7 @@ const [transactions, setTransactions] = useState(initialTransactions);
   const expenses = transactions.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
 
   return (
-    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
+    <div className="px-10 pt-12 pb-15 max-[1024px]:pt-20 max-[720px]:px-5">
       {deleteError && (
         <div className="mb-4 px-3.5 py-2.5 rounded-[10px] bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] font-mono text-[11px] flex items-center justify-between">
           {deleteError}

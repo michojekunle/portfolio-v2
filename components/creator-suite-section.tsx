@@ -17,7 +17,7 @@ const TOOLS = [
 export function CreatorSuiteSection(): React.ReactElement {
   return (
     <section
-      className="py-30 max-180:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
+      className="py-30 max-[720px]:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
       aria-labelledby="creator-suite-heading"
     >
       <motion.div
@@ -25,7 +25,7 @@ export function CreatorSuiteSection(): React.ReactElement {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12"
+        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12"
       >
         <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">
           03 — TOOLS
@@ -94,7 +94,7 @@ export function CreatorSuiteSection(): React.ReactElement {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="flex items-center justify-between gap-6 max-180:flex-col max-180:items-start"
+        className="flex items-center justify-between gap-6 max-[720px]:flex-col max-[720px]:items-start"
       >
         <p className="m-0 text-[15px] text-muted-foreground max-w-[52ch]">
           Each tool is a real product with auth, database, AI integrations, and production

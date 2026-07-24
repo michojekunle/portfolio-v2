@@ -24,7 +24,7 @@ export function Footer(): React.ReactElement {
           Engineer, writer &amp; builder. Building mobile and systems today, toward zkML tomorrow — from Lagos.
         </p>
 
-        <div className="grid grid-cols-4 max-180:grid-cols-2 max-[480px]:grid-cols-1 gap-8 pt-10 border-t border-(--rule)">
+        <div className="grid grid-cols-4 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1 gap-8 pt-10 border-t border-(--rule)">
           <div className="flex flex-col">
             <h5 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Work

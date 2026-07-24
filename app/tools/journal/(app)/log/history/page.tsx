@@ -34,7 +34,7 @@ export default async function HistoryPage(): Promise<React.ReactElement> {
   const months = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
   return (
-    <div className="max-w-180 mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
+    <div className="max-w-180 mx-auto px-8 py-12 max-[640px]:px-5 max-[640px]:py-8">
       <div className="flex items-center justify-between mb-10">
         <div>
           <h1 className="font-display text-[28px] font-normal tracking-[-0.02em] fvs-text m-0 text-(--ink)">

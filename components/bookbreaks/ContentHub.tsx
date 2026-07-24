@@ -123,10 +123,10 @@ export function ContentHub({ content, books }: ContentHubProps) {
   const hasFilters = search || typeFilter !== "all" || statusFilter !== "all";
 
   return (
-    <div className="px-12 py-12 max-256:pt-20 max-180:px-6 max-180:pb-6 max-180:pt-20">
+    <div className="px-12 py-12 max-[1024px]:pt-20 max-[720px]:px-6 max-[720px]:pb-6 max-[720px]:pt-20">
 
       {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="flex items-end justify-between mb-10 max-180:flex-col max-180:items-start max-180:gap-4">
+      <div className="flex items-end justify-between mb-10 max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-4">
         <div>
           <div className="font-mono text-[10px] tracking-[0.16em] uppercase mb-2 text-muted-foreground">
             Content Hub

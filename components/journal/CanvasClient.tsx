@@ -71,7 +71,7 @@ export function CanvasClient() {
   const activeEntry = activeDate ? entries.find((e) => e.date === activeDate) : null;
 
   return (
-    <div className="max-w-[900px] mx-auto px-8 py-12 max-160:px-5 max-160:py-8">
+    <div className="max-w-[900px] mx-auto px-8 py-12 max-[640px]:px-5 max-[640px]:py-8">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[20px]" style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}>
           <Calendar size={20} />
@@ -201,7 +201,7 @@ export function CanvasClient() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-12 py-10 max-160:px-5 max-160:py-6 flex flex-col gap-6">
+            <div className="flex-1 overflow-y-auto px-12 py-10 max-[640px]:px-5 max-[640px]:py-6 flex flex-col gap-6">
               {activeEntry && (activeEntry.top_priorities.length > 0 || activeEntry.accomplished.length > 0) && (
                 <div className="rounded-[10px] px-4 py-3.5 text-[13px]" style={{ background: "var(--bg-2)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}>
                   This day already has priorities/accomplishments logged from the daily log — edit those from{" "}

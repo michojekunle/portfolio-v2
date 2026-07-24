@@ -96,7 +96,7 @@ const router = useRouter();
       : 0;
 
   return (
-    <div className="px-10 pt-12 pb-15 max-256:pt-20 max-180:px-5">
+    <div className="px-10 pt-12 pb-15 max-[1024px]:pt-20 max-[720px]:px-5">
       {/* Header */}
       <div className="flex items-start justify-between mb-10 gap-4 flex-wrap">
         <div>
@@ -104,7 +104,7 @@ const router = useRouter();
             {new Date().toLocaleDateString("en-NG", { month: "long", year: "numeric" })}
           </div>
           <h1
-            className="font-display font-normal text-[40px] max-180:text-[28px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)"
+            className="font-display font-normal text-[40px] max-[720px]:text-[28px] leading-[1.05] tracking-[-0.03em] fvs-text m-0 text-(--ink)"
           >
             Dashboard
           </h1>
@@ -306,7 +306,7 @@ function SummaryCard({
       </div>
       <div
         onClick={toggle}
-        className="font-display text-[28px] max-180:text-[22px] font-normal tracking-[-0.02em] fvs-text leading-none cursor-pointer hover:opacity-80 transition-opacity"
+        className="font-display text-[28px] max-[720px]:text-[22px] font-normal tracking-[-0.02em] fvs-text leading-none cursor-pointer hover:opacity-80 transition-opacity"
         style={{ color: accent }}
       >
         {value}

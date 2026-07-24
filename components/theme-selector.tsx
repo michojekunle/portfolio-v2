@@ -166,7 +166,7 @@ export function ThemeSelector(): React.ReactElement {
       <div className="flex flex-col gap-3">
         <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Color theme</div>
         <div className="v3-theme-selector">
-          <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-180:grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-3 gap-2">
             {Object.entries(THEMES).map(([key, t]) => {
               const palette = isDark ? t.dark : t.light
               return (

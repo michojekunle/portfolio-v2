@@ -298,7 +298,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
       "var(--bg-2)";
 
     return (
-      <div className="flex flex-col h-[100dvh] bg-(--bg) max-256:pt-15">
+      <div className="flex flex-col h-[100dvh] bg-(--bg) max-[1024px]:pt-15">
         {/* Header */}
         <div className="flex items-center justify-between px-5 h-14 border-b border-(--rule) bg-(--bg-2) shrink-0">
           <div className="flex items-center gap-2.5">
@@ -392,7 +392,7 @@ export function ChChatClient({ book }: Props): React.ReactElement {
 
   // ─── Text chat UI ─────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-[100dvh] bg-(--bg) max-256:pt-15">
+    <div className="flex flex-col h-[100dvh] bg-(--bg) max-[1024px]:pt-15">
       {/* Header */}
       <div className="flex items-center justify-between px-4 sm:px-5 h-14 border-b border-(--rule) bg-(--bg-2) shrink-0">
         <div className="flex items-center gap-4">

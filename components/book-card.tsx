@@ -93,7 +93,7 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
   return (
     <div>
       {/* Meta row */}
-      <div className="flex flex-wrap gap-12 max-180:gap-6 mb-10">
+      <div className="flex flex-wrap gap-12 max-[720px]:gap-6 mb-10">
         <div className="flex flex-col gap-2">
           <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Author</div>
           <div className="text-[15px] font-medium text-(--ink)">{book.author}</div>

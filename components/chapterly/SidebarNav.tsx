@@ -173,12 +173,12 @@ export function ChSidebarNav({ userEmail, streak = 0 }: Props): React.ReactEleme
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-[260px] max-256:hidden z-50 bg-(--bg-2) border-r border-(--rule)">
+      <aside className="fixed left-0 top-0 h-screen w-[260px] max-[1024px]:hidden z-50 bg-(--bg-2) border-r border-(--rule)">
         <SidebarContent />
       </aside>
 
       {/* Mobile topbar */}
-      <div className="hidden max-256:flex fixed top-0 left-0 right-0 h-15 items-center justify-between px-5 z-50 bg-(--bg-2) border-b border-(--rule)">
+      <div className="hidden max-[1024px]:flex fixed top-0 left-0 right-0 h-15 items-center justify-between px-5 z-50 bg-(--bg-2) border-b border-(--rule)">
         <div className="flex items-center gap-2">
           <BookMarked size={20} style={{ color: ACCENT }} />
           <span className="font-display text-[16px] fvs-text text-(--ink)">Chapterly</span>
@@ -208,7 +208,7 @@ export function ChSidebarNav({ userEmail, streak = 0 }: Props): React.ReactEleme
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
-          <aside className="fixed top-0 left-0 h-screen w-[280px] max-90:w-full z-50 bg-(--bg-2) border-r border-(--rule) shadow-2xl">
+          <aside className="fixed top-0 left-0 h-screen w-[280px] max-[360px]:w-full z-50 bg-(--bg-2) border-r border-(--rule) shadow-2xl">
             <SidebarContent />
           </aside>
         </>

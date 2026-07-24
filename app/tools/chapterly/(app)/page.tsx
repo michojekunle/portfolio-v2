@@ -68,13 +68,13 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
   const isFreeAtLimit = books.length >= FREE_BOOK_LIMIT;
 
   return (
-    <div className="px-10 pt-12 pb-12 max-256:pt-20 max-180:px-6 max-180:pb-8 max-w-[1200px]">
+    <div className="px-10 pt-12 pb-12 max-[1024px]:pt-20 max-[720px]:px-6 max-[720px]:pb-8 max-w-[1200px]">
       {/* ── Header ── */}
       <div className="mb-12">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-2">
           Good {getGreeting()}, {user?.email?.split("@")[0]}
         </div>
-        <h1 className="font-display text-[36px] max-180:text-[28px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
+        <h1 className="font-display text-[36px] max-[720px]:text-[28px] font-normal tracking-[-0.02em] fvs-text text-(--ink) m-0 leading-[1.1]">
           Your Reading OS
         </h1>
       </div>
@@ -410,7 +410,7 @@ export default async function ChapterlyHomePage(): Promise<React.ReactElement> {
       )}
 
       {/* ── BookBreaks bridge ── */}
-      <div className="rounded-2xl p-7 border border-(--rule) bg-(--bg-2) flex items-center justify-between gap-5 max-160:flex-col max-160:text-center">
+      <div className="rounded-2xl p-7 border border-(--rule) bg-(--bg-2) flex items-center justify-between gap-5 max-[640px]:flex-col max-[640px]:text-center">
         <div>
           <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
             Powered by BookBreaks

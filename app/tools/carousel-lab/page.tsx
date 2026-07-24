@@ -816,10 +816,10 @@ export default function CarouselLabPage(): React.ReactElement {
     >
       {/* Header Banner */}
       <section
-        className="pt-35 pb-15 max-[720px]:pt-[100px] max-180:pb-9 border-b"
+        className="pt-35 pb-15 max-[720px]:pt-[100px] max-[720px]:pb-9 border-b"
         style={{ borderColor: "var(--rule)" }}
       >
-        <div className="max-w-310 mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-8 max-180:flex-col max-180:items-start">
+        <div className="max-w-310 mx-auto px-[var(--gutter,24px)] flex items-center justify-between gap-8 max-[720px]:flex-col max-[720px]:items-start">
           <div>
             <div
               className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.16em] uppercase mb-5 px-2.5 py-1 rounded-full"
@@ -869,7 +869,7 @@ export default function CarouselLabPage(): React.ReactElement {
       <section className="max-w-310 mx-auto px-[var(--gutter,24px)] py-12">
         {/* Input area */}
         <div
-          className="rounded-2xl p-8 max-180:p-5 mb-10 space-y-6"
+          className="rounded-2xl p-8 max-[720px]:p-5 mb-10 space-y-6"
           style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
         >
           {/* Creation Mode Tabs */}
@@ -895,7 +895,7 @@ export default function CarouselLabPage(): React.ReactElement {
           </div>
 
           {inputMode === "topic" && (
-            <div className="flex gap-4 max-180:flex-col">
+            <div className="flex gap-4 max-[720px]:flex-col">
               <div className="flex-1">
                 <label
                   htmlFor="carousel-topic"
@@ -928,7 +928,7 @@ export default function CarouselLabPage(): React.ReactElement {
                 />
               </div>
 
-              <div className="w-[200px] max-180:w-full">
+              <div className="w-[200px] max-[720px]:w-full">
                 <label
                   className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                   style={{ color: "var(--ink-3)" }}
@@ -958,7 +958,7 @@ export default function CarouselLabPage(): React.ReactElement {
           )}
 
           {inputMode === "refine" && (
-            <div className="flex gap-4 max-180:flex-col">
+            <div className="flex gap-4 max-[720px]:flex-col">
               <div className="flex-1">
                 <label
                   htmlFor="carousel-notes"
@@ -988,7 +988,7 @@ export default function CarouselLabPage(): React.ReactElement {
                 />
               </div>
 
-              <div className="w-[200px] max-180:w-full">
+              <div className="w-[200px] max-[720px]:w-full">
                 <label
                   className="block font-mono text-[10px] tracking-[0.14em] uppercase mb-2.5"
                   style={{ color: "var(--ink-3)" }}

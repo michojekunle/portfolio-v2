@@ -98,8 +98,8 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
   return (
     <>
       {/* ── Hero: heading left, intro + recent videos right ── */}
-      <section className="pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
-        <div className="grid grid-cols-[1.05fr_0.95fr] max-240:grid-cols-1 gap-14 max-240:gap-10 items-start">
+      <section className="pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+        <div className="grid grid-cols-[1.05fr_0.95fr] max-[960px]:grid-cols-1 gap-14 max-[960px]:gap-10 items-start">
           {/* Left: heading + copy */}
           <div>
             <motion.div
@@ -188,7 +188,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
             )}
 
             {featuredVideos.length > 0 && (
-              <div className="grid grid-cols-2 max-130:grid-cols-1 gap-3">
+              <div className="grid grid-cols-2 max-[520px]:grid-cols-1 gap-3">
                 {featuredVideos.map((video) => (
                   <div key={video.id} className="rounded-xl overflow-hidden border border-(--rule)">
                     {video.platform === "youtube" ? (
@@ -210,7 +210,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       </section>
 
       {/* ── Highlights ── */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-180:py-12 border-b border-(--rule)">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-[720px]:py-12 border-b border-(--rule)">
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1.5">
@@ -255,7 +255,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       </section>
 
       {/* ── Platform links ── */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-180:py-12">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-[720px]:py-12">
         <div className="mb-8">
           <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1.5">
             Follow along

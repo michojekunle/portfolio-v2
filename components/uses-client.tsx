@@ -65,7 +65,7 @@ export function UsesClient() {
 
   return (
     <>
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-180:pt-20 max-180:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -117,7 +117,7 @@ export function UsesClient() {
         </motion.div>
       </section>
 
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-30 max-180:py-18">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-30 max-[720px]:py-18">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat, catIdx) => (
             <motion.div 

@@ -927,7 +927,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
 
       {/* ── Top bar ── */}
       <div
-        className={`fixed top-0 max-256:top-15 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-5 h-14 transition-opacity duration-300 ${
+        className={`fixed top-0 max-[1024px]:top-15 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-5 h-14 transition-opacity duration-300 ${
           showControls ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         style={{

@@ -17,7 +17,7 @@ const STACK = [
 
 export function HeroSection(): React.ReactElement {
   return (
-    <section className="pt-30 pb-20 max-180:pt-16 max-180:pb-12 max-[480px]:pt-10 max-[480px]:pb-8 relative overflow-hidden max-w-(--maxw) mx-auto px-(--gutter)" aria-label="Introduction">
+    <section className="pt-30 pb-20 max-[720px]:pt-16 max-[720px]:pb-12 max-[480px]:pt-10 max-[480px]:pb-8 relative overflow-hidden max-w-(--maxw) mx-auto px-(--gutter)" aria-label="Introduction">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(-55deg,transparent,transparent_2px,color-mix(in_oklab,var(--v3-accent)_5%,transparent)_2px,color-mix(in_oklab,var(--v3-accent)_5%,transparent)_5px)] opacity-50 z-0 pointer-events-none" aria-hidden="true" />
 
       {/* Status dashboard meta row */}
@@ -25,23 +25,23 @@ export function HeroSection(): React.ReactElement {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="relative z-[1] grid grid-cols-[1fr_auto_1fr] max-180:grid-cols-1 items-end max-180:items-start gap-8 max-180:gap-6 pb-8 mb-16 border-b border-(--rule) font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground max-[480px]:text-[10px]" role="presentation"
+        className="relative z-[1] grid grid-cols-[1fr_auto_1fr] max-[720px]:grid-cols-1 items-end max-[720px]:items-start gap-8 max-[720px]:gap-6 pb-8 mb-16 border-b border-(--rule) font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground max-[480px]:text-[10px]" role="presentation"
       >
-        <div className="leading-[1.7] text-[12px] text-muted-foreground max-180:text-left max-[480px]:text-[10px]">
+        <div className="leading-[1.7] text-[12px] text-muted-foreground max-[720px]:text-left max-[480px]:text-[10px]">
           <b className="text-(--ink) font-medium">Michael Ojekunle</b><br />
           Software Engineer &amp; Builder · Lagos, NG
         </div>
-        <div className="leading-[1.7] text-[12px] text-center max-180:text-left text-(--v3-accent) max-[480px]:text-[10px]">
+        <div className="leading-[1.7] text-[12px] text-center max-[720px]:text-left text-(--v3-accent) max-[480px]:text-[10px]">
           <span className="inline-block w-1.75 h-1.75 rounded-full bg-(--v3-accent) mr-2 align-middle animate-[v3-pulse_2.4s_infinite_ease-in-out]" aria-hidden="true" />
           Available for select work
         </div>
-        <div className="leading-[1.7] text-[12px] text-right max-180:text-left text-muted-foreground max-[480px]:text-[10px]">
+        <div className="leading-[1.7] text-[12px] text-right max-[720px]:text-left text-muted-foreground max-[480px]:text-[10px]">
           <b className="text-(--ink) font-medium">2026 · v3</b><br />
           EST. 2021 · 4+ years
         </div>
       </motion.div>
 
-      <h1 className="relative z-[1] font-normal text-[clamp(72px,18vw,200px)] leading-[0.85] tracking-[-0.05em] text-(--ink) mb-20 max-180:mb-8 text-balance">
+      <h1 className="relative z-[1] font-normal text-[clamp(72px,18vw,200px)] leading-[0.85] tracking-[-0.05em] text-(--ink) mb-20 max-[720px]:mb-8 text-balance">
         <TextReveal delay={0.2} stagger={0.05} className="block">Engineer.</TextReveal>
         <TextReveal delay={0.3} stagger={0.05} className="block italic fvs-soft">Writer.</TextReveal>
         <TextReveal delay={0.4} stagger={0.05} className="block text-transparent [-webkit-text-stroke:2px_var(--ink)]">Builder.</TextReveal>
@@ -85,7 +85,7 @@ export function HeroSection(): React.ReactElement {
             <b className="text-(--ink) font-medium">Flutter</b>, and building products of my own — heading toward zkML.
           </p>
 
-          <div className="flex gap-4 flex-wrap mt-8 max-180:mb-10">
+          <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">
             <MagneticWrapper strength={30}>
               <Link href="/contact" className="group inline-flex items-center justify-center px-7 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-(--v3-accent) text-(--bg) hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-8px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
                 Book a call <ArrowUpRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2 w-4 h-4" aria-hidden="true" />
@@ -99,15 +99,15 @@ export function HeroSection(): React.ReactElement {
           </div>
 
           <div className="flex gap-0 mt-12 border border-(--rule) rounded-lg overflow-hidden" role="list" aria-label="Career highlights">
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-180:pr-3.5 max-180:mr-3.5" role="listitem">
+            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
               <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">4+</span>
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Years building</span>
             </div>
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-180:pr-3.5 max-180:mr-3.5" role="listitem">
+            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
               <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">3</span>
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Chains shipped</span>
             </div>
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-180:pr-3.5 max-180:mr-3.5" role="listitem">
+            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
               <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">12+</span>
               <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Projects live</span>
             </div>

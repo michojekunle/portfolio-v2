@@ -100,7 +100,7 @@ export function AchievementGrid({ earned }: Props): React.ReactElement {
           <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
             {group.label}
           </div>
-          <div className="grid grid-cols-5 max-[900px]:grid-cols-4 max-160:grid-cols-3 max-[400px]:grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-5 max-[900px]:grid-cols-4 max-[640px]:grid-cols-3 max-[400px]:grid-cols-2 gap-2.5">
             {group.ids.map((id) => {
               const badgeId = id as BadgeId;
               const def = allDefs[badgeId];

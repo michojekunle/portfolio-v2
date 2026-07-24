@@ -14,13 +14,13 @@ const PROJECT_COLORS: Record<string, string> = {
 export function FilmReelSection(): React.ReactElement {
   return (
     <section
-      className="py-30 max-180:py-18 relative overflow-hidden"
+      className="py-30 max-[720px]:py-18 relative overflow-hidden"
       id="all-work"
       aria-labelledby="reel-heading"
     >
-      <div className="max-w-(--maxw) mx-auto px-(--gutter) grid grid-cols-[120px_1fr] max-180:grid-cols-1 gap-12 max-180:gap-6 items-baseline mb-20 max-180:mb-12">
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
         <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — ARCHIVE</div>
-        <div className="flex justify-between items-end max-180:flex-col max-180:items-start gap-6">
+        <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-6">
           <h2 id="reel-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Everything I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
