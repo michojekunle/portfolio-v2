@@ -12,7 +12,7 @@ const MEETING_TYPES = [
 ] as const
 
 const SLOTS = ["09:00", "09:30", "10:00", "11:00", "14:00", "14:30", "15:30", "16:00", "17:00"]
-const DAY_NAMES = ["M", "Tu", "W", "Th", "F", "Sa", "Su"]
+const DAY_NAMES = ["Su", "M", "Tu", "W", "Th", "F", "Sa"]
 
 const FAQS = [
   { q: "Are you open to full-time roles?", a: "Yes — specifically protocol-adjacent teams, infrastructure, or zkML research. DM or email first." },
@@ -33,7 +33,8 @@ export function ContactPage(): React.ReactElement {
   const viewDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
   const monthName = viewDate.toLocaleString("en", { month: "long", year: "numeric" })
   const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate()
-  const firstDay = (viewDate.getDay() + 6) % 7
+  // Sunday-start week: Date#getDay() already returns 0 for Sunday, so no offset needed.
+  const firstDay = viewDate.getDay()
 
   type DayCell =
     | { empty: true }

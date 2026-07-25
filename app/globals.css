@@ -1415,8 +1415,8 @@ h1, h2, h3, h4, h5 {
 
 .v3-calendar-nav { display: flex; gap: 6px; align-items: center; }
 .v3-calendar-nav button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--ink-2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-.v3-calendar-nav button:hover { border-color: var(--ink-3); color: var(--ink); }
-.v3-calendar-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+.v3-calendar-nav button:hover { border-color: var(--ink-3) !important; color: var(--ink) !important; }
+.v3-calendar-nav button:disabled { opacity: 0.3 !important; cursor: not-allowed; }
 .v3-calendar-nav .month { padding: 0 12px; font-size: 13px; color: var(--ink-2); font-weight: 500; }
 
 .v3-calendar-types { display: flex; gap: 8px; margin-bottom: 18px; }
@@ -1425,7 +1425,11 @@ h1, h2, h3, h4, h5 {
 
 .v3-calendar-types button .dur { font-family: var(--display-font); font-size: 18px; font-weight: 500; color: var(--ink); }
 .v3-calendar-types button .lbl { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-top: 4px; }
-.v3-calendar-types button.active { border-color: var(--v3-accent); background: var(--v3-accent-soft); }
+/* !important: Tailwind v4 buckets this plain CSS into @layer utilities, where
+   its extra class beats specificity expectations against the base rule above —
+   without it, the active/selected/hover states silently fail to repaint. */
+.v3-calendar-types button.active { border-color: var(--v3-accent) !important; background: var(--v3-accent-soft) !important; }
+.v3-calendar-types button:hover:not(.active) { border-color: var(--ink-3) !important; }
 
 .v3-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 16px; }
 
@@ -1433,31 +1437,31 @@ h1, h2, h3, h4, h5 {
 
 .v3-calendar-grid .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--ink-2); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; transition: all .15s; position: relative; }
 
-.v3-calendar-grid .day:hover:not(.unavail):not(.past):not(.empty) { background: var(--bg-2); }
+.v3-calendar-grid .day:hover:not(.unavail):not(.past):not(.empty):not(.selected) { background: var(--bg-2) !important; }
 .v3-calendar-grid .day.empty { cursor: default; }
 .v3-calendar-grid .day.empty:hover { background: transparent; }
-.v3-calendar-grid .day.past { color: var(--ink-4); cursor: not-allowed; opacity: 0.4; }
-.v3-calendar-grid .day.unavail { 
-  color: var(--ink-4); 
-  cursor: not-allowed; 
-  opacity: 0.25; 
-  background: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--rule) 4px, var(--rule) 5px); 
+.v3-calendar-grid .day.past { color: var(--ink-4) !important; cursor: not-allowed; opacity: 0.4 !important; }
+.v3-calendar-grid .day.unavail {
+  color: var(--ink-4) !important;
+  cursor: not-allowed;
+  opacity: 0.25 !important;
+  background: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--rule) 4px, var(--rule) 5px) !important;
 }
-.v3-calendar-grid .day.today { color: var(--v3-accent); font-weight: 600; }
+.v3-calendar-grid .day.today { color: var(--v3-accent) !important; font-weight: 600; }
 .v3-calendar-grid .day.today::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--v3-accent); border-radius: 50%; }
-.v3-calendar-grid .day.selected { background: var(--ink); color: var(--bg); }
-.v3-calendar-grid .day.has-slots { font-weight: 600; color: var(--ink); }
+.v3-calendar-grid .day.selected { background: var(--ink) !important; color: var(--bg) !important; }
+.v3-calendar-grid .day.has-slots { font-weight: 600; color: var(--ink) !important; }
 
 .v3-calendar-slots { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
 .v3-calendar-slots .lbl { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
 .v3-calendar-slots .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
 .v3-slot { padding: 10px 12px; border-radius: 6px; border: 1px solid var(--rule); background: transparent; font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; color: var(--ink); cursor: pointer; transition: all .15s; text-align: center; }
-.v3-slot:hover { border-color: var(--v3-accent); color: var(--v3-accent); }
-.v3-slot.selected { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.v3-slot:hover:not(.selected) { border-color: var(--v3-accent) !important; color: var(--v3-accent) !important; }
+.v3-slot.selected { background: var(--ink) !important; color: var(--bg) !important; border-color: var(--ink) !important; }
 
 .v3-calendar-actions { display: flex; gap: 8px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--rule); }
-.v3-calendar-actions .v3-btn { flex: 1; justify-content: center; }
+.v3-calendar-actions .v3-btn { flex: 1; justify-content: center; white-space: nowrap; }
 
 .v3-booking-info p { font-family: var(--display-font); font-variation-settings: "opsz" 96; font-size: 24px; line-height: 1.4; color: var(--ink); margin: 0 0 16px; max-width: 24ch; }
 .v3-booking-info p em { font-style: italic; color: var(--v3-accent); font-variation-settings: "opsz" 96, "SOFT" 100; }
@@ -1744,6 +1748,10 @@ h1, h2, h3, h4, h5 {
   .v3-calendar-head { flex-direction: column; align-items: flex-start; gap: 12px; }
   .v3-calendar-types { flex-direction: column; }
   .v3-calendar-types button { flex: none; }
+  /* Side-by-side CTAs don't have room for "Open Cal.com" + "Select a slot"
+     on one line each at this width — the text wraps and squashes the pill
+     into a distorted shape. Stack them instead of shrinking further. */
+  .v3-calendar-actions { flex-direction: column; }
 }
 
 /* FAQ grid in contact: inline style override not possible; handled via container */
