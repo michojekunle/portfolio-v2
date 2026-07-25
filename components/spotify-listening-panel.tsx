@@ -216,13 +216,13 @@ export function SpotifyListeningPanel({ initialNowPlaying, initialTopTracks, ini
           <div className="flex gap-1">
             <button
               onClick={() => setTab("top")}
-              className={`flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 rounded-md transition-colors ${tab === "top" ? "bg-(--v3-accent) text-white" : "text-muted-foreground hover:text-(--ink)"}`}
+              className={`flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 rounded-md transition-colors ${tab === "top" ? "bg-(--v3-accent) text-(--bg)" : "text-muted-foreground hover:text-(--ink)"}`}
             >
               <ListMusic className="w-3 h-3" /> Top tracks
             </button>
             <button
               onClick={() => setTab("recent")}
-              className={`flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 rounded-md transition-colors ${tab === "recent" ? "bg-(--v3-accent) text-white" : "text-muted-foreground hover:text-(--ink)"}`}
+              className={`flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 rounded-md transition-colors ${tab === "recent" ? "bg-(--v3-accent) text-(--bg)" : "text-muted-foreground hover:text-(--ink)"}`}
             >
               <History className="w-3 h-3" /> Recent
             </button>
