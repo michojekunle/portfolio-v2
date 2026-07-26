@@ -4,6 +4,8 @@ export type FileFormat = "pdf" | "epub" | "docx" | "txt" | "md" | "html" | "azw3
 
 export type HighlightColor = "yellow" | "green" | "blue" | "pink";
 
+export type HighlightStyle = "highlight" | "underline";
+
 export const HIGHLIGHT_COLORS: { id: HighlightColor; bg: string; ring: string }[] = [
   { id: "yellow", bg: "#FEF08A", ring: "#CA8A04" },
   { id: "green", bg: "#BBF7D0", ring: "#16A34A" },
@@ -67,6 +69,7 @@ export interface ChHighlight {
   cfi_range: string | null;
   text: string;
   color: HighlightColor;
+  style: HighlightStyle;
   note: string | null;
   is_flashcard: boolean;
   flashcard_due_at: string | null;

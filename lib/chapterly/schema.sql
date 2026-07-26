@@ -51,11 +51,16 @@ create table if not exists ch_highlights (
   cfi_range        text,
   text             text not null,
   color            text not null default 'yellow' check (color in ('yellow','green','blue','pink')),
+  style            text not null default 'highlight' check (style in ('highlight','underline')),
   note             text,
   is_flashcard     boolean not null default false,
   flashcard_due_at timestamptz,
   created_at       timestamptz not null default now()
 );
+
+-- Existing installs: table already exists without `style` — add it.
+alter table ch_highlights
+  add column if not exists style text not null default 'highlight' check (style in ('highlight','underline'));
 
 -- Chapter & book notes
 create table if not exists ch_notes (

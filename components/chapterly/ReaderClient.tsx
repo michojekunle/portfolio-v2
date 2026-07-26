@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { HIGHLIGHT_COLORS } from "@/lib/chapterly/types";
-import type { ChBook, HighlightColor } from "@/lib/chapterly/types";
+import type { ChBook, HighlightColor, HighlightStyle } from "@/lib/chapterly/types";
+import { findTextRange } from "@/lib/chapterly/text-range";
 
 const EpubReader = dynamic(
   () => import("./EpubReader").then((m) => ({ default: m.EpubReader })),
@@ -214,79 +215,6 @@ function renderMarkdown(text: string, textColor: string): React.ReactElement {
   return <div className="space-y-1.5">{elements}</div>;
 }
 
-// Finds the first occurrence of `snippet` across the container's text nodes
-// and returns a Range spanning it (which may cross node boundaries).
-// Whitespace runs are normalized on both sides so snippets saved from a
-// selection still match after markdown re-rendering collapses whitespace.
-function findTextRange(container: HTMLElement, snippet: string): Range | null {
-  const needle = snippet.replace(/\s+/g, " ").trim();
-  if (!needle) return null;
-
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-  const nodes: Text[] = [];
-  let fullText = "";
-  const nodeStarts: number[] = [];
-  while (walker.nextNode()) {
-    const node = walker.currentNode as Text;
-    nodeStarts.push(fullText.length);
-    nodes.push(node);
-    fullText += node.data;
-  }
-
-  // Build a normalized copy plus an index map back to raw offsets
-  const rawToNorm: number[] = [];
-  let norm = "";
-  let lastWasSpace = true;
-  for (let i = 0; i < fullText.length; i++) {
-    const ch = fullText[i];
-    if (/\s/.test(ch)) {
-      if (!lastWasSpace) {
-        rawToNorm.push(i);
-        norm += " ";
-        lastWasSpace = true;
-      }
-    } else {
-      rawToNorm.push(i);
-      norm += ch;
-      lastWasSpace = false;
-    }
-  }
-
-  const idx = norm.indexOf(needle);
-  if (idx === -1) return null;
-  const rawStart = rawToNorm[idx];
-  const rawEnd = rawToNorm[idx + needle.length - 1] + 1;
-  if (rawStart === undefined || rawEnd === undefined || isNaN(rawEnd)) return null;
-
-  const locate = (rawOffset: number, isEnd: boolean): { node: Text; offset: number } | null => {
-    for (let n = nodes.length - 1; n >= 0; n--) {
-      const start = nodeStarts[n];
-      const len = nodes[n].data.length;
-      if (rawOffset >= start && rawOffset <= start + len) {
-        // For the end boundary prefer staying inside this node
-        if (!isEnd && rawOffset === start + len && n + 1 < nodes.length) {
-          return { node: nodes[n + 1], offset: 0 };
-        }
-        return { node: nodes[n], offset: rawOffset - start };
-      }
-    }
-    return null;
-  };
-
-  const startPos = locate(rawStart, false);
-  const endPos = locate(rawEnd, true);
-  if (!startPos || !endPos) return null;
-
-  const range = document.createRange();
-  try {
-    range.setStart(startPos.node, startPos.offset);
-    range.setEnd(endPos.node, endPos.offset);
-  } catch {
-    return null;
-  }
-  return range;
-}
-
 type ReaderTheme = "white" | "sepia" | "dark" | "oled";
 
 // Warm, print-like palettes — pure white/black backgrounds are harsh over
@@ -313,6 +241,14 @@ interface Props {
 export function ChReaderClient({ book }: Props): React.ReactElement {
   const [theme, setTheme] = useState<ReaderTheme>("white");
   const [fontSize, setFontSize] = useState(17);
+  const [pdfScale, setPdfScale] = useState(1.0);
+  // Mirrors PdfReader's old uncontrolled-mode default — now needed here since
+  // ReaderClient always controls `scale`, which suppresses that effect there.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPdfScale(window.innerWidth < 768 ? 0.75 : 1.0);
+    }
+  }, []);
   const [isOffline, setIsOffline] = useState(
     typeof window !== "undefined" ? !navigator.onLine : false
   );
@@ -330,7 +266,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   }, []);
 
   // Offline highlight queueing
-  const queueHighlightOffline = useCallback((highlight: { text: string; cfi_range?: string; color: string }): void => {
+  const queueHighlightOffline = useCallback((highlight: { text: string; cfi_range?: string; color: string; page_number?: number }): void => {
     try {
       const key = `chapterly_queued_highlights_${book.id}`;
       const existing = localStorage.getItem(key);
@@ -353,7 +289,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         const hKey = `chapterly_queued_highlights_${book.id}`;
         const queuedH = localStorage.getItem(hKey);
         if (queuedH) {
-          const list = JSON.parse(queuedH) as { text: string; cfi_range?: string; color: string }[];
+          const list = JSON.parse(queuedH) as { text: string; cfi_range?: string; color: string; page_number?: number }[];
           for (const h of list) {
             await fetch("/api/chapterly/highlights", {
               method: "POST",
@@ -418,7 +354,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   // Saved highlights for this book — painted onto epub pages (via annotations)
   // and text-format content (via the CSS Custom Highlight API).
   const [savedHighlights, setSavedHighlights] = useState<
-    { id: string; text: string; color: HighlightColor; cfi_range: string | null }[]
+    { id: string; text: string; color: HighlightColor; style: HighlightStyle; cfi_range: string | null; page_number: number | null }[]
   >([]);
 
   const [liveProgress, setLiveProgress] = useState<number>(book.progress_pct ?? 0);
@@ -469,6 +405,21 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
   const isPdf = book.file_format === "pdf";
   const isEpub = book.file_format === "epub";
 
+  // Memoized so PdfReader's repaint effect (which walks the text layer and
+  // forces layout via getBoundingClientRect) only re-fires when highlights
+  // actually change, not on every unrelated ReaderClient re-render.
+  const pdfSavedHighlights = useMemo(
+    () =>
+      savedHighlights.map((h) => ({
+        id: h.id,
+        text: h.text,
+        color: h.color,
+        style: h.style,
+        page: h.page_number,
+      })),
+    [savedHighlights]
+  );
+
   // ── Session tracking ──────────────────────────────────────────
   useEffect(() => {
     sessionStartRef.current = Date.now();
@@ -516,7 +467,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         const res = await fetch(`/api/chapterly/highlights?book_id=${book.id}`);
         if (!res.ok) return;
         const data = await res.json() as {
-          highlights: { id: string; text: string; color: HighlightColor; cfi_range: string | null }[];
+          highlights: { id: string; text: string; color: HighlightColor; style: HighlightStyle; cfi_range: string | null; page_number: number | null }[];
         };
         if (!cancelled) setSavedHighlights(data.highlights);
       } catch (err) {
@@ -789,7 +740,7 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
       // Paint immediately — the highlight effect re-runs off this state
       setSavedHighlights((prev) => [
         ...prev,
-        { id: highlight.id, text: selectionText, color, cfi_range: null },
+        { id: highlight.id, text: selectionText, color, style: "highlight", cfi_range: null, page_number: null },
       ]);
     } catch (err) {
       console.error("[reader] highlight error:", err);
@@ -970,13 +921,17 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Font size */}
+          {/* Font size (or zoom, for PDFs which render to canvas) */}
           <div className="flex items-center gap-0.5">
             <button
-              onClick={() => setFontSize((s) => Math.max(12, s - 1))}
+              onClick={() =>
+                isPdf
+                  ? setPdfScale((s) => Math.max(0.5, +(s - 0.1).toFixed(2)))
+                  : setFontSize((s) => Math.max(12, s - 1))
+              }
               className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
               style={{ background: current.text + "12", color: current.text }}
-              aria-label="Decrease font size"
+              aria-label={isPdf ? "Zoom out" : "Decrease font size"}
             >
               <Type size={11} />
             </button>
@@ -984,13 +939,17 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               className="font-mono text-[10px] w-6.5 text-center"
               style={{ color: current.text, opacity: 0.6 }}
             >
-              {fontSize}
+              {isPdf ? `${Math.round(pdfScale * 100)}%` : fontSize}
             </span>
             <button
-              onClick={() => setFontSize((s) => Math.min(32, s + 1))}
+              onClick={() =>
+                isPdf
+                  ? setPdfScale((s) => Math.min(3, +(s + 0.1).toFixed(2)))
+                  : setFontSize((s) => Math.min(32, s + 1))
+              }
               className="w-7.5 h-7.5 flex items-center justify-center rounded-md border-none cursor-pointer transition-opacity hover:opacity-60"
               style={{ background: current.text + "12", color: current.text }}
-              aria-label="Increase font size"
+              aria-label={isPdf ? "Zoom in" : "Increase font size"}
             >
               <Type size={15} />
             </button>
@@ -1171,6 +1130,9 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
               <PdfReader
                 url={resolvedUrl}
                 initialPage={book.current_page > 0 ? book.current_page : undefined}
+              scale={pdfScale}
+              onScaleChange={setPdfScale}
+              savedHighlights={pdfSavedHighlights}
               onChapterText={setChapterText}
               onProgress={(page, total) => {
                 const pct = Math.round((page / total) * 100);
@@ -1178,8 +1140,8 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                 saveProgress({ current_page: page, total_pages: total, progress_pct: pct });
               }}
               onMetadata={handleMetadata}
-              onHighlight={async (text, color) => {
-                const highlight = { text, color };
+              onHighlight={async (text, color, page) => {
+                const highlight = { text, color, page_number: page };
                 if (!navigator.onLine) {
                   queueHighlightOffline(highlight);
                   return;
@@ -1191,8 +1153,37 @@ export function ChReaderClient({ book }: Props): React.ReactElement {
                     body: JSON.stringify({ book_id: book.id, ...highlight }),
                   });
                   if (!res.ok) throw new Error("Highlight save failed");
+                  const { highlight: saved } = await res.json() as { highlight: { id: string } };
+                  setSavedHighlights((prev) => [
+                    ...prev,
+                    { id: saved.id, text, color, style: "highlight", cfi_range: null, page_number: page },
+                  ]);
                 } catch (err) {
                   console.error("[reader] pdf highlight error:", err);
+                }
+              }}
+              onUpdateHighlight={async (id, changes) => {
+                try {
+                  const res = await fetch("/api/chapterly/highlights", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, ...changes }),
+                  });
+                  if (!res.ok) throw new Error("Highlight update failed");
+                  setSavedHighlights((prev) =>
+                    prev.map((h) => (h.id === id ? { ...h, ...changes } : h))
+                  );
+                } catch (err) {
+                  console.error("[reader] pdf highlight update error:", err);
+                }
+              }}
+              onDeleteHighlight={async (id) => {
+                try {
+                  const res = await fetch(`/api/chapterly/highlights?id=${id}`, { method: "DELETE" });
+                  if (!res.ok) throw new Error("Highlight delete failed");
+                  setSavedHighlights((prev) => prev.filter((h) => h.id !== id));
+                } catch (err) {
+                  console.error("[reader] pdf highlight delete error:", err);
                 }
               }}
               onMakeFlashcard={saveHighlightAsFlashcard}
