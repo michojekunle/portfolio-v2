@@ -47,7 +47,7 @@ export function AboutPreviewSection(): React.ReactElement {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
           >
-            I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface — and increasingly, the business around it...
+            I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface — and increasingly, the business around it.
           </motion.div>
         </div>
       </motion.div>

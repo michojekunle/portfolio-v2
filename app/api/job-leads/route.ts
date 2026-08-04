@@ -4,10 +4,18 @@ import { createClient } from "@/lib/supabase/server";
 import { requireAdminAuth } from "@/lib/admin/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import type { JobRole } from "@/lib/admin/job-search-data";
+import { JOB_LEADS_PAGE_SIZE } from "@/lib/admin/job-leads-constants";
 
 // POST is written by an external cron job; GET is polled by the dashboard's
 // refresh button. Neither should ever be served from Next's fetch cache.
 export const dynamic = "force-dynamic";
+
+const ProjectSchema = z.object({
+  name: z.string().min(1).max(200),
+  desc: z.string().max(1000),
+  difficulty: z.enum(["Easy", "Medium", "Hard"]),
+  weeks: z.number().int().min(1).max(52),
+});
 
 const LeadSchema = z.object({
   company: z.string().min(1).max(200),
@@ -15,12 +23,27 @@ const LeadSchema = z.object({
   board: z.string().max(100).optional().nullable(),
   url: z.string().url().max(2000).optional().nullable(),
   tip: z.string().max(1000).optional().nullable(),
+  salary: z.string().max(200).optional().nullable(),
+  requirements: z.string().max(2000).optional().nullable(),
+  skills: z.array(z.string().min(1).max(100)).max(30).optional(),
+  projects: z.array(ProjectSchema).max(20).optional(),
 });
 
+// 50 is a generous, arbitrary cap (not tied to any external API limit) —
+// just a sanity bound on how many leads one scheduled-task run can submit.
 const LeadsPayloadSchema = z.object({
-  flutter: z.array(LeadSchema).max(20).default([]),
-  rust: z.array(LeadSchema).max(20).default([]),
+  flutter: z.array(LeadSchema).max(50).default([]),
+  rust: z.array(LeadSchema).max(50).default([]),
 });
+
+export interface JobProject {
+  name: string;
+  desc: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  weeks: number;
+}
+
+const MAX_LIMIT = 200;
 
 export interface JobLead {
   id: string;
@@ -30,6 +53,10 @@ export interface JobLead {
   board: string | null;
   url: string | null;
   tip: string | null;
+  salary: string | null;
+  requirements: string | null;
+  skills: string[];
+  projects: JobProject[];
   created_at: string;
 }
 
@@ -39,7 +66,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // standing between the internet and JOB_LEADS_API_SECRET, so it must
   // limit unauthenticated attempts, not just successful ones.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const rl = await checkRateLimit(`job-leads:post:${ip}`, { limit: 20, windowMs: 60_000 });
+  const rl = await checkRateLimit(`job-leads:post:${ip}`, { limit: 50, windowMs: 60_000 });
   if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const authHeader = request.headers.get("authorization") ?? "";
@@ -84,29 +111,57 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   return NextResponse.json({ ok: true, inserted: rows.length, updatedAt: new Date().toISOString() });
 }
 
-/** GET /api/job-leads — the admin dashboard's client-side refresh button/auto-refresh, admin-session gated. */
-export async function GET(): Promise<NextResponse> {
+function clampLimit(raw: string | null): number {
+  const n = raw ? parseInt(raw, 10) : NaN;
+  if (!Number.isFinite(n) || n < 1) return JOB_LEADS_PAGE_SIZE;
+  return Math.min(n, MAX_LIMIT);
+}
+
+/**
+ * GET /api/job-leads — the admin dashboard's initial load, refresh button,
+ * auto-refresh, and "Load more" button, admin-session gated.
+ *
+ * `flutterLimit`/`rustLimit` query params control how many of each role to
+ * return (default JOB_LEADS_PAGE_SIZE). The dashboard re-requests with its
+ * *currently loaded* count on every refresh — not just the page size — so
+ * refreshing never collapses a list the admin has already expanded via
+ * "Load more". `flutterHasMore`/`rustHasMore` tell the client whether more
+ * rows exist beyond what was returned, via the classic "fetch limit+1, check
+ * if the extra row came back" trick — cheaper than a separate COUNT query.
+ */
+export async function GET(request: NextRequest): Promise<NextResponse> {
   const auth = await requireAdminAuth();
   if (auth.unauthorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { supabase } = auth;
 
-  const { data, error } = await supabase
-    .from("job_leads")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(60);
+  const { searchParams } = new URL(request.url);
+  const flutterLimit = clampLimit(searchParams.get("flutterLimit"));
+  const rustLimit = clampLimit(searchParams.get("rustLimit"));
 
-  if (error) {
-    console.error("[job-leads] GET error:", error);
+  // Fetch each role separately (rather than one combined query sliced
+  // afterward) so a burst of leads on one track can never crowd out the
+  // other's share of a shared row limit.
+  const [{ data: flutterData, error: flutterError }, { data: rustData, error: rustError }] = await Promise.all([
+    supabase.from("job_leads").select("*").eq("role", "flutter").order("created_at", { ascending: false }).limit(flutterLimit + 1),
+    supabase.from("job_leads").select("*").eq("role", "rust").order("created_at", { ascending: false }).limit(rustLimit + 1),
+  ]);
+
+  if (flutterError || rustError) {
+    console.error("[job-leads] GET error:", flutterError ?? rustError);
     return NextResponse.json({ error: "Failed to fetch leads" }, { status: 500 });
   }
 
-  const leads = (data ?? []) as JobLead[];
-  const updatedAt = leads.length > 0 ? leads[0].created_at : null;
+  const flutterRows = (flutterData ?? []) as JobLead[];
+  const rustRows = (rustData ?? []) as JobLead[];
+  const flutter = flutterRows.slice(0, flutterLimit);
+  const rust = rustRows.slice(0, rustLimit);
+  const updatedAt = [flutter[0]?.created_at, rust[0]?.created_at].filter(Boolean).sort().reverse()[0] ?? null;
 
   return NextResponse.json({
     updatedAt,
-    flutter: leads.filter((l) => l.role === "flutter").slice(0, 20),
-    rust: leads.filter((l) => l.role === "rust").slice(0, 20),
+    flutter,
+    rust,
+    flutterHasMore: flutterRows.length > flutterLimit,
+    rustHasMore: rustRows.length > rustLimit,
   });
 }

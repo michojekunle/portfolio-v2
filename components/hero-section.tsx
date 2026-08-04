@@ -17,7 +17,7 @@ const STACK = [
 
 export function HeroSection(): React.ReactElement {
   return (
-    <section className="pt-30 pb-20 max-[720px]:pt-16 max-[720px]:pb-12 max-[480px]:pt-10 max-[480px]:pb-8 relative overflow-hidden max-w-(--maxw) mx-auto px-(--gutter)" aria-label="Introduction">
+    <section className="pt-5 pb-20 max-[720px]:pt-16 max-[720px]:pb-12 max-[480px]:pt-10 max-[480px]:pb-8 relative overflow-hidden max-w-(--maxw) mx-auto px-(--gutter)" aria-label="Introduction">
       <div className="absolute inset-0 bg-[repeating-linear-gradient(-55deg,transparent,transparent_2px,color-mix(in_oklab,var(--v3-accent)_5%,transparent)_2px,color-mix(in_oklab,var(--v3-accent)_5%,transparent)_5px)] opacity-50 z-0 pointer-events-none" aria-hidden="true" />
 
       {/* Status dashboard meta row */}
@@ -25,7 +25,7 @@ export function HeroSection(): React.ReactElement {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="relative z-[1] grid grid-cols-[1fr_auto_1fr] max-[720px]:grid-cols-1 items-end max-[720px]:items-start gap-8 max-[720px]:gap-6 pb-8 mb-16 border-b border-(--rule) font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground max-[480px]:text-[10px]" role="presentation"
+        className="relative z-1 grid grid-cols-[1fr_auto_1fr] max-[720px]:grid-cols-1 items-end max-[720px]:items-start gap-8 max-[720px]:gap-6 pb-8 mb-16 border-b border-(--rule) font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground max-[480px]:text-[10px]" role="presentation"
       >
         <div className="leading-[1.7] text-[12px] text-muted-foreground max-[720px]:text-left max-[480px]:text-[10px]">
           <b className="text-(--ink) font-medium">Michael Ojekunle</b><br />
@@ -41,15 +41,15 @@ export function HeroSection(): React.ReactElement {
         </div>
       </motion.div>
 
-      <h1 className="relative z-[1] font-normal text-[clamp(72px,18vw,200px)] leading-[0.85] tracking-[-0.05em] text-(--ink) mb-20 max-[720px]:mb-8 text-balance">
+      <h1 className="relative z-1 font-normal text-[clamp(72px,18vw,200px)] leading-[0.85] tracking-tighter text-(--ink) mb-20 max-[720px]:mb-8 text-balance">
         <TextReveal delay={0.2} stagger={0.05} className="block">Engineer.</TextReveal>
         <TextReveal delay={0.3} stagger={0.05} className="block italic fvs-soft">Writer.</TextReveal>
         <TextReveal delay={0.4} stagger={0.05} className="block text-transparent [-webkit-text-stroke:2px_var(--ink)]">Builder.</TextReveal>
       </h1>
 
-      <div className="relative z-[1] grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
+      <div className="relative z-1 grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
-          <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.25] text-(--ink) m-0 max-w-[24ch] text-pretty">
+          <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-tight text-(--ink) m-0 max-w-[24ch] text-pretty">
             I build software end to end. Four years full-stack — now going deep on{" "}
             <em>Rust systems</em> and <em>Flutter mobile</em>, building products of my own.
           </p>
