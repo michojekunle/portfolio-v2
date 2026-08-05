@@ -18,10 +18,15 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  const { count: unreadMessageCount } = await supabase
+    .from("messages")
+    .select("*", { count: "exact", head: true })
+    .eq("read", false);
+
   return (
     <div className="min-h-screen bg-background">
-      <AdminNav userEmail={user?.email ?? ""} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <AdminNav userEmail={user?.email ?? ""} unreadMessageCount={unreadMessageCount ?? 0} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {children}
       </main>
     </div>

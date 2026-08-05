@@ -12,6 +12,7 @@ const TOOL_APP_PREFIXES = [
   "/tools/chapterly",
   "/tools/flowise",
   "/tools/journal",
+  "/admin",
 ];
 
 export function PortfolioChrome({
