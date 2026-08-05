@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Brain, Check, ChevronDown, Flame, Loader2 } from "lucide-react";
+import { Brain, Check, ChevronDown, Copy, Flame, Loader2, Send } from "lucide-react";
 import type { RustChallengeDay } from "@/app/api/admin/rust-challenge/route";
 
 interface Props {
@@ -53,6 +53,54 @@ type UpdateFn = (
   dayNumber: number,
   changes: { completed?: boolean; x_post_url?: string | null; notes?: string | null }
 ) => Promise<void>;
+
+// Derived entirely from the day's own data — no separate template storage.
+// daily_task already carries kickoff/build/test/ship/review phrasing from
+// how the 180 days were generated, so it reads naturally as a standalone post.
+function generateDayTweet(day: RustChallengeDay): string {
+  return `Day ${day.day_number}/180 🦀\n\n${day.daily_task}\n\n#buildinpublic #rustlang`;
+}
+
+function SuggestedTweet({ day }: { day: RustChallengeDay }): React.ReactElement {
+  const [text, setText] = useState(() => generateDayTweet(day));
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success("Copied");
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      console.error("[rust-challenge] copy error:", err);
+      toast.error("Couldn't copy — select and copy manually");
+    }
+  };
+
+  const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+
+  return (
+    <div className="space-y-2">
+      <Textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        className="text-sm min-h-24"
+      />
+      <div className="flex gap-2">
+        <Button size="sm" variant="outline" className="flex-1" onClick={() => void handleCopy()}>
+          {copied ? <Check className="h-3.5 w-3.5 mr-1.5" /> : <Copy className="h-3.5 w-3.5 mr-1.5" />}
+          {copied ? "Copied" : "Copy"}
+        </Button>
+        <Button size="sm" variant="outline" className="flex-1" asChild>
+          <a href={intentUrl} target="_blank" rel="noopener noreferrer">
+            <Send className="h-3.5 w-3.5 mr-1.5" />
+            Open in X
+          </a>
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 // The one big satisfying action per card — full width, bottom-anchored, so
 // it never has to compete with the smaller "save the post link" action for
@@ -175,6 +223,11 @@ function HeroCard({ day, onUpdate }: { day: RustChallengeDay; onUpdate: UpdateFn
       <div className="flex items-start gap-2 text-xs bg-muted text-muted-foreground px-3 py-2 rounded-lg">
         <Brain className="h-3.5 w-3.5 shrink-0 mt-0.5" />
         <span className="leading-relaxed">{day.dsa_rep}</span>
+      </div>
+
+      <div className="border-t border-border pt-4">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Suggested post</p>
+        <SuggestedTweet day={day} />
       </div>
 
       <div className="border-t border-border pt-4">
