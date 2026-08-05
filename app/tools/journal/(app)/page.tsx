@@ -10,6 +10,12 @@ function todayStr(): string {
   return new Date().toLocaleDateString("en-CA");
 }
 
+function tomorrowStr(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toLocaleDateString("en-CA");
+}
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-GB", {
     weekday: "short",
@@ -95,12 +101,14 @@ function EntryStreak({
 
 export default async function JournalDashboard(): Promise<React.ReactElement> {
   const today = todayStr();
+  const tomorrow = tomorrowStr();
   const [objectives, entries] = await Promise.all([
     getObjectivesWithMilestones(),
     getRecentEntries(90),
   ]);
 
   const todayEntry = entries.find((e) => e.date === today) ?? null;
+  const tomorrowEntry = entries.find((e) => e.date === tomorrow) ?? null;
   const activeObjectives = objectives.filter((o) => o.status === "active");
 
   const streakCount = (() => {
@@ -165,7 +173,7 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
       </div>
 
       {/* ── Today's CTAs — setting priorities and logging the day are two different moments ── */}
-      <DailyCTAs date={today} todayEntry={todayEntry} />
+      <DailyCTAs date={today} todayEntry={todayEntry} tomorrow={tomorrow} tomorrowEntry={tomorrowEntry} />
 
       {/* ── Stats row — 3 clean numbers ── */}
       <div className="grid grid-cols-3 gap-3 mb-10">

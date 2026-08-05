@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { Plus, X, Save, Loader2, Sparkles, ChevronDown, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { Plus, X, Save, Loader2, Sparkles, ChevronDown, AlertCircle, Sunrise, ArrowRight } from "lucide-react";
 import type { JoEntry, JoObjectiveWithMilestones } from "@/lib/journal/types";
 import { ENERGY_LABELS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 import { SaveToast } from "@/components/journal/SaveToast";
@@ -33,6 +34,8 @@ interface Props {
   onSaved?: (entry: JoEntry) => void;
   /** "priorities" narrows the form to just priorities and collapses the rest. "log" (default) shows everything. */
   initialView?: "priorities" | "log";
+  tomorrowDate?: string;
+  tomorrowEntry?: JoEntry | null;
 }
 
 async function queueEntryLocally(
@@ -77,7 +80,18 @@ function SectionLabel({ children }: { children: React.ReactNode }): React.ReactE
   );
 }
 
-export function EntryForm({ date, initialEntry, objectives, onSaved, initialView = "log" }: Props): React.ReactElement {
+export function EntryForm({
+  date,
+  initialEntry,
+  objectives,
+  onSaved,
+  initialView = "log",
+  tomorrowDate,
+  tomorrowEntry,
+}: Props): React.ReactElement {
+  const todayStr = new Date().toLocaleDateString("en-CA");
+  const isTomorrow = date > todayStr;
+
   const [priorities, setPriorities] = useState<string[]>(initialEntry?.top_priorities ?? []);
   const [accomplished, setAccomplished] = useState<string[]>(initialEntry?.accomplished ?? []);
   const [blockers, setBlockers] = useState(initialEntry?.blockers ?? "");
@@ -91,6 +105,12 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
   const [toastVisible, setToastVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [tomorrowPriorities, setTomorrowPriorities] = useState<string[]>(
+    tomorrowEntry?.top_priorities ?? []
+  );
+  const [savingTomorrow, setSavingTomorrow] = useState(false);
+  const [carryOverDone, setCarryOverDone] = useState(false);
+
   const [newPriority, setNewPriority] = useState("");
   const [newAccomplished, setNewAccomplished] = useState("");
   const priorityInputRef = useRef<HTMLInputElement>(null);
@@ -100,6 +120,36 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
   const [dailyLogOpen, setDailyLogOpen] = useState(!prioritiesFocused);
 
   const isComplete = priorities.length > 0 && accomplished.length > 0 && energy !== null;
+  const unaccomplishedToday = priorities.filter((p) => !accomplished.includes(p));
+
+  const handleCarryOverToTomorrow = async (): Promise<void> => {
+    if (!tomorrowDate || unaccomplishedToday.length === 0) return;
+    setSavingTomorrow(true);
+    try {
+      const merged = Array.from(new Set([...tomorrowPriorities, ...unaccomplishedToday])).slice(0, 10);
+      const payload = {
+        top_priorities: merged,
+        accomplished: tomorrowEntry?.accomplished ?? [],
+        blockers: tomorrowEntry?.blockers ?? null,
+        notes: tomorrowEntry?.notes ?? null,
+        energy_level: tomorrowEntry?.energy_level ?? null,
+        objective_ids: tomorrowEntry?.objective_ids ?? [],
+      };
+      const res = await fetch(`/api/journal/entries/${tomorrowDate}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Failed to carry over");
+      setTomorrowPriorities(merged);
+      setCarryOverDone(true);
+      setTimeout(() => setCarryOverDone(false), 3000);
+    } catch (err) {
+      console.error("[entry-form] carryover error:", err);
+    } finally {
+      setSavingTomorrow(false);
+    }
+  };
 
   const generatePrompt = (): void => {
     const randomPrompt = REFLECTION_PROMPTS[Math.floor(Math.random() * REFLECTION_PROMPTS.length)];
@@ -247,14 +297,16 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
                 className="font-display font-normal leading-[1.05] tracking-[-0.02em] fvs-text m-0"
                 style={{ fontSize: "clamp(26px,4vw,34px)", color: "var(--ink)" }}
               >
-                Today&apos;s Priorities
+                {isTomorrow ? "Tomorrow's Priorities" : "Today's Priorities"}
               </h1>
               <p className="text-[13px] mt-1.5" style={{ color: "var(--ink-3)" }}>
-                Just the things that matter today. You can log the rest of the day later.
+                {isTomorrow
+                  ? "Plan what you'll tackle tomorrow so you can hit the ground running."
+                  : "Just the things that matter today. You can log the rest of the day later."}
               </p>
             </div>
           ) : (
-            <SectionLabel>Today&apos;s Priorities</SectionLabel>
+            <SectionLabel>{isTomorrow ? "Tomorrow's Priorities" : "Today's Priorities"}</SectionLabel>
           )}
           <div className="space-y-1.5">
             {priorities.map((p, i) => (
@@ -564,6 +616,77 @@ export function EntryForm({ date, initialEntry, objectives, onSaved, initialView
             }}
           >
             {error}
+          </div>
+        )}
+
+        {/* Plan Tomorrow helper & carryover */}
+        {tomorrowDate && (
+          <div
+            className="rounded-[14px] p-5.5 space-y-4"
+            style={{
+              background: "var(--bg-2)",
+              border: "1.5px solid rgba(217,119,6,0.22)",
+            }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] uppercase" style={{ color: "#D97706" }}>
+                <Sunrise size={13} />
+                Plan Tomorrow ({tomorrowDate})
+              </div>
+              {tomorrowPriorities.length > 0 && (
+                <span className="font-mono text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: "rgba(217,119,6,0.15)", color: "#D97706" }}>
+                  {tomorrowPriorities.length} {tomorrowPriorities.length === 1 ? "priority" : "priorities"} set
+                </span>
+              )}
+            </div>
+
+            {unaccomplishedToday.length > 0 && (
+              <div className="rounded-lg p-3 space-y-2.5" style={{ background: "rgba(217,119,6,0.06)", border: "1px solid rgba(217,119,6,0.15)" }}>
+                <div className="text-[13px] font-medium" style={{ color: "var(--ink)" }}>
+                  Carry over unfinished priorities to tomorrow?
+                </div>
+                <div className="text-[12px] space-y-1" style={{ color: "var(--ink-3)" }}>
+                  {unaccomplishedToday.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                      <span className="truncate">{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => void handleCarryOverToTomorrow()}
+                  disabled={savingTomorrow || carryOverDone}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.75 rounded-md font-mono text-[10px] uppercase font-semibold text-amber-700 bg-amber-500/15 hover:bg-amber-500/25 cursor-pointer border-none transition-colors disabled:opacity-60"
+                >
+                  {savingTomorrow ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : carryOverDone ? (
+                    <>Carried over ✓</>
+                  ) : (
+                    <>
+                      <ArrowRight size={12} />
+                      Carry over {unaccomplishedToday.length} item{unaccomplishedToday.length > 1 ? "s" : ""} to tomorrow
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between gap-3 pt-1">
+              <span className="text-[13px]" style={{ color: "var(--ink-3)" }}>
+                {tomorrowPriorities.length > 0
+                  ? `${tomorrowPriorities.length} planned for tomorrow`
+                  : "Set your top priorities before wrapping up"}
+              </span>
+              <Link
+                href={`/tools/journal/log/${tomorrowDate}?focus=priorities#priorities`}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[11px] uppercase tracking-wider font-semibold text-white no-underline transition-opacity hover:opacity-90 shrink-0"
+                style={{ background: "#D97706" }}
+              >
+                {tomorrowPriorities.length > 0 ? "Edit Tomorrow's Priorities →" : "Set Tomorrow's Priorities →"}
+              </Link>
+            </div>
           </div>
         )}
 
