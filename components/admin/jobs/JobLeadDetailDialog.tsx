@@ -131,7 +131,7 @@ export function JobLeadDetailDialog({
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <p className="text-sm font-medium">{project.name}</p>
+                            <p className="text-sm font-medium min-w-0 break-words">{project.name}</p>
                             <Badge variant={DIFFICULTY_VARIANT[project.difficulty] ?? "secondary"} className="text-xs shrink-0">
                               {project.difficulty}
                             </Badge>
