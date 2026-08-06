@@ -9,7 +9,7 @@ export default function Image() {
   return renderOgCard({
     eyebrow: "Software Engineer & Builder",
     title: "Michael Ojekunle",
-    subtitle: "Full-stack engineer going deep on Rust systems & Flutter mobile — building products of my own, heading toward zkML.",
+    subtitle: "Full-stack engineer going deep on Rust systems programming — building products of my own, heading toward zkML.",
     cta: "Explore the work →",
   });
 }

@@ -49,7 +49,7 @@ const PLACEHOLDERS = [
   },
   {
     platform: "tiktok",
-    url: "https://www.tiktok.com/@devvmichaell/video/7378901234567890123",
+    url: "https://www.tiktok.com/@devvvmichaell/video/7378901234567890123",
     title: "Inside my multi-agent AI coding workflow",
     description: "How I orchestrate multiple LLM subagents to audit, edit, and verify code.",
     section: "highlight",

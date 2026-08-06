@@ -25,9 +25,9 @@ export interface ProfileStatusData {
 
 const DEFAULT_STATUS: ProfileStatusData = {
   status: "Available",
-  focus1_name: "Flutter (mobile)",
-  focus1_pct: 35,
-  focus2_name: "Rust systems",
+  focus1_name: "Rust — DSA reps",
+  focus1_pct: 40,
+  focus2_name: "Rust — systems builds",
   focus2_pct: 55,
   next_focus: "zkML",
   spotify_override_title: "Metanoia (feat. Lofi Chill)",

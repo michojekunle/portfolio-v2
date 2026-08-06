@@ -62,7 +62,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "Instagram",
-    handle: "@devvmichaell",
+    handle: "@devvvmichaell",
     url: "https://instagram.com/devvmichaell/",
     tagline: "Behind-the-scenes clips, workspace shots, and quick demos.",
     color: "#E1306C",
@@ -70,7 +70,7 @@ const PLATFORMS: Platform[] = [
   },
   {
     name: "TikTok",
-    handle: "@devvmichaell",
+    handle: "@devvvmichaell",
     url: "https://www.tiktok.com/@devvmichaell",
     tagline: "Fast-cut dev tips and bite-sized lessons from real projects.",
     color: "#000000",

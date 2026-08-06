@@ -54,21 +54,19 @@ export const metadata: Metadata = {
     template: "%s | Michael Ojekunle",
   },
   description:
-    "Software engineer and builder in Lagos, Nigeria. Four years building full-stack products — now going deeper into Rust systems and Flutter mobile, and building products of my own. Heading toward zkML.",
+    "Software engineer and builder in Lagos, Nigeria. Four years building full-stack products — now going deep on Rust systems programming, and building products of my own. Heading toward zkML.",
   keywords: [
     "Michael Ojekunle",
     "devvmichael",
     "Software Engineer",
     "Builder",
-    "Flutter Developer",
-    "Dart",
-    "Mobile Development",
     "Rust",
+    "Systems Programming",
     "Full-Stack Developer",
     "Next.js",
     "TypeScript",
     "React",
-    "Web3 Developer",
+    "Rust Developer",
     "Solidity",
     "StarkNet",
     "Lagos Nigeria",
@@ -84,13 +82,13 @@ export const metadata: Metadata = {
     siteName: "Michael Ojekunle",
     title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Software engineer and builder. Full-stack foundation, now going deep on Rust systems and Flutter mobile — building products of my own, heading toward zkML.",
+      "Software engineer and builder. Full-stack foundation, now going deep on Rust systems programming — building products of my own, heading toward zkML.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Software engineer and builder. Full-stack foundation, now going deep on Rust systems and Flutter mobile — building products of my own, heading toward zkML.",
+      "Software engineer and builder. Full-stack foundation, now going deep on Rust systems programming — building products of my own, heading toward zkML.",
     creator: "@devvmichael",
     site: "@devvmichael",
   },
@@ -132,7 +130,7 @@ const jsonLd = {
       },
       jobTitle: "Software Engineer & Builder",
       description:
-        "Software engineer and builder in Lagos, Nigeria. Four years building full-stack products — now going deeper into Rust systems and Flutter mobile, and building products of my own. Heading toward zkML.",
+        "Software engineer and builder in Lagos, Nigeria. Four years building full-stack products — now going deep on Rust systems programming, and building products of my own. Heading toward zkML.",
       sameAs: [
         "https://github.com/michojekunle",
         "https://x.com/devvmichael",
@@ -145,9 +143,6 @@ const jsonLd = {
       },
       knowsAbout: [
         "Software Engineering",
-        "Flutter",
-        "Dart",
-        "Mobile Development",
         "Rust",
         "Systems Programming",
         "TypeScript",

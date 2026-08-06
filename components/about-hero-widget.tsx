@@ -118,11 +118,11 @@ export function AboutHeroWidget() {
         <div className="flex flex-col gap-2">
           <div>
             <div className="flex justify-between text-[11px] mb-1 font-mono text-secondary-foreground">
-              <span>{status?.focus1_name || "Flutter (mobile)"}</span>
-              <span>{status?.focus1_pct ?? 35}%</span>
+              <span>{status?.focus1_name || "Rust — DSA reps"}</span>
+              <span>{status?.focus1_pct ?? 40}%</span>
             </div>
             <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
-              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus1_pct ?? 35}%` }} />
+              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus1_pct ?? 40}%` }} />
             </div>
           </div>
           <div>

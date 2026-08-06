@@ -9,7 +9,7 @@ import { TextReveal } from "./text-reveal"
 const ROLES = [
   {
     title: "Software Engineer",
-    desc: "Four years full-stack, two deep in web3. Now going lower down the stack — Rust systems and Flutter mobile.",
+    desc: "Four years full-stack, two deep in web3. Now going lower down the stack, doubling down on Rust systems programming.",
     tag: "ENGINEERING"
   },
   {

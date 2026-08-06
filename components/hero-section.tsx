@@ -7,11 +7,9 @@ import { TextReveal } from "./text-reveal"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 const STACK = [
-  { label: "Flutter", primary: true },
   { label: "Rust", primary: true },
   { label: "TypeScript", primary: true },
   { label: "Next.js", primary: false },
-  { label: "Dart", primary: false },
   { label: "Solidity", primary: false },
 ]
 
@@ -51,7 +49,7 @@ export function HeroSection(): React.ReactElement {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
           <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-tight text-(--ink) m-0 max-w-[24ch] text-pretty">
             I build software end to end. Four years full-stack — now going deep on{" "}
-            <em>Rust systems</em> and <em>Flutter mobile</em>, building products of my own.
+            <em>Rust systems</em>, building products of my own.
           </p>
 
           {/* Tech stack pills */}
@@ -67,7 +65,7 @@ export function HeroSection(): React.ReactElement {
           <div className="flex items-center gap-3.5 mt-7 flex-wrap font-mono text-[10px] tracking-[0.14em] uppercase" aria-label="Current focus and where I'm heading">
             <div className="flex items-center gap-2">
               <span className="text-(--v3-accent) font-medium">Now</span>
-              <span className="text-muted-foreground">Flutter · Rust systems</span>
+              <span className="text-muted-foreground">Rust systems</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" aria-hidden="true" />
             <div className="flex items-center gap-2">
@@ -81,8 +79,7 @@ export function HeroSection(): React.ReactElement {
           <p className="text-[17px] leading-[1.7] text-secondary-foreground m-0">
             Four years building full-stack products — two of them deep in web3, shipping on{" "}
             <b className="text-(--ink) font-medium">Rootstock</b>, <b className="text-(--ink) font-medium">Starknet</b>, and <b className="text-(--ink) font-medium">Stacks</b>.
-            Now I&apos;m going deeper into systems with <b className="text-(--ink) font-medium">Rust</b> and mobile with{" "}
-            <b className="text-(--ink) font-medium">Flutter</b>, and building products of my own — heading toward zkML.
+            Now I&apos;m doubling down on systems with <b className="text-(--ink) font-medium">Rust</b>, going deep before wide, and building products of my own — heading toward zkML.
           </p>
 
           <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">

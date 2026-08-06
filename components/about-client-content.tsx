@@ -108,10 +108,6 @@ export function AboutClientContent() {
 
               <div className="flex flex-col gap-4.5">
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
-                  <span className="text-[17px] text-(--ink) font-medium">Mobile</span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Flutter · Dart</span>
-                </div>
-                <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
                   <span className="text-[17px] text-(--ink) font-medium">Systems</span>
                   <span className="text-[14px] text-muted-foreground font-mono">Rust · Linux internals</span>
                 </div>
@@ -150,13 +146,12 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              Right now I&apos;m going lower down the stack than the frontend. My two current
-              obsessions are{" "}
-              <b className="text-(--ink) font-medium">Rust systems programming</b> and{" "}
-              <b className="text-(--ink) font-medium">Flutter mobile development</b>. Rust is
-              teaching me to think in lifetimes and memory; Flutter is teaching me to ship
-              polished apps to real devices. Both are teaching me that the abstractions
-              I&apos;d been trusting were never as solid as I assumed.
+              Right now I&apos;m going lower down the stack than the frontend, and going deep
+              on one thing before wide on many. My current obsession is{" "}
+              <b className="text-(--ink) font-medium">Rust systems programming</b> — public,
+              daily reps for six months straight. It&apos;s teaching me to think in lifetimes
+              and memory, and that the abstractions I&apos;d been trusting were never as solid
+              as I assumed.
             </motion.p>
 
             <motion.div {...fadeUp} className="relative py-2 my-2">
