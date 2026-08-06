@@ -20,6 +20,7 @@ import { LogOut, ExternalLink, Menu, ChevronDown } from "lucide-react";
 // of a wall of nav items competing for attention.
 const primaryLinks = [
   { name: "Dashboard", href: "/admin" },
+  { name: "Vision Board", href: "/admin/vision-board" },
   { name: "Jobs", href: "/admin/jobs" },
   { name: "Rust", href: "/admin/rust-challenge" },
   { name: "Messages", href: "/admin/messages" },

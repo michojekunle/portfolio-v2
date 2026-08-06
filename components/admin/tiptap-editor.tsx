@@ -184,7 +184,7 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
     content: content,
     editorProps: {
       attributes: {
-        class: "prose dark:prose-invert max-w-none min-h-[500px] p-8 focus:outline-none prose-p:leading-relaxed blog-editor-instance",
+        class: "max-w-none min-h-[500px] p-8 focus:outline-none text-[var(--ink)] font-sans blog-editor-instance",
       },
     },
     immediatelyRender: false,
@@ -199,22 +199,22 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
       <EditorContent editor={editor} />
       
       <style>{`
-        .blog-editor-instance h1 { font-size: 2.5rem; font-weight: 800; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.1; color: hsl(var(--foreground)); }
-        .blog-editor-instance h2 { font-size: 2rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.2; color: hsl(var(--foreground)); border-bottom: 1px solid hsl(var(--border)); padding-bottom: 0.5rem; }
-        .blog-editor-instance h3 { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; line-height: 1.3; color: hsl(var(--foreground)); }
-        .blog-editor-instance p { margin: 1rem 0; font-size: 1.1rem; line-height: 1.7; }
-        .blog-editor-instance ul { list-style-type: disc; padding-left: 1.5rem; margin: 1rem 0; }
-        .blog-editor-instance ol { list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0; }
+        .blog-editor-instance h1 { font-family: var(--display-font); font-variation-settings: "opsz" 144; font-size: 2.5rem; font-weight: 300; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.1; color: var(--ink); }
+        .blog-editor-instance h2 { font-family: var(--display-font); font-variation-settings: "opsz" 144; font-size: 2rem; font-weight: 300; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.2; color: var(--ink); border-bottom: 1px solid var(--rule); padding-bottom: 0.5rem; }
+        .blog-editor-instance h3 { font-family: var(--display-font); font-variation-settings: "opsz" 96; font-size: 1.5rem; font-weight: 400; margin-top: 1.5rem; margin-bottom: 0.75rem; line-height: 1.3; color: var(--ink); }
+        .blog-editor-instance p { margin: 1rem 0; font-size: 1.1rem; line-height: 1.7; color: var(--ink-2); }
+        .blog-editor-instance ul { list-style-type: disc; padding-left: 1.5rem; margin: 1rem 0; color: var(--ink-2); }
+        .blog-editor-instance ol { list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0; color: var(--ink-2); }
         .blog-editor-instance li { margin-bottom: 0.5rem; }
-        .blog-editor-instance blockquote { border-left: 4px solid hsl(var(--primary)); padding: 0.75rem 1.5rem; font-style: italic; color: hsl(var(--muted-foreground)); background: hsl(var(--muted)/0.3); border-radius: 0 0.5rem 0.5rem 0; margin: 2rem 0; }
-        .blog-editor-instance img { max-width: 100%; border-radius: 1rem; margin: 2.5rem auto; border: 1px solid hsl(var(--border)); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .blog-editor-instance a { color: hsl(var(--primary)); text-decoration: underline; text-underline-offset: 4px; font-weight: 500; }
-        .blog-editor-instance hr { border: 0; border-top: 2px solid hsl(var(--border)); margin: 3rem 0; }
+        .blog-editor-instance blockquote { border-left: 4px solid var(--v3-accent); padding: 0.75rem 1.5rem; font-style: italic; color: var(--ink-3); background: color-mix(in oklab, var(--paper) 95%, black); border-radius: 0 0.5rem 0.5rem 0; margin: 2rem 0; font-family: var(--display-font); font-variation-settings: "opsz" 144, "SOFT" 100; }
+        .blog-editor-instance img { max-width: 100%; border-radius: 1rem; margin: 2.5rem auto; border: 1px solid var(--rule); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .blog-editor-instance a { color: var(--v3-accent); text-decoration: underline; text-underline-offset: 4px; font-weight: 500; }
+        .blog-editor-instance hr { border: 0; border-top: 2px solid var(--rule); margin: 3rem 0; }
         
         /* Tables */
-        .blog-editor-instance table { border-collapse: collapse; table-layout: fixed; width: 100%; margin: 2rem 0; overflow: hidden; border-radius: 0.5rem; border: 1px solid hsl(var(--border)); }
-        .blog-editor-instance table td, .blog-editor-instance table th { border: 1px solid hsl(var(--border)); box-sizing: border-box; min-width: 1em; padding: 0.75rem 1rem; position: relative; vertical-align: top; }
-        .blog-editor-instance table th { background-color: hsl(var(--muted)/0.5); font-weight: bold; text-align: left; }
+        .blog-editor-instance table { border-collapse: collapse; table-layout: fixed; width: 100%; margin: 2rem 0; overflow: hidden; border-radius: 0.5rem; border: 1px solid var(--rule); color: var(--ink-2); }
+        .blog-editor-instance table td, .blog-editor-instance table th { border: 1px solid var(--rule); box-sizing: border-box; min-width: 1em; padding: 0.75rem 1rem; position: relative; vertical-align: top; }
+        .blog-editor-instance table th { background-color: var(--paper); font-weight: bold; text-align: left; color: var(--ink); }
         
         /* Task Lists */
         .blog-editor-instance ul[data-type="taskList"] { list-style: none; padding: 0; }
