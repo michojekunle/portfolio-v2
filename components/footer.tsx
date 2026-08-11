@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ThemeSelector } from "@/components/theme-selector";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { ArrowUpRight } from "lucide-react";
+import { AmdSignatureInline } from "@/lib/brand-mark";
 
 export function Footer(): React.ReactElement {
   const year = new Date().getFullYear();
@@ -234,7 +235,11 @@ export function Footer(): React.ReactElement {
         </div>
 
         <div className="flex justify-between items-center max-[480px]:flex-col max-[480px]:items-start mt-14 pt-7 border-t border-(--rule) font-mono text-[11px] text-muted-foreground flex-wrap gap-3 max-[480px]:gap-2">
-          <div>© {year} · Built with intent in Lagos, NG</div>
+          <div className="flex items-center gap-2">
+            <span>© {year}</span>
+            <AmdSignatureInline height={11} />
+            <span>· Built with intent in Lagos, NG</span>
+          </div>
           <div className="font-display italic text-[13px] text-secondary-foreground">
             &ldquo;Whatever you do, do it all to the glory of God.&rdquo; —
             1&nbsp;Cor&nbsp;10:31

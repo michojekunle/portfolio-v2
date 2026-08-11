@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { MagneticWrapper } from "./magnetic-wrapper";
+import { MoMark } from "@/lib/brand-mark";
 
 const navLinks = [
   { name: "Work", href: "/work" },
@@ -117,12 +118,11 @@ export function Navbar(): React.ReactNode {
             aria-label="Michael Ojekunle — home"
             className="flex items-center gap-4 font-display italic text-[22px] font-normal cursor-pointer text-(--ink) no-underline fvs-soft group"
           >
-            <div className="flex items-center justify-center w-8 h-8 bg-(--ink) text-(--bg) font-display not-italic text-[16px] font-medium leading-[0.9] tracking-widest uppercase transition-transform duration-300 group-hover:scale-105">
-              <span>m</span>
-              <span>i</span>
+            <div className="transition-transform duration-300 group-hover:scale-105">
+              <MoMark dim={34} />
             </div>
             <span className="max-[480px]:hidden">
-              A M D<em>.</em>
+              Michael Ojekunle<em>.</em>
             </span>
           </Link>
         </MagneticWrapper>

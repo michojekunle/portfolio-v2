@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { MoMark } from "@/lib/brand-mark";
 
 /**
  * Shared Open Graph card renderer. One branded template so every page's social
@@ -95,30 +96,7 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
         {/* Top row — logomark + name, and eyebrow pill */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: 10,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-              }}
-            >
-              <svg width="48" height="48" viewBox="0 0 44 44" style={{ position: "absolute" }}>
-                <polyline
-                  points="11,33 11,11 22,22 33,11 33,33"
-                  fill="none"
-                  stroke={ACCENT_SOFT}
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
+            <MoMark dim={48} />
             <span style={{ fontSize: 18, fontWeight: 600, color: INK, letterSpacing: "0.2px" }}>
               Michael Ojekunle
             </span>
