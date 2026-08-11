@@ -1,5 +1,6 @@
 import { Quote } from "lucide-react";
-import type { ActiveStyle, AspectRatio, BackgroundStyle, Slide } from "../lib/types";
+import { MoSignatureInline, AmdSignatureInline } from "@/lib/brand-mark";
+import type { ActiveStyle, AspectRatio, BackgroundStyle, LogoMark, Slide } from "../lib/types";
 
 interface Props {
   slide: Slide;
@@ -10,12 +11,25 @@ interface Props {
   showBranding: boolean;
   logoImage: string | null;
   logoText: string;
+  logoMark: LogoMark;
   topRightTag: string;
   creatorName: string;
   creatorHandle: string;
 }
 
-function LogoBadge({ style, logoImage, logoText, creatorName }: { style: ActiveStyle; logoImage: string | null; logoText: string; creatorName: string }): React.ReactElement {
+function LogoBadge({
+  style,
+  logoImage,
+  logoText,
+  logoMark,
+  creatorName,
+}: {
+  style: ActiveStyle;
+  logoImage: string | null;
+  logoText: string;
+  logoMark: LogoMark;
+  creatorName: string;
+}): React.ReactElement {
   return (
     <div
       className="w-7 h-7 rounded-lg flex items-center justify-center text-[12px] font-bold overflow-hidden shrink-0"
@@ -24,6 +38,10 @@ function LogoBadge({ style, logoImage, logoText, creatorName }: { style: ActiveS
       {logoImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={logoImage} alt="" className="w-full h-full object-cover" />
+      ) : logoMark === "mo" ? (
+        <MoSignatureInline height={16} color={style.accent} />
+      ) : logoMark === "amd" ? (
+        <AmdSignatureInline height={16} color={style.accent} accent={style.accent} />
       ) : (
         (logoText.trim()[0] || creatorName.trim()[0] || "M").toUpperCase()
       )}
@@ -170,6 +188,7 @@ export function SlidePreview({
   showBranding,
   logoImage,
   logoText,
+  logoMark,
   topRightTag,
   creatorName,
   creatorHandle,
@@ -200,7 +219,7 @@ export function SlidePreview({
         {showBranding && layout !== "cta" && (
           <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: style.border }}>
             <div className="flex items-center gap-2">
-              <LogoBadge style={style} logoImage={logoImage} logoText={logoText} creatorName={creatorName} />
+              <LogoBadge style={style} logoImage={logoImage} logoText={logoText} logoMark={logoMark} creatorName={creatorName} />
               <div className="text-[12px] font-bold tracking-widest uppercase" style={{ color: style.accent }}>
                 {logoText}
               </div>

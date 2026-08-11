@@ -1,4 +1,6 @@
 import { Upload, X } from "lucide-react";
+import { MoSignatureInline, AmdSignatureInline } from "@/lib/brand-mark";
+import type { LogoMark } from "../lib/types";
 
 interface Props {
   accent: string;
@@ -9,6 +11,8 @@ interface Props {
   onLogoRemove: () => void;
   logoText: string;
   onLogoTextChange: (value: string) => void;
+  logoMark: LogoMark;
+  onLogoMarkChange: (value: LogoMark) => void;
   creatorName: string;
   onCreatorNameChange: (value: string) => void;
   topRightTag: string;
@@ -29,6 +33,8 @@ export function BrandingPanel({
   onLogoRemove,
   logoText,
   onLogoTextChange,
+  logoMark,
+  onLogoMarkChange,
   creatorName,
   onCreatorNameChange,
   topRightTag,
@@ -63,6 +69,10 @@ export function BrandingPanel({
                 {logoImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={logoImage} alt="" className="w-full h-full object-cover" />
+                ) : logoMark === "mo" ? (
+                  <MoSignatureInline height={18} color={accent} />
+                ) : logoMark === "amd" ? (
+                  <AmdSignatureInline height={18} color={accent} accent={accent} />
                 ) : (
                   (logoText.trim()[0] || creatorName.trim()[0] || "M").toUpperCase()
                 )}
@@ -93,7 +103,37 @@ export function BrandingPanel({
               )}
             </div>
             <p className="text-[10px] text-muted-foreground mt-1.5">
-              {logoImage ? "Used in the badge instead of the initial." : "No image set — badge shows the initial below."}
+              {logoImage ? "Used in the badge instead of the mark below." : "No image set — badge shows the mark below."}
+            </p>
+          </div>
+          <div>
+            <label className={fieldLabel}>Badge Mark</label>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(
+                [
+                  { value: "mo" as const, label: "MO" },
+                  { value: "amd" as const, label: "AMD" },
+                  { value: "initial" as const, label: "Initial" },
+                ]
+              ).map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => onLogoMarkChange(opt.value)}
+                  disabled={!!logoImage}
+                  className="h-9 rounded-lg border text-[11px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={
+                    logoMark === opt.value
+                      ? { borderColor: accent, color: accent, background: accent + "14" }
+                      : { borderColor: "var(--rule)", color: "var(--muted-foreground)" }
+                  }
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1.5">
+              {logoImage ? "Remove the uploaded image to switch marks." : "MO is the forward brand mark; AMD is the signature mark."}
             </p>
           </div>
           <div>

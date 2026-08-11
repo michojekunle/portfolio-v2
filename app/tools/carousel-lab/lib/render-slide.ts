@@ -1,6 +1,39 @@
 import type { ActiveStyle, AspectRatio, BackgroundStyle, BrandConfig, Slide } from "./types";
 import { FONT_MONO_STACK, FONT_SANS_STACK } from "./constants";
 import { wrapperBackgroundFor } from "./color-utils";
+import { AMD_DOTS, AMD_PATH_D, MO_PATH_D } from "@/lib/brand-mark";
+
+// Draws the same MO/AMD marks used site-wide, from the same path data —
+// Path2D accepts SVG path syntax directly, so this can't drift from the
+// React/SVG version the live preview renders.
+function drawLogoMark(
+  ctx: CanvasRenderingContext2D,
+  mark: "mo" | "amd",
+  x: number,
+  y: number,
+  size: number,
+  color: string,
+  accent: string
+): void {
+  ctx.save();
+  ctx.translate(x, y);
+  const s = size / 100;
+  ctx.scale(s, s);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 9;
+  ctx.stroke(new Path2D(mark === "mo" ? MO_PATH_D : AMD_PATH_D));
+  if (mark === "amd") {
+    ctx.fillStyle = accent;
+    for (const dot of AMD_DOTS) {
+      ctx.beginPath();
+      ctx.arc(dot.cx, dot.cy, 7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
 
 export interface RenderConfig {
   style: ActiveStyle;
@@ -196,6 +229,17 @@ export function drawSlideToCanvas(
       ctx.clip();
       ctx.drawImage(brand.logoImage, margin, margin, logoSize, logoSize);
       ctx.restore();
+    } else if (brand.logoMark === "mo" || brand.logoMark === "amd") {
+      const markSize = logoSize * 0.62;
+      drawLogoMark(
+        ctx,
+        brand.logoMark,
+        margin + (logoSize - markSize) / 2,
+        margin + (logoSize - markSize) / 2,
+        markSize,
+        style.accent,
+        style.accent
+      );
     } else {
       ctx.fillStyle = style.accent;
       ctx.font = "bold " + Math.round(12 * scale) + "px " + FONT_SANS_STACK;

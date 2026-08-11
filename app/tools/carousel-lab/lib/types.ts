@@ -56,11 +56,15 @@ export interface ActiveStyle {
   shadow: string;
 }
 
+// Which drawn mark fills the logo badge when no image is uploaded.
+export type LogoMark = "mo" | "amd" | "initial";
+
 // Brand identity shown in the header/footer of every slide.
 export interface BrandConfig {
   showBranding: boolean;
   logoText: string;
   logoImage: HTMLImageElement | null;
+  logoMark: LogoMark;
   topRightTag: string;
   creatorName: string;
   creatorHandle: string;

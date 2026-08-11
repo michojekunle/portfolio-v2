@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { TOOL_COLORS } from "@/lib/tool-colors";
 import { MOOD_STYLES } from "./lib/constants";
 import { exportSlideAsPNG, exportSlidesAsPDF, exportSlidesAsZip } from "./lib/export-slides";
-import type { ActiveStyle, AestheticMood, AspectRatio, BackgroundStyle, BrandConfig, ExportKind, InputMode, GenerateResponse, Slide, SlideLayout } from "./lib/types";
+import type { ActiveStyle, AestheticMood, AspectRatio, BackgroundStyle, BrandConfig, ExportKind, InputMode, GenerateResponse, LogoMark, Slide, SlideLayout } from "./lib/types";
 import { useColorOverrides } from "./lib/use-color-overrides";
 import { useLogoUpload } from "./lib/use-logo-upload";
 import { PageHeader } from "./components/PageHeader";
@@ -55,6 +55,7 @@ export default function CarouselLabPage(): React.ReactElement {
   const [showBranding, setShowBranding] = useState(true);
   const [topRightTag, setTopRightTag] = useState("Field Notes");
   const [logoText, setLogoText] = useState("MICHAEL");
+  const [logoMark, setLogoMark] = useState<LogoMark>("mo");
   const { logoImage, logoImageEl, upload: uploadLogo, remove: removeLogo } = useLogoUpload();
 
   // Canvas customization
@@ -89,6 +90,7 @@ export default function CarouselLabPage(): React.ReactElement {
     showBranding,
     logoText,
     logoImage: logoImageEl,
+    logoMark,
     topRightTag,
     creatorName,
     creatorHandle,
@@ -230,6 +232,8 @@ export default function CarouselLabPage(): React.ReactElement {
                 onLogoRemove={removeLogo}
                 logoText={logoText}
                 onLogoTextChange={setLogoText}
+                logoMark={logoMark}
+                onLogoMarkChange={setLogoMark}
                 creatorName={creatorName}
                 onCreatorNameChange={setCreatorName}
                 topRightTag={topRightTag}
@@ -284,6 +288,7 @@ export default function CarouselLabPage(): React.ReactElement {
                   showBranding={showBranding}
                   logoImage={logoImage}
                   logoText={logoText}
+                  logoMark={logoMark}
                   topRightTag={topRightTag}
                   creatorName={creatorName}
                   creatorHandle={creatorHandle}
