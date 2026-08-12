@@ -13,7 +13,18 @@ function renderToCanvas(slide: Slide, index: number, aspectRatio: AspectRatio, c
   return canvas;
 }
 
-export function exportSlideAsPNG(slide: Slide, index: number, aspectRatio: AspectRatio, config: RenderConfig): void {
+// A font picked seconds ago (e.g. one of the new next/font-loaded families)
+// may not have finished downloading yet — ctx.fillText with an unready font
+// silently falls back to the browser default instead of erroring, so every
+// export path awaits this first rather than risking a tofu'd slide.
+async function ensureFontsReady(): Promise<void> {
+  if (typeof document !== "undefined" && "fonts" in document) {
+    await document.fonts.ready;
+  }
+}
+
+export async function exportSlideAsPNG(slide: Slide, index: number, aspectRatio: AspectRatio, config: RenderConfig): Promise<void> {
+  await ensureFontsReady();
   const canvas = renderToCanvas(slide, index, aspectRatio, config);
   if (!canvas) return;
   const link = document.createElement("a");
@@ -23,6 +34,7 @@ export function exportSlideAsPNG(slide: Slide, index: number, aspectRatio: Aspec
 }
 
 export async function exportSlidesAsZip(slides: Slide[], aspectRatio: AspectRatio, config: RenderConfig, filenamePrefix: string): Promise<void> {
+  await ensureFontsReady();
   const zip = new JSZip();
 
   for (let idx = 0; idx < slides.length; idx++) {
@@ -47,6 +59,7 @@ export async function exportSlidesAsZip(slides: Slide[], aspectRatio: AspectRati
 }
 
 export async function exportSlidesAsPDF(slides: Slide[], aspectRatio: AspectRatio, config: RenderConfig, filenamePrefix: string): Promise<void> {
+  await ensureFontsReady();
   const { jsPDF } = await import("jspdf");
   const width = EXPORT_WIDTH;
   const height = exportHeight(aspectRatio);

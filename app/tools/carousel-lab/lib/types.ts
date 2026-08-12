@@ -51,6 +51,8 @@ export interface ActiveStyle {
   borderRadius: number;
   fontTitle: string;
   fontBody: string;
+  titleScale: number;
+  bodyScale: number;
   italic: boolean;
   divider: boolean;
   shadow: string;

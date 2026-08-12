@@ -63,6 +63,8 @@ export default function CarouselLabPage(): React.ReactElement {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("portrait");
   const [fontTitle, setFontTitle] = useState("default");
   const [fontBody, setFontBody] = useState("default");
+  const [titleScale, setTitleScale] = useState(1);
+  const [bodyScale, setBodyScale] = useState(1);
   const { customBg, customText, customAccent, setCustomBg, setCustomText, setCustomAccent, resetOverrides } = useColorOverrides();
 
   const activeSlide = slides[activeSlideIndex] ?? null;
@@ -81,6 +83,8 @@ export default function CarouselLabPage(): React.ReactElement {
     borderRadius: activeMoodStyle.borderRadius,
     fontTitle: fontTitle !== "default" ? fontTitle : activeMoodStyle.fontTitle,
     fontBody: fontBody !== "default" ? fontBody : activeMoodStyle.fontBody,
+    titleScale,
+    bodyScale,
     italic: activeMoodStyle.isItalicTitle,
     divider: activeMoodStyle.showDivider,
     shadow: activeMoodStyle.shadow,
@@ -169,11 +173,16 @@ export default function CarouselLabPage(): React.ReactElement {
     setActiveSlideIndex(index + 1);
   };
 
-  const handleExportPng = (): void => {
+  const handleExportPng = async (): Promise<void> => {
     if (!activeSlide) return;
     setExportLoading("png");
-    exportSlideAsPNG(activeSlide, activeSlideIndex, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio });
-    setExportLoading(null);
+    try {
+      await exportSlideAsPNG(activeSlide, activeSlideIndex, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio });
+    } catch (err) {
+      console.error("[carousel-lab] PNG export failed:", err);
+    } finally {
+      setExportLoading(null);
+    }
   };
 
   const handleExportZip = async (): Promise<void> => {
@@ -254,6 +263,10 @@ export default function CarouselLabPage(): React.ReactElement {
                 onFontTitleChange={setFontTitle}
                 fontBody={fontBody}
                 onFontBodyChange={setFontBody}
+                titleScale={titleScale}
+                onTitleScaleChange={setTitleScale}
+                bodyScale={bodyScale}
+                onBodyScaleChange={setBodyScale}
                 activeBg={activeStyle.bg}
                 activeText={activeStyle.text}
                 activeAccent={activeStyle.accent}
@@ -271,7 +284,7 @@ export default function CarouselLabPage(): React.ReactElement {
                 slideNumber={activeSlideIndex + 1}
                 slideCount={slides.length}
                 exportLoading={exportLoading}
-                onExportPng={handleExportPng}
+                onExportPng={() => void handleExportPng()}
                 onExportZip={() => void handleExportZip()}
                 onExportPdf={() => void handleExportPdf()}
               />

@@ -1,5 +1,6 @@
 import { Quote } from "lucide-react";
 import { MoSignatureInline, AmdSignatureInline } from "@/lib/brand-mark";
+import { wrapperBackgroundFor } from "../lib/color-utils";
 import type { ActiveStyle, AspectRatio, BackgroundStyle, LogoMark, Slide } from "../lib/types";
 
 interface Props {
@@ -69,11 +70,16 @@ function SlideBody({
       <div>
         <h3
           className="font-bold leading-[1.15] tracking-[-0.03em] mb-3 m-0"
-          style={{ fontFamily: style.fontTitle, fontSize: "clamp(22px,3.5vw,30px)", color: style.text, fontStyle: style.italic ? "italic" : "normal" }}
+          style={{
+            fontFamily: style.fontTitle,
+            fontSize: `calc(clamp(22px,3.5vw,30px) * ${style.titleScale})`,
+            color: style.text,
+            fontStyle: style.italic ? "italic" : "normal",
+          }}
         >
           {slide.title}
         </h3>
-        <p className="text-[14px] leading-[1.6] m-0 font-sans" style={{ fontFamily: style.fontBody, color: style.subtext }}>
+        <p className="leading-[1.6] m-0 font-sans" style={{ fontFamily: style.fontBody, fontSize: `calc(14px * ${style.bodyScale})`, color: style.subtext }}>
           {slide.content}
         </p>
       </div>
@@ -84,12 +90,15 @@ function SlideBody({
     return (
       <div className="grid grid-cols-2 h-full items-center gap-3 -mx-9 my-0 px-9 bg-[color-mix(in_oklab,var(--bg-2)_20%,transparent)]">
         <div className="h-full flex items-center border-r pr-3" style={{ borderColor: style.border }}>
-          <h3 className="font-bold leading-[1.2] tracking-[-0.02em] m-0" style={{ fontFamily: style.fontTitle, fontSize: "clamp(18px,2.5vw,22px)", color: style.text }}>
+          <h3
+            className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
+            style={{ fontFamily: style.fontTitle, fontSize: `calc(clamp(18px,2.5vw,22px) * ${style.titleScale})`, color: style.text }}
+          >
             {slide.title}
           </h3>
         </div>
         <div className="pl-1">
-          <p className="text-[12px] leading-normal m-0 font-sans" style={{ fontFamily: style.fontBody, color: style.text }}>
+          <p className="leading-normal m-0 font-sans" style={{ fontFamily: style.fontBody, fontSize: `calc(12px * ${style.bodyScale})`, color: style.text }}>
             {slide.content}
           </p>
         </div>
@@ -101,7 +110,10 @@ function SlideBody({
     return (
       <div className="relative space-y-3">
         <Quote className="absolute -top-6 -left-4 opacity-10" size={56} style={{ color: style.accent }} />
-        <p className="text-[16px] leading-[1.6] italic m-0 font-medium pl-3" style={{ fontFamily: style.fontTitle, color: style.text }}>
+        <p
+          className="leading-[1.6] italic m-0 font-medium pl-3"
+          style={{ fontFamily: style.fontTitle, fontSize: `calc(16px * ${style.titleScale})`, color: style.text }}
+        >
           &ldquo;{slide.content}&rdquo;
         </p>
         {slide.title && (
@@ -124,10 +136,13 @@ function SlideBody({
         <div className="font-mono text-[56px] font-bold leading-none" style={{ color: style.accent }}>
           0{slideIndex + 1}
         </div>
-        <h3 className="font-bold leading-[1.2] tracking-[-0.02em] m-0" style={{ fontFamily: style.fontTitle, fontSize: "20px", color: style.text }}>
+        <h3
+          className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
+          style={{ fontFamily: style.fontTitle, fontSize: `calc(20px * ${style.titleScale})`, color: style.text }}
+        >
           {slide.title}
         </h3>
-        <p className="text-[13px] leading-normal m-0 font-sans" style={{ fontFamily: style.fontBody, color: style.subtext }}>
+        <p className="leading-normal m-0 font-sans" style={{ fontFamily: style.fontBody, fontSize: `calc(13px * ${style.bodyScale})`, color: style.subtext }}>
           {slide.content}
         </p>
       </div>
@@ -146,10 +161,13 @@ function SlideBody({
             .slice(0, 2)}
         </div>
         <div>
-          <h3 className="text-[20px] font-bold m-0 mb-1" style={{ fontFamily: style.fontTitle, color: style.text }}>
+          <h3
+            className="font-bold m-0 mb-1"
+            style={{ fontFamily: style.fontTitle, fontSize: `calc(20px * ${style.titleScale})`, color: style.text }}
+          >
             {slide.title || "Let's connect!"}
           </h3>
-          <p className="text-[12px] leading-normal m-0" style={{ fontFamily: style.fontBody, color: style.subtext }}>
+          <p className="leading-normal m-0" style={{ fontFamily: style.fontBody, fontSize: `calc(12px * ${style.bodyScale})`, color: style.subtext }}>
             {slide.content || "Follow for daily guides and resources."}
           </p>
         </div>
@@ -168,10 +186,13 @@ function SlideBody({
   // default
   return (
     <div>
-      <h3 className="font-bold leading-[1.2] tracking-[-0.03em] mb-2.5 m-0" style={{ fontFamily: style.fontTitle, fontSize: "24px", color: style.text }}>
+      <h3
+        className="font-bold leading-[1.2] tracking-[-0.03em] mb-2.5 m-0"
+        style={{ fontFamily: style.fontTitle, fontSize: `calc(24px * ${style.titleScale})`, color: style.text }}
+      >
         {slide.title}
       </h3>
-      <p className="text-[14px] leading-[1.65] m-0 font-sans" style={{ fontFamily: style.fontBody, color: style.subtext }}>
+      <p className="leading-[1.65] m-0 font-sans" style={{ fontFamily: style.fontBody, fontSize: `calc(14px * ${style.bodyScale})`, color: style.subtext }}>
         {slide.content}
       </p>
       {slide.emoji && <div className="text-[40px] mt-4">{slide.emoji}</div>}
@@ -195,12 +216,22 @@ export function SlidePreview({
 }: Props): React.ReactElement {
   const layout = slide.layout || "default";
 
+  // The wrapper's tone is derived from the card's own mood color (same
+  // function the canvas exporter uses) — not the site's dark/light theme.
+  // Those are two unrelated color sources; tying the preview to the site
+  // theme meant the mesh background could never actually match what gets
+  // exported, since the export has no concept of the site's toggle state.
+  const wrapperBg = backgroundStyle === "mesh" ? wrapperBackgroundFor(style.bg) : undefined;
+
   return (
-    <div className="flex items-center justify-center p-5 rounded-3xl border border-(--rule) bg-[color-mix(in_oklab,var(--bg)_80%,var(--bg-2))] min-h-[500px] relative overflow-hidden">
+    <div
+      className="flex items-center justify-center p-5 rounded-3xl border border-(--rule) min-h-[500px] relative overflow-hidden"
+      style={wrapperBg ? { background: wrapperBg } : undefined}
+    >
       {backgroundStyle === "mesh" && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
-          <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-20" style={{ background: style.accent }} />
-          <div className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full blur-20" style={{ background: style.text }} />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-45">
+          <div className="absolute -top-[10%] -left-[10%] w-[55%] h-[55%] rounded-full blur-20" style={{ background: style.accent }} />
+          <div className="absolute -bottom-[10%] -right-[10%] w-[55%] h-[55%] rounded-full blur-20" style={{ background: style.text }} />
         </div>
       )}
 

@@ -91,14 +91,17 @@ function drawLines(
   return y;
 }
 
-// Solid-color circle, heavily blurred, at 30% opacity — matches the live
-// preview's ambient glow (a container at opacity-30 wrapping two blurred,
-// fully-opaque circles). A radial gradient fading from the center outward
-// reads as much weaker/muddier than a flat color blurred only at its edge.
+// Solid-color circle, blurred, at 45% opacity — matches the live preview's
+// ambient glow (a container at opacity-45 wrapping two blurred, fully-opaque
+// circles). A radial gradient fading from the center outward reads as much
+// weaker/muddier than a flat color blurred only at its edge. Blur factor is
+// intentionally lower than the live preview's blur-20 — the export is
+// requested less washed-out than the live editor, on purpose, not a parity
+// bug like the bleed/opacity fixes above.
 function drawGlowBlob(ctx: CanvasRenderingContext2D, cx: number, cy: number, diameter: number, color: string): void {
   ctx.save();
-  ctx.filter = `blur(${diameter * 0.22}px)`;
-  ctx.globalAlpha = 0.3;
+  ctx.filter = `blur(${diameter * 0.14}px)`;
+  ctx.globalAlpha = 0.45;
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(cx, cy, diameter / 2, 0, Math.PI * 2);
@@ -131,7 +134,10 @@ export function drawSlideToCanvas(
   // card inset within it and translate into the card's own coordinate space
   // so all the card-content math below operates in local (0,0)-(width,height)
   // coordinates regardless of the bleed.
-  const bleed = backgroundStyle === "mesh" ? 0.055 : 0;
+  // 0.11 — measured off the actual live-preview wrapper/card proportions at
+  // normal desktop width, not eyeballed; the old 0.055 was roughly half that,
+  // which is why exported mesh cards read as barely-there next to the editor.
+  const bleed = backgroundStyle === "mesh" ? 0.11 : 0;
   const cardX = canvasWidth * bleed;
   const cardY = canvasHeight * bleed;
   const width = canvasWidth - cardX * 2;
@@ -230,7 +236,9 @@ export function drawSlideToCanvas(
       ctx.drawImage(brand.logoImage, margin, margin, logoSize, logoSize);
       ctx.restore();
     } else if (brand.logoMark === "mo" || brand.logoMark === "amd") {
-      const markSize = logoSize * 0.62;
+      // Matches SlidePreview's LogoBadge exactly: a 16px mark inside the
+      // 28px (w-7 h-7) badge — 16/28, not an eyeballed fraction.
+      const markSize = logoSize * (16 / 28);
       drawLogoMark(
         ctx,
         brand.logoMark,
@@ -273,10 +281,10 @@ export function drawSlideToCanvas(
 
   // 3. Draw Layout Content (Vertically Centered)
   if (layout === "hook") {
-    const titleFont = `${style.italic ? "italic " : ""}bold ${Math.round(28 * scale)}px ${style.fontTitle}`;
-    const titleLineHeight = 34 * scale;
-    const bodyFont = `${Math.round(14 * scale)}px ${style.fontBody}`;
-    const bodyLineHeight = 22 * scale;
+    const titleFont = `${style.italic ? "italic " : ""}bold ${Math.round(28 * scale * style.titleScale)}px ${style.fontTitle}`;
+    const titleLineHeight = 34 * scale * style.titleScale;
+    const bodyFont = `${Math.round(14 * scale * style.bodyScale)}px ${style.fontBody}`;
+    const bodyLineHeight = 22 * scale * style.bodyScale;
     const spacing = 16 * scale;
 
     const titleLines = wrap(slide.title, contentWidth, titleFont);
@@ -296,8 +304,8 @@ export function drawSlideToCanvas(
 
     // Left split (Title)
     const leftWidth = width / 2 - margin - 20 * scale;
-    const titleFont = `bold ${Math.round(20 * scale)}px ${style.fontTitle}`;
-    const titleLineHeight = 26 * scale;
+    const titleFont = `bold ${Math.round(20 * scale * style.titleScale)}px ${style.fontTitle}`;
+    const titleLineHeight = 26 * scale * style.titleScale;
     const titleLines = wrap(slide.title, leftWidth, titleFont);
     const titleH = titleLines.length * titleLineHeight;
     const leftStartY = centerY - titleH / 2;
@@ -305,8 +313,8 @@ export function drawSlideToCanvas(
 
     // Right split (Content)
     const rightWidth = width / 2 - margin - 20 * scale;
-    const bodyFont = `${Math.round(13 * scale)}px ${style.fontBody}`;
-    const bodyLineHeight = 19 * scale;
+    const bodyFont = `${Math.round(13 * scale * style.bodyScale)}px ${style.fontBody}`;
+    const bodyLineHeight = 19 * scale * style.bodyScale;
     const contentLines = wrap(slide.content, rightWidth, bodyFont);
     const contentH = contentLines.length * bodyLineHeight;
     const rightStartY = centerY - contentH / 2;
@@ -317,8 +325,8 @@ export function drawSlideToCanvas(
     ctx.font = `italic bold ${Math.round(72 * scale)}px Georgia, serif`;
     ctx.fillText("“", margin, centerY - 60 * scale);
 
-    const bodyFont = `italic 500 ${Math.round(16 * scale)}px ${style.fontTitle}`;
-    const bodyLineHeight = 26 * scale;
+    const bodyFont = `italic 500 ${Math.round(16 * scale * style.titleScale)}px ${style.fontTitle}`;
+    const bodyLineHeight = 26 * scale * style.titleScale;
     const contentLines = wrap(slide.content, contentWidth - 20 * scale, bodyFont);
     const contentH = contentLines.length * bodyLineHeight;
 
@@ -351,10 +359,10 @@ export function drawSlideToCanvas(
   } else if (layout === "metrics") {
     const numFont = `bold ${Math.round(56 * scale)}px ${FONT_MONO_STACK}`;
     const numLineHeight = 56 * scale;
-    const titleFont = `bold ${Math.round(20 * scale)}px ${style.fontTitle}`;
-    const titleLineHeight = 26 * scale;
-    const bodyFont = `${Math.round(13 * scale)}px ${style.fontBody}`;
-    const bodyLineHeight = 19 * scale;
+    const titleFont = `bold ${Math.round(20 * scale * style.titleScale)}px ${style.fontTitle}`;
+    const titleLineHeight = 26 * scale * style.titleScale;
+    const bodyFont = `${Math.round(13 * scale * style.bodyScale)}px ${style.fontBody}`;
+    const bodyLineHeight = 19 * scale * style.bodyScale;
     const spacing = 12 * scale;
 
     const titleLines = wrap(slide.title, contentWidth, titleFont);
@@ -391,10 +399,12 @@ export function drawSlideToCanvas(
     ctx.fill();
 
     const avatarRadius = 30 * scale;
-    const titleFont = `bold ${Math.round(20 * scale)}px ${style.fontTitle}`;
-    const bodyFont = `${Math.round(12 * scale)}px ${style.fontBody}`;
+    const titleFont = `bold ${Math.round(20 * scale * style.titleScale)}px ${style.fontTitle}`;
+    const bodyFont = `${Math.round(12 * scale * style.bodyScale)}px ${style.fontBody}`;
     const btnFont = `bold ${Math.round(12 * scale)}px ${FONT_MONO_STACK}`;
     const btnHeight = 36 * scale;
+    const ctaTitleLineHeight = 26 * scale * style.titleScale;
+    const ctaBodyLineHeight = 18 * scale * style.bodyScale;
 
     const titleLines = wrap(slide.title || "Let's connect!", cardWidth - 40 * scale, titleFont);
     const contentLines = wrap(slide.content || "Follow for daily guides and resources.", cardWidth - 40 * scale, bodyFont);
@@ -403,8 +413,8 @@ export function drawSlideToCanvas(
     const spacing2 = 12 * scale;
     const spacing3 = 20 * scale;
 
-    const titleH = titleLines.length * 26 * scale;
-    const bodyH = contentLines.length * 18 * scale;
+    const titleH = titleLines.length * ctaTitleLineHeight;
+    const bodyH = contentLines.length * ctaBodyLineHeight;
     const totalH = avatarRadius * 2 + spacing1 + titleH + spacing2 + bodyH + spacing3 + btnHeight;
     const startY = ctaCardY + cardHeight / 2 - totalH / 2;
 
@@ -427,11 +437,11 @@ export function drawSlideToCanvas(
 
     // Title
     const titleY = startY + avatarRadius * 2 + spacing1;
-    lines(titleLines, width / 2, titleY + 20 * scale, 26 * scale, style.text, titleFont, "center");
+    lines(titleLines, width / 2, titleY + 20 * scale, ctaTitleLineHeight, style.text, titleFont, "center");
 
     // Content
     const bodyY = titleY + titleH + spacing2;
-    lines(contentLines, width / 2, bodyY + 14 * scale, 18 * scale, style.subtext, bodyFont, "center");
+    lines(contentLines, width / 2, bodyY + 14 * scale, ctaBodyLineHeight, style.subtext, bodyFont, "center");
 
     // Button — preview applies CSS `uppercase` to this one (unlike the
     // lowercase footer link), so the export must uppercase it too.
@@ -452,10 +462,10 @@ export function drawSlideToCanvas(
     ctx.textAlign = "left"; // reset
   } else {
     // Default Centered slide
-    const titleFont = `bold ${Math.round(24 * scale)}px ${style.fontTitle}`;
-    const titleLineHeight = 30 * scale;
-    const bodyFont = `${Math.round(14 * scale)}px ${style.fontBody}`;
-    const bodyLineHeight = 22 * scale;
+    const titleFont = `bold ${Math.round(24 * scale * style.titleScale)}px ${style.fontTitle}`;
+    const titleLineHeight = 30 * scale * style.titleScale;
+    const bodyFont = `${Math.round(14 * scale * style.bodyScale)}px ${style.fontBody}`;
+    const bodyLineHeight = 22 * scale * style.bodyScale;
     const spacing = 12 * scale;
 
     const titleLines = wrap(slide.title, contentWidth, titleFont);

@@ -1,6 +1,21 @@
 import { FONTS_LIST } from "../lib/constants";
 import { AESTHETIC_MOODS, type AestheticMood, type AspectRatio, type BackgroundStyle } from "../lib/types";
 
+// Grouped once at module scope, in list order, so both selects render
+// consistent <optgroup> sections without recomputing on every render.
+const FONT_GROUPS: [string, typeof FONTS_LIST][] = (() => {
+  const order: string[] = [];
+  const byGroup = new Map<string, typeof FONTS_LIST>();
+  for (const f of FONTS_LIST) {
+    if (!byGroup.has(f.group)) {
+      byGroup.set(f.group, []);
+      order.push(f.group);
+    }
+    byGroup.get(f.group)!.push(f);
+  }
+  return order.map((g) => [g, byGroup.get(g)!]);
+})();
+
 interface Props {
   accent: string;
   aesthetic: AestheticMood;
@@ -13,6 +28,10 @@ interface Props {
   onFontTitleChange: (value: string) => void;
   fontBody: string;
   onFontBodyChange: (value: string) => void;
+  titleScale: number;
+  onTitleScaleChange: (value: number) => void;
+  bodyScale: number;
+  onBodyScaleChange: (value: number) => void;
   activeBg: string;
   activeText: string;
   activeAccent: string;
@@ -73,6 +92,10 @@ export function CanvasCustomizerPanel({
   onFontTitleChange,
   fontBody,
   onFontBodyChange,
+  titleScale,
+  onTitleScaleChange,
+  bodyScale,
+  onBodyScaleChange,
   activeBg,
   activeText,
   activeAccent,
@@ -134,22 +157,64 @@ export function CanvasCustomizerPanel({
         <div>
           <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">Title Font</label>
           <select value={fontTitle} onChange={(e) => onFontTitleChange(e.target.value)} className={selectClass}>
-            {FONTS_LIST.map((f) => (
-              <option key={f.name} value={f.value}>
-                {f.name}
-              </option>
+            {FONT_GROUPS.map(([group, fonts]) => (
+              <optgroup key={group} label={group}>
+                {fonts.map((f) => (
+                  <option key={f.name} value={f.value}>
+                    {f.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>
         <div>
           <label className="block font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">Body Font</label>
           <select value={fontBody} onChange={(e) => onFontBodyChange(e.target.value)} className={selectClass}>
-            {FONTS_LIST.map((f) => (
-              <option key={f.name} value={f.value}>
-                {f.name}
-              </option>
+            {FONT_GROUPS.map(([group, fonts]) => (
+              <optgroup key={group} label={group}>
+                {fonts.map((f) => (
+                  <option key={f.name} value={f.value}>
+                    {f.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="flex items-center justify-between font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
+              <span>Title Size</span>
+              <span style={{ color: accent }}>{Math.round(titleScale * 100)}%</span>
+            </label>
+            <input
+              type="range"
+              min={0.75}
+              max={1.5}
+              step={0.05}
+              value={titleScale}
+              onChange={(e) => onTitleScaleChange(Number(e.target.value))}
+              className="w-full accent-(--accent)"
+              style={{ "--accent": accent } as React.CSSProperties}
+            />
+          </div>
+          <div>
+            <label className="flex items-center justify-between font-mono text-[9px] tracking-widest uppercase mb-1.5 text-muted-foreground">
+              <span>Body Size</span>
+              <span style={{ color: accent }}>{Math.round(bodyScale * 100)}%</span>
+            </label>
+            <input
+              type="range"
+              min={0.75}
+              max={1.5}
+              step={0.05}
+              value={bodyScale}
+              onChange={(e) => onBodyScaleChange(Number(e.target.value))}
+              className="w-full accent-(--accent)"
+              style={{ "--accent": accent } as React.CSSProperties}
+            />
+          </div>
         </div>
       </div>
 
