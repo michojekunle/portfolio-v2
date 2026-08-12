@@ -10,7 +10,9 @@ import type {
   AspectRatio,
   BackgroundStyle,
   BrandConfig,
+  CarouselDraft,
   DesignPreset,
+  DesignPresetData,
   ExportKind,
   InputMode,
   GenerateResponse,
@@ -21,11 +23,13 @@ import type {
 import { useColorOverrides } from "./lib/use-color-overrides";
 import { useDesignPresets } from "./lib/use-design-presets";
 import { useLogoUpload } from "./lib/use-logo-upload";
+import { readDraft, writeDraft, clearDraft } from "./lib/draft-storage";
 import { PageHeader } from "./components/PageHeader";
 import { GeneratorForm } from "./components/GeneratorForm";
 import { BrandingPanel } from "./components/BrandingPanel";
 import { CanvasCustomizerPanel } from "./components/CanvasCustomizerPanel";
 import { PresetsPanel } from "./components/PresetsPanel";
+import { DraftRestoreBanner } from "./components/DraftRestoreBanner";
 import { ExportToolbar } from "./components/ExportToolbar";
 import { LayoutPicker } from "./components/LayoutPicker";
 import { SlidePreview } from "./components/SlidePreview";
@@ -82,14 +86,15 @@ export default function CarouselLabPage(): React.ReactElement {
   const [bodyScale, setBodyScale] = useState(1);
   const { customBg, customText, customAccent, setCustomBg, setCustomText, setCustomAccent, resetOverrides } = useColorOverrides();
   const { presets, savePreset, deletePreset } = useDesignPresets();
+  const [pendingDraft, setPendingDraft] = useState<CarouselDraft | null>(null);
 
   const activeSlide = slides[activeSlideIndex] ?? null;
   const hasSlides = slides.length > 0;
   const activeMoodStyle = MOOD_STYLES[aesthetic];
 
-  // Nothing here is auto-saved — a reload, back-button, or closed tab loses
-  // the whole deck. Only warn once there's actually a deck to lose; an empty
-  // generator form has nothing worth confirming.
+  // Still warn on an actual browser-level unload (reload/close/back) even
+  // though autosave exists (below) — autosave is debounced, so the very
+  // latest few keystrokes could still be unwritten at the moment of unload.
   useEffect(() => {
     if (!hasSlides) return;
     const handleBeforeUnload = (e: BeforeUnloadEvent): void => {
@@ -129,32 +134,31 @@ export default function CarouselLabPage(): React.ReactElement {
     creatorHandle,
   };
 
-  // Design presets capture the "how it looks" state only — mood, fonts,
-  // sizes, color overrides, branding — never slide content and never the
-  // uploaded logo image (not serializable into localStorage).
-  const handleSavePreset = (name: string): void => {
-    savePreset(name, {
-      aesthetic,
-      backgroundStyle,
-      aspectRatio,
-      fontTitle,
-      fontBody,
-      titleScale,
-      bodyScale,
-      customBg,
-      customText,
-      customAccent,
-      showBranding,
-      logoMark,
-      logoText,
-      topRightTag,
-      creatorName,
-      creatorHandle,
-    });
+  // Design presets and the autosaved draft both capture the "how it looks"
+  // state — mood, fonts, sizes, color overrides, branding — never slide
+  // content and never the uploaded logo image (not serializable into
+  // localStorage). One builder/applier pair, reused by both features, so
+  // they can't quietly drift into capturing different fields.
+  const currentDesign: DesignPresetData = {
+    aesthetic,
+    backgroundStyle,
+    aspectRatio,
+    fontTitle,
+    fontBody,
+    titleScale,
+    bodyScale,
+    customBg,
+    customText,
+    customAccent,
+    showBranding,
+    logoMark,
+    logoText,
+    topRightTag,
+    creatorName,
+    creatorHandle,
   };
 
-  const handleApplyPreset = (preset: DesignPreset): void => {
-    const d = preset.data;
+  const applyDesign = (d: DesignPresetData): void => {
     setAesthetic(d.aesthetic);
     setBackgroundStyle(d.backgroundStyle);
     setAspectRatio(d.aspectRatio);
@@ -173,10 +177,69 @@ export default function CarouselLabPage(): React.ReactElement {
     setCreatorHandle(d.creatorHandle);
   };
 
+  const handleSavePreset = (name: string): void => savePreset(name, currentDesign);
+  const handleApplyPreset = (preset: DesignPreset): void => applyDesign(preset.data);
+
+  // Runs once, before the autosave effect below has ever had a chance to
+  // write anything (it only fires once hasSlides is true, and slides starts
+  // empty) — so this always sees whatever the *previous* session left behind,
+  // never something this render just wrote.
+  useEffect(() => {
+    const draft = readDraft();
+    if (draft && draft.slides.length > 0) setPendingDraft(draft);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
+  }, []);
+
+  const handleRestoreDraft = (): void => {
+    if (!pendingDraft) return;
+    setSlides(pendingDraft.slides);
+    setActiveSlideIndex(pendingDraft.activeSlideIndex);
+    setTopic(pendingDraft.topic);
+    setRoughNotes(pendingDraft.roughNotes);
+    setInputMode(pendingDraft.inputMode);
+    setSlideCount(pendingDraft.slideCount);
+    applyDesign(pendingDraft.design);
+    setPendingDraft(null);
+  };
+
+  const handleDiscardDraft = (): void => {
+    clearDraft();
+    setPendingDraft(null);
+  };
+
+  // Debounced autosave — waits for a pause in editing rather than writing to
+  // localStorage on every keystroke. Only runs once there's a deck and only
+  // after the restore-or-discard decision above has been made, so it can
+  // never overwrite an unconfirmed draft out from under that prompt.
+  useEffect(() => {
+    if (!hasSlides || pendingDraft) return;
+    const timeout = setTimeout(() => {
+      writeDraft({
+        savedAt: Date.now(),
+        slides,
+        activeSlideIndex,
+        topic,
+        roughNotes,
+        inputMode,
+        slideCount,
+        design: currentDesign,
+      });
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [hasSlides, pendingDraft, slides, activeSlideIndex, topic, roughNotes, inputMode, slideCount, currentDesign]);
+
   const generate = useCallback(async (): Promise<void> => {
     const activeTextSource = inputMode === "refine" ? roughNotes.trim() : topic.trim();
     if (!activeTextSource) return;
     if (hasSlides && !window.confirm("Generating a new deck replaces your current slides and can't be undone. Continue?")) return;
+    // Starting fresh content implicitly resolves any still-open restore
+    // prompt — otherwise the autosave effect below stays paused forever
+    // (it defers to an unresolved pendingDraft), silently leaving this new
+    // deck unprotected while the banner keeps showing stale, unrelated info.
+    if (pendingDraft) {
+      clearDraft();
+      setPendingDraft(null);
+    }
     setLoading(true);
     setSlides([]);
     setActiveSlideIndex(0);
@@ -215,10 +278,14 @@ export default function CarouselLabPage(): React.ReactElement {
     } finally {
       setLoading(false);
     }
-  }, [topic, roughNotes, inputMode, slideCount, aesthetic, hasSlides]);
+  }, [topic, roughNotes, inputMode, slideCount, aesthetic, hasSlides, pendingDraft]);
 
   const startManualDeck = (): void => {
     if (hasSlides && !window.confirm("Starting a manual deck replaces your current slides and can't be undone. Continue?")) return;
+    if (pendingDraft) {
+      clearDraft();
+      setPendingDraft(null);
+    }
     setSlides(MANUAL_DECK);
     setActiveSlideIndex(0);
   };
@@ -289,6 +356,16 @@ export default function CarouselLabPage(): React.ReactElement {
       <PageHeader accent={ACCENT} accentSoft={ACCENT_SOFT} accentBorder={ACCENT_BORDER} />
 
       <section className="max-w-310 mx-auto px-[var(--gutter,24px)] py-12">
+        {pendingDraft && (
+          <DraftRestoreBanner
+            accent={ACCENT}
+            savedAt={pendingDraft.savedAt}
+            slideCount={pendingDraft.slides.length}
+            onRestore={handleRestoreDraft}
+            onDiscard={handleDiscardDraft}
+          />
+        )}
+
         <GeneratorForm
           accent={ACCENT}
           inputMode={inputMode}
@@ -306,7 +383,18 @@ export default function CarouselLabPage(): React.ReactElement {
 
         {hasSlides && (
           <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-8">
-            <div className="space-y-6 max-[800px]:order-2 overflow-y-auto max-h-[calc(100vh-160px)] max-[800px]:max-h-none pr-0.5 sticky top-20 self-start max-[800px]:static">
+            {/* Deliberately not sticky and no inner max-height/overflow.
+                Three stacked panels (Branding, Canvas Customizer, Presets)
+                routinely run taller than the viewport now. A capped-height
+                sticky sidebar trapped scrolling in its own cramped inner
+                scrollbar; an uncapped sticky one stayed pinned near the top
+                while still taller than the viewport, visually overlapping
+                the SlideStackPanel row wrapped beneath it at narrower widths
+                (verified: sidebar rect spanned y=38 to y=1419 in a 900px-tall
+                viewport). A plain static column avoids both — it scrolls
+                with the page like everything else, just without the
+                "follows you" convenience, which isn't worth either bug. */}
+            <div className="space-y-6 max-[800px]:order-2">
               <BrandingPanel
                 accent={ACCENT}
                 showBranding={showBranding}

@@ -100,3 +100,18 @@ export interface DesignPreset {
   createdAt: number;
   data: DesignPresetData;
 }
+
+// A full work-in-progress snapshot, autosaved as you edit — slide content
+// plus every design/branding field, so a reload or crash never loses a
+// session. Excludes the uploaded logo image (an HTMLImageElement/blob URL
+// isn't something you can round-trip through localStorage).
+export interface CarouselDraft {
+  savedAt: number;
+  slides: Slide[];
+  activeSlideIndex: number;
+  topic: string;
+  roughNotes: string;
+  inputMode: InputMode;
+  slideCount: number;
+  design: DesignPresetData;
+}

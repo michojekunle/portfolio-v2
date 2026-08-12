@@ -418,22 +418,38 @@ export function drawSlideToCanvas(
     const totalH = avatarRadius * 2 + spacing1 + titleH + spacing2 + bodyH + spacing3 + btnHeight;
     const startY = ctaCardY + cardHeight / 2 - totalH / 2;
 
-    // Avatar
+    // Avatar — the brand mark (logo image, or the same MO/AMD mark drawn in
+    // the header badge), not literal initials text, matching the preview.
+    const avatarCx = width / 2;
+    const avatarCy = startY + avatarRadius;
     ctx.fillStyle = style.accent;
     ctx.beginPath();
-    ctx.arc(width / 2, startY + avatarRadius, avatarRadius, 0, Math.PI * 2);
+    ctx.arc(avatarCx, avatarCy, avatarRadius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = style.bg;
-    ctx.font = `bold ${Math.round(16 * scale)}px ${FONT_SANS_STACK}`;
-    ctx.textAlign = "center";
-    const initials = brand.creatorName
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-    ctx.fillText(initials, width / 2, startY + avatarRadius + 6 * scale);
+    if (brand.logoImage) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avatarCx, avatarCy, avatarRadius, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(brand.logoImage, avatarCx - avatarRadius, avatarCy - avatarRadius, avatarRadius * 2, avatarRadius * 2);
+      ctx.restore();
+    } else if (brand.logoMark === "mo" || brand.logoMark === "amd") {
+      const avatarMarkSize = avatarRadius * 2 * (16 / 28);
+      drawLogoMark(ctx, brand.logoMark, avatarCx - avatarMarkSize / 2, avatarCy - avatarMarkSize / 2, avatarMarkSize, style.bg, style.bg);
+    } else {
+      ctx.fillStyle = style.bg;
+      ctx.font = `bold ${Math.round(16 * scale)}px ${FONT_SANS_STACK}`;
+      ctx.textAlign = "center";
+      const initials = brand.creatorName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+      ctx.fillText(initials, avatarCx, avatarCy + 6 * scale);
+      ctx.textAlign = "left"; // reset
+    }
 
     // Title
     const titleY = startY + avatarRadius * 2 + spacing1;

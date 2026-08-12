@@ -56,12 +56,16 @@ function SlideBody({
   style,
   creatorName,
   creatorHandle,
+  logoImage,
+  logoMark,
 }: {
   slide: Slide;
   slideIndex: number;
   style: ActiveStyle;
   creatorName: string;
   creatorHandle: string;
+  logoImage: string | null;
+  logoMark: LogoMark;
 }): React.ReactElement {
   const layout = slide.layout || "default";
 
@@ -152,13 +156,25 @@ function SlideBody({
   if (layout === "cta") {
     return (
       <div className="text-center space-y-5 p-5 rounded-2xl" style={{ background: style.accent + "08" }}>
-        <div className="w-15 h-15 rounded-full mx-auto flex items-center justify-center text-[18px] font-bold shadow-sm" style={{ background: style.accent, color: style.bg }}>
-          {creatorName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)}
+        <div
+          className="w-15 h-15 rounded-full mx-auto flex items-center justify-center text-[18px] font-bold shadow-sm overflow-hidden"
+          style={{ background: style.accent, color: style.bg }}
+        >
+          {logoImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoImage} alt="" className="w-full h-full object-cover" />
+          ) : logoMark === "mo" ? (
+            <MoSignatureInline height={28} color={style.bg} />
+          ) : logoMark === "amd" ? (
+            <AmdSignatureInline height={28} color={style.bg} accent={style.bg} />
+          ) : (
+            creatorName
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2)
+          )}
         </div>
         <div>
           <h3
@@ -262,7 +278,15 @@ export function SlidePreview({
         )}
 
         <div className="flex-1 flex flex-col justify-center py-2.5">
-          <SlideBody slide={slide} slideIndex={slideIndex} style={style} creatorName={creatorName} creatorHandle={creatorHandle} />
+          <SlideBody
+            slide={slide}
+            slideIndex={slideIndex}
+            style={style}
+            creatorName={creatorName}
+            creatorHandle={creatorHandle}
+            logoImage={logoImage}
+            logoMark={logoMark}
+          />
         </div>
 
         {style.divider && layout !== "split" && <div className="h-0.25 w-full" style={{ background: style.border }} />}
