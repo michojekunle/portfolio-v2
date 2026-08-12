@@ -71,3 +71,32 @@ export interface BrandConfig {
   creatorName: string;
   creatorHandle: string;
 }
+
+// Everything a preset captures — design/branding choices only, deliberately
+// excluding slide content (title/body text) and the uploaded logo image
+// (can't serialize an HTMLImageElement into localStorage).
+export interface DesignPresetData {
+  aesthetic: AestheticMood;
+  backgroundStyle: BackgroundStyle;
+  aspectRatio: AspectRatio;
+  fontTitle: string;
+  fontBody: string;
+  titleScale: number;
+  bodyScale: number;
+  customBg: string;
+  customText: string;
+  customAccent: string;
+  showBranding: boolean;
+  logoMark: LogoMark;
+  logoText: string;
+  topRightTag: string;
+  creatorName: string;
+  creatorHandle: string;
+}
+
+export interface DesignPreset {
+  id: string;
+  name: string;
+  createdAt: number;
+  data: DesignPresetData;
+}

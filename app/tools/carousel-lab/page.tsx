@@ -1,16 +1,31 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TOOL_COLORS } from "@/lib/tool-colors";
 import { MOOD_STYLES } from "./lib/constants";
 import { exportSlideAsPNG, exportSlidesAsPDF, exportSlidesAsZip } from "./lib/export-slides";
-import type { ActiveStyle, AestheticMood, AspectRatio, BackgroundStyle, BrandConfig, ExportKind, InputMode, GenerateResponse, LogoMark, Slide, SlideLayout } from "./lib/types";
+import type {
+  ActiveStyle,
+  AestheticMood,
+  AspectRatio,
+  BackgroundStyle,
+  BrandConfig,
+  DesignPreset,
+  ExportKind,
+  InputMode,
+  GenerateResponse,
+  LogoMark,
+  Slide,
+  SlideLayout,
+} from "./lib/types";
 import { useColorOverrides } from "./lib/use-color-overrides";
+import { useDesignPresets } from "./lib/use-design-presets";
 import { useLogoUpload } from "./lib/use-logo-upload";
 import { PageHeader } from "./components/PageHeader";
 import { GeneratorForm } from "./components/GeneratorForm";
 import { BrandingPanel } from "./components/BrandingPanel";
 import { CanvasCustomizerPanel } from "./components/CanvasCustomizerPanel";
+import { PresetsPanel } from "./components/PresetsPanel";
 import { ExportToolbar } from "./components/ExportToolbar";
 import { LayoutPicker } from "./components/LayoutPicker";
 import { SlidePreview } from "./components/SlidePreview";
@@ -66,10 +81,24 @@ export default function CarouselLabPage(): React.ReactElement {
   const [titleScale, setTitleScale] = useState(1);
   const [bodyScale, setBodyScale] = useState(1);
   const { customBg, customText, customAccent, setCustomBg, setCustomText, setCustomAccent, resetOverrides } = useColorOverrides();
+  const { presets, savePreset, deletePreset } = useDesignPresets();
 
   const activeSlide = slides[activeSlideIndex] ?? null;
   const hasSlides = slides.length > 0;
   const activeMoodStyle = MOOD_STYLES[aesthetic];
+
+  // Nothing here is auto-saved — a reload, back-button, or closed tab loses
+  // the whole deck. Only warn once there's actually a deck to lose; an empty
+  // generator form has nothing worth confirming.
+  useEffect(() => {
+    if (!hasSlides) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent): void => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasSlides]);
 
   // Resolved style + brand config, threaded into both the live preview and
   // the canvas exporter so the two can never independently drift.
@@ -100,9 +129,54 @@ export default function CarouselLabPage(): React.ReactElement {
     creatorHandle,
   };
 
+  // Design presets capture the "how it looks" state only — mood, fonts,
+  // sizes, color overrides, branding — never slide content and never the
+  // uploaded logo image (not serializable into localStorage).
+  const handleSavePreset = (name: string): void => {
+    savePreset(name, {
+      aesthetic,
+      backgroundStyle,
+      aspectRatio,
+      fontTitle,
+      fontBody,
+      titleScale,
+      bodyScale,
+      customBg,
+      customText,
+      customAccent,
+      showBranding,
+      logoMark,
+      logoText,
+      topRightTag,
+      creatorName,
+      creatorHandle,
+    });
+  };
+
+  const handleApplyPreset = (preset: DesignPreset): void => {
+    const d = preset.data;
+    setAesthetic(d.aesthetic);
+    setBackgroundStyle(d.backgroundStyle);
+    setAspectRatio(d.aspectRatio);
+    setFontTitle(d.fontTitle);
+    setFontBody(d.fontBody);
+    setTitleScale(d.titleScale);
+    setBodyScale(d.bodyScale);
+    setCustomBg(d.customBg);
+    setCustomText(d.customText);
+    setCustomAccent(d.customAccent);
+    setShowBranding(d.showBranding);
+    setLogoMark(d.logoMark);
+    setLogoText(d.logoText);
+    setTopRightTag(d.topRightTag);
+    setCreatorName(d.creatorName);
+    setCreatorHandle(d.creatorHandle);
+  };
+
   const generate = useCallback(async (): Promise<void> => {
     const activeTextSource = inputMode === "refine" ? roughNotes.trim() : topic.trim();
     if (!activeTextSource) return;
+    if (hasSlides && !window.confirm("Generating a new deck replaces your current slides and can't be undone. Continue?")) return;
     setLoading(true);
     setSlides([]);
     setActiveSlideIndex(0);
@@ -141,9 +215,10 @@ export default function CarouselLabPage(): React.ReactElement {
     } finally {
       setLoading(false);
     }
-  }, [topic, roughNotes, inputMode, slideCount, aesthetic]);
+  }, [topic, roughNotes, inputMode, slideCount, aesthetic, hasSlides]);
 
   const startManualDeck = (): void => {
+    if (hasSlides && !window.confirm("Starting a manual deck replaces your current slides and can't be undone. Continue?")) return;
     setSlides(MANUAL_DECK);
     setActiveSlideIndex(0);
   };
@@ -276,6 +351,8 @@ export default function CarouselLabPage(): React.ReactElement {
                 hasCustomColors={!!(customBg || customText || customAccent)}
                 onResetColors={resetOverrides}
               />
+
+              <PresetsPanel accent={ACCENT} presets={presets} onSave={handleSavePreset} onApply={handleApplyPreset} onDelete={deletePreset} />
             </div>
 
             <div className="space-y-6">
