@@ -206,9 +206,27 @@ export function drawSlideToCanvas(
     align: CanvasTextAlign = "left"
   ): number => drawLines(ctx, ls, x, startY, lineHeight, color, font, align);
 
-  // Calculate Y Boundaries for Center Container
+  // Calculate Y Boundaries for Center Container — header height grows to
+  // fit a wrapped, multi-word brand name (e.g. a day title next to the
+  // logo) exactly like the live preview's flex row does; a fixed
+  // single-line assumption here would let a longer brand name collide with
+  // the top-right tag with no warning, since canvas text never wraps on
+  // its own the way a DOM <div> does.
   const logoSize = 28 * scale;
-  const headerBottom = brand.showBranding && layout !== "cta" ? margin + logoSize + 10 * scale : margin;
+  const brandFont = "bold " + Math.round(12 * scale) + "px " + FONT_SANS_STACK;
+  const tagFont = "bold " + Math.round(9 * scale) + "px " + FONT_MONO_STACK;
+  const brandLineHeight = 15 * scale;
+
+  let headerHeight = logoSize;
+  let brandLines: string[] = [];
+  if (brand.showBranding && layout !== "cta") {
+    ctx.font = tagFont;
+    const tagWidth = ctx.measureText(brand.topRightTag).width;
+    const brandMaxWidth = width - margin * 2 - logoSize - 8 * scale - tagWidth - 16 * scale;
+    brandLines = wrap(brand.logoText, Math.max(brandMaxWidth, 40 * scale), brandFont);
+    headerHeight = Math.max(logoSize, brandLines.length * brandLineHeight);
+  }
+  const headerBottom = brand.showBranding && layout !== "cta" ? margin + headerHeight + 10 * scale : margin;
 
   const footerHeight = style.divider && layout !== "split" ? 20 * scale + 30 * scale : 20 * scale;
   const footerTop = height - margin - footerHeight;
@@ -218,10 +236,12 @@ export function drawSlideToCanvas(
 
   // 2. Creator Branding Header (Top)
   if (brand.showBranding && layout !== "cta") {
+    const badgeY = margin + (headerHeight - logoSize) / 2;
+
     // Logo icon badge background
     ctx.fillStyle = style.accent + "1a";
     ctx.beginPath();
-    ctx.roundRect(margin, margin, logoSize, logoSize, 8 * scale);
+    ctx.roundRect(margin, badgeY, logoSize, logoSize, 8 * scale);
     ctx.fill();
 
     // Uploaded logo image, clipped to the badge's rounded square; falls back
@@ -231,9 +251,9 @@ export function drawSlideToCanvas(
     if (brand.logoImage) {
       ctx.save();
       ctx.beginPath();
-      ctx.roundRect(margin, margin, logoSize, logoSize, 8 * scale);
+      ctx.roundRect(margin, badgeY, logoSize, logoSize, 8 * scale);
       ctx.clip();
-      ctx.drawImage(brand.logoImage, margin, margin, logoSize, logoSize);
+      ctx.drawImage(brand.logoImage, margin, badgeY, logoSize, logoSize);
       ctx.restore();
     } else if (brand.logoMark === "mo" || brand.logoMark === "amd") {
       // Matches SlidePreview's LogoBadge exactly: a 16px mark inside the
@@ -243,7 +263,7 @@ export function drawSlideToCanvas(
         ctx,
         brand.logoMark,
         margin + (logoSize - markSize) / 2,
-        margin + (logoSize - markSize) / 2,
+        badgeY + (logoSize - markSize) / 2,
         markSize,
         style.accent,
         style.accent
@@ -253,29 +273,33 @@ export function drawSlideToCanvas(
       ctx.font = "bold " + Math.round(12 * scale) + "px " + FONT_SANS_STACK;
       ctx.textAlign = "center";
       const monogram = (brand.logoText.trim()[0] || brand.creatorName.trim()[0] || "M").toUpperCase();
-      ctx.fillText(monogram, margin + logoSize / 2, margin + logoSize / 2 + 4 * scale);
+      ctx.fillText(monogram, margin + logoSize / 2, badgeY + logoSize / 2 + 4 * scale);
       ctx.textAlign = "left"; // reset
     }
 
-    // Logo brand text
-    ctx.fillStyle = style.accent;
-    ctx.font = "bold " + Math.round(12 * scale) + "px " + FONT_SANS_STACK;
-    const spacedLogo = brand.logoText.split("").join(" ");
-    ctx.fillText(spacedLogo, margin + logoSize + 8 * scale, margin + logoSize / 2 + 4 * scale);
+    // Logo brand text — wrapped (brandLines, computed above), letter-spaced
+    // via the real Canvas Text API instead of the old join(" ") hack, which
+    // inserted a full space between every character and exploded in width
+    // the moment the brand name became more than one short word.
+    if ("letterSpacing" in ctx) ctx.letterSpacing = `${scale}px`;
+    const brandBlockHeight = brandLines.length * brandLineHeight;
+    const brandStartY = margin + (headerHeight - brandBlockHeight) / 2 + brandLineHeight - 4 * scale;
+    lines(brandLines, margin + logoSize + 8 * scale, brandStartY, brandLineHeight, style.accent, brandFont);
+    if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
 
     // Top right tag
     ctx.fillStyle = style.text + "80";
-    ctx.font = "bold " + Math.round(9 * scale) + "px " + FONT_MONO_STACK;
+    ctx.font = tagFont;
     ctx.textAlign = "right";
-    ctx.fillText(brand.topRightTag, width - margin, margin + logoSize / 2 + 4 * scale);
+    ctx.fillText(brand.topRightTag, width - margin, margin + headerHeight / 2 + 3 * scale);
     ctx.textAlign = "left"; // reset
 
     // Header bottom border
     ctx.strokeStyle = style.border;
     ctx.lineWidth = 1 * scale;
     ctx.beginPath();
-    ctx.moveTo(margin, margin + logoSize + 10 * scale);
-    ctx.lineTo(width - margin, margin + logoSize + 10 * scale);
+    ctx.moveTo(margin, margin + headerHeight + 10 * scale);
+    ctx.lineTo(width - margin, margin + headerHeight + 10 * scale);
     ctx.stroke();
   }
 
