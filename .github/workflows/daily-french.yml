@@ -1,0 +1,56 @@
+name: French Daily Challenge — 10 PM Trigger
+
+on:
+  schedule:
+    # 21:00 UTC = 10:00 PM WAT (West Africa Time, UTC+1)
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Target Environment"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - preview
+          - both
+
+jobs:
+  trigger-french-challenge:
+    name: Trigger (${{ matrix.target_env }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        target_env: >-
+          ${{
+            github.event_name == 'workflow_dispatch' && (
+              inputs.target_env == 'both' && '["production", "preview"]' || format('["{0}"]', inputs.target_env)
+            ) || '["production"]'
+          }}
+    environment: ${{ matrix.target_env }}
+
+    steps:
+      - name: Trigger daily French challenge
+        run: |
+          echo "Targeting environment: ${{ matrix.target_env }}"
+          
+          if [ -z "${{ secrets.SITE_URL }}" ]; then
+            echo "❌ Error: SITE_URL is not set for environment ${{ matrix.target_env }}"
+            exit 1
+          fi
+
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.SITE_URL }}/api/french/trigger" \
+            -H "Authorization: Bearer ${{ secrets.FRENCH_CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          echo "Response status: $response"
+
+          if [ "$response" -ne 200 ]; then
+            echo "❌ Trigger failed on ${{ matrix.target_env }} with status $response"
+            exit 1
+          fi
+
+          echo "✅ French challenge triggered on ${{ matrix.target_env }} and push notification sent!"
