@@ -9,7 +9,8 @@ import { LeadsPanel } from "./LeadsPanel";
 import { ResourcesPanel } from "./ResourcesPanel";
 import type { ApplicationPrefill } from "./ApplicationFormDialog";
 import type { ApplicationStatus, JobApplication } from "./constants";
-import type { JobLead } from "@/app/api/job-leads/route";
+import type { JobLead, JobSkillGap, JobProjectToBuild } from "@/app/api/job-leads/route";
+import type { JobRole } from "@/lib/admin/job-search-data";
 
 interface LeadsState {
   updatedAt: string | null;
@@ -24,19 +25,34 @@ interface ProgressState {
   projects: string[];
 }
 
+interface RoleSplit<T> {
+  flutter: T[];
+  rust: T[];
+}
+
 interface Props {
   initialApplications: JobApplication[];
   initialLeads: LeadsState;
   initialProgress: ProgressState;
+  initialSkillsGap: RoleSplit<JobSkillGap>;
+  initialProjectsToBuild: RoleSplit<JobProjectToBuild>;
 }
 
-export function JobsDashboard({ initialApplications, initialLeads, initialProgress }: Props): React.ReactElement {
+export function JobsDashboard({
+  initialApplications,
+  initialLeads,
+  initialProgress,
+  initialSkillsGap,
+  initialProjectsToBuild,
+}: Props): React.ReactElement {
   const [apps, setApps] = useState<JobApplication[]>(initialApplications);
   const [activeTab, setActiveTab] = useState("overview");
   const [logDialogOpen, setLogDialogOpen] = useState(false);
   const [logPrefill, setLogPrefill] = useState<ApplicationPrefill | null>(null);
   const [learnedSkills, setLearnedSkills] = useState<Set<string>>(new Set(initialProgress.skills));
   const [builtProjects, setBuiltProjects] = useState<Set<string>>(new Set(initialProgress.projects));
+  const [skillsGap, setSkillsGap] = useState<RoleSplit<JobSkillGap>>(initialSkillsGap);
+  const [projectsToBuild, setProjectsToBuild] = useState<RoleSplit<JobProjectToBuild>>(initialProjectsToBuild);
   // A ref (not state) so the guard below is visible synchronously to a
   // second click dispatched before the first request's state update lands —
   // state updates are batched/async, so a same-tick double-click could slip
@@ -126,6 +142,49 @@ export function JobsDashboard({ initialApplications, initialLeads, initialProgre
     }
   };
 
+  // A manually-typed skill upserts on (role, name) same as the scheduled
+  // task's — re-adding one that already exists just refreshes it in place
+  // rather than erroring or duplicating.
+  const handleAddSkillGap = (role: JobRole, skill: JobSkillGap): void => {
+    setSkillsGap((prev) => ({
+      ...prev,
+      [role]: [...prev[role].filter((s) => s.name !== skill.name), skill],
+    }));
+  };
+
+  const handleDeleteSkillGap = async (role: JobRole, id: string): Promise<void> => {
+    const prev = skillsGap;
+    setSkillsGap((cur) => ({ ...cur, [role]: cur[role].filter((s) => s.id !== id) }));
+    try {
+      const res = await fetch(`/api/admin/job-skills-gap/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+    } catch (err) {
+      console.error("[jobs-dashboard] delete skill gap error:", err);
+      setSkillsGap(prev);
+      toast.error("Failed to remove skill");
+    }
+  };
+
+  const handleAddProjectToBuild = (role: JobRole, project: JobProjectToBuild): void => {
+    setProjectsToBuild((prev) => ({
+      ...prev,
+      [role]: [...prev[role].filter((p) => p.name !== project.name), project],
+    }));
+  };
+
+  const handleDeleteProjectToBuild = async (role: JobRole, id: string): Promise<void> => {
+    const prev = projectsToBuild;
+    setProjectsToBuild((cur) => ({ ...cur, [role]: cur[role].filter((p) => p.id !== id) }));
+    try {
+      const res = await fetch(`/api/admin/job-projects-to-build/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+    } catch (err) {
+      console.error("[jobs-dashboard] delete project to build error:", err);
+      setProjectsToBuild(prev);
+      toast.error("Failed to remove project");
+    }
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="grid w-full grid-cols-4 h-auto gap-1 p-1 mb-6">
@@ -163,7 +222,14 @@ export function JobsDashboard({ initialApplications, initialLeads, initialProgre
       </TabsContent>
 
       <TabsContent value="resources">
-        <ResourcesPanel />
+        <ResourcesPanel
+          skillsGap={skillsGap}
+          projectsToBuild={projectsToBuild}
+          onAddSkillGap={handleAddSkillGap}
+          onDeleteSkillGap={handleDeleteSkillGap}
+          onAddProjectToBuild={handleAddProjectToBuild}
+          onDeleteProjectToBuild={handleDeleteProjectToBuild}
+        />
       </TabsContent>
     </Tabs>
   );

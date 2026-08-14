@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { JobsDashboard } from "@/components/admin/jobs/JobsDashboard";
 import type { JobApplication } from "@/components/admin/jobs/constants";
-import type { JobLead } from "@/app/api/job-leads/route";
+import type { JobLead, JobSkillGap, JobProjectToBuild } from "@/app/api/job-leads/route";
 import { JOB_LEADS_PAGE_SIZE } from "@/lib/admin/job-leads-constants";
 
 // Leads/applications are written by an external cron POST and by admin
@@ -22,12 +22,16 @@ export default async function JobsPage(): Promise<React.ReactElement> {
     { data: rustLeads },
     { data: learnedSkills },
     { data: builtProjects },
+    { data: skillsGapData },
+    { data: projectsToBuildData },
   ] = await Promise.all([
     supabase.from("job_applications").select("*").order("date", { ascending: false }),
     supabase.from("job_leads").select("*").eq("role", "flutter").order("created_at", { ascending: false }).limit(JOB_LEADS_PAGE_SIZE + 1),
     supabase.from("job_leads").select("*").eq("role", "rust").order("created_at", { ascending: false }).limit(JOB_LEADS_PAGE_SIZE + 1),
     supabase.from("job_skills_learned").select("skill"),
     supabase.from("job_projects_built").select("project"),
+    supabase.from("job_skills_gap").select("*").order("created_at", { ascending: true }),
+    supabase.from("job_projects_to_build").select("*").order("created_at", { ascending: true }),
   ]);
 
   const flutterRows = (flutterLeads ?? []) as JobLead[];
@@ -46,6 +50,17 @@ export default async function JobsPage(): Promise<React.ReactElement> {
     projects: (builtProjects ?? []).map((p) => p.project as string),
   };
 
+  const skillsGapRows = (skillsGapData ?? []) as JobSkillGap[];
+  const projectsToBuildRows = (projectsToBuildData ?? []) as JobProjectToBuild[];
+  const initialSkillsGap = {
+    flutter: skillsGapRows.filter((s) => s.role === "flutter"),
+    rust: skillsGapRows.filter((s) => s.role === "rust"),
+  };
+  const initialProjectsToBuild = {
+    flutter: projectsToBuildRows.filter((p) => p.role === "flutter"),
+    rust: projectsToBuildRows.filter((p) => p.role === "rust"),
+  };
+
   return (
     <div>
       <div className="mb-8">
@@ -58,6 +73,8 @@ export default async function JobsPage(): Promise<React.ReactElement> {
         initialApplications={(applications ?? []) as JobApplication[]}
         initialLeads={initialLeads}
         initialProgress={initialProgress}
+        initialSkillsGap={initialSkillsGap}
+        initialProjectsToBuild={initialProjectsToBuild}
       />
     </div>
   );
