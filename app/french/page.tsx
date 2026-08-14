@@ -1566,8 +1566,15 @@ export default function FrenchPage() {
         theme={theme}
       />
 
-      {/* Header — Responsive Theme Controlled Layout */}
-      <header className="px-4 sm:px-6 pt-6 pb-3 max-w-5xl mx-auto w-full">
+      {/* Header — Responsive Theme Controlled Layout with Mobile Safe Area Top Insets */}
+      <header
+        className="px-4 sm:px-6 pb-3 max-w-5xl mx-auto w-full"
+        style={{
+          paddingTop: "max(1.5rem, env(safe-area-inset-top))",
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+        }}
+      >
         <div className="flex items-center justify-between gap-2">
           {/* Brand Left */}
           <div className="flex items-center gap-3 min-w-0">
@@ -1632,7 +1639,13 @@ export default function FrenchPage() {
       </header>
 
       {/* Segmented Tab Navigation Pill */}
-      <div className="px-4 sm:px-6 max-w-5xl mx-auto w-full">
+      <div
+        className="px-4 sm:px-6 max-w-5xl mx-auto w-full"
+        style={{
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+        }}
+      >
         <div
           className="relative flex max-w-md rounded-2xl p-1 border shadow-sm"
           style={{ backgroundColor: theme.navBg, borderColor: theme.navBorder }}
@@ -1672,7 +1685,15 @@ export default function FrenchPage() {
       </div>
 
       {/* Main Responsive Grid Layout (Single Column on Mobile, Split View / Wide Grid on Desktop max-w-5xl) */}
-      <main id="main-content" className="flex-1 px-4 sm:px-6 pt-5 pb-12 max-w-5xl mx-auto w-full">
+      <main
+        id="main-content"
+        className="flex-1 px-4 sm:px-6 pt-5 max-w-5xl mx-auto w-full"
+        style={{
+          paddingBottom: "max(3.5rem, env(safe-area-inset-bottom))",
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+        }}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
