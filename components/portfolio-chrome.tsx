@@ -13,6 +13,7 @@ const TOOL_APP_PREFIXES = [
   "/tools/flowise",
   "/tools/journal",
   "/admin",
+  "/french",
 ];
 
 export function PortfolioChrome({

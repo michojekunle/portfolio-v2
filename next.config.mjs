@@ -51,6 +51,11 @@ const nextConfig = {
                 `https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
                 // WebSocket for Supabase realtime (if ever enabled)
                 `wss://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
+                // Web Push — allow subscribing to push notification endpoints
+                "https://fcm.googleapis.com",
+                "https://*.push.services.mozilla.com",
+                "https://*.notify.windows.com",
+                "https://*.apple.com",
               ].join(" "),
               // Allow YouTube, Instagram, TikTok, and Vimeo embeds (plus blob: for epubjs)
               "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.vimeo.com",

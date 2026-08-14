@@ -26,6 +26,7 @@ export const TOOL_COLORS = {
   vela: buildColorSet("#7C3AED", 124, 58, 237),
   "carousel-lab": buildColorSet("#FF6B35", 255, 107, 53),
   flowise: buildColorSet("#16A34A", 22, 163, 74),
+  french: buildColorSet("#0066F5", 0, 102, 245),
 } as const satisfies Record<string, ToolColorSet>;
 
 export type ToolId = keyof typeof TOOL_COLORS;

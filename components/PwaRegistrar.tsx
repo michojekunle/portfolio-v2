@@ -25,6 +25,7 @@ const TOOL_NAMES: Record<string, string> = {
   flowise: "Flowise",
   journal: "Journal",
   "thread-studio": "Thread Studio",
+  french: "French Daily",
 };
 
 export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
@@ -35,8 +36,11 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
+    // Tools under /tools/<id> use a sub-scope; french lives at /french directly
+    const scope = toolId === "french" ? "/french" : `/tools/${toolId}/`;
+
     void navigator.serviceWorker
-      .register("/sw.js", { scope: `/tools/${toolId}/` })
+      .register("/sw.js", { scope })
       .then((reg) => {
         reg.addEventListener("updatefound", () => {
           const worker = reg.installing;
