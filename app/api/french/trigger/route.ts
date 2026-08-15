@@ -109,6 +109,8 @@ export async function POST(request: Request): Promise<Response> {
     .from("french_challenges")
     .select("id, type, prompt_text")
     .eq("challenge_date", today)
+    .order("created_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   let challenge: { id: string; type: string; prompt_text: string } | null = existing;

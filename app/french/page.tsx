@@ -128,7 +128,7 @@ const THEMES: Record<
     cardBg: "#FFFFFF",
     cardBorder: "#E2E8F0",
     cardTitle: "#0F172A",
-    cardSubtext: "#475569", // Slate 600 - High Contrast
+    cardSubtext: "#475569",
     subCardBg: "#F8FAFC",
     subCardText: "#0F172A",
     englishText: "#0066F5",
@@ -220,7 +220,7 @@ const THEMES: Record<
     cardBg: "#18181B",
     cardBorder: "#27272A",
     cardTitle: "#FAFAFA",
-    cardSubtext: "#D4D4D8", // Zinc 300 - High Contrast on Dark
+    cardSubtext: "#D4D4D8",
     subCardBg: "#27272A",
     subCardText: "#FAFAFA",
     englishText: "#60A5FA",
@@ -395,7 +395,6 @@ function VocabDetailModal({
           className="w-full max-w-md rounded-3xl border p-6 shadow-2xl overflow-hidden relative"
           style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder, color: theme.cardTitle }}
         >
-          {/* Close button */}
           <button
             type="button"
             onClick={onClose}
@@ -405,7 +404,6 @@ function VocabDetailModal({
             <X className="w-4 h-4" />
           </button>
 
-          {/* Type Badge & Header */}
           <div className="flex items-center gap-2 mb-4">
             <span
               className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border"
@@ -418,7 +416,6 @@ function VocabDetailModal({
             </span>
           </div>
 
-          {/* Interactive Flashcard */}
           <div
             onClick={() => setIsFlipped((f) => !f)}
             className="relative w-full min-h-[180px] p-6 rounded-3xl border flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:scale-[1.01] shadow-inner select-none mb-6"
@@ -445,7 +442,6 @@ function VocabDetailModal({
             </div>
           </div>
 
-          {/* Notes section if available */}
           {entry.notes && (
             <div className="p-3.5 rounded-2xl border mb-6 text-xs" style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}>
               <span className="font-mono text-[10px] uppercase font-bold block mb-1" style={{ color: theme.cardSubtext }}>Memory Hook / Context</span>
@@ -453,7 +449,6 @@ function VocabDetailModal({
             </div>
           )}
 
-          {/* Toolbar Actions */}
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -767,14 +762,22 @@ function AudioRecorder({
 function ChallengeTab({
   challenge,
   streak,
-  completedToday,
+  isCompleted,
   onComplete,
+  onGenerate,
+  generating,
+  generationCount,
+  maxAllowed,
   theme,
 }: {
   challenge: Challenge | null;
   streak: Streak | null;
-  completedToday: boolean;
+  isCompleted: boolean;
   onComplete: (newStreak: Streak) => void;
+  onGenerate: () => void;
+  generating: boolean;
+  generationCount: number;
+  maxAllowed: number;
   theme: (typeof THEMES)["cowrywise"];
 }) {
   const [audioBlob, setAudioBlob] = useState<{ blob: Blob; ext: string } | null>(null);
@@ -844,7 +847,7 @@ function ChallengeTab({
     }
   };
 
-  if (completedToday) {
+  if (isCompleted) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
@@ -861,9 +864,9 @@ function ChallengeTab({
           <CheckCircle2 className="w-8 h-8 text-emerald-600" />
         </div>
 
-        <h3 className="text-xl font-serif font-bold tracking-tight" style={{ color: theme.cardTitle }}>Today&apos;s Challenge Completed!</h3>
+        <h3 className="text-xl font-serif font-bold tracking-tight" style={{ color: theme.cardTitle }}>Challenge Completed!</h3>
         <p className="text-xs max-w-xs mt-2 leading-relaxed font-medium" style={{ color: theme.cardSubtext }}>
-          Great job! Come back tomorrow at 10 PM to keep your streak alive.
+          Great job! You can practice another prompt or come back tomorrow at 10 PM.
         </p>
 
         {streak && (
@@ -885,6 +888,18 @@ function ChallengeTab({
             </div>
           </div>
         )}
+
+        {generationCount < maxAllowed && (
+          <button
+            type="button"
+            onClick={onGenerate}
+            disabled={generating}
+            className="mt-6 py-3 px-6 rounded-2xl font-bold text-xs flex items-center gap-2 border shadow-md cursor-pointer transition-all active:scale-95"
+            style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" /> Generate Another Challenge ({generationCount}/{maxAllowed})
+          </button>
+        )}
       </motion.div>
     );
   }
@@ -895,11 +910,30 @@ function ChallengeTab({
         className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-3xl border shadow-xl"
         style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
       >
-        <Sparkles className="w-8 h-8 animate-pulse mb-3 text-blue-600" />
-        <h3 className="text-base font-serif font-bold" style={{ color: theme.cardTitle }}>Preparing Today&apos;s Prompt</h3>
-        <p className="text-xs max-w-xs mt-2 leading-relaxed font-medium" style={{ color: theme.cardSubtext }}>
-          Your daily French prompt generates automatically at 10 PM. You can also trigger one via GitHub Actions.
+        <Sparkles className="w-10 h-10 animate-pulse mb-3 text-amber-500" />
+        <h3 className="text-lg font-serif font-bold" style={{ color: theme.cardTitle }}>No Prompt Loaded Yet</h3>
+        <p className="text-xs max-w-xs mt-2 leading-relaxed font-medium mb-6" style={{ color: theme.cardSubtext }}>
+          Tap below to generate a fresh 5-minute French challenge immediately!
         </p>
+
+        <button
+          type="button"
+          onClick={onGenerate}
+          disabled={generating || generationCount >= maxAllowed}
+          className="py-3.5 px-6 rounded-2xl font-bold text-xs flex items-center gap-2 border shadow-xl cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+          style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+        >
+          {generating ? (
+            <>
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              Generating Prompt…
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 text-amber-300" /> Generate Today&apos;s First Challenge (0/{maxAllowed})
+            </>
+          )}
+        </button>
       </div>
     );
   }
@@ -1468,7 +1502,15 @@ function NotificationButton({
 export default function FrenchPage() {
   const [activeTab, setActiveTab] = useState<"challenge" | "vocab">("challenge");
   const [themeMode, setThemeMode] = useState<ThemeMode>("cowrywise");
-  const [challenge, setChallenge] = useState<Challenge | null>(null);
+
+  // On-demand challenge state
+  const [todayChallenges, setTodayChallenges] = useState<Challenge[]>([]);
+  const [activeChallenge, setActiveChallenge] = useState<Challenge | null>(null);
+  const [completedIds, setCompletedIds] = useState<string[]>([]);
+  const [generationCount, setGenerationCount] = useState(0);
+  const [maxAllowed, setMaxAllowed] = useState(5);
+  const [generating, setGenerating] = useState(false);
+
   const [streak, setStreak] = useState<Streak | null>(null);
   const [completedToday, setCompletedToday] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -1506,30 +1548,76 @@ export default function FrenchPage() {
     initPush();
   }, []);
 
-  useEffect(() => {
-    const fetchToday = async () => {
-      try {
-        const res = await fetch("/api/french/today");
-        if (!res.ok) throw new Error("Failed to fetch today's challenge");
-        const data = (await res.json()) as {
-          challenge: Challenge | null;
-          streak: Streak | null;
-          completedToday: boolean;
-        };
-        setChallenge(data.challenge);
-        setStreak(data.streak);
-        setCompletedToday(data.completedToday);
-      } catch {
-        toast.error("Could not load today's challenge.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchToday();
+  const fetchTodayData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/french/today");
+      if (!res.ok) throw new Error("Failed to fetch today's challenge");
+      const data = (await res.json()) as {
+        challenges: Challenge[];
+        activeChallenge: Challenge | null;
+        completedIds: string[];
+        generationCount: number;
+        maxAllowed: number;
+        streak: Streak | null;
+        completedToday: boolean;
+      };
+
+      setTodayChallenges(data.challenges ?? []);
+      setActiveChallenge(data.activeChallenge);
+      setCompletedIds(data.completedIds ?? []);
+      setGenerationCount(data.generationCount ?? 0);
+      setMaxAllowed(data.maxAllowed ?? 5);
+      setStreak(data.streak);
+      setCompletedToday(data.completedToday);
+    } catch {
+      toast.error("Could not load today's challenge.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchTodayData();
+  }, [fetchTodayData]);
+
+  // On-Demand Generation Handler
+  const handleGeneratePrompt = async () => {
+    if (generationCount >= maxAllowed) {
+      toast.info(`Daily limit reached (${generationCount}/${maxAllowed}). You can practice any of today's prompts below!`);
+      return;
+    }
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/french/generate", { method: "POST" });
+      const data = (await res.json()) as {
+        ok: boolean;
+        challenge?: Challenge;
+        count: number;
+        maxAllowed: number;
+        challenges: Challenge[];
+        error?: string;
+      };
+
+      if (data.ok && data.challenge) {
+        setTodayChallenges(data.challenges);
+        setActiveChallenge(data.challenge);
+        setGenerationCount(data.count);
+        toast.success(`✨ Fresh Prompt #${data.count} Generated!`);
+      } else if (data.error) {
+        toast.info(data.error);
+      }
+    } catch {
+      toast.error("Could not generate prompt.");
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const handleComplete = (newStreak: Streak) => {
     setStreak(newStreak);
+    if (activeChallenge) {
+      setCompletedIds((prev) => [...prev, activeChallenge.id]);
+    }
     setCompletedToday(true);
     setShowConfetti(true);
     toast.success(`🔥 ${newStreak.current_streak} Day Streak Unlocked!`);
@@ -1566,7 +1654,7 @@ export default function FrenchPage() {
         theme={theme}
       />
 
-      {/* Header — Responsive Theme Controlled Layout with Mobile Safe Area Top Insets */}
+      {/* Header — Mobile Safe Area Top Insets */}
       <header
         className="px-4 sm:px-6 pb-3 max-w-5xl mx-auto w-full"
         style={{
@@ -1587,7 +1675,7 @@ export default function FrenchPage() {
                 French Daily
               </h1>
               <p className="text-xs mt-1 truncate font-medium" style={{ color: theme.headerSubtext }}>
-                {todayDateStr} • Nightly Practice
+                {todayDateStr} • On-Demand Practice
               </p>
             </div>
           </div>
@@ -1684,10 +1772,10 @@ export default function FrenchPage() {
         </div>
       </div>
 
-      {/* Main Responsive Grid Layout (Single Column on Mobile, Split View / Wide Grid on Desktop max-w-5xl) */}
+      {/* Main Responsive Grid Layout */}
       <main
         id="main-content"
-        className="flex-1 px-4 sm:px-6 pt-5 max-w-5xl mx-auto w-full"
+        className="flex-1 px-4 sm:px-6 pt-4 max-w-5xl mx-auto w-full"
         style={{
           paddingBottom: "max(3.5rem, env(safe-area-inset-bottom))",
           paddingLeft: "max(1rem, env(safe-area-inset-left))",
@@ -1709,86 +1797,143 @@ export default function FrenchPage() {
                   <div className="h-64 rounded-3xl bg-white/10 animate-pulse" />
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                  {/* Main Challenge Studio (Left 2 Columns on Desktop) */}
-                  <div className="lg:col-span-2">
-                    <ChallengeTab
-                      challenge={challenge}
-                      streak={streak}
-                      completedToday={completedToday}
-                      onComplete={handleComplete}
-                      theme={theme}
-                    />
-                  </div>
-
-                  {/* Desktop Activity & Streak Widget Sidebar */}
-                  <div className="hidden lg:flex flex-col gap-4">
-                    <div
-                      className="p-5 rounded-3xl border shadow-lg flex flex-col gap-3"
-                      style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: theme.badgeText }}>
-                          <Flame className="w-4 h-4 text-amber-500 fill-amber-500" /> Streak Protection
-                        </span>
-                        <span className="text-xs font-extrabold font-mono text-amber-500">
-                          {streak?.current_streak ?? 0} Days
-                        </span>
-                      </div>
-
-                      <div
-                        className="flex items-center gap-3 p-3 rounded-2xl border"
-                        style={{ backgroundColor: theme.freezeBoxBg, borderColor: theme.freezeBoxBorder }}
-                      >
-                        <Snowflake className="w-5 h-5 shrink-0" style={{ color: theme.freezeBoxTitle }} />
-                        <div className="text-xs">
-                          <span className="font-bold block" style={{ color: theme.freezeBoxTitle }}>{streak?.streak_freezes ?? 2}/2 Streak Freezes</span>
-                          <span className="text-[11px] font-medium" style={{ color: theme.freezeBoxSubtext }}>Automatic miss protection</span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => setShowStreakModal(true)}
-                        className="w-full py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm"
-                        style={{
-                          backgroundColor: theme.secondaryBtnBg,
-                          borderColor: theme.secondaryBtnBorder,
-                          color: theme.secondaryBtnText,
-                        }}
-                      >
-                        Open Full Duolingo Calendar
-                      </button>
-                    </div>
-
-                    {/* Quick Native TTS Practice Widget */}
-                    <div
-                      className="p-5 rounded-3xl border shadow-lg flex flex-col gap-3"
-                      style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
-                    >
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: theme.badgeText }}>
-                        <Volume2 className="w-4 h-4 text-blue-600" /> French Ear Training
+                <div className="flex flex-col gap-4">
+                  {/* Today's On-Demand Prompt Switcher & Generation Bar */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl border bg-white/10 backdrop-blur-md" style={{ borderColor: theme.navBorder }}>
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                      <span className="text-[10px] font-mono uppercase font-bold tracking-wider shrink-0 mr-1" style={{ color: theme.headerSubtext }}>
+                        Today&apos;s Prompts ({todayChallenges.length}):
                       </span>
-                      <p className="text-xs font-medium leading-relaxed" style={{ color: theme.cardSubtext }}>
-                        Practice hearing native French rhythm. Tap below to speak common expressions:
-                      </p>
-                      <div className="flex flex-col gap-2">
-                        {["C'est la vie", "Savoir-faire", "Chaque jour compte"].map((phrase) => (
+                      {todayChallenges.map((ch, idx) => {
+                        const isActive = activeChallenge?.id === ch.id;
+                        const isDone = completedIds.includes(ch.id);
+                        const typeEmoji = ch.type === "speaking" ? "🗣️" : ch.type === "writing" ? "✍️" : "📖";
+                        return (
                           <button
-                            key={phrase}
+                            key={ch.id}
                             type="button"
-                            onClick={() => speakFrench(phrase)}
-                            className="p-2.5 rounded-xl border text-xs font-serif font-bold flex items-center justify-between text-left transition-all cursor-pointer shadow-sm"
+                            onClick={() => setActiveChallenge(ch)}
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border shrink-0"
                             style={{
-                              backgroundColor: theme.subCardBg,
-                              borderColor: theme.cardBorder,
-                              color: theme.cardTitle,
+                              backgroundColor: isActive ? theme.tabActiveBg : "rgba(255,255,255,0.12)",
+                              color: isActive ? theme.tabActiveText : theme.headerText,
+                              borderColor: isActive ? theme.cardBorder : "rgba(255,255,255,0.25)",
                             }}
                           >
-                            <span>&ldquo;{phrase}&rdquo;</span>
-                            <Volume2 className="w-3.5 h-3.5 text-blue-600" />
+                            <span>{typeEmoji} #{idx + 1}</span>
+                            {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
                           </button>
-                        ))}
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleGeneratePrompt}
+                      disabled={generating || generationCount >= maxAllowed}
+                      className="px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border shadow-sm cursor-pointer shrink-0 disabled:opacity-50"
+                      style={{
+                        backgroundColor: theme.primaryBtnBg,
+                        color: theme.primaryBtnText,
+                        borderColor: theme.cardBorder,
+                      }}
+                    >
+                      {generating ? (
+                        <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      )}
+                      <span>
+                        {generationCount >= maxAllowed ? `Cap Reached (${generationCount}/${maxAllowed})` : `Generate Prompt (${generationCount}/${maxAllowed})`}
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                    {/* Main Challenge Studio (Left 2 Columns on Desktop) */}
+                    <div className="lg:col-span-2">
+                      <ChallengeTab
+                        challenge={activeChallenge}
+                        streak={streak}
+                        isCompleted={activeChallenge ? completedIds.includes(activeChallenge.id) : false}
+                        onComplete={handleComplete}
+                        onGenerate={handleGeneratePrompt}
+                        generating={generating}
+                        generationCount={generationCount}
+                        maxAllowed={maxAllowed}
+                        theme={theme}
+                      />
+                    </div>
+
+                    {/* Desktop Activity & Streak Widget Sidebar */}
+                    <div className="hidden lg:flex flex-col gap-4">
+                      <div
+                        className="p-5 rounded-3xl border shadow-lg flex flex-col gap-3"
+                        style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: theme.badgeText }}>
+                            <Flame className="w-4 h-4 text-amber-500 fill-amber-500" /> Streak Protection
+                          </span>
+                          <span className="text-xs font-extrabold font-mono text-amber-500">
+                            {streak?.current_streak ?? 0} Days
+                          </span>
+                        </div>
+
+                        <div
+                          className="flex items-center gap-3 p-3 rounded-2xl border"
+                          style={{ backgroundColor: theme.freezeBoxBg, borderColor: theme.freezeBoxBorder }}
+                        >
+                          <Snowflake className="w-5 h-5 shrink-0" style={{ color: theme.freezeBoxTitle }} />
+                          <div className="text-xs">
+                            <span className="font-bold block" style={{ color: theme.freezeBoxTitle }}>{streak?.streak_freezes ?? 2}/2 Streak Freezes</span>
+                            <span className="text-[11px] font-medium" style={{ color: theme.freezeBoxSubtext }}>Automatic miss protection</span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setShowStreakModal(true)}
+                          className="w-full py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm"
+                          style={{
+                            backgroundColor: theme.secondaryBtnBg,
+                            borderColor: theme.secondaryBtnBorder,
+                            color: theme.secondaryBtnText,
+                          }}
+                        >
+                          Open Full Duolingo Calendar
+                        </button>
+                      </div>
+
+                      {/* Quick Native TTS Practice Widget */}
+                      <div
+                        className="p-5 rounded-3xl border shadow-lg flex flex-col gap-3"
+                        style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
+                      >
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: theme.badgeText }}>
+                          <Volume2 className="w-4 h-4 text-blue-600" /> French Ear Training
+                        </span>
+                        <p className="text-xs font-medium leading-relaxed" style={{ color: theme.cardSubtext }}>
+                          Practice hearing native French rhythm. Tap below to speak common expressions:
+                        </p>
+                        <div className="flex flex-col gap-2">
+                          {["C'est la vie", "Savoir-faire", "Chaque jour compte"].map((phrase) => (
+                            <button
+                              key={phrase}
+                              type="button"
+                              onClick={() => speakFrench(phrase)}
+                              className="p-2.5 rounded-xl border text-xs font-serif font-bold flex items-center justify-between text-left transition-all cursor-pointer shadow-sm"
+                              style={{
+                                backgroundColor: theme.subCardBg,
+                                borderColor: theme.cardBorder,
+                                color: theme.cardTitle,
+                              }}
+                            >
+                              <span>&ldquo;{phrase}&rdquo;</span>
+                              <Volume2 className="w-3.5 h-3.5 text-blue-600" />
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

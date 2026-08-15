@@ -1,6 +1,6 @@
 /**
  * GET /api/french/today
- * Returns today's challenge + current streak + whether it's already been completed today.
+ * Returns all of today's generated challenges + completion status + streak.
  * Called by the /french page on load.
  */
 import { NextResponse } from "next/server";
@@ -15,36 +15,49 @@ export async function GET(): Promise<Response> {
 
     const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
 
-    // Fetch challenge and streak in parallel
-    const [challengeResult, streakResult] = await Promise.all([
+    // Fetch all challenges for today and streak in parallel
+    const [challengesResult, streakResult] = await Promise.all([
       supabase
         .from("french_challenges")
         .select("*")
         .eq("challenge_date", today)
-        .maybeSingle(),
+        .order("created_at", { ascending: true }),
       supabase.from("french_streaks").select("*").eq("id", 1).single(),
     ]);
 
-    const challenge = challengeResult.data;
+    const challenges = challengesResult.data ?? [];
     const streak = streakResult.data;
 
-    // Check if today's challenge was already completed.
-    // We do this only if a challenge exists (need the id).
-    let completedToday = false;
-    if (challenge?.id) {
-      const { data: log } = await supabase
+    // Fetch completion logs for today's challenges
+    const challengeIds = challenges.map((c) => c.id);
+    let completedIds: string[] = [];
+
+    if (challengeIds.length > 0) {
+      const { data: logs } = await supabase
         .from("french_logs")
-        .select("id")
-        .eq("challenge_id", challenge.id)
-        .maybeSingle();
-      completedToday = !!log;
-    } else if (streak?.last_completed_date === today) {
-      // Fallback: if somehow a log was submitted without a challenge row
-      completedToday = true;
+        .select("challenge_id")
+        .in("challenge_id", challengeIds);
+
+      if (logs) {
+        completedIds = logs.map((l) => l.challenge_id).filter(Boolean);
+      }
     }
 
+    const completedToday =
+      completedIds.length > 0 || streak?.last_completed_date === today;
+
+    // Active challenge is the latest one generated or the first uncompleted one
+    const activeChallenge =
+      challenges.find((c) => !completedIds.includes(c.id)) ??
+      challenges[challenges.length - 1] ??
+      null;
+
     return NextResponse.json({
-      challenge,
+      challenges,
+      activeChallenge,
+      completedIds,
+      generationCount: challenges.length,
+      maxAllowed: 5,
       streak,
       completedToday,
     });
