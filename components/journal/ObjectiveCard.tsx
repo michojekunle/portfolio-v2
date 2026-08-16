@@ -99,6 +99,17 @@ export function ObjectiveCard({
     }
   };
 
+  const handleToggleComplete = async (): Promise<void> => {
+    setStatusBusy(true);
+    try {
+      await onUpdate(objective.id, { 
+        status: objective.status === "completed" ? "active" : "completed" 
+      });
+    } finally {
+      setStatusBusy(false);
+    }
+  };
+
   const handleAddMilestone = async (): Promise<void> => {
     const title = newMilestone.trim();
     if (!title) return;
@@ -349,6 +360,16 @@ export function ObjectiveCard({
 
           {/* Actions */}
           <div className="flex items-center gap-0.25 flex-shrink-0">
+            <button
+              onClick={() => void handleToggleComplete()}
+              disabled={statusBusy}
+              className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-all bg-transparent disabled:opacity-50"
+              style={{ color: objective.status === "completed" ? VELA_ACCENT : "var(--ink-4)" }}
+              title={objective.status === "completed" ? "Mark active" : "Mark completed"}
+              aria-label={objective.status === "completed" ? "Mark active" : "Mark completed"}
+            >
+              <CheckCircle2 size={12} />
+            </button>
             <button
               onClick={startEdit}
               className="w-7 h-7 flex items-center justify-center rounded-md border-none cursor-pointer transition-all bg-transparent"
