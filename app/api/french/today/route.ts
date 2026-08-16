@@ -1,46 +1,83 @@
 /**
  * GET /api/french/today
  * Returns today's challenges + user-specific streak + completion status.
+ * Auto-seeds an initial daily prompt if none exists yet today.
  * Supports multi-user isolation.
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+
+function getAdminSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+}
+
+const STARTER_PROMPTS = [
+  {
+    type: "speaking",
+    prompt_text: "Record yourself introducing yourself in French: name, where you live, and why you are learning French.",
+    example_text: "Bonjour! Je m'appelle Alex, j'habite en ville et j'apprends le français parce que j'aime la culture et la musique française.",
+  },
+  {
+    type: "writing",
+    prompt_text: "Write 3 French sentences describing what you plan to accomplish today.",
+    example_text: "Aujourd'hui, je vais pratiquer mon français, faire de l'exercice et lire un bon livre.",
+  },
+  {
+    type: "reading",
+    prompt_text: "Read this passage out loud and focus on your rhythm and pronunciation.",
+    example_text: "Chaque jour est une nouvelle opportunité d'apprendre quelque chose d'extraordinaire.",
+  },
+];
 
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const serverClient = await createServerClient();
+    const { data: { user } } = await serverClient.auth.getUser();
 
     const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+    const adminDb = getAdminSupabase();
 
     // 1. Fetch today's generated challenges
-    const { data: challenges } = await supabase
+    let { data: challenges } = await adminDb
       .from("french_challenges")
       .select("*")
       .eq("challenge_date", today)
       .order("created_at", { ascending: true });
 
+    // 2. If no challenge exists for today yet, auto-seed a starter prompt so visitors immediately get content
+    if (!challenges || challenges.length === 0) {
+      const seed = STARTER_PROMPTS[Math.floor(Math.random() * STARTER_PROMPTS.length)];
+      const { data: newChallenge } = await adminDb
+        .from("french_challenges")
+        .insert({
+          challenge_date: today,
+          type: seed.type,
+          prompt_text: seed.prompt_text,
+          example_text: seed.example_text,
+        })
+        .select()
+        .single();
+
+      if (newChallenge) {
+        challenges = [newChallenge];
+      }
+    }
+
     const todayChallenges = challenges ?? [];
     const challengeIds = todayChallenges.map((c) => c.id);
 
     let completedIds: string[] = [];
-    let streak: {
-      current_streak: number;
-      longest_streak: number;
-      streak_freezes: number;
-      total_completions: number;
-      last_completed_date: string | null;
-    } = {
+    let streak = {
       current_streak: 0,
       longest_streak: 0,
       streak_freezes: 2,
       total_completions: 0,
-      last_completed_date: null,
+      last_completed_date: null as string | null,
     };
 
     if (user) {
-      // 2. Fetch user's personal streak
-      const { data: userStreak } = await supabase
+      const { data: userStreak } = await adminDb
         .from("french_user_streaks")
         .select("*")
         .eq("user_id", user.id)
@@ -54,28 +91,10 @@ export async function GET(): Promise<Response> {
           total_completions: userStreak.total_completions ?? 0,
           last_completed_date: userStreak.last_completed_date ?? null,
         };
-      } else {
-        // Check legacy singleton streak for backwards compatibility
-        const { data: legacyStreak } = await supabase
-          .from("french_streaks")
-          .select("*")
-          .eq("id", 1)
-          .maybeSingle();
-
-        if (legacyStreak) {
-          streak = {
-            current_streak: legacyStreak.current_streak ?? 0,
-            longest_streak: legacyStreak.longest_streak ?? 0,
-            streak_freezes: legacyStreak.streak_freezes ?? 2,
-            total_completions: legacyStreak.total_completions ?? 0,
-            last_completed_date: legacyStreak.last_completed_date ?? null,
-          };
-        }
       }
 
-      // 3. Fetch user's completed logs for today
       if (challengeIds.length > 0) {
-        const { data: logs } = await supabase
+        const { data: logs } = await adminDb
           .from("french_logs")
           .select("challenge_id")
           .eq("user_id", user.id)
@@ -90,7 +109,6 @@ export async function GET(): Promise<Response> {
     const completedToday =
       completedIds.length > 0 || streak.last_completed_date === today;
 
-    // Active challenge is the first uncompleted one or the latest generated
     const activeChallenge =
       todayChallenges.find((c) => !completedIds.includes(c.id)) ??
       todayChallenges[todayChallenges.length - 1] ??
