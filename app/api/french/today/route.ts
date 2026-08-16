@@ -15,19 +15,19 @@ function getAdminSupabase() {
 
 const STARTER_PROMPTS = [
   {
+    type: "reading",
+    prompt_text: "Lisez ce dialogue dans un café à voix haute avec une bonne intonation.",
+    example_text: "— Bonjour ! Je peux vous prendre votre commande ?\n— Oui, un grand café au lait et un croissant s'il vous plaît.\n— Très bien, ce sera tout pour vous ?\n— Oui, merci beaucoup !",
+  },
+  {
     type: "speaking",
-    prompt_text: "Record yourself introducing yourself in French: name, where you live, and why you are learning French.",
-    example_text: "Bonjour! Je m'appelle Alex, j'habite en ville et j'apprends le français parce que j'aime la culture et la musique française.",
+    prompt_text: "Enregistrez-vous en français pour présenter votre journée idéale.",
+    example_text: "Bonjour ! Pour ma journée idéale, je commence par un bon café au soleil. Ensuite, je me promène en ville et je retrouve mes amis pour le déjeuner. C'est simple et relaxant.",
   },
   {
     type: "writing",
-    prompt_text: "Write 3 French sentences describing what you plan to accomplish today.",
-    example_text: "Aujourd'hui, je vais pratiquer mon français, faire de l'exercice et lire un bon livre.",
-  },
-  {
-    type: "reading",
-    prompt_text: "Read this passage out loud and focus on your rhythm and pronunciation.",
-    example_text: "Chaque jour est une nouvelle opportunité d'apprendre quelque chose d'extraordinaire.",
+    prompt_text: "Écrivez 3 à 4 phrases en français sur vos objectifs de la semaine.",
+    example_text: "Mots clés à utiliser : aujourd'hui, réussir, progresser",
   },
 ];
 

@@ -16,39 +16,68 @@ const CHALLENGE_TYPES = ["speaking", "writing", "reading"] as const;
 type ChallengeType = (typeof CHALLENGE_TYPES)[number];
 
 const SPEAKING_PROMPTS = [
-  "Record yourself introducing yourself in French. Include your name, where you're from, and one thing you love.",
-  "Record yourself describing what you did today — in French. Use at least 5 sentences.",
-  "Read this sentence out loud 3 times until it flows naturally: 'Je fais des efforts chaque jour pour m'améliorer.'",
-  "Record a 60-second French rant or opinion about any topic — sports, food, tech, anything.",
-  "Describe your room or workspace in French. Record yourself for at least 45 seconds.",
+  {
+    prompt_text: "Enregistrez-vous en français pour présenter votre journée idéale.",
+    example_text: "Bonjour ! Pour ma journée idéale, je commence par un bon café au soleil. Ensuite, je me promène en ville et je retrouve mes amis pour le déjeuner. C'est simple et relaxant.",
+  },
+  {
+    prompt_text: "Décrivez votre endroit préféré en français pendant 45 secondes.",
+    example_text: "Mon endroit préféré est un petit parc près de chez moi. J'aime y aller en fin d'après-midi quand il fait beau pour lire et me détendre au calme.",
+  },
+  {
+    prompt_text: "Présentez vos objectifs de la semaine en français.",
+    example_text: "Cette semaine, je veux améliorer mon français, faire trois séances de sport et terminer la lecture de mon livre préféré. Chaque effort compte !",
+  },
 ];
 
 const WRITING_PROMPTS = [
-  "Write 3 sentences about your day in French and post it as your Twitter/X status.",
-  "Write a short journal entry in French: What was the best part of today?",
-  "Translate your thoughts from the last 10 minutes into French sentences. Write at least 4.",
-  "Write a mini review of the last thing you watched, read, or listened to — in French.",
-  "Write 5 French sentences using the passé composé (past tense). Describe something that happened this week.",
+  {
+    prompt_text: "Écrivez 3 à 4 phrases sur ce que vous avez fait ce week-end.",
+    example_text: "Mots clés à utiliser : week-end, amuser, préparer",
+  },
+  {
+    prompt_text: "Rédigez un mini-journal de votre journée en français.",
+    example_text: "Mots clés à utiliser : aujourd'hui, réussir, demain",
+  },
+  {
+    prompt_text: "Écrivez une courte critique du dernier film ou livre que vous avez vu.",
+    example_text: "Mots clés à utiliser : histoire, passionnant, recommander",
+  },
 ];
 
 const READING_PROMPTS = [
-  "Read this paragraph out loud until you can say it without hesitation: 'Apprendre une nouvelle langue, c'est comme ouvrir une nouvelle fenêtre sur le monde. Chaque mot appris est un pas de plus vers la maîtrise.'",
-  "Go to r/france or a French news site. Pick any article and read the first 3 paragraphs out loud.",
-  "Read the lyrics of any French song out loud while it plays. Focus on matching the rhythm.",
-  "Read these 5 common French expressions out loud and say their English meaning after each: 'C'est la vie', 'Savoir-faire', 'Joie de vivre', 'Comme ci comme ça', 'Coup de grâce'.",
-  "Open a French Wikipedia article on any topic you find interesting and read the intro section out loud.",
+  {
+    prompt_text: "Lisez ce dialogue dans un café à voix haute avec une bonne intonation.",
+    example_text: "— Bonjour ! Je peux vous prendre votre commande ?\n— Oui, un grand café au lait et un croissant s'il vous plaît.\n— Très bien, ce sera tout pour vous ?\n— Oui, merci beaucoup !",
+  },
+  {
+    prompt_text: "Lisez ce paragraphe d'inspiration à voix haute en articulant chaque mot.",
+    example_text: "Apprendre une nouvelle langue est une aventure magnifique. Chaque mot appris est une porte ouverte sur une nouvelle culture, de nouvelles histoires et de nouvelles rencontres à travers le monde.",
+  },
+  {
+    prompt_text: "Lisez cette courte histoire de voyage à voix haute.",
+    example_text: "L'été dernier, je suis parti quelques jours à Paris. Se promener le long de la Seine au coucher du soleil est un souvenir vraiment inoubliable.",
+  },
 ];
 
 async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
   const groqKey = process.env.GROQ_API_KEY;
   if (!groqKey) throw new Error("No GROQ_API_KEY");
 
-  const systemPrompt = `You are a French language learning coach. Generate a single, clear daily micro-challenge for a French learner. 
-The challenge type is: ${type}.
-Return a JSON object with:
-- "prompt_text": a 1-sentence instruction telling the user exactly what to do (max 20 words)
-- "example_text": the specific French sentence/passage/material to use (1-2 sentences for speaking/reading, 1 topic prompt for writing)
-Keep it achievable in under 5 minutes. Be specific and actionable. No fluff.`;
+  const systemPrompt = `You are a native French language instructor. Generate a high-quality daily 5-minute French challenge for an intermediate learner (A2-B2 level).
+The challenge type is: "${type}".
+
+Guidelines:
+- French grammar MUST be 100% authentic, natural, and grammatically flawless (e.g. use "je suis en retard", NEVER "j'ai retardé").
+- For "reading": "prompt_text" should be a clear instruction in French (e.g., "Lisez ce dialogue au café à voix haute avec une bonne intonation."). "example_text" MUST be a realistic 3-5 line dialogue or paragraph (35-60 words total) perfect for a 5-minute elocution drill.
+- For "speaking": "prompt_text" should instruct the user to record their voice answering a scenario in French. "example_text" should provide a native model answer (30-50 words).
+- For "writing": "prompt_text" should give a creative writing topic in French. "example_text" should list 3 target French vocabulary words to include in their response.
+
+Return a valid JSON object ONLY:
+{
+  "prompt_text": "Instruction in clear, correct French",
+  "example_text": "The rich, natural target French passage, dialogue, or target vocabulary list"
+}`;
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -60,8 +89,8 @@ Keep it achievable in under 5 minutes. Be specific and actionable. No fluff.`;
       model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: systemPrompt }],
       response_format: { type: "json_object" },
-      max_tokens: 200,
-      temperature: 0.9,
+      max_tokens: 400,
+      temperature: 0.7,
     }),
   });
 
@@ -72,15 +101,16 @@ Keep it achievable in under 5 minutes. Be specific and actionable. No fluff.`;
 
 function getStaticChallenge(type: ChallengeType): { prompt_text: string; example_text: string } {
   const day = new Date().getDay();
-  const map: Record<ChallengeType, string[]> = {
+  const map = {
     speaking: SPEAKING_PROMPTS,
     writing: WRITING_PROMPTS,
     reading: READING_PROMPTS,
   };
   const prompts = map[type];
+  const selected = prompts[day % prompts.length];
   return {
-    prompt_text: prompts[day % prompts.length],
-    example_text: "",
+    prompt_text: selected.prompt_text,
+    example_text: selected.example_text,
   };
 }
 
