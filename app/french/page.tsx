@@ -1818,6 +1818,7 @@ export default function FrenchPage() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const [showStreakModal, setShowStreakModal] = useState(false);
+  const [showScheduleDrawer, setShowScheduleDrawer] = useState(false);
   const [selectedVocabEntry, setSelectedVocabEntry] = useState<VocabEntry | null>(null);
 
   const [notifSupported, setNotifSupported] = useState(false);
@@ -1985,18 +1986,20 @@ export default function FrenchPage() {
         theme={theme}
       />
 
-      {/* Header — Mobile Safe Area Top Insets */}
+      {/* Header — Mobile Safe Area Top Insets & Sticky Blur Navigation Bar */}
       <header
-        className="px-4 sm:px-6 pb-3 max-w-5xl mx-auto w-full"
+        className="sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-300 px-3 sm:px-6 pb-3 w-full"
         style={{
-          paddingTop: "max(1.5rem, env(safe-area-inset-top))",
-          paddingLeft: "max(1rem, env(safe-area-inset-left))",
-          paddingRight: "max(1rem, env(safe-area-inset-right))",
+          backgroundColor: `${theme.bg}F2`,
+          borderColor: "rgba(255,255,255,0.15)",
+          paddingTop: "max(0.875rem, env(safe-area-inset-top))",
+          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
+          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
         }}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
           {/* Brand Left */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
             <AppLogo />
             <div className="min-w-0">
               <h1
@@ -2005,71 +2008,20 @@ export default function FrenchPage() {
               >
                 French Daily
               </h1>
-              <p className="text-xs mt-1 truncate font-medium flex items-center gap-1.5" style={{ color: theme.headerSubtext }}>
-                <span>{todayDateStr}</span> • <span>On-Demand Practice</span>
+              <p className="text-[11px] mt-0.5 truncate font-medium flex items-center gap-1 opacity-90" style={{ color: theme.headerSubtext }}>
+                <span>{todayDateStr}</span>
+                <span className="hidden sm:inline">• On-Demand Practice</span>
               </p>
             </div>
           </div>
 
           {/* Controls Right */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* User Auth Badge */}
-            {user ? (
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-sm"
-                style={{
-                  backgroundColor: theme.headerBtnBg,
-                  borderColor: theme.headerBtnBorder,
-                  color: theme.headerBtnText,
-                }}
-                title={`Signed in as ${user.email} (Tap to Sign Out)`}
-              >
-                <UserIcon className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline max-w-[100px] truncate">{user.email?.split("@")[0]}</span>
-                <LogOut className="w-3.5 h-3.5 opacity-70 ml-0.5" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-md"
-                style={{
-                  backgroundColor: theme.primaryBtnBg,
-                  color: theme.primaryBtnText,
-                  borderColor: theme.cardBorder,
-                }}
-                title="Sign in to save vocabulary and track streaks"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Sign In</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => {
-                const modes: ThemeMode[] = ["cowrywise", "light", "noir"];
-                const nextIndex = (modes.indexOf(themeMode) + 1) % modes.length;
-                setThemeMode(modes[nextIndex]);
-                toast.info(`Theme: ${THEMES[modes[nextIndex]].name}`);
-              }}
-              className="p-2.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm"
-              style={{
-                backgroundColor: theme.headerBtnBg,
-                borderColor: theme.headerBtnBorder,
-                color: theme.headerBtnText,
-              }}
-              title="Switch Theme (Cowrywise Cobalt / Pure Light / Noir)"
-            >
-              <Palette className="w-4 h-4" />
-            </button>
-
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Streak Pill */}
             <button
               type="button"
               onClick={() => setShowStreakModal(true)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md font-bold text-xs"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md font-bold text-xs"
               style={{
                 backgroundColor: theme.streakBtnBg,
                 borderColor: theme.headerBtnBorder,
@@ -2080,29 +2032,107 @@ export default function FrenchPage() {
               <Flame className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />
               <span>{streak?.current_streak ?? 0}</span>
             </button>
+
+            {/* Daily Schedule Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setShowScheduleDrawer((s) => !s)}
+              className="p-2 sm:p-2.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm relative"
+              style={{
+                backgroundColor: showScheduleDrawer ? theme.primaryBtnBg : theme.headerBtnBg,
+                borderColor: theme.headerBtnBorder,
+                color: showScheduleDrawer ? theme.primaryBtnText : theme.headerBtnText,
+              }}
+              title="Notification & Reminder Schedule Settings"
+            >
+              <Clock className="w-4 h-4" />
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                const modes: ThemeMode[] = ["cowrywise", "light", "noir"];
+                const nextIndex = (modes.indexOf(themeMode) + 1) % modes.length;
+                setThemeMode(modes[nextIndex]);
+                toast.info(`Theme: ${THEMES[modes[nextIndex]].name}`);
+              }}
+              className="p-2 sm:p-2.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm"
+              style={{
+                backgroundColor: theme.headerBtnBg,
+                borderColor: theme.headerBtnBorder,
+                color: theme.headerBtnText,
+              }}
+              title="Switch Theme (Cowrywise Cobalt / Pure Light / Noir)"
+            >
+              <Palette className="w-4 h-4" />
+            </button>
+
+            {/* User Auth Button */}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-sm"
+                style={{
+                  backgroundColor: theme.headerBtnBg,
+                  borderColor: theme.headerBtnBorder,
+                  color: theme.headerBtnText,
+                }}
+                title={`Signed in as ${user.email} (Tap to Sign Out)`}
+              >
+                <UserIcon className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden md:inline max-w-[90px] truncate">{user.email?.split("@")[0]}</span>
+                <LogOut className="w-3.5 h-3.5 opacity-70" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-md"
+                style={{
+                  backgroundColor: theme.primaryBtnBg,
+                  color: theme.primaryBtnText,
+                  borderColor: theme.cardBorder,
+                }}
+                title="Sign in to save vocabulary and track streaks"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sign In</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Custom Reminder Time Selector */}
-        <div className="mt-3">
-          <ReminderTimeSettings
-            user={user}
-            onRequireAuth={() => setShowAuthModal(true)}
-            theme={theme}
-          />
-        </div>
+        {/* Collapsible Reminder Schedule & Push Notification Settings Drawer */}
+        <AnimatePresence>
+          {showScheduleDrawer && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden max-w-5xl mx-auto"
+            >
+              <div className="pt-3 flex flex-col gap-2">
+                <ReminderTimeSettings
+                  user={user}
+                  onRequireAuth={() => setShowAuthModal(true)}
+                  theme={theme}
+                />
 
-        {/* Web Push Action Banner */}
-        {notifSupported && !notifSubscribed && (
-          <div className="mt-3">
-            <NotificationButton
-              onSubscribed={() => setNotifSubscribed(true)}
-              user={user}
-              onRequireAuth={() => setShowAuthModal(true)}
-              theme={theme}
-            />
-          </div>
-        )}
+                {notifSupported && !notifSubscribed && (
+                  <NotificationButton
+                    onSubscribed={() => setNotifSubscribed(true)}
+                    user={user}
+                    onRequireAuth={() => setShowAuthModal(true)}
+                    theme={theme}
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Segmented Tab Navigation Pill */}
