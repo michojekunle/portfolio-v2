@@ -150,12 +150,22 @@ export async function POST(request: Request): Promise<Response> {
   // TypeScript narrowing: after the if-block above, challenge is guaranteed non-null
   const safeChallenge = challenge!;
 
-  // 4. Load push subscriptions
+  // 4. Load push subscriptions (match current WAT hour or all if manual)
+  // Calculate current West Africa Time (UTC+1) hour in "HH:00" format
+  const nowWAT = new Date(Date.now() + 3600000);
+  const currentWatHour = `${String(nowWAT.getUTCHours()).padStart(2, "0")}:00`;
+
   const { data: subs } = await supabase.from("french_subscriptions").select("*");
   if (!subs || subs.length === 0) {
     console.log("[french/trigger] No push subscriptions found.");
     return NextResponse.json({ ok: true, pushed: 0, challenge });
   }
+
+  // Target subscriptions matching the current hour or default 22:00
+  const targetSubs = subs.filter((s) => {
+    if (!s.reminder_time) return currentWatHour === "22:00";
+    return s.reminder_time === currentWatHour || currentWatHour === "22:00";
+  });
 
   // 5. Configure web-push VAPID
   const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
@@ -188,7 +198,7 @@ export async function POST(request: Request): Promise<Response> {
   const expiredEndpoints: string[] = [];
 
   await Promise.allSettled(
-    subs.map(async (sub) => {
+    targetSubs.map(async (sub) => {
       try {
         await webpush.sendNotification(
           { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },

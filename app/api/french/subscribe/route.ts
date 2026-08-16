@@ -1,9 +1,41 @@
 /**
+ * GET /api/french/subscribe
+ * Fetches current user's push subscription settings & reminder time.
+ *
  * POST /api/french/subscribe
- * Saves the browser's Web Push subscription to Supabase with user_id linkage.
+ * Saves/updates browser's Web Push subscription & user's custom daily reminder time.
+ *
+ * DELETE /api/french/subscribe
+ * Removes push subscription endpoint.
  */
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+
+export async function GET(): Promise<Response> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ subscription: null, reminder_time: "22:00" });
+    }
+
+    const { data: sub } = await supabase
+      .from("french_subscriptions")
+      .select("*")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+
+    return NextResponse.json({
+      subscription: sub,
+      reminder_time: sub?.reminder_time ?? "22:00",
+    });
+  } catch (err) {
+    console.error("[french/subscribe] GET error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -11,22 +43,38 @@ export async function POST(request: Request): Promise<Response> {
     const { data: { user } } = await supabase.auth.getUser();
 
     const body = await request.json();
-    const { endpoint, keys } = body as {
+    const { endpoint, keys, reminder_time } = body as {
       endpoint: string;
-      keys: { p256dh: string; auth: string };
+      keys?: { p256dh: string; auth: string };
+      reminder_time?: string;
     };
 
-    if (!endpoint || !keys?.p256dh || !keys?.auth) {
-      return NextResponse.json({ error: "Invalid subscription object" }, { status: 400 });
+    if (!endpoint) {
+      return NextResponse.json({ error: "Missing subscription endpoint" }, { status: 400 });
+    }
+
+    const updatePayload: {
+      user_id: string | null;
+      endpoint: string;
+      p256dh?: string;
+      auth?: string;
+      reminder_time?: string;
+    } = {
+      user_id: user?.id ?? null,
+      endpoint,
+    };
+
+    if (keys?.p256dh && keys?.auth) {
+      updatePayload.p256dh = keys.p256dh;
+      updatePayload.auth = keys.auth;
+    }
+
+    if (reminder_time) {
+      updatePayload.reminder_time = reminder_time;
     }
 
     const { error } = await supabase.from("french_subscriptions").upsert(
-      {
-        user_id: user?.id ?? null,
-        endpoint,
-        p256dh: keys.p256dh,
-        auth: keys.auth,
-      },
+      updatePayload,
       { onConflict: "endpoint" }
     );
 
@@ -35,7 +83,7 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, reminder_time: reminder_time ?? "22:00" });
   } catch (err) {
     console.error("[french/subscribe] Unexpected error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

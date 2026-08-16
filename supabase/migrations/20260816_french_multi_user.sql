@@ -11,8 +11,9 @@ create index if not exists french_logs_user_id_idx on french_logs(user_id);
 alter table french_vocabulary add column if not exists user_id uuid references auth.users(id) on delete cascade;
 create index if not exists french_vocabulary_user_id_idx on french_vocabulary(user_id);
 
--- 3. Add user_id column to french_subscriptions (tracks push notification endpoints per user)
+-- 3. Add user_id column and reminder_time to french_subscriptions (tracks push notification endpoints per user)
 alter table french_subscriptions add column if not exists user_id uuid references auth.users(id) on delete cascade;
+alter table french_subscriptions add column if not exists reminder_time text default '22:00';
 
 -- 4. Multi-user streaks table (each signed-in user gets their own streak & freeze tracker)
 create table if not exists french_user_streaks (

@@ -33,6 +33,7 @@ import {
   LogIn,
   LogOut,
   User as UserIcon,
+  Clock,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -513,6 +514,113 @@ function AuthModal({
         </motion.div>
       </div>
     </AnimatePresence>
+  );
+}
+
+// ── Custom Reminder Time Settings Selector ────────────────────────────────────
+function ReminderTimeSettings({
+  user,
+  onRequireAuth,
+  theme,
+}: {
+  user: User | null;
+  onRequireAuth: () => void;
+  theme: (typeof THEMES)["cowrywise"];
+}) {
+  const [reminderTime, setReminderTime] = useState("22:00");
+  const [updating, setUpdating] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/french/subscribe")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.reminder_time) setReminderTime(data.reminder_time);
+      })
+      .catch(() => {});
+  }, [user]);
+
+  const handleTimeChange = async (newTime: string) => {
+    if (!user) {
+      onRequireAuth();
+      return;
+    }
+    setReminderTime(newTime);
+    setUpdating(true);
+    try {
+      let reg = await navigator.serviceWorker.getRegistration("/french");
+      const sub = await reg?.pushManager.getSubscription();
+
+      const res = await fetch("/api/french/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: sub?.endpoint ?? "default_endpoint",
+          reminder_time: newTime,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to save reminder time");
+      const timeLabels: Record<string, string> = {
+        "08:00": "8:00 AM",
+        "12:00": "12:00 PM",
+        "18:00": "6:00 PM",
+        "21:00": "9:00 PM",
+        "22:00": "10:00 PM",
+      };
+      toast.success(`⏰ Daily reminder scheduled for ${timeLabels[newTime] || newTime}`);
+    } catch {
+      toast.error("Could not save custom reminder time.");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const times = [
+    { value: "08:00", label: "8 AM" },
+    { value: "12:00", label: "12 PM" },
+    { value: "18:00", label: "6 PM" },
+    { value: "21:00", label: "9 PM" },
+    { value: "22:00", label: "10 PM" },
+  ];
+
+  return (
+    <div
+      className="p-3.5 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-semibold shadow-md"
+      style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder, color: theme.cardTitle }}
+    >
+      <div className="flex items-center gap-2.5">
+        <Clock className="w-4 h-4 text-blue-600 shrink-0" />
+        <div>
+          <span className="font-bold block" style={{ color: theme.cardTitle }}>Daily Reminder Schedule</span>
+          <span className="text-[11px] font-medium" style={{ color: theme.cardSubtext }}>
+            Choose your preferred time to receive notification reminders
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto">
+        {times.map((t) => {
+          const isSelected = reminderTime === t.value;
+          return (
+            <button
+              key={t.value}
+              type="button"
+              onClick={() => handleTimeChange(t.value)}
+              disabled={updating}
+              className="px-3 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer shrink-0"
+              style={{
+                backgroundColor: isSelected ? theme.primaryBtnBg : theme.secondaryBtnBg,
+                color: isSelected ? theme.primaryBtnText : theme.cardTitle,
+                borderColor: isSelected ? theme.primaryBtnBg : theme.cardBorder,
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -1645,7 +1753,7 @@ function NotificationButton({
 
       setStatus("granted");
       onSubscribed();
-      toast.success("Daily Web Push active! Reminders sent at 10 PM 🔔");
+      toast.success("Daily Web Push active! Reminders sent at your scheduled time 🔔");
     } catch (err: unknown) {
       console.error("[french/webpush]", err);
       setStatus("idle");
@@ -1680,7 +1788,7 @@ function NotificationButton({
         </>
       ) : (
         <>
-          <Bell className="w-4 h-4 shrink-0 text-blue-600" /> Activate Daily 10 PM Push Notifications
+          <Bell className="w-4 h-4 shrink-0 text-blue-600" /> Activate Daily Web Push Notifications
         </>
       )}
     </button>
@@ -1975,9 +2083,18 @@ export default function FrenchPage() {
           </div>
         </div>
 
+        {/* Custom Reminder Time Selector */}
+        <div className="mt-3">
+          <ReminderTimeSettings
+            user={user}
+            onRequireAuth={() => setShowAuthModal(true)}
+            theme={theme}
+          />
+        </div>
+
         {/* Web Push Action Banner */}
         {notifSupported && !notifSubscribed && (
-          <div className="mt-3 max-w-xl">
+          <div className="mt-3">
             <NotificationButton
               onSubscribed={() => setNotifSubscribed(true)}
               user={user}
