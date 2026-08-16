@@ -49,3 +49,13 @@ $$;
 alter table french_challenges drop constraint if exists french_challenges_challenge_date_key;
 create index if not exists french_challenges_date_idx on french_challenges(challenge_date);
 
+-- 6. Allow authenticated users to insert generated challenges
+do $$
+begin
+  if not exists (select 1 from pg_policies where tablename = 'french_challenges' and policyname = 'authenticated users insert challenges') then
+    create policy "authenticated users insert challenges" on french_challenges for insert with check (auth.role() = 'authenticated');
+  end if;
+end
+$$;
+
+
