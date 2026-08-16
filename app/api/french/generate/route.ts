@@ -146,7 +146,7 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // 4. Insert into DB using adminDb (bypasses insert false RLS)
-    const { data: inserted, error: insertError } = await adminDb
+    let { data: inserted, error: insertError } = await adminDb
       .from("french_challenges")
       .insert({
         challenge_date: today,
@@ -157,8 +157,32 @@ export async function POST(request: Request): Promise<Response> {
       .select("*")
       .single();
 
+    if (insertError) {
+      console.warn("[french/generate] DB insert error:", insertError);
+
+      // If constraint french_challenges_challenge_date_key still exists in database, fallback to update
+      if (insertError.code === "23505" && existingChallenges && existingChallenges.length > 0) {
+        const targetId = existingChallenges[existingChallenges.length - 1].id;
+        const { data: updated } = await adminDb
+          .from("french_challenges")
+          .update({
+            type,
+            prompt_text: content.prompt_text,
+            example_text: content.example_text || null,
+          })
+          .eq("id", targetId)
+          .select("*")
+          .single();
+
+        if (updated) {
+          inserted = updated;
+          insertError = null;
+        }
+      }
+    }
+
     if (insertError || !inserted) {
-      console.error("[french/generate] DB insert error:", insertError);
+      console.error("[french/generate] DB insert error after fallback:", insertError);
       return NextResponse.json({ error: "Failed to save generated challenge" }, { status: 500 });
     }
 

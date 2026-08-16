@@ -44,3 +44,8 @@ begin
   end if;
 end
 $$;
+
+-- 5. Drop single-prompt unique constraint on french_challenges to allow on-demand multiple prompts per day (up to 5 per date)
+alter table french_challenges drop constraint if exists french_challenges_challenge_date_key;
+create index if not exists french_challenges_date_idx on french_challenges(challenge_date);
+
