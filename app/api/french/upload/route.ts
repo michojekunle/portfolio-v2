@@ -24,11 +24,12 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: "No audio file provided" }, { status: 400 });
     }
 
-    // Validate MIME type — strip codec suffix for the check
+    // Validate MIME type — allow standard audio formats across iOS, Android, and desktop
     const baseType = file.type.split(";")[0].trim();
-    if (!ALLOWED_TYPES.has(file.type) && !ALLOWED_TYPES.has(baseType)) {
+    const isAudio = file.type.startsWith("audio/") || ALLOWED_TYPES.has(baseType);
+    if (!isAudio) {
       return NextResponse.json(
-        { error: `Unsupported audio type: ${file.type}` },
+        { error: `Unsupported file type: ${file.type}` },
         { status: 415 }
       );
     }
