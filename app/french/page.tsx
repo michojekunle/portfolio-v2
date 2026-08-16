@@ -1173,7 +1173,7 @@ function ChallengeTab({
   if (!challenge) {
     return (
       <div
-        className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-3xl border shadow-xl"
+        className="flex flex-col items-center justify-center py-8 sm:py-10 px-5 text-center rounded-3xl border shadow-xl"
         style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
       >
         <Sparkles className="w-10 h-10 animate-pulse mb-3 text-amber-500" />
@@ -1988,11 +1988,11 @@ export default function FrenchPage() {
 
       {/* Header — Mobile Safe Area Top Insets & Sticky Blur Navigation Bar */}
       <header
-        className="sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-300 px-3 sm:px-6 pb-3 w-full"
+        className="sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-300 px-3 sm:px-6 py-2.5 w-full"
         style={{
           backgroundColor: `${theme.bg}F2`,
           borderColor: "rgba(255,255,255,0.15)",
-          paddingTop: "max(0.875rem, env(safe-area-inset-top))",
+          paddingTop: "max(0.75rem, env(safe-area-inset-top))",
           paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
           paddingRight: "max(0.75rem, env(safe-area-inset-right))",
         }}
@@ -2021,7 +2021,7 @@ export default function FrenchPage() {
             <button
               type="button"
               onClick={() => setShowStreakModal(true)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md font-bold text-xs"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md font-bold text-xs"
               style={{
                 backgroundColor: theme.streakBtnBg,
                 borderColor: theme.headerBtnBorder,
@@ -2104,46 +2104,6 @@ export default function FrenchPage() {
           </div>
         </div>
 
-        {/* Segmented Tab Navigation Pill */}
-        <div className="mt-3 max-w-5xl mx-auto w-full">
-          <div
-            className="relative flex max-w-md rounded-2xl p-1 border shadow-sm"
-            style={{ backgroundColor: theme.navBg, borderColor: theme.navBorder }}
-          >
-            {(["challenge", "vocab"] as const).map((tab) => {
-              const isActive = activeTab === tab;
-              return (
-                <button
-                  key={tab}
-                  id={`french-tab-${tab}`}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className="relative flex-1 py-2 text-xs font-bold transition-colors duration-200 z-10 flex items-center justify-center gap-1.5 cursor-pointer"
-                  style={{ color: isActive ? theme.tabActiveText : theme.tabInactiveText }}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabPill"
-                      className="absolute inset-0 rounded-xl shadow-md -z-10"
-                      style={{ backgroundColor: theme.tabActiveBg }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  {tab === "challenge" ? (
-                    <>
-                      <Zap className="w-3.5 h-3.5" /> Daily Challenge
-                    </>
-                  ) : (
-                    <>
-                      <BookMarked className="w-3.5 h-3.5" /> Vocab Vault
-                    </>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         {/* Collapsible Reminder Schedule & Push Notification Settings Drawer */}
         <AnimatePresence>
           {showScheduleDrawer && (
@@ -2175,14 +2135,60 @@ export default function FrenchPage() {
         </AnimatePresence>
       </header>
 
+      {/* Segmented Tab Navigation Pill */}
+      <div
+        className="px-3 sm:px-6 pt-3 pb-1 max-w-5xl mx-auto w-full"
+        style={{
+          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
+          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+        }}
+      >
+        <div
+          className="relative flex max-w-md rounded-2xl p-1 border shadow-sm"
+          style={{ backgroundColor: theme.navBg, borderColor: theme.navBorder }}
+        >
+          {(["challenge", "vocab"] as const).map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                id={`french-tab-${tab}`}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className="relative flex-1 py-2 text-xs font-bold transition-colors duration-200 z-10 flex items-center justify-center gap-1.5 cursor-pointer"
+                style={{ color: isActive ? theme.tabActiveText : theme.tabInactiveText }}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabPill"
+                    className="absolute inset-0 rounded-xl shadow-md -z-10"
+                    style={{ backgroundColor: theme.tabActiveBg }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                {tab === "challenge" ? (
+                  <>
+                    <Zap className="w-3.5 h-3.5" /> Daily Challenge
+                  </>
+                ) : (
+                  <>
+                    <BookMarked className="w-3.5 h-3.5" /> Vocab Vault
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Main Responsive Grid Layout */}
       <main
         id="main-content"
-        className="flex-1 px-4 sm:px-6 pt-4 max-w-5xl mx-auto w-full"
+        className="flex-1 px-3 sm:px-6 pt-2 max-w-5xl mx-auto w-full"
         style={{
           paddingBottom: "max(3.5rem, env(safe-area-inset-bottom))",
-          paddingLeft: "max(1rem, env(safe-area-inset-left))",
-          paddingRight: "max(1rem, env(safe-area-inset-right))",
+          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
+          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
         }}
       >
         <AnimatePresence mode="wait">
@@ -2200,7 +2206,7 @@ export default function FrenchPage() {
                   <div className="h-64 rounded-3xl bg-white/10 animate-pulse" />
                 </div>
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   {/* Today's On-Demand Prompt Switcher & Generation Bar */}
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl border bg-white/10 backdrop-blur-md" style={{ borderColor: theme.navBorder }}>
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
