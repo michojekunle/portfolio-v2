@@ -16,18 +16,29 @@ function getAdminSupabase() {
 const STARTER_PROMPTS = [
   {
     type: "reading",
-    prompt_text: "Lisez ce dialogue dans un café à voix haute avec une bonne intonation.",
-    example_text: "— Bonjour ! Je peux vous prendre votre commande ?\n— Oui, un grand café au lait et un croissant s'il vous plaît.\n— Très bien, ce sera tout pour vous ?\n— Oui, merci beaucoup !",
+    prompt_text: "Lisez ce dialogue complet dans un café parisien à voix haute. Prêtez une attention particulière aux liaisons et à l'intonation naturelle.",
+    example_text: `— Bonjour Antoine ! Ça fait plaisir de te voir ici. Tu m'attends depuis longtemps ?
+— Salut Sophie ! Non pas du tout, je suis arrivé il y a peine cinq minutes. J'ai failli être en retard à cause des embouteillages près de l'opéra.
+— Ah je comprends parfaitement, la circulation est terrible aujourd'hui. Alors, qu'est-ce que tu vas prendre ?
+— Je vais commander un grand café crème avec une tartine beurrée. Et toi, tu as déjà pris ton petit-déjeuner ?
+— Pas encore ! Je vais prendre un thé vert et un croissant chaud. Dis-moi, tu as des nouvelles de Thomas depuis son voyage en Italie ?
+— Oui absolument ! Il m'a envoyé un message hier soir. Il adore Rome et il revient la semaine prochaine avec plein d'anecdotes à nous raconter !`,
   },
   {
     type: "speaking",
-    prompt_text: "Enregistrez-vous en français pour présenter votre journée idéale.",
-    example_text: "Bonjour ! Pour ma journée idéale, je commence par un bon café au soleil. Ensuite, je me promène en ville et je retrouve mes amis pour le déjeuner. C'est simple et relaxant.",
+    prompt_text: "Enregistrez votre réponse en français : Décrivez votre routine du matin idéale et expliquez pourquoi chaque étape est importante pour vous.",
+    example_text: `Modèle d'expression orale :
+Pour moi, la matinée idéale commence très tôt, vers six heures et demie. La première chose que je fais est d'ouvrir la fenêtre pour faire entrer de l'air frais. Ensuite, je prépare un expresso bien chaud tout en écoutant de la musique douce. Ce moment de calme me permet de faire le vide dans mon esprit et de planifier sereinement les tâches de la journée. Après avoir pris mon petit-déjeuner, je fais vingt minutes de méditation ou de marche rapide dehors. Cela me donne une énergie formidable pour attaquer la journée de travail avec enthousiasme et sérénité.`,
   },
   {
     type: "writing",
-    prompt_text: "Écrivez 3 à 4 phrases en français sur vos objectifs de la semaine.",
-    example_text: "Mots clés à utiliser : aujourd'hui, réussir, progresser",
+    prompt_text: "Rédigez un paragraphe complet en français (5 à 8 phrases) pour raconter un souvenir de vacances inoubliable.",
+    example_text: `Guide de rédaction — Mots & expressions cibles à inclure obligatoirement :
+1. "Après être arrivé(e) à..." (Passé composé)
+2. "Il faisait un temps magnifique quand..." (Imparfait)
+3. "Se rendre compte de..." (Expression réflexive)
+4. "Avoir l'intention de..." (Intention)
+5. "Du coup..." (Connecteur logique courant)`,
   },
 ];
 
