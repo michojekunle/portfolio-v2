@@ -289,13 +289,42 @@ function speakFrench(text: string) {
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "fr-FR";
-  utterance.rate = 0.88;
+  utterance.rate = 0.9;
+  utterance.pitch = 1.0;
+
+  const voices = window.speechSynthesis.getVoices();
+  const frVoice =
+    voices.find(
+      (v) =>
+        v.lang.startsWith("fr") &&
+        (v.name.includes("Thomas") ||
+          v.name.includes("Amélie") ||
+          v.name.includes("Google") ||
+          v.name.includes("Audrey") ||
+          v.name.includes("Natural") ||
+          v.name.includes("Enhanced"))
+    ) || voices.find((v) => v.lang.startsWith("fr"));
+
+  if (frVoice) {
+    utterance.voice = frVoice;
+  }
+
   window.speechSynthesis.speak(utterance);
 }
 
-// ── Audio Helpers ─────────────────────────────────────────────────────────────
-function getSupportedMimeType(): string {
-  const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg"];
+// ── Audio & Video MIME Helpers ────────────────────────────────────────────────
+function getSupportedAudioMimeType(): string {
+  const types = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/aac", "audio/ogg"];
+  for (const type of types) {
+    if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
+      return type;
+    }
+  }
+  return "";
+}
+
+function getSupportedVideoMimeType(): string {
+  const types = ["video/mp4;codecs=avc1", "video/mp4", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
   for (const type of types) {
     if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
       return type;
@@ -1063,9 +1092,14 @@ function MediaRecorderModule({
         videoPreviewRef.current.play().catch(() => {});
       }
 
-      const mimeType = mode === "video" ? "video/webm" : getSupportedMimeType();
+      const mimeType = mode === "video" ? getSupportedVideoMimeType() : getSupportedAudioMimeType();
       const options = mimeType ? { mimeType } : {};
-      const mr = new MediaRecorder(stream, options);
+      let mr: MediaRecorder;
+      try {
+        mr = new MediaRecorder(stream, options);
+      } catch {
+        mr = new MediaRecorder(stream);
+      }
       const actualType = mr.mimeType || (mode === "video" ? "video/webm" : "audio/webm");
       setMimeTypeLabel(actualType.split(";")[0]);
 
@@ -1239,6 +1273,183 @@ function MediaRecorderModule({
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Proof History Log Component ───────────────────────────────────────────────
+interface LogEntry {
+  id: string;
+  type: "speaking" | "writing" | "reading";
+  proof_text?: string;
+  proof_url?: string;
+  created_at: string;
+  french_challenges?: {
+    type: "speaking" | "writing" | "reading";
+    prompt_text: string;
+    example_text?: string;
+    challenge_date: string;
+  };
+}
+
+function HistoryTab({
+  theme,
+  user,
+  onRequireAuth,
+}: {
+  theme: (typeof THEMES)["cowrywise"];
+  user: User | null;
+  onRequireAuth: () => void;
+}) {
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    fetch("/api/french/history")
+      .then((res) => res.json())
+      .then((data) => setLogs(data.logs ?? []))
+      .catch(() => toast.error("Could not load past practice logs."))
+      .finally(() => setLoading(false));
+  }, [user]);
+
+  if (!user) {
+    return (
+      <div
+        className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-3xl border shadow-xl"
+        style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
+      >
+        <Lock className="w-10 h-10 mb-3 text-blue-600" />
+        <h3 className="text-lg font-serif font-bold" style={{ color: theme.cardTitle }}>Sign In to View Proof History</h3>
+        <p className="text-xs max-w-xs mt-2 leading-relaxed font-medium mb-6" style={{ color: theme.cardSubtext }}>
+          All your logged audio recordings, video proof, and written essays are safely saved to your account.
+        </p>
+
+        <button
+          type="button"
+          onClick={onRequireAuth}
+          className="py-3.5 px-6 rounded-2xl font-bold text-xs flex items-center gap-2 border shadow-xl cursor-pointer"
+          style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+        >
+          <LogIn className="w-4 h-4" /> Sign In Now
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16">
+        <span className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-xs font-semibold" style={{ color: theme.cardSubtext }}>Loading your proof history…</p>
+      </div>
+    );
+  }
+
+  if (logs.length === 0) {
+    return (
+      <div
+        className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-3xl border shadow-xl"
+        style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
+      >
+        <BookMarked className="w-10 h-10 mb-3 text-amber-500" />
+        <h3 className="text-lg font-serif font-bold" style={{ color: theme.cardTitle }}>No Logged Proofs Yet</h3>
+        <p className="text-xs max-w-xs mt-2 leading-relaxed font-medium" style={{ color: theme.cardSubtext }}>
+          Complete today&apos;s 5-minute drill and log your audio, video, or written proof to build your history!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between px-1">
+        <h2 className="text-base font-bold flex items-center gap-2" style={{ color: theme.cardTitle }}>
+          <BookMarked className="w-5 h-5 text-blue-600" /> Your Logged Practice Proofs ({logs.length})
+        </h2>
+      </div>
+
+      <div className="space-y-4">
+        {logs.map((log) => {
+          const ch = log.french_challenges;
+          const type = log.type || ch?.type || "speaking";
+          const config = TYPE_CONFIG[type];
+          const IconComponent = config?.icon || Sparkles;
+          const isVideo = log.proof_url?.includes(".webm") || log.proof_url?.includes(".mp4");
+
+          return (
+            <div
+              key={log.id}
+              className="p-5 rounded-3xl border shadow-md flex flex-col gap-3 transition-all"
+              style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center border shadow-xs"
+                    style={{ backgroundColor: theme.badgeBg, borderColor: theme.cardBorder, color: theme.badgeText }}
+                  >
+                    <IconComponent className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold block" style={{ color: theme.cardTitle }}>
+                      {config?.label || "Practice Drill"}
+                    </span>
+                    <span className="text-[10px] font-mono" style={{ color: theme.cardSubtext }}>
+                      {new Date(log.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                </div>
+
+                <span
+                  className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border"
+                  style={{ backgroundColor: theme.badgeBg, color: theme.badgeText, borderColor: theme.cardBorder }}
+                >
+                  {config?.badge || "Logged"}
+                </span>
+              </div>
+
+              {ch?.prompt_text && (
+                <p className="text-xs font-semibold" style={{ color: theme.cardTitle }}>
+                  &ldquo;{ch.prompt_text}&rdquo;
+                </p>
+              )}
+
+              {/* Logged Proof Content (Text or Audio/Video Player) */}
+              {log.proof_text && (
+                <div
+                  className="p-3 rounded-2xl border text-xs font-serif leading-relaxed"
+                  style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder, color: theme.cardTitle }}
+                >
+                  <span className="text-[10px] font-mono uppercase tracking-wider block font-bold mb-1" style={{ color: theme.cardSubtext }}>
+                    Your Written Proof:
+                  </span>
+                  {log.proof_text}
+                </div>
+              )}
+
+              {log.proof_url && (
+                <div
+                  className="p-3 rounded-2xl border flex flex-col gap-2"
+                  style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
+                >
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-bold flex items-center gap-1.5 text-emerald-600">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Recorded Media Proof
+                  </span>
+                  {isVideo ? (
+                    <video controls src={log.proof_url} className="w-full rounded-xl aspect-video bg-black" />
+                  ) : (
+                    <audio controls src={log.proof_url} className="w-full rounded-xl" />
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -2005,7 +2216,7 @@ function NotificationButton({
 
 // ── Main Page Component ───────────────────────────────────────────────────────
 export default function FrenchPage() {
-  const [activeTab, setActiveTab] = useState<"challenge" | "vocab">("challenge");
+  const [activeTab, setActiveTab] = useState<"challenge" | "vocab" | "history">("challenge");
   const [themeMode, setThemeMode] = useState<ThemeMode>("cowrywise");
 
   // User Auth State
@@ -2355,7 +2566,7 @@ export default function FrenchPage() {
           className="relative flex max-w-md rounded-2xl p-1 border shadow-sm"
           style={{ backgroundColor: theme.navBg, borderColor: theme.navBorder }}
         >
-          {(["challenge", "vocab"] as const).map((tab) => {
+          {(["challenge", "vocab", "history"] as const).map((tab) => {
             const isActive = activeTab === tab;
             return (
               <button
@@ -2376,11 +2587,15 @@ export default function FrenchPage() {
                 )}
                 {tab === "challenge" ? (
                   <>
-                    <Zap className="w-3.5 h-3.5" /> Daily Challenge
+                    <Zap className="w-3.5 h-3.5" /> Challenge
+                  </>
+                ) : tab === "vocab" ? (
+                  <>
+                    <BookMarked className="w-3.5 h-3.5" /> Vocab Vault
                   </>
                 ) : (
                   <>
-                    <BookMarked className="w-3.5 h-3.5" /> Vocab Vault
+                    <BookOpen className="w-3.5 h-3.5" /> Proof History
                   </>
                 )}
               </button>
@@ -2430,42 +2645,44 @@ export default function FrenchPage() {
                             key={ch.id}
                             type="button"
                             onClick={() => setActiveChallenge(ch)}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border shrink-0"
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer shrink-0 border"
                             style={{
-                              backgroundColor: isActive ? theme.tabActiveBg : "rgba(255,255,255,0.12)",
-                              color: isActive ? theme.tabActiveText : theme.headerText,
-                              borderColor: isActive ? theme.cardBorder : "rgba(255,255,255,0.25)",
+                              backgroundColor: isActive ? theme.primaryBtnBg : theme.secondaryBtnBg,
+                              color: isActive ? theme.primaryBtnText : theme.cardTitle,
+                              borderColor: isActive ? theme.primaryBtnBg : theme.cardBorder,
                             }}
                           >
                             <span>{typeEmoji} #{idx + 1}</span>
-                            {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                            {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500" />}
                           </button>
                         );
                       })}
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={user ? handleGeneratePrompt : () => setShowAuthModal(true)}
-                      disabled={generating || (generationCount >= maxAllowed && !!user)}
-                      className="px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border shadow-sm cursor-pointer shrink-0 disabled:opacity-50"
-                      style={{
-                        backgroundColor: theme.primaryBtnBg,
-                        color: theme.primaryBtnText,
-                        borderColor: theme.cardBorder,
-                      }}
-                    >
-                      {generating ? (
-                        <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      ) : !user ? (
-                        <Lock className="w-3.5 h-3.5" />
-                      ) : (
-                        <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                      )}
-                      <span>
-                        {!user ? "Sign In to Generate" : generationCount >= maxAllowed ? `Cap Reached (${generationCount}/${maxAllowed})` : `Generate Prompt (${generationCount}/${maxAllowed})`}
-                      </span>
-                    </button>
+                    {generationCount < maxAllowed && (
+                      <button
+                        type="button"
+                        onClick={handleGeneratePrompt}
+                        disabled={generating}
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border cursor-pointer shrink-0 shadow-sm"
+                        style={{
+                          backgroundColor: theme.primaryBtnBg,
+                          color: theme.primaryBtnText,
+                          borderColor: theme.cardBorder,
+                        }}
+                      >
+                        {generating ? (
+                          <>
+                            <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            Generating…
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5 text-amber-300" /> Generate Prompt ({generationCount}/{maxAllowed})
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -2560,12 +2777,18 @@ export default function FrenchPage() {
                   </div>
                 </div>
               )
-            ) : (
+            ) : activeTab === "vocab" ? (
               <VocabTab
                 theme={theme}
                 user={user}
                 onRequireAuth={() => setShowAuthModal(true)}
                 onSelectEntry={(entry) => setSelectedVocabEntry(entry)}
+              />
+            ) : (
+              <HistoryTab
+                theme={theme}
+                user={user}
+                onRequireAuth={() => setShowAuthModal(true)}
               />
             )}
           </motion.div>
