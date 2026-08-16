@@ -1,11 +1,13 @@
 /**
  * POST /api/french/generate
  * On-demand challenge generation endpoint.
+ * Multi-Provider AI Architecture: Gemini 2.5 Flash (Primary) → Groq Llama 3.1 (Secondary) → Static Fallback.
  * Allows user to manually request a new French challenge for today up to 5 times per day.
  */
 import { NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function getAdminSupabase() {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY!;
@@ -60,24 +62,49 @@ const READING_PROMPTS = [
   },
 ];
 
-async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!groqKey) throw new Error("No GROQ_API_KEY");
-
-  const systemPrompt = `You are a native French language instructor. Generate a high-quality daily 5-minute French challenge for an intermediate learner (A2-B2 level).
+function buildFrenchPrompt(type: ChallengeType): string {
+  return `You are a native French language instructor. Generate a high-quality daily 5-minute French practice drill for an intermediate learner (A2-B2 level).
 The challenge type is: "${type}".
 
-Guidelines:
+Strict Language Rules:
 - French grammar MUST be 100% authentic, natural, and grammatically flawless (e.g. use "je suis en retard", NEVER "j'ai retardé").
 - For "reading": "prompt_text" should be a clear instruction in French (e.g., "Lisez ce dialogue au café à voix haute avec une bonne intonation."). "example_text" MUST be a realistic 3-5 line dialogue or paragraph (35-60 words total) perfect for a 5-minute elocution drill.
 - For "speaking": "prompt_text" should instruct the user to record their voice answering a scenario in French. "example_text" should provide a native model answer (30-50 words).
 - For "writing": "prompt_text" should give a creative writing topic in French. "example_text" should list 3 target French vocabulary words to include in their response.
 
-Return a valid JSON object ONLY:
+Return ONLY a raw valid JSON object with no markdown codeblocks:
 {
   "prompt_text": "Instruction in clear, correct French",
   "example_text": "The rich, natural target French passage, dialogue, or target vocabulary list"
 }`;
+}
+
+// ── Provider 1: Google Gemini 2.5 Flash (Primary) ─────────────────────────────
+async function generateChallengeWithGemini(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    generationConfig: { responseMimeType: "application/json" },
+  });
+
+  const prompt = buildFrenchPrompt(type);
+  const result = await model.generateContent(prompt);
+  const rawText = result.response.text();
+  const stripped = rawText.replace(/^```(?:json)?\n?/i, "").replace(/\n?```$/i, "").trim();
+  const parsed = JSON.parse(stripped) as { prompt_text: string; example_text: string };
+  if (!parsed.prompt_text || !parsed.example_text) throw new Error("Gemini returned incomplete JSON");
+  return parsed;
+}
+
+// ── Provider 2: Groq Llama 3.1 (Secondary Fallback) ───────────────────────────
+async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
+  const groqKey = process.env.GROQ_API_KEY;
+  if (!groqKey) throw new Error("GROQ_API_KEY is not configured");
+
+  const prompt = buildFrenchPrompt(type);
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -87,7 +114,7 @@ Return a valid JSON object ONLY:
     },
     body: JSON.stringify({
       model: "llama-3.1-8b-instant",
-      messages: [{ role: "user", content: systemPrompt }],
+      messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
       max_tokens: 400,
       temperature: 0.7,
@@ -96,9 +123,13 @@ Return a valid JSON object ONLY:
 
   if (!response.ok) throw new Error(`Groq error: ${response.status}`);
   const data = (await response.json()) as { choices: { message: { content: string } }[] };
-  return JSON.parse(data.choices[0].message.content) as { prompt_text: string; example_text: string };
+  const rawContent = data.choices[0]?.message?.content ?? "";
+  const parsed = JSON.parse(rawContent) as { prompt_text: string; example_text: string };
+  if (!parsed.prompt_text || !parsed.example_text) throw new Error("Groq returned incomplete JSON");
+  return parsed;
 }
 
+// ── Provider 3: Static Curated Drills (Tertiary Fallback) ─────────────────────
 function getStaticChallenge(type: ChallengeType): { prompt_text: string; example_text: string } {
   const day = new Date().getDay();
   const map = {
@@ -167,13 +198,19 @@ export async function POST(request: Request): Promise<Response> {
         ? requestedType
         : CHALLENGE_TYPES[currentCount % 3];
 
-    // 3. Generate challenge content via Groq or static fallback
-    let content: { prompt_text: string; example_text: string };
+    // 3. Multi-Provider AI Fallback Pipeline: Gemini → Groq → Static
+    let content: { prompt_text: string; example_text: string } | null = null;
+
     try {
-      content = await generateChallengeWithGroq(type);
-    } catch (err) {
-      console.warn("[french/generate] Groq failed, using static fallback:", err);
-      content = getStaticChallenge(type);
+      content = await generateChallengeWithGemini(type);
+    } catch (geminiErr) {
+      console.warn("[french/generate] Gemini failed, falling back to Groq:", geminiErr);
+      try {
+        content = await generateChallengeWithGroq(type);
+      } catch (groqErr) {
+        console.warn("[french/generate] Groq failed, using static fallback:", groqErr);
+        content = getStaticChallenge(type);
+      }
     }
 
     // 4. Insert into DB using adminDb (bypasses insert false RLS)
