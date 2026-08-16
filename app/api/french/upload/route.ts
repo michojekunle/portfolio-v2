@@ -1,7 +1,7 @@
 /**
  * POST /api/french/upload
- * Uploads an audio blob to Supabase Storage and returns its public URL.
- * Supports .webm (Chrome/Android), .mp4 (Safari/iOS), and .ogg (Firefox).
+ * Uploads an audio or video proof blob to Supabase Storage and returns its public URL.
+ * Supports .webm (Chrome/Android), .mp4 (Safari/iOS), .ogg, and video/webm.
  * The /french client calls this before submitting the challenge log.
  */
 import { NextResponse } from "next/server";
@@ -13,21 +13,24 @@ const ALLOWED_TYPES = new Set([
   "audio/mp4",
   "audio/ogg",
   "audio/ogg;codecs=opus",
+  "video/webm",
+  "video/mp4",
+  "video/quicktime",
 ]);
 
 export async function POST(request: Request): Promise<Response> {
   try {
     const formData = await request.formData();
-    const file = formData.get("audio") as File | null;
+    const file = (formData.get("audio") || formData.get("video") || formData.get("file")) as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "No audio file provided" }, { status: 400 });
+      return NextResponse.json({ error: "No media file provided" }, { status: 400 });
     }
 
-    // Validate MIME type — allow standard audio formats across iOS, Android, and desktop
+    // Validate MIME type — allow standard audio & video formats across iOS, Android, and desktop
     const baseType = file.type.split(";")[0].trim();
-    const isAudio = file.type.startsWith("audio/") || ALLOWED_TYPES.has(baseType);
-    if (!isAudio) {
+    const isMedia = file.type.startsWith("audio/") || file.type.startsWith("video/") || ALLOWED_TYPES.has(baseType);
+    if (!isMedia) {
       return NextResponse.json(
         { error: `Unsupported file type: ${file.type}` },
         { status: 415 }
@@ -35,17 +38,18 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Derive extension from file name sent by the client (recording.webm / .mp4 / .ogg)
-    const ext = file.name.split(".").pop() ?? "webm";
+    const ext = file.name.split(".").pop() ?? (file.type.startsWith("video/") ? "webm" : "webm");
     const fileName = `recording-${Date.now()}.${ext}`;
 
-    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY!;
+    const supabase = createClient(process.env.SUPABASE_URL!, serviceKey);
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
     const { error: uploadError } = await supabase.storage
       .from("french-audio")
       .upload(fileName, buffer, {
-        contentType: baseType,
+        contentType: baseType || "application/octet-stream",
         upsert: false,
       });
 
