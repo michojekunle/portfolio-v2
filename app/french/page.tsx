@@ -2104,6 +2104,46 @@ export default function FrenchPage() {
           </div>
         </div>
 
+        {/* Segmented Tab Navigation Pill */}
+        <div className="mt-3 max-w-5xl mx-auto w-full">
+          <div
+            className="relative flex max-w-md rounded-2xl p-1 border shadow-sm"
+            style={{ backgroundColor: theme.navBg, borderColor: theme.navBorder }}
+          >
+            {(["challenge", "vocab"] as const).map((tab) => {
+              const isActive = activeTab === tab;
+              return (
+                <button
+                  key={tab}
+                  id={`french-tab-${tab}`}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className="relative flex-1 py-2 text-xs font-bold transition-colors duration-200 z-10 flex items-center justify-center gap-1.5 cursor-pointer"
+                  style={{ color: isActive ? theme.tabActiveText : theme.tabInactiveText }}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTabPill"
+                      className="absolute inset-0 rounded-xl shadow-md -z-10"
+                      style={{ backgroundColor: theme.tabActiveBg }}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  {tab === "challenge" ? (
+                    <>
+                      <Zap className="w-3.5 h-3.5" /> Daily Challenge
+                    </>
+                  ) : (
+                    <>
+                      <BookMarked className="w-3.5 h-3.5" /> Vocab Vault
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Collapsible Reminder Schedule & Push Notification Settings Drawer */}
         <AnimatePresence>
           {showScheduleDrawer && (
@@ -2134,52 +2174,6 @@ export default function FrenchPage() {
           )}
         </AnimatePresence>
       </header>
-
-      {/* Segmented Tab Navigation Pill */}
-      <div
-        className="px-4 sm:px-6 max-w-5xl mx-auto w-full"
-        style={{
-          paddingLeft: "max(1rem, env(safe-area-inset-left))",
-          paddingRight: "max(1rem, env(safe-area-inset-right))",
-        }}
-      >
-        <div
-          className="relative flex max-w-md rounded-2xl p-1 border shadow-sm"
-          style={{ backgroundColor: theme.navBg, borderColor: theme.navBorder }}
-        >
-          {(["challenge", "vocab"] as const).map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                id={`french-tab-${tab}`}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className="relative flex-1 py-2.5 text-xs font-bold transition-colors duration-200 z-10 flex items-center justify-center gap-1.5 cursor-pointer"
-                style={{ color: isActive ? theme.tabActiveText : theme.tabInactiveText }}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTabPill"
-                    className="absolute inset-0 rounded-xl shadow-md -z-10"
-                    style={{ backgroundColor: theme.tabActiveBg }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                {tab === "challenge" ? (
-                  <>
-                    <Zap className="w-3.5 h-3.5" /> Daily Challenge
-                  </>
-                ) : (
-                  <>
-                    <BookMarked className="w-3.5 h-3.5" /> Vocab Vault
-                  </>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* Main Responsive Grid Layout */}
       <main
