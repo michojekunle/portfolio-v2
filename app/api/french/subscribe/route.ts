@@ -1,13 +1,15 @@
 /**
  * POST /api/french/subscribe
- * Saves the browser's Web Push subscription to Supabase.
- * Called once when the user enables notifications on /french.
+ * Saves the browser's Web Push subscription to Supabase with user_id linkage.
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request): Promise<Response> {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
     const body = await request.json();
     const { endpoint, keys } = body as {
       endpoint: string;
@@ -18,13 +20,13 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: "Invalid subscription object" }, { status: 400 });
     }
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_KEY!
-    );
-
     const { error } = await supabase.from("french_subscriptions").upsert(
-      { endpoint, p256dh: keys.p256dh, auth: keys.auth },
+      {
+        user_id: user?.id ?? null,
+        endpoint,
+        p256dh: keys.p256dh,
+        auth: keys.auth,
+      },
       { onConflict: "endpoint" }
     );
 
@@ -40,21 +42,13 @@ export async function POST(request: Request): Promise<Response> {
   }
 }
 
-/**
- * DELETE /api/french/subscribe
- * Removes the subscription (unsubscribe from notifications).
- */
 export async function DELETE(request: Request): Promise<Response> {
   try {
-    const { endpoint } = await request.json() as { endpoint: string };
+    const supabase = await createClient();
+    const { endpoint } = (await request.json()) as { endpoint: string };
     if (!endpoint) {
       return NextResponse.json({ error: "Missing endpoint" }, { status: 400 });
     }
-
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_KEY!
-    );
 
     await supabase.from("french_subscriptions").delete().eq("endpoint", endpoint);
     return NextResponse.json({ ok: true });

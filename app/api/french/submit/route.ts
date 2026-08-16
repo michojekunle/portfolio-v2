@@ -1,7 +1,7 @@
 /**
  * POST /api/french/submit
- * Logs a completed challenge and updates the streak.
- * Supports Streak Freezes (consumes 1 freeze if a day was missed).
+ * Logs a completed challenge and updates the user's personal streak.
+ * Supports multi-user isolation & Streak Freezes (consumes 1 freeze if a day was missed).
  * Body: { challenge_id, type, proof_text?, proof_url? }
  */
 import { NextResponse } from "next/server";
@@ -32,8 +32,9 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // 1. Insert completion log
+    // 1. Insert completion log with user_id
     const { error: logError } = await supabase.from("french_logs").insert({
+      user_id: user.id,
       challenge_id,
       type,
       proof_text: proof_text ?? null,
@@ -45,40 +46,38 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: "Failed to log completion" }, { status: 500 });
     }
 
-    // 2. Fetch current streak data
+    // 2. Fetch current streak data for this user
     const today = new Date().toISOString().split("T")[0];
 
-    const { data: streak, error: streakReadError } = await supabase
-      .from("french_streaks")
+    const { data: streak } = await supabase
+      .from("french_user_streaks")
       .select("*")
-      .eq("id", 1)
-      .single();
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (streakReadError || !streak) {
-      console.error("[french/submit] Streak read error:", streakReadError);
-      return NextResponse.json({ ok: true, streak: null });
-    }
+    const currentStreak = streak?.current_streak ?? 0;
+    const freezesCount = streak?.streak_freezes ?? 2;
+    const lastDate = streak?.last_completed_date ?? null;
 
-    const lastDate = streak.last_completed_date;
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-    let newStreak = streak.current_streak ?? 0;
-    let freezesCount = streak.streak_freezes ?? 2;
+    let newStreak = currentStreak;
+    let newFreezes = freezesCount;
     let usedFreeze = false;
 
     // Streak Calculation & Freeze logic
     if (lastDate === today) {
       // Already completed today
-      return NextResponse.json({ ok: true, streak });
+      return NextResponse.json({ ok: true, streak: streak ?? { current_streak: 1, longest_streak: 1, streak_freezes: 2, total_completions: 1, last_completed_date: today } });
     } else if (!lastDate || lastDate === yesterdayStr) {
       // Consecutive completion
       newStreak += 1;
     } else {
       // Missed a day — check if a Streak Freeze is available
-      if (freezesCount > 0) {
-        freezesCount -= 1;
+      if (newFreezes > 0) {
+        newFreezes -= 1;
         newStreak += 1; // Freeze saved the streak!
         usedFreeze = true;
       } else {
@@ -86,20 +85,22 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
 
-    const newLongest = Math.max(streak.longest_streak ?? 0, newStreak);
-    const totalCompletions = (streak.total_completions ?? 0) + 1;
+    const newLongest = Math.max(streak?.longest_streak ?? 0, newStreak);
+    const totalCompletions = (streak?.total_completions ?? 0) + 1;
+
+    const updatedStreak = {
+      user_id: user.id,
+      current_streak: newStreak,
+      longest_streak: newLongest,
+      streak_freezes: newFreezes,
+      last_completed_date: today,
+      total_completions: totalCompletions,
+      updated_at: new Date().toISOString(),
+    };
 
     const { error: streakUpdateError } = await supabase
-      .from("french_streaks")
-      .update({
-        current_streak: newStreak,
-        longest_streak: newLongest,
-        streak_freezes: freezesCount,
-        last_completed_date: today,
-        total_completions: totalCompletions,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", 1);
+      .from("french_user_streaks")
+      .upsert(updatedStreak, { onConflict: "user_id" });
 
     if (streakUpdateError) {
       console.error("[french/submit] Streak update error:", streakUpdateError);
@@ -111,7 +112,7 @@ export async function POST(request: Request): Promise<Response> {
       streak: {
         current_streak: newStreak,
         longest_streak: newLongest,
-        streak_freezes: freezesCount,
+        streak_freezes: newFreezes,
         total_completions: totalCompletions,
         last_completed_date: today,
       },

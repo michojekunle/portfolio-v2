@@ -1,13 +1,13 @@
 /**
  * GET /api/french/vocab
- * Returns all vocabulary entries, newest first (Public).
+ * Returns vocabulary entries for the current signed-in user + shared defaults.
  *
  * POST /api/french/vocab
- * Adds a new vocabulary entry (Authentication Required).
+ * Adds a new vocabulary entry linked to the signed-in user.
  * Body: { entry_type: "word"|"sentence", french_text, english_meaning, notes? }
  *
  * DELETE /api/french/vocab
- * Deletes a vocabulary entry (Authentication Required).
+ * Deletes a user's vocabulary entry.
  * Body: { id }
  */
 import { NextResponse } from "next/server";
@@ -16,17 +16,27 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser();
+
+    let query = supabase
       .from("french_vocabulary")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (user) {
+      query = query.or(`user_id.eq.${user.id},user_id.is.null`);
+    } else {
+      query = query.is("user_id", null);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("[french/vocab] GET error:", error);
       return NextResponse.json({ error: "Failed to fetch vocabulary" }, { status: 500 });
     }
 
-    return NextResponse.json({ entries: data });
+    return NextResponse.json({ entries: data ?? [] });
   } catch (err) {
     console.error("[french/vocab] Unexpected error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -61,6 +71,7 @@ export async function POST(request: Request): Promise<Response> {
     const { data, error } = await supabase
       .from("french_vocabulary")
       .insert({
+        user_id: user.id,
         entry_type,
         french_text: french_text.trim(),
         english_meaning: english_meaning.trim(),
@@ -101,7 +112,8 @@ export async function DELETE(request: Request): Promise<Response> {
     const { error } = await supabase
       .from("french_vocabulary")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) {
       console.error("[french/vocab] DELETE error:", error);
