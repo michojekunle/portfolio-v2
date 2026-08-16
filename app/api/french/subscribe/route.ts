@@ -9,18 +9,24 @@
  * Removes push subscription endpoint.
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+
+function getAdminSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+}
 
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const serverClient = await createServerClient();
+    const { data: { user } } = await serverClient.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ subscription: null, reminder_time: "22:00" });
     }
 
-    const { data: sub } = await supabase
+    const adminDb = getAdminSupabase();
+    const { data: sub } = await adminDb
       .from("french_subscriptions")
       .select("*")
       .eq("user_id", user.id)
@@ -39,51 +45,55 @@ export async function GET(): Promise<Response> {
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const serverClient = await createServerClient();
+    const { data: { user } } = await serverClient.auth.getUser();
 
     const body = await request.json();
     const { endpoint, keys, reminder_time } = body as {
-      endpoint: string;
+      endpoint?: string;
       keys?: { p256dh: string; auth: string };
       reminder_time?: string;
     };
 
-    if (!endpoint) {
-      return NextResponse.json({ error: "Missing subscription endpoint" }, { status: 400 });
+    const targetEndpoint = endpoint || (user ? `user-${user.id}` : null);
+
+    if (!targetEndpoint) {
+      return NextResponse.json({ error: "Missing subscription endpoint or user session" }, { status: 400 });
     }
 
-    const updatePayload: {
-      user_id: string | null;
-      endpoint: string;
-      p256dh?: string;
-      auth?: string;
-      reminder_time?: string;
-    } = {
-      user_id: user?.id ?? null,
-      endpoint,
+    const adminDb = getAdminSupabase();
+
+    // 1. Fetch existing subscription for this endpoint or user to preserve p256dh/auth keys
+    const { data: existing } = await adminDb
+      .from("french_subscriptions")
+      .select("*")
+      .or(`endpoint.eq.${targetEndpoint}${user ? `,user_id.eq.${user.id}` : ""}`)
+      .limit(1)
+      .maybeSingle();
+
+    const p256dh = keys?.p256dh || existing?.p256dh || "default_p256dh";
+    const auth = keys?.auth || existing?.auth || "default_auth";
+    const activeReminderTime = reminder_time || existing?.reminder_time || "22:00";
+
+    const updatePayload = {
+      user_id: user?.id ?? existing?.user_id ?? null,
+      endpoint: existing?.endpoint || targetEndpoint,
+      p256dh,
+      auth,
+      reminder_time: activeReminderTime,
     };
 
-    if (keys?.p256dh && keys?.auth) {
-      updatePayload.p256dh = keys.p256dh;
-      updatePayload.auth = keys.auth;
-    }
-
-    if (reminder_time) {
-      updatePayload.reminder_time = reminder_time;
-    }
-
-    const { error } = await supabase.from("french_subscriptions").upsert(
+    const { error } = await adminDb.from("french_subscriptions").upsert(
       updatePayload,
       { onConflict: "endpoint" }
     );
 
     if (error) {
       console.error("[french/subscribe] DB error:", error);
-      return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to save push subscription to database." }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, reminder_time: reminder_time ?? "22:00" });
+    return NextResponse.json({ ok: true, reminder_time: activeReminderTime });
   } catch (err) {
     console.error("[french/subscribe] Unexpected error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -92,13 +102,18 @@ export async function POST(request: Request): Promise<Response> {
 
 export async function DELETE(request: Request): Promise<Response> {
   try {
-    const supabase = await createClient();
-    const { endpoint } = (await request.json()) as { endpoint: string };
-    if (!endpoint) {
-      return NextResponse.json({ error: "Missing endpoint" }, { status: 400 });
+    const serverClient = await createServerClient();
+    const { data: { user } } = await serverClient.auth.getUser();
+
+    const { endpoint } = (await request.json()) as { endpoint?: string };
+    const adminDb = getAdminSupabase();
+
+    if (endpoint) {
+      await adminDb.from("french_subscriptions").delete().eq("endpoint", endpoint);
+    } else if (user) {
+      await adminDb.from("french_subscriptions").delete().eq("user_id", user.id);
     }
 
-    await supabase.from("french_subscriptions").delete().eq("endpoint", endpoint);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[french/subscribe] DELETE error:", err);
