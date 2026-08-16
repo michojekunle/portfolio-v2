@@ -34,6 +34,9 @@ import {
   LogOut,
   User as UserIcon,
   Clock,
+  Languages,
+  Globe,
+  Video,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -879,78 +882,294 @@ function StreakCalendarModal({
   );
 }
 
-// ── Audio Recorder ────────────────────────────────────────────────────────────
-function AudioRecorder({
+// ── Interactive Target Passage with Clickable Word Inspector & Translation ─────
+function InteractiveTargetPassage({
+  text,
+  theme,
+}: {
+  text: string;
+  theme: (typeof THEMES)["cowrywise"];
+}) {
+  const [showTranslation, setShowTranslation] = useState(false);
+  const [selectedWord, setSelectedWord] = useState<string | null>(null);
+
+  // Split text by lines and space tokens
+  const paragraphs = text.split("\n").filter(Boolean);
+
+  const handleWordClick = (rawWord: string) => {
+    const cleanWord = rawWord.replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
+    if (!cleanWord) return;
+    setSelectedWord(cleanWord);
+    speakFrench(cleanWord);
+  };
+
+  return (
+    <div
+      className="mt-4 p-4 sm:p-5 rounded-2xl border transition-all"
+      style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
+    >
+      <div className="flex items-center justify-between gap-2 mb-3 pb-2.5 border-b" style={{ borderColor: theme.cardBorder }}>
+        <span className="text-[10px] font-mono uppercase tracking-wider block font-bold" style={{ color: theme.cardSubtext }}>
+          Target Passage • Tap any word to listen & inspect
+        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => speakFrench(text)}
+            className="flex items-center gap-1 text-[11px] font-extrabold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+            title="Listen to entire native French passage"
+          >
+            <Volume2 className="w-3.5 h-3.5" /> Full Audio
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowTranslation((s) => !s)}
+            className="flex items-center gap-1 text-[11px] font-extrabold px-2 py-1 rounded-lg border transition-all cursor-pointer"
+            style={{
+              backgroundColor: showTranslation ? theme.primaryBtnBg : theme.cardBg,
+              color: showTranslation ? theme.primaryBtnText : theme.cardTitle,
+              borderColor: theme.cardBorder,
+            }}
+          >
+            <Languages className="w-3.5 h-3.5" /> {showTranslation ? "Hide English" : "Show English"}
+          </button>
+        </div>
+      </div>
+
+      {/* Interactive Word Tokens */}
+      <div className="space-y-2 text-sm sm:text-base font-serif leading-relaxed font-semibold" style={{ color: theme.cardTitle }}>
+        {paragraphs.map((para, pIdx) => (
+          <p key={pIdx} className="leading-loose">
+            {para.split(" ").map((token, wIdx) => {
+              const clean = token.replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
+              return (
+                <span key={wIdx} className="inline-block mr-1">
+                  {clean ? (
+                    <button
+                      type="button"
+                      onClick={() => handleWordClick(token)}
+                      className="px-0.5 py-0.5 rounded transition-all hover:bg-blue-500/20 hover:text-blue-600 cursor-pointer active:scale-95"
+                      title={`Click to listen to "${clean}"`}
+                    >
+                      {token}
+                    </button>
+                  ) : (
+                    <span>{token}</span>
+                  )}
+                </span>
+              );
+            })}
+          </p>
+        ))}
+      </div>
+
+      {/* Word Inspector Modal Popover */}
+      <AnimatePresence>
+        {selectedWord && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            className="mt-3 p-3 rounded-xl border flex items-center justify-between gap-3 shadow-md"
+            style={{ backgroundColor: theme.cardBg, borderColor: theme.primaryBtnBg }}
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+              <div>
+                <span className="text-xs font-bold font-serif" style={{ color: theme.cardTitle }}>
+                  &ldquo;{selectedWord}&rdquo;
+                </span>
+                <span className="text-[10px] font-mono block" style={{ color: theme.cardSubtext }}>
+                  French Word Inspector
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => speakFrench(selectedWord)}
+                className="px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 border cursor-pointer"
+                style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+              >
+                <Volume2 className="w-3 h-3" /> Listen
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedWord(null)}
+                className="p-1 rounded-lg text-xs hover:opacity-70"
+                style={{ color: theme.cardSubtext }}
+              >
+                ✕
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* English Translation Collapsible Drawer */}
+      <AnimatePresence>
+        {showTranslation && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 pt-3 border-t overflow-hidden"
+            style={{ borderColor: theme.cardBorder }}
+          >
+            <div className="flex items-center gap-1.5 mb-1.5 text-xs font-bold text-blue-600">
+              <Globe className="w-4 h-4" /> English Meaning & Guided Translation
+            </div>
+            <p className="text-xs font-medium leading-relaxed italic" style={{ color: theme.cardSubtext }}>
+              Practice reading or speaking the French passage out loud above, then compare with your natural understanding of the dialogue.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ── Media Recorder (Audio & Video Camera Proof Capture) ───────────────────────
+function MediaRecorderModule({
   onRecorded,
   theme,
 }: {
   onRecorded: (blob: Blob, ext: string) => void;
   theme: (typeof THEMES)["cowrywise"];
 }) {
+  const [mode, setMode] = useState<"audio" | "video">("audio");
   const [recording, setRecording] = useState(false);
   const [recorded, setRecorded] = useState(false);
   const [seconds, setSeconds] = useState(0);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioType, setAudioType] = useState("audio/webm");
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
+  const [mimeTypeLabel, setMimeTypeLabel] = useState("webm");
+
   const mediaRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const start = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const constraints = mode === "video" ? { audio: true, video: { facingMode: "user" } } : { audio: true };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
       chunksRef.current = [];
-      const mimeType = getSupportedMimeType();
+
+      if (mode === "video" && videoPreviewRef.current) {
+        videoPreviewRef.current.srcObject = stream;
+        videoPreviewRef.current.play().catch(() => {});
+      }
+
+      const mimeType = mode === "video" ? "video/webm" : getSupportedMimeType();
       const options = mimeType ? { mimeType } : {};
       const mr = new MediaRecorder(stream, options);
-      const actualType = mr.mimeType || "audio/webm";
-      setAudioType(actualType);
+      const actualType = mr.mimeType || (mode === "video" ? "video/webm" : "audio/webm");
+      setMimeTypeLabel(actualType.split(";")[0]);
 
-      mr.ondataavailable = (e) => e.data.size > 0 && chunksRef.current.push(e.data);
+      mr.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
+      };
+
       mr.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: actualType });
         const url = URL.createObjectURL(blob);
-        setAudioUrl(url);
+        setMediaUrl(url);
         setRecorded(true);
-        onRecorded(blob, getAudioExtension(actualType));
-        stream.getTracks().forEach((t) => t.stop());
+        const ext = mode === "video" ? "webm" : getAudioExtension(actualType);
+        onRecorded(blob, ext);
+
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((t) => t.stop());
+          streamRef.current = null;
+        }
       };
-      mr.start();
+
+      // Force timeslice of 250ms so chunks accumulate continuously on mobile browsers
+      mr.start(250);
       mediaRef.current = mr;
       setRecording(true);
       setSeconds(0);
       timerRef.current = setInterval(() => setSeconds((s) => s + 1), 1000);
     } catch {
-      toast.error("Microphone permission required. Please allow access in browser settings.");
+      toast.error(`${mode === "video" ? "Camera and Microphone" : "Microphone"} permission required.`);
     }
-  }, [onRecorded]);
+  }, [mode, onRecorded]);
 
   const stop = useCallback(() => {
-    mediaRef.current?.stop();
+    if (mediaRef.current && mediaRef.current.state !== "inactive") {
+      mediaRef.current.stop();
+    }
     setRecording(false);
     if (timerRef.current) clearInterval(timerRef.current);
   }, []);
 
   const reset = useCallback(() => {
     setRecorded(false);
-    setAudioUrl(null);
+    setMediaUrl(null);
     setSeconds(0);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
     return () => {
-      if (audioUrl) URL.revokeObjectURL(audioUrl);
+      if (mediaUrl) URL.revokeObjectURL(mediaUrl);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+      }
     };
-  }, [audioUrl]);
+  }, [mediaUrl]);
 
   return (
     <div
-      className="flex flex-col items-center gap-5 p-5 rounded-3xl border transition-colors shadow-sm"
-      style={{
-        backgroundColor: theme.subCardBg,
-        borderColor: theme.cardBorder,
-      }}
+      className="flex flex-col items-center gap-4 p-5 rounded-3xl border transition-colors shadow-sm"
+      style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
     >
+      {/* Mode Selector */}
+      {!recording && !recorded && (
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl border" style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}>
+          <button
+            type="button"
+            onClick={() => setMode("audio")}
+            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+            style={{
+              backgroundColor: mode === "audio" ? theme.primaryBtnBg : "transparent",
+              color: mode === "audio" ? theme.primaryBtnText : theme.cardSubtext,
+            }}
+          >
+            <Mic className="w-3.5 h-3.5" /> Audio Mic
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("video")}
+            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+            style={{
+              backgroundColor: mode === "video" ? theme.primaryBtnBg : "transparent",
+              color: mode === "video" ? theme.primaryBtnText : theme.cardSubtext,
+            }}
+          >
+            <Video className="w-3.5 h-3.5" /> Video Camera
+          </button>
+        </div>
+      )}
+
+      {/* Live Video Preview element if in video mode */}
+      {mode === "video" && recording && (
+        <div className="w-full max-w-sm aspect-video rounded-2xl overflow-hidden bg-black relative border shadow-inner">
+          <video ref={videoPreviewRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-mono font-bold px-2 py-1 rounded-full flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse" /> REC
+          </div>
+        </div>
+      )}
+
       {!recorded ? (
         <div className="flex flex-col items-center gap-3">
           <button
@@ -974,6 +1193,8 @@ function AudioRecorder({
             )}
             {recording ? (
               <Square className="w-7 h-7 text-white fill-current" />
+            ) : mode === "video" ? (
+              <Video className="w-8 h-8 text-white transition-transform group-hover:scale-110" />
             ) : (
               <Mic className="w-8 h-8 text-white transition-transform group-hover:scale-110" />
             )}
@@ -984,23 +1205,29 @@ function AudioRecorder({
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
               <p className="text-xs font-mono font-bold text-red-500 tabular-nums">
                 {String(Math.floor(seconds / 60)).padStart(2, "0")}:
-                {String(seconds % 60).padStart(2, "0")} • Recording
+                {String(seconds % 60).padStart(2, "0")} • Recording {mode.toUpperCase()}
               </p>
             </div>
           ) : (
-            <p className="text-xs font-medium" style={{ color: theme.cardSubtext }}>Tap mic to speak • Auto-saves proof</p>
+            <p className="text-xs font-medium" style={{ color: theme.cardSubtext }}>
+              Tap button to record {mode} proof • Auto-saves submission
+            </p>
           )}
         </div>
       ) : (
         <div className="w-full flex flex-col gap-3">
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-emerald-600">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Recording Captured
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> {mode.toUpperCase()} Proof Captured
             </span>
-            <span className="text-[10px] font-mono opacity-70 uppercase" style={{ color: theme.cardSubtext }}>{audioType.split(";")[0]}</span>
+            <span className="text-[10px] font-mono opacity-70 uppercase" style={{ color: theme.cardSubtext }}>{mimeTypeLabel}</span>
           </div>
 
-          <audio controls src={audioUrl || undefined} className="w-full rounded-xl" />
+          {mode === "video" ? (
+            <video controls src={mediaUrl || undefined} className="w-full rounded-2xl aspect-video bg-black" />
+          ) : (
+            <audio controls src={mediaUrl || undefined} className="w-full rounded-xl" />
+          )}
 
           <button
             type="button"
@@ -1008,7 +1235,7 @@ function AudioRecorder({
             className="flex items-center justify-center gap-1.5 text-xs font-bold transition-colors pt-1 cursor-pointer"
             style={{ color: theme.cardSubtext }}
           >
-            <RotateCcw className="w-3.5 h-3.5" /> Re-record audio
+            <RotateCcw className="w-3.5 h-3.5" /> Re-record {mode}
           </button>
         </div>
       )}
@@ -1246,36 +1473,17 @@ function ChallengeTab({
           {challenge.prompt_text}
         </p>
 
-        {/* Target Passage with Native Audio Listen Button */}
+        {/* Interactive Target Passage with Word Inspector & Translation */}
         {challenge.example_text && (
-          <div
-            className="mt-4 p-4 rounded-2xl border"
-            style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
-          >
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-mono uppercase tracking-wider block font-bold" style={{ color: theme.cardSubtext }}>
-                Target Material
-              </span>
-              <button
-                type="button"
-                onClick={() => speakFrench(challenge.example_text!)}
-                className="flex items-center gap-1 text-[11px] font-extrabold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
-                title="Listen to native French pronunciation"
-              >
-                <Volume2 className="w-3.5 h-3.5" /> Listen Audio
-              </button>
-            </div>
-            <p className="text-sm italic font-serif leading-relaxed font-semibold" style={{ color: theme.cardTitle }}>
-              &ldquo;{challenge.example_text}&rdquo;
-            </p>
-          </div>
+          <InteractiveTargetPassage text={challenge.example_text} theme={theme} />
         )}
 
         <p className="mt-4 text-xs font-semibold" style={{ color: theme.cardSubtext }}>{config?.hint}</p>
       </div>
 
       {/* Input Module */}
-      {isAudioChallenge && <AudioRecorder onRecorded={handleRecorded} theme={theme} />}
+      {isAudioChallenge && <MediaRecorderModule onRecorded={handleRecorded} theme={theme} />}
+
 
       {challenge.type === "writing" && (
         <div className="flex flex-col gap-2">

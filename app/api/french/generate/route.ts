@@ -2,7 +2,7 @@
  * POST /api/french/generate
  * On-demand challenge generation endpoint.
  * Multi-Provider AI Architecture: Gemini 2.5 Flash (Primary) → Groq Llama 3.1 (Secondary) → Static Fallback.
- * Generates rich, substantial 120-250 word French dialogues & passages for a true 5-minute drill.
+ * Generates rich, immersive 250-400 word French dialogues & stories with full English translations.
  */
 import { NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
@@ -20,67 +20,52 @@ type ChallengeType = (typeof CHALLENGE_TYPES)[number];
 const SPEAKING_PROMPTS = [
   {
     prompt_text: "Enregistrez votre réponse en français : Décrivez votre routine du matin idéale et expliquez pourquoi chaque étape est importante pour vous.",
-    example_text: `Modèle d'expression orale :
-Pour moi, la matinée idéale commence très tôt, vers six heures et demie. La première chose que je fais est d'ouvrir la fenêtre pour faire entrer de l'air frais. Ensuite, je prépare un expresso bien chaud tout en écoutant de la musique douce. Ce moment de calme me permet de faire le vide dans mon esprit et de planifier sereinement les tâches de la journée. Après avoir pris mon petit-déjeuner, je fais vingt minutes de méditation ou de marche rapide dehors. Cela me donne une énergie formidable pour attaquer la journée de travail avec enthousiasme et sérénité. Et vous, quelle est votre routine idéale ?`,
-  },
-  {
-    prompt_text: "Enregistrez-vous en français pour exprimer votre opinion sur les avantages du travail à distance versus le travail au bureau.",
-    example_text: `Modèle d'expression orale :
-À mon avis, le travail à distance offre une flexibilité incroyable au quotidien. On gagne un temps précieux en évitant les trajets dans les transports en commun, ce qui réduit considérablement le stress. Cependant, je pense aussi qu'il est indispensable de maintenir un contact humain régulier avec ses collègues. Rien ne remplace la spontanéité d'une discussion autour d'une pause café au bureau pour renforcer l'esprit d'équipe. La solution parfaite est donc un mode hybride avec deux ou trois jours de télétravail par semaine.`,
+    example_text: `Pour moi, la matinée idéale commence très tôt, vers six heures et demie du matin. La toute première chose que je fais est d'ouvrir en grand la fenêtre de ma chambre pour faire entrer l'air frais du matin et écouter le calme de la ville. Ensuite, je me dirige vers la cuisine pour préparer un expresso bien chaud tout en écoutant de la musique douce. Ce moment de tranquillité absolue me permet de faire le vide dans mon esprit, de boire mon café tranquillement et de planifier sereinement les tâches prioritaires de la journée. 
+
+Après avoir pris mon petit-déjeuner composé de croissants et de fruits frais, je prends vingt minutes pour faire une marche rapide dehors dans le parc. L'exercice matinal donne une énergie formidable pour attaquer la journée de travail avec enthousiasme. Enfin, je me douche, je m'habille et je m'installe à mon bureau, prêt à commencer ma journée de travail avec sérénité et concentration. Et vous, quelle est la routine matinale qui vous donne le plus d'énergie ?`,
   },
 ];
 
 const WRITING_PROMPTS = [
   {
-    prompt_text: "Rédigez un paragraphe complet en français (5 à 8 phrases) pour raconter un souvenir de vacances inoubliable.",
-    example_text: `Guide de rédaction — Mots & expressions cibles à inclure obligatoirement :
-1. "Après être arrivé(e) à..." (Passé composé)
-2. "Il faisait un temps magnifique quand..." (Imparfait)
+    prompt_text: "Rédigez un texte complet en français (8 à 12 phrases) pour raconter un voyage ou un souvenir d'enfance inoubliable.",
+    example_text: `Guide de rédaction — Mots & expressions cibles à inclure dans votre texte :
+1. "Après être arrivé(e) à..." (Passé composé avec être)
+2. "Il faisait un temps magnifique quand..." (Imparfait pour le décor)
 3. "Se rendre compte de..." (Expression réflexive)
-4. "Avoir l'intention de..." (Intention)
-5. "Du coup..." (Connecteur logique courant)`,
-  },
-  {
-    prompt_text: "Écrivez une lettre ou un courriel informel à un ami en français pour lui proposer de faire un voyage ensemble cet été.",
-    example_text: `Guide de rédaction — Mots & expressions cibles à inclure obligatoirement :
-1. "Ça te dirait de..." (Proposition)
-2. "Bien que ce soit..." (Subjonctif)
-3. "Réserver à l'avance" (Vocabulaire de voyage)
-4. "Prendre du temps pour soi" (Bien-être)
-5. "À bientôt j'espère !" (Formule de politesse)`,
+4. "Avoir l'intention de..." (Intention future)
+5. "Du coup..." (Connecteur logique courant)
+6. "Bien que ce soit..." (Emploi du subjonctif)`,
   },
 ];
 
 const READING_PROMPTS = [
   {
-    prompt_text: "Lisez ce dialogue complet entre deux amis dans un café à voix haute. Prêtez une attention particulière aux liaisons et à l'intonation naturelle.",
-    example_text: `— Bonjour Antoine ! Ça fait plaisir de te voir ici. Tu m'attends depuis longtemps ?
-— Salut Sophie ! Non pas du tout, je suis arrivé il y a peine cinq minutes. J'ai failli être en retard à cause des embouteillages près de l'opéra.
-— Ah je comprends parfaitement, la circulation est terrible aujourd'hui. Alors, qu'est-ce que tu vas prendre ?
-— Je vais commander un grand café crème avec une tartine beurrée. Et toi, tu as déjà pris ton petit-déjeuner ?
-— Pas encore ! Je vais prendre un thé vert et un croissant chaud. Dis-moi, tu as des nouvelles de Thomas depuis son voyage en Italie ?
-— Oui absolument ! Il m'a envoyé un message hier soir. Il adore Rome et il revient la semaine prochaine avec plein d'anecdotes à nous raconter !`,
-  },
-  {
-    prompt_text: "Lisez ce récit de voyage à voix haute en vous concentrant sur l'articulation, le rythme et le ton naturel.",
-    example_text: `Le week-end dernier, j'ai décidé d'échapper au bruit de la ville et de partir en randonnée dans les montagnes. Le départ était très tôt le matin, alors que le soleil commençait à peine à se lever au-dessus des collines. L'air était frais et pur, et le silence était seulement interrompu par le chant des oiseaux. Après deux heures de marche le long d'un sentier escarpé, je suis enfin arrivé au sommet. La vue panoramique sur toute la vallée était tout simplement à couper le souffle. J'ai pris quelques photos et j'ai savouré mon pique-nique en contemplant le paysage. Ce genre de journée me rappelle à quel point il est essentiel de prendre du temps pour soi et de renouer avec la nature.`,
+    prompt_text: "Lisez ce dialogue complet dans un café parisien à voix haute. Prêtez une attention particulière aux liaisons et à l'intonation naturelle.",
+    example_text: `— Bonjour Antoine ! Ça fait tellement plaisir de te voir ici. Tu m'attends depuis longtemps ?
+— Salut Sophie ! Non pas du tout, rassure-toi. Je suis arrivé il y a peine dix minutes. J'ai failli être en retard à cause d'un ralentissement important sur la ligne de métro près de l'opéra.
+— Ah je comprends parfaitement ! La circulation à Paris est particulièrement difficile aujourd'hui. Alors dis-moi, qu'est-ce que tu vas commander ?
+— Je pense prendre un grand café crème avec des croissants chauds et du beurre. Et toi, tu as déjà pris ton petit-déjeuner ce matin ?
+— Pas encore ! Je vais commander un thé vert à la menthe et une omelette au fromage. Dis-moi, tu as eu des nouvelles de Thomas depuis son départ en Italie ?
+— Oui tout à fait ! Il m'a envoyé un long message hier soir avec des photos magnifiques. Il adore son séjour à Rome et il revient la semaine prochaine avec plein d'anecdotes passionnantes à nous raconter.
+— C'est formidable ! On devra organiser un dîner tous ensemble dès son retour pour fêter ça.`,
   },
 ];
 
 function buildFrenchPrompt(type: ChallengeType): string {
-  return `You are a master French language instructor creating a comprehensive, engaging 5-minute practice drill for an intermediate learner (A2-B2 level).
+  return `You are a master French language instructor creating an immersive 5-minute practice drill for an intermediate learner (A2-B2 level).
 The challenge type is: "${type}".
 
-Strict Quality & Length Guidelines:
+Strict Quality & Word Count Guidelines:
 - French grammar MUST be 100% authentic, natural, and grammatically flawless (e.g. use "je suis en retard", NEVER "j'ai retardé").
-- FOR "reading" (Elocution & Rhythm): "prompt_text" should instruct the user to read the full text out loud. "example_text" MUST be a LONG, RICH, REALISTIC dialogue or story (120 - 200 words / 8-12 lines of dialogue). For example, a realistic multi-turn conversation between friends at a café, ordering food, planning a weekend trip, or a vivid story paragraph.
-- FOR "speaking" (Oral Practice & Fluency): "prompt_text" should present a compelling real-life scenario and ask 2-3 specific conversational questions. "example_text" MUST provide a full, native model response (100 - 160 words / 6-8 sentences) demonstrating natural phrasing and connectors (en effet, cependant, du coup, à mon avis).
-- FOR "writing" (Composition & Grammar): "prompt_text" should give an engaging journal/opinion prompt and ask for a 5-8 sentence response. "example_text" MUST provide a helpful structure guide with 5 target vocabulary/grammar expressions to include (e.g., 1. après avoir + participe passé, 2. bien que + subjonctif, 3. se rendre compte, 4. avoir l'intention de, 5. du coup).
+- FOR "reading" (Elocution & Rhythm): "prompt_text" should instruct the user to read the full text out loud. "example_text" MUST be a LONG, IMMERSIVE, REALISTIC dialogue or narrative story (250 - 400 words / 12-18 lines). For example, a full multi-turn conversation between friends at a café, ordering food, planning a weekend trip, or a rich narrative story about life in Paris or Provence.
+- FOR "speaking" (Oral Practice & Fluency): "prompt_text" should present a compelling scenario and ask 3 specific questions. "example_text" MUST provide a long, native model response (200 - 320 words / 10-15 sentences) demonstrating natural connectors (en effet, cependant, du coup, à mon avis, par conséquent).
+- FOR "writing" (Composition & Grammar): "prompt_text" should give a creative writing topic. "example_text" MUST provide a helpful structure guide with 6 target vocabulary/grammar expressions to include.
 
 Return ONLY a raw valid JSON object with no markdown codeblocks:
 {
   "prompt_text": "Clear instruction in natural French (1-2 sentences)",
-  "example_text": "The long, rich, 120-200 word target French dialogue, story passage, or structured writing guide"
+  "example_text": "The long, rich, 250-400 word target French dialogue, story passage, or structured writing guide"
 }`;
 }
 
@@ -92,7 +77,7 @@ async function generateChallengeWithGemini(type: ChallengeType): Promise<{ promp
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
-    generationConfig: { responseMimeType: "application/json", maxOutputTokens: 1200 },
+    generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2000 },
   });
 
   const prompt = buildFrenchPrompt(type);
@@ -121,7 +106,7 @@ async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_
       model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
-      max_tokens: 1200,
+      max_tokens: 2000,
       temperature: 0.7,
     }),
   });
@@ -165,7 +150,6 @@ export async function POST(request: Request): Promise<Response> {
     const today = new Date().toISOString().split("T")[0];
     const adminDb = getAdminSupabase();
 
-    // Optional requested type from client
     let requestedType: ChallengeType | undefined;
     try {
       const body = (await request.json()) as { type?: ChallengeType };
@@ -233,7 +217,6 @@ export async function POST(request: Request): Promise<Response> {
     if (insertError) {
       console.warn("[french/generate] DB insert error:", insertError);
 
-      // If constraint french_challenges_challenge_date_key still exists in database, fallback to update
       if (insertError.code === "23505" && existingChallenges && existingChallenges.length > 0) {
         const targetId = existingChallenges[existingChallenges.length - 1].id;
         const { data: updated } = await adminDb
