@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 import {
   Flame,
   PenTool,
@@ -27,6 +29,10 @@ import {
   Check,
   Volume2,
   Copy,
+  Lock,
+  LogIn,
+  LogOut,
+  User as UserIcon,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -363,6 +369,150 @@ function AppLogo() {
         FR
       </span>
     </div>
+  );
+}
+
+// ── Sleek Cowrywise Auth Modal ────────────────────────────────────────────────
+function AuthModal({
+  isOpen,
+  onClose,
+  theme,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  theme: (typeof THEMES)["cowrywise"];
+}) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleOAuth = async (provider: "google" | "github") => {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/french`,
+      },
+    });
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim()) return;
+    setLoading(true);
+    const supabase = createClient();
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/french` },
+        });
+        if (error) throw error;
+        toast.success("Check your email for the confirmation link!");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Signed in successfully! 🇫🇷");
+        onClose();
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Authentication failed";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 15 }}
+          className="w-full max-w-sm rounded-3xl border p-6 shadow-2xl overflow-hidden relative"
+          style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder, color: theme.cardTitle }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-5 right-5 p-2 rounded-full border transition-all cursor-pointer z-10"
+            style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.cardTitle }}
+          >
+            <X className="w-4 h-4" />
+          </button>
+
+          <div className="flex flex-col items-center text-center mb-5">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center mb-3">
+              <Lock className="w-6 h-6 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-bold font-serif" style={{ color: theme.cardTitle }}>Sign In Required</h3>
+            <p className="text-xs mt-1.5 leading-relaxed font-medium" style={{ color: theme.cardSubtext }}>
+              Anyone can view prompts and test flashcards, but signing in is required to log progress, generate on-demand challenges, and save vocabulary.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => handleOAuth("google")}
+              className="w-full py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border bg-white text-slate-800 border-slate-200 shadow-sm hover:bg-slate-50 cursor-pointer"
+            >
+              Continue with Google
+            </button>
+          </div>
+
+          <div className="relative flex py-2 items-center mb-3">
+            <div className="flex-grow border-t" style={{ borderColor: theme.cardBorder }}></div>
+            <span className="flex-shrink mx-3 text-[10px] font-mono uppercase font-bold" style={{ color: theme.cardSubtext }}>or email</span>
+            <div className="flex-grow border-t" style={{ borderColor: theme.cardBorder }}></div>
+          </div>
+
+          <form onSubmit={handleEmailAuth} className="flex flex-col gap-3">
+            <input
+              type="email"
+              required
+              placeholder="Email address"
+              className="rounded-2xl px-4 py-3 text-xs border focus:outline-none font-medium"
+              style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.inputText }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              required
+              placeholder="Password"
+              className="rounded-2xl px-4 py-3 text-xs border focus:outline-none font-medium"
+              style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.inputText }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="py-3 rounded-2xl font-bold text-xs shadow-lg cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+              style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText }}
+            >
+              {loading ? "Signing in…" : isSignUp ? "Create Account" : "Sign In"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsSignUp((s) => !s)}
+              className="text-[11px] font-semibold text-center hover:underline cursor-pointer pt-1"
+              style={{ color: theme.cardSubtext }}
+            >
+              {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+            </button>
+          </form>
+        </motion.div>
+      </div>
+    </AnimatePresence>
   );
 }
 
@@ -768,6 +918,8 @@ function ChallengeTab({
   generating,
   generationCount,
   maxAllowed,
+  user,
+  onRequireAuth,
   theme,
 }: {
   challenge: Challenge | null;
@@ -778,6 +930,8 @@ function ChallengeTab({
   generating: boolean;
   generationCount: number;
   maxAllowed: number;
+  user: User | null;
+  onRequireAuth: () => void;
   theme: (typeof THEMES)["cowrywise"];
 }) {
   const [audioBlob, setAudioBlob] = useState<{ blob: Blob; ext: string } | null>(null);
@@ -796,6 +950,10 @@ function ChallengeTab({
   };
 
   const handleSubmit = async () => {
+    if (!user) {
+      onRequireAuth();
+      return;
+    }
     if (!challenge) return;
     setSubmitting(true);
 
@@ -892,7 +1050,7 @@ function ChallengeTab({
         {generationCount < maxAllowed && (
           <button
             type="button"
-            onClick={onGenerate}
+            onClick={user ? onGenerate : onRequireAuth}
             disabled={generating}
             className="mt-6 py-3 px-6 rounded-2xl font-bold text-xs flex items-center gap-2 border shadow-md cursor-pointer transition-all active:scale-95"
             style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
@@ -913,12 +1071,12 @@ function ChallengeTab({
         <Sparkles className="w-10 h-10 animate-pulse mb-3 text-amber-500" />
         <h3 className="text-lg font-serif font-bold" style={{ color: theme.cardTitle }}>No Prompt Loaded Yet</h3>
         <p className="text-xs max-w-xs mt-2 leading-relaxed font-medium mb-6" style={{ color: theme.cardSubtext }}>
-          Tap below to generate a fresh 5-minute French challenge immediately!
+          Anyone can view & test prompts, but tap below to generate a fresh 5-minute French challenge!
         </p>
 
         <button
           type="button"
-          onClick={onGenerate}
+          onClick={user ? onGenerate : onRequireAuth}
           disabled={generating || generationCount >= maxAllowed}
           className="py-3.5 px-6 rounded-2xl font-bold text-xs flex items-center gap-2 border shadow-xl cursor-pointer transition-all active:scale-95 disabled:opacity-50"
           style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
@@ -1055,9 +1213,9 @@ function ChallengeTab({
       <button
         id="french-submit-btn"
         type="button"
-        onClick={handleSubmit}
-        disabled={!canSubmit}
-        className="w-full py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        onClick={user ? handleSubmit : onRequireAuth}
+        disabled={!canSubmit && !!user}
+        className="w-full py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl cursor-pointer"
         style={{
           backgroundColor: theme.primaryBtnBg,
           color: theme.primaryBtnText,
@@ -1066,6 +1224,10 @@ function ChallengeTab({
       >
         {submitting ? (
           "Saving your proof…"
+        ) : !user ? (
+          <>
+            <Lock className="w-4 h-4" /> Sign In to Log Proof & Update Streak
+          </>
         ) : (
           <>
             Complete Challenge & Log Proof <ArrowRight className="w-4 h-4" />
@@ -1079,9 +1241,13 @@ function ChallengeTab({
 // ── Vocab Vault Tab Component ─────────────────────────────────────────────────
 function VocabTab({
   theme,
+  user,
+  onRequireAuth,
   onSelectEntry,
 }: {
   theme: (typeof THEMES)["cowrywise"];
+  user: User | null;
+  onRequireAuth: () => void;
   onSelectEntry: (entry: VocabEntry) => void;
 }) {
   const [entries, setEntries] = useState<VocabEntry[]>([]);
@@ -1117,6 +1283,10 @@ function VocabTab({
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      onRequireAuth();
+      return;
+    }
     if (!frenchText.trim() || !englishMeaning.trim()) return;
     setAdding(true);
     try {
@@ -1147,6 +1317,10 @@ function VocabTab({
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!user) {
+      onRequireAuth();
+      return;
+    }
     setEntries((prev) => prev.filter((entry) => entry.id !== id));
     try {
       const res = await fetch("/api/french/vocab", {
@@ -1196,7 +1370,13 @@ function VocabTab({
           <button
             id="french-vocab-add-btn"
             type="button"
-            onClick={() => setShowForm((s) => !s)}
+            onClick={() => {
+              if (!user) {
+                onRequireAuth();
+                return;
+              }
+              setShowForm((s) => !s);
+            }}
             className="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 transition-all border cursor-pointer shrink-0 shadow-sm"
             style={{
               backgroundColor: showForm ? theme.secondaryBtnBg : theme.primaryBtnBg,
@@ -1401,14 +1581,23 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 // ── Notification Button Component (Bulletproof Push Subscription) ────────────
 function NotificationButton({
   onSubscribed,
+  user,
+  onRequireAuth,
   theme,
 }: {
   onSubscribed: () => void;
+  user: User | null;
+  onRequireAuth: () => void;
   theme: (typeof THEMES)["cowrywise"];
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "granted" | "denied">("idle");
 
   const enable = async () => {
+    if (!user) {
+      onRequireAuth();
+      return;
+    }
+
     const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
     if (!vapidKey) {
       toast.error("VAPID Key not found in environment settings. Please configure NEXT_PUBLIC_VAPID_PUBLIC_KEY.");
@@ -1503,6 +1692,10 @@ export default function FrenchPage() {
   const [activeTab, setActiveTab] = useState<"challenge" | "vocab">("challenge");
   const [themeMode, setThemeMode] = useState<ThemeMode>("cowrywise");
 
+  // User Auth State
+  const [user, setUser] = useState<User | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
   // On-demand challenge state
   const [todayChallenges, setTodayChallenges] = useState<Challenge[]>([]);
   const [activeChallenge, setActiveChallenge] = useState<Challenge | null>(null);
@@ -1523,6 +1716,18 @@ export default function FrenchPage() {
   const [notifSubscribed, setNotifSubscribed] = useState(false);
 
   const theme = THEMES[themeMode];
+
+  // Auth session listener
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const initPush = async () => {
@@ -1582,6 +1787,11 @@ export default function FrenchPage() {
 
   // On-Demand Generation Handler
   const handleGeneratePrompt = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     if (generationCount >= maxAllowed) {
       toast.info(`Daily limit reached (${generationCount}/${maxAllowed}). You can practice any of today's prompts below!`);
       return;
@@ -1624,6 +1834,13 @@ export default function FrenchPage() {
     setTimeout(() => setShowConfetti(false), 3500);
   };
 
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+    toast.info("Signed out");
+  };
+
   const todayDateStr = new Date().toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
@@ -1641,6 +1858,12 @@ export default function FrenchPage() {
       <Confetti active={showConfetti} />
 
       {/* Modals */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        theme={theme}
+      />
+
       <StreakCalendarModal
         isOpen={showStreakModal}
         onClose={() => setShowStreakModal(false)}
@@ -1674,14 +1897,48 @@ export default function FrenchPage() {
               >
                 French Daily
               </h1>
-              <p className="text-xs mt-1 truncate font-medium" style={{ color: theme.headerSubtext }}>
-                {todayDateStr} • On-Demand Practice
+              <p className="text-xs mt-1 truncate font-medium flex items-center gap-1.5" style={{ color: theme.headerSubtext }}>
+                <span>{todayDateStr}</span> • <span>On-Demand Practice</span>
               </p>
             </div>
           </div>
 
           {/* Controls Right */}
           <div className="flex items-center gap-2 shrink-0">
+            {/* User Auth Badge */}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-sm"
+                style={{
+                  backgroundColor: theme.headerBtnBg,
+                  borderColor: theme.headerBtnBorder,
+                  color: theme.headerBtnText,
+                }}
+                title={`Signed in as ${user.email} (Tap to Sign Out)`}
+              >
+                <UserIcon className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden sm:inline max-w-[100px] truncate">{user.email?.split("@")[0]}</span>
+                <LogOut className="w-3.5 h-3.5 opacity-70 ml-0.5" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-md"
+                style={{
+                  backgroundColor: theme.primaryBtnBg,
+                  color: theme.primaryBtnText,
+                  borderColor: theme.cardBorder,
+                }}
+                title="Sign in to save vocabulary and track streaks"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => {
@@ -1721,7 +1978,12 @@ export default function FrenchPage() {
         {/* Web Push Action Banner */}
         {notifSupported && !notifSubscribed && (
           <div className="mt-3 max-w-xl">
-            <NotificationButton onSubscribed={() => setNotifSubscribed(true)} theme={theme} />
+            <NotificationButton
+              onSubscribed={() => setNotifSubscribed(true)}
+              user={user}
+              onRequireAuth={() => setShowAuthModal(true)}
+              theme={theme}
+            />
           </div>
         )}
       </header>
@@ -1829,8 +2091,8 @@ export default function FrenchPage() {
 
                     <button
                       type="button"
-                      onClick={handleGeneratePrompt}
-                      disabled={generating || generationCount >= maxAllowed}
+                      onClick={user ? handleGeneratePrompt : () => setShowAuthModal(true)}
+                      disabled={generating || (generationCount >= maxAllowed && !!user)}
                       className="px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border shadow-sm cursor-pointer shrink-0 disabled:opacity-50"
                       style={{
                         backgroundColor: theme.primaryBtnBg,
@@ -1840,11 +2102,13 @@ export default function FrenchPage() {
                     >
                       {generating ? (
                         <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      ) : !user ? (
+                        <Lock className="w-3.5 h-3.5" />
                       ) : (
                         <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                       )}
                       <span>
-                        {generationCount >= maxAllowed ? `Cap Reached (${generationCount}/${maxAllowed})` : `Generate Prompt (${generationCount}/${maxAllowed})`}
+                        {!user ? "Sign In to Generate" : generationCount >= maxAllowed ? `Cap Reached (${generationCount}/${maxAllowed})` : `Generate Prompt (${generationCount}/${maxAllowed})`}
                       </span>
                     </button>
                   </div>
@@ -1861,6 +2125,8 @@ export default function FrenchPage() {
                         generating={generating}
                         generationCount={generationCount}
                         maxAllowed={maxAllowed}
+                        user={user}
+                        onRequireAuth={() => setShowAuthModal(true)}
                         theme={theme}
                       />
                     </div>
@@ -1940,7 +2206,12 @@ export default function FrenchPage() {
                 </div>
               )
             ) : (
-              <VocabTab theme={theme} onSelectEntry={(entry) => setSelectedVocabEntry(entry)} />
+              <VocabTab
+                theme={theme}
+                user={user}
+                onRequireAuth={() => setShowAuthModal(true)}
+                onSelectEntry={(entry) => setSelectedVocabEntry(entry)}
+              />
             )}
           </motion.div>
         </AnimatePresence>

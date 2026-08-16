@@ -1,25 +1,22 @@
 /**
  * GET /api/french/vocab
- * Returns all vocabulary entries, newest first.
+ * Returns all vocabulary entries, newest first (Public).
  *
  * POST /api/french/vocab
- * Adds a new vocabulary entry.
+ * Adds a new vocabulary entry (Authentication Required).
  * Body: { entry_type: "word"|"sentence", french_text, english_meaning, notes? }
  *
  * DELETE /api/french/vocab
- * Deletes a vocabulary entry.
+ * Deletes a vocabulary entry (Authentication Required).
  * Body: { id }
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-function getSupabase() {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
-}
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(): Promise<Response> {
   try {
-    const { data, error } = await getSupabase()
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from("french_vocabulary")
       .select("*")
       .order("created_at", { ascending: false });
@@ -38,7 +35,17 @@ export async function GET(): Promise<Response> {
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const body = await request.json() as {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required to add vocabulary entries." },
+        { status: 401 }
+      );
+    }
+
+    const body = (await request.json()) as {
       entry_type: "word" | "sentence";
       french_text: string;
       english_meaning: string;
@@ -51,7 +58,7 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const { data, error } = await getSupabase()
+    const { data, error } = await supabase
       .from("french_vocabulary")
       .insert({
         entry_type,
@@ -76,12 +83,22 @@ export async function POST(request: Request): Promise<Response> {
 
 export async function DELETE(request: Request): Promise<Response> {
   try {
-    const { id } = await request.json() as { id: string };
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required to delete vocabulary entries." },
+        { status: 401 }
+      );
+    }
+
+    const { id } = (await request.json()) as { id: string };
     if (!id) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    const { error } = await getSupabase()
+    const { error } = await supabase
       .from("french_vocabulary")
       .delete()
       .eq("id", id);

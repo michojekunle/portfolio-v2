@@ -4,7 +4,7 @@
  * Allows user to manually request a new French challenge for today up to 5 times per day.
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
 const CHALLENGE_TYPES = ["speaking", "writing", "reading"] as const;
 type ChallengeType = (typeof CHALLENGE_TYPES)[number];
@@ -80,7 +80,16 @@ function getStaticChallenge(type: ChallengeType): { prompt_text: string; example
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required to generate on-demand challenges." },
+        { status: 401 }
+      );
+    }
+
     const today = new Date().toISOString().split("T")[0];
 
     // Optional requested type from client

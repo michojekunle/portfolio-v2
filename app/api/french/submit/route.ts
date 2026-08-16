@@ -5,10 +5,20 @@
  * Body: { challenge_id, type, proof_text?, proof_url? }
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request): Promise<Response> {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required to submit challenge completions." },
+        { status: 401 }
+      );
+    }
+
     const body = (await request.json()) as {
       challenge_id: string;
       type: "speaking" | "writing" | "reading";
@@ -21,11 +31,6 @@ export async function POST(request: Request): Promise<Response> {
     if (!challenge_id || !type) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
-
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_KEY!
-    );
 
     // 1. Insert completion log
     const { error: logError } = await supabase.from("french_logs").insert({
