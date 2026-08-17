@@ -2501,27 +2501,27 @@ export default function FrenchPage() {
 
       {/* Header — Mobile Safe Area Top Insets & Sticky Blur Navigation Bar */}
       <header
-        className="sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-300 px-3 sm:px-6 py-2.5 w-full"
+        className="sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-300 px-4 sm:px-8 py-3 w-full"
         style={{
           backgroundColor: `${theme.bg}F2`,
           borderColor: "rgba(255,255,255,0.15)",
           paddingTop: "max(0.75rem, env(safe-area-inset-top))",
-          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
-          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
         }}
       >
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           {/* Brand Left */}
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-3 min-w-0">
             <AppLogo />
             <div className="min-w-0">
               <h1
-                className="text-base sm:text-xl font-serif font-bold tracking-tight leading-none truncate"
+                className="text-lg sm:text-2xl font-serif font-bold tracking-tight leading-none truncate"
                 style={{ color: theme.headerText }}
               >
                 French Daily
               </h1>
-              <p className="text-[11px] mt-0.5 truncate font-medium flex items-center gap-1 opacity-90" style={{ color: theme.headerSubtext }}>
+              <p className="text-xs mt-1 truncate font-medium flex items-center gap-1 opacity-90" style={{ color: theme.headerSubtext }}>
                 <span>{todayDateStr}</span>
                 <span className="hidden sm:inline">• On-Demand Practice</span>
               </p>
@@ -2529,12 +2529,12 @@ export default function FrenchPage() {
           </div>
 
           {/* Controls Right */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Streak Pill */}
             <button
               type="button"
               onClick={() => setShowStreakModal(true)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md font-bold text-xs"
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md font-bold text-xs"
               style={{
                 backgroundColor: theme.streakBtnBg,
                 borderColor: theme.headerBtnBorder,
@@ -2550,7 +2550,7 @@ export default function FrenchPage() {
             <button
               type="button"
               onClick={() => setShowScheduleDrawer((s) => !s)}
-              className="p-2 sm:p-2.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm relative"
+              className="p-2.5 sm:p-3 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm relative"
               style={{
                 backgroundColor: showScheduleDrawer ? theme.primaryBtnBg : theme.headerBtnBg,
                 borderColor: theme.headerBtnBorder,
@@ -2570,7 +2570,7 @@ export default function FrenchPage() {
                 setThemeMode(modes[nextIndex]);
                 toast.info(`Theme: ${THEMES[modes[nextIndex]].name}`);
               }}
-              className="p-2 sm:p-2.5 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm"
+              className="p-2.5 sm:p-3 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm"
               style={{
                 backgroundColor: theme.headerBtnBg,
                 borderColor: theme.headerBtnBorder,
@@ -2586,7 +2586,7 @@ export default function FrenchPage() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-sm"
+                className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-sm"
                 style={{
                   backgroundColor: theme.headerBtnBg,
                   borderColor: theme.headerBtnBorder,
@@ -2595,14 +2595,14 @@ export default function FrenchPage() {
                 title={`Signed in as ${user.email} (Tap to Sign Out)`}
               >
                 <UserIcon className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden md:inline max-w-[90px] truncate">{user.email?.split("@")[0]}</span>
+                <span className="hidden md:inline max-w-[100px] truncate">{user.email?.split("@")[0]}</span>
                 <LogOut className="w-3.5 h-3.5 opacity-70" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-md"
+                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-2xl border transition-all cursor-pointer text-xs font-bold hover:scale-105 active:scale-95 shadow-md"
                 style={{
                   backgroundColor: theme.primaryBtnBg,
                   color: theme.primaryBtnText,
@@ -2625,7 +2625,7 @@ export default function FrenchPage() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="overflow-hidden max-w-5xl mx-auto"
+              className="overflow-hidden max-w-7xl mx-auto"
             >
               <div className="pt-3 flex flex-col gap-2">
                 <ReminderTimeSettings
@@ -2650,10 +2650,10 @@ export default function FrenchPage() {
 
       {/* Segmented Tab Navigation Pill */}
       <div
-        className="px-3 sm:px-6 pt-3 pb-1 max-w-5xl mx-auto w-full"
+        className="px-4 sm:px-8 pt-4 pb-2 max-w-7xl mx-auto w-full"
         style={{
-          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
-          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
         }}
       >
         <div
@@ -2701,11 +2701,11 @@ export default function FrenchPage() {
       {/* Main Responsive Grid Layout */}
       <main
         id="main-content"
-        className="flex-1 px-3 sm:px-6 pt-2 max-w-5xl mx-auto w-full"
+        className="flex-1 px-4 sm:px-8 pt-2 max-w-7xl mx-auto w-full"
         style={{
           paddingBottom: "max(3.5rem, env(safe-area-inset-bottom))",
-          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
-          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
         }}
       >
         <AnimatePresence mode="wait">
@@ -2718,14 +2718,14 @@ export default function FrenchPage() {
           >
             {activeTab === "challenge" ? (
               loading ? (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                  <div className="lg:col-span-2 h-64 rounded-3xl bg-white/10 animate-pulse" />
-                  <div className="h-64 rounded-3xl bg-white/10 animate-pulse" />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <div className="lg:col-span-8 h-80 rounded-3xl bg-white/10 animate-pulse" />
+                  <div className="lg:col-span-4 h-80 rounded-3xl bg-white/10 animate-pulse" />
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
-                  {/* Today's On-Demand Prompt Switcher & Generation Bar */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl border bg-white/10 backdrop-blur-md" style={{ borderColor: theme.navBorder }}>
+                <div className="flex flex-col gap-4">
+                  {/* Mobile & Tablet Today's Prompt Bar */}
+                  <div className="lg:hidden flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-2xl border bg-white/10 backdrop-blur-md" style={{ borderColor: theme.navBorder }}>
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
                       <span className="text-[10px] font-mono uppercase font-bold tracking-wider shrink-0 mr-1" style={{ color: theme.headerSubtext }}>
                         Today&apos;s Prompts ({todayChallenges.length}):
@@ -2779,9 +2779,10 @@ export default function FrenchPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                    {/* Main Challenge Studio (Left 2 Columns on Desktop) */}
-                    <div className="lg:col-span-2">
+                  {/* 12-Column Desktop Grid Layout */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* Main Challenge Studio (Left 7-8 Columns) */}
+                    <div className="lg:col-span-7 xl:col-span-8">
                       <ChallengeTab
                         challenge={activeChallenge}
                         streak={streak}
@@ -2797,10 +2798,91 @@ export default function FrenchPage() {
                       />
                     </div>
 
-                    {/* Desktop Activity & Streak Widget Sidebar */}
-                    <div className="hidden lg:flex flex-col gap-4">
+                    {/* Desktop Command Center Sidebar (Right 4-5 Columns — Sticky) */}
+                    <div className="hidden lg:flex lg:col-span-5 xl:col-span-4 flex-col gap-5 sticky top-24">
+                      {/* Today's Practice Prompts Navigator Card */}
                       <div
-                        className="p-5 rounded-3xl border shadow-lg flex flex-col gap-3"
+                        className="p-5 sm:p-6 rounded-3xl border shadow-xl flex flex-col gap-4 transition-all"
+                        style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
+                      >
+                        <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: theme.cardBorder }}>
+                          <span className="text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: theme.badgeText }}>
+                            <Zap className="w-4 h-4 text-amber-500" /> Today&apos;s Practice Drills ({todayChallenges.length}/5)
+                          </span>
+                          <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border" style={{ backgroundColor: theme.badgeBg, color: theme.badgeText, borderColor: theme.cardBorder }}>
+                            {completedIds.length}/{todayChallenges.length} Done
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          {todayChallenges.map((ch, idx) => {
+                            const isActive = activeChallenge?.id === ch.id;
+                            const isDone = completedIds.includes(ch.id);
+                            const typeEmoji = ch.type === "speaking" ? "🗣️" : ch.type === "writing" ? "✍️" : "📖";
+                            const typeLabel = ch.type === "speaking" ? "Oral Practice" : ch.type === "writing" ? "Composition" : "Elocution";
+                            return (
+                              <button
+                                key={ch.id}
+                                type="button"
+                                onClick={() => setActiveChallenge(ch)}
+                                className="p-3 rounded-2xl border flex items-center justify-between text-left transition-all cursor-pointer shadow-sm active:scale-[0.98]"
+                                style={{
+                                  backgroundColor: isActive ? theme.primaryBtnBg : theme.subCardBg,
+                                  color: isActive ? theme.primaryBtnText : theme.cardTitle,
+                                  borderColor: isActive ? theme.primaryBtnBg : theme.cardBorder,
+                                }}
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <span className="text-base shrink-0">{typeEmoji}</span>
+                                  <div className="min-w-0">
+                                    <span className="text-xs font-bold block truncate">
+                                      Drill #{idx + 1} • {typeLabel}
+                                    </span>
+                                    <span className="text-[10px] font-medium opacity-80 block truncate">
+                                      {ch.prompt_text}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {isDone ? (
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
+                                ) : (
+                                  <ArrowRight className="w-4 h-4 opacity-50 shrink-0 ml-2" />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {generationCount < maxAllowed && (
+                          <button
+                            type="button"
+                            onClick={handleGeneratePrompt}
+                            disabled={generating}
+                            className="w-full py-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all border cursor-pointer shadow-md active:scale-95"
+                            style={{
+                              backgroundColor: theme.primaryBtnBg,
+                              color: theme.primaryBtnText,
+                              borderColor: theme.cardBorder,
+                            }}
+                          >
+                            {generating ? (
+                              <>
+                                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                Generating Drill…
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-4 h-4 text-amber-300" /> Generate Fresh Drill ({generationCount}/{maxAllowed})
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Streak Protection Widget */}
+                      <div
+                        className="p-5 rounded-3xl border shadow-xl flex flex-col gap-3 transition-all"
                         style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
                       >
                         <div className="flex items-center justify-between">
@@ -2813,20 +2895,20 @@ export default function FrenchPage() {
                         </div>
 
                         <div
-                          className="flex items-center gap-3 p-3 rounded-2xl border"
+                          className="flex items-center gap-3 p-3.5 rounded-2xl border"
                           style={{ backgroundColor: theme.freezeBoxBg, borderColor: theme.freezeBoxBorder }}
                         >
                           <Snowflake className="w-5 h-5 shrink-0" style={{ color: theme.freezeBoxTitle }} />
                           <div className="text-xs">
                             <span className="font-bold block" style={{ color: theme.freezeBoxTitle }}>{streak?.streak_freezes ?? 2}/2 Streak Freezes</span>
-                            <span className="text-[11px] font-medium" style={{ color: theme.freezeBoxSubtext }}>Automatic miss protection</span>
+                            <span className="text-[11px] font-medium opacity-90" style={{ color: theme.freezeBoxSubtext }}>Automatic miss protection active</span>
                           </div>
                         </div>
 
                         <button
                           type="button"
                           onClick={() => setShowStreakModal(true)}
-                          className="w-full py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm"
+                          className="w-full py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm hover:opacity-90"
                           style={{
                             backgroundColor: theme.secondaryBtnBg,
                             borderColor: theme.secondaryBtnBorder,
@@ -2837,24 +2919,24 @@ export default function FrenchPage() {
                         </button>
                       </div>
 
-                      {/* Quick Native TTS Practice Widget */}
+                      {/* French Ear Training Widget */}
                       <div
-                        className="p-5 rounded-3xl border shadow-lg flex flex-col gap-3"
+                        className="p-5 rounded-3xl border shadow-xl flex flex-col gap-3 transition-all"
                         style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
                       >
                         <span className="text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: theme.badgeText }}>
                           <Volume2 className="w-4 h-4 text-blue-600" /> French Ear Training
                         </span>
                         <p className="text-xs font-medium leading-relaxed" style={{ color: theme.cardSubtext }}>
-                          Practice hearing native French rhythm. Tap below to speak common expressions:
+                          Practice hearing native French rhythm. Tap below to listen to key idiomatic expressions:
                         </p>
-                        <div className="flex flex-col gap-2">
-                          {["C'est la vie", "Savoir-faire", "Chaque jour compte"].map((phrase) => (
+                        <div className="grid grid-cols-1 gap-2">
+                          {["C'est la vie", "Savoir-faire", "Au fur et à mesure", "Chaque jour compte"].map((phrase) => (
                             <button
                               key={phrase}
                               type="button"
                               onClick={() => speakFrench(phrase)}
-                              className="p-2.5 rounded-xl border text-xs font-serif font-bold flex items-center justify-between text-left transition-all cursor-pointer shadow-sm"
+                              className="p-2.5 rounded-xl border text-xs font-serif font-bold flex items-center justify-between text-left transition-all cursor-pointer shadow-sm hover:border-blue-500"
                               style={{
                                 backgroundColor: theme.subCardBg,
                                 borderColor: theme.cardBorder,
