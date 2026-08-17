@@ -282,29 +282,53 @@ const TYPE_CONFIG = {
 const FRENCH_ACCENTS = ["é", "è", "ê", "à", "â", "ç", "ù", "ô", "î", "ë"];
 
 // ── Native Text-to-Speech Helper (fr-FR) ──────────────────────────────────────
+function getFrenchVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  return (
+    voices.find(
+      (v) =>
+        v.lang.startsWith("fr") &&
+        (v.name.includes("Natural") ||
+          v.name.includes("Enhanced") ||
+          v.name.includes("Premium") ||
+          v.name.includes("Online") ||
+          v.name.includes("Google"))
+    ) ||
+    voices.find(
+      (v) =>
+        (v.lang === "fr-FR" || v.lang === "fr_FR" || v.lang.startsWith("fr")) &&
+        (v.name.includes("Thomas") ||
+          v.name.includes("Amélie") ||
+          v.name.includes("Audrey") ||
+          v.name.includes("Aurélie") ||
+          v.name.includes("Hortense") ||
+          v.name.includes("Nicolas"))
+    ) ||
+    voices.find((v) => v.lang.startsWith("fr")) ||
+    null
+  );
+}
+
 function speakFrench(text: string) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     toast.error("Text-to-speech is not supported in this browser.");
     return;
   }
   window.speechSynthesis.cancel();
+
+  let frVoice = getFrenchVoice();
+  if (!frVoice) {
+    window.speechSynthesis.getVoices();
+    frVoice = getFrenchVoice();
+  }
+
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "fr-FR";
-  utterance.rate = 0.9;
+  utterance.rate = 0.88;
   utterance.pitch = 1.0;
-
-  const voices = window.speechSynthesis.getVoices();
-  const frVoice =
-    voices.find(
-      (v) =>
-        v.lang.startsWith("fr") &&
-        (v.name.includes("Thomas") ||
-          v.name.includes("Amélie") ||
-          v.name.includes("Google") ||
-          v.name.includes("Audrey") ||
-          v.name.includes("Natural") ||
-          v.name.includes("Enhanced"))
-    ) || voices.find((v) => v.lang.startsWith("fr"));
 
   if (frVoice) {
     utterance.voice = frVoice;
@@ -315,7 +339,13 @@ function speakFrench(text: string) {
 
 // ── Audio & Video MIME Helpers ────────────────────────────────────────────────
 function getSupportedAudioMimeType(): string {
-  const types = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/aac", "audio/ogg"];
+  const types = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/aac",
+    "audio/ogg",
+  ];
   for (const type of types) {
     if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
       return type;
@@ -325,7 +355,13 @@ function getSupportedAudioMimeType(): string {
 }
 
 function getSupportedVideoMimeType(): string {
-  const types = ["video/mp4;codecs=avc1", "video/mp4", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+  const types = [
+    "video/mp4;codecs=avc1",
+    "video/mp4",
+    "video/webm;codecs=vp9",
+    "video/webm;codecs=vp8",
+    "video/webm",
+  ];
   for (const type of types) {
     if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
       return type;
@@ -334,8 +370,12 @@ function getSupportedVideoMimeType(): string {
   return "";
 }
 
-function getAudioExtension(mimeType: string): string {
-  if (mimeType.includes("mp4")) return "mp4";
+function getMediaExtension(mimeType: string, mode: "audio" | "video"): string {
+  if (mode === "video") {
+    if (mimeType.includes("mp4")) return "mp4";
+    return "webm";
+  }
+  if (mimeType.includes("mp4") || mimeType.includes("aac")) return "mp4";
   if (mimeType.includes("ogg")) return "ogg";
   return "webm";
 }
@@ -1092,17 +1132,31 @@ function MediaRecorderModule({
   const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  useEffect(() => {
+    if (mode === "video" && recording && videoPreviewRef.current && streamRef.current) {
+      videoPreviewRef.current.srcObject = streamRef.current;
+      videoPreviewRef.current.play().catch(() => {});
+    }
+  }, [mode, recording]);
+
   const start = useCallback(async () => {
     try {
-      const constraints = mode === "video" ? { audio: true, video: { facingMode: "user" } } : { audio: true };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      let stream: MediaStream;
+      if (mode === "video") {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: { facingMode: "user" },
+          });
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        }
+      } else {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
+
       streamRef.current = stream;
       chunksRef.current = [];
-
-      if (mode === "video" && videoPreviewRef.current) {
-        videoPreviewRef.current.srcObject = stream;
-        videoPreviewRef.current.play().catch(() => {});
-      }
 
       const mimeType = mode === "video" ? getSupportedVideoMimeType() : getSupportedAudioMimeType();
       const options = mimeType ? { mimeType } : {};
@@ -1126,7 +1180,7 @@ function MediaRecorderModule({
         const url = URL.createObjectURL(blob);
         setMediaUrl(url);
         setRecorded(true);
-        const ext = mode === "video" ? "webm" : getAudioExtension(actualType);
+        const ext = getMediaExtension(actualType, mode);
         onRecorded(blob, ext);
 
         if (streamRef.current) {
@@ -1135,13 +1189,14 @@ function MediaRecorderModule({
         }
       };
 
-      // Force timeslice of 250ms so chunks accumulate continuously on mobile browsers
       mr.start(250);
       mediaRef.current = mr;
       setRecording(true);
       setSeconds(0);
+      if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => setSeconds((s) => s + 1), 1000);
-    } catch {
+    } catch (err) {
+      console.error("[french/recorder] Error starting recording:", err);
       toast.error(`${mode === "video" ? "Camera and Microphone" : "Microphone"} permission required.`);
     }
   }, [mode, onRecorded]);
@@ -2260,6 +2315,18 @@ export default function FrenchPage() {
   const [notifSubscribed, setNotifSubscribed] = useState(false);
 
   const theme = THEMES[themeMode];
+
+  // Pre-warm SpeechSynthesis Voices
+  useEffect(() => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.getVoices();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+        };
+      }
+    }
+  }, []);
 
   // Auth session listener
   useEffect(() => {
