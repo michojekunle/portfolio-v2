@@ -1148,32 +1148,32 @@ function InteractiveTargetPassage({
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 6 }}
-              className="mt-4 p-4 rounded-2xl border flex flex-col gap-2.5 shadow-lg relative overflow-hidden"
+              className="mt-4 p-3.5 sm:p-4 rounded-2xl border flex flex-col gap-3 shadow-lg relative overflow-hidden"
               style={{ backgroundColor: theme.cardBg, borderColor: theme.primaryBtnBg }}
             >
-              <div className="flex items-start justify-between gap-3 border-b pb-2.5" style={{ borderColor: theme.cardBorder }}>
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: theme.cardBorder }}>
+                <div className="flex items-start gap-2.5">
+                  <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-extrabold font-serif" style={{ color: theme.cardTitle }}>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm sm:text-base font-extrabold font-serif" style={{ color: theme.cardTitle }}>
                         &ldquo;{clean}&rdquo;
                       </span>
                       <span className="text-[9px] font-mono uppercase font-extrabold px-2 py-0.5 rounded-full border bg-blue-500/10 border-blue-500/30 text-blue-600">
                         {details.partOfSpeech}
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-blue-600 block mt-0.5">
+                    <span className="text-xs font-semibold text-blue-600 block mt-1">
                       Meaning: {details.en}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 flex-wrap w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0" style={{ borderColor: theme.cardBorder }}>
                   <button
                     type="button"
                     onClick={() => speakFrench(clean)}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border cursor-pointer shadow-sm active:scale-95"
+                    className="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1 border cursor-pointer shadow-sm active:scale-95"
                     style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
                   >
                     <Volume2 className="w-3.5 h-3.5" /> Listen
@@ -1201,7 +1201,7 @@ function InteractiveTargetPassage({
                         toast.error("Could not save to Vocab Vault.");
                       }
                     }}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 border cursor-pointer shadow-sm hover:opacity-90 active:scale-95"
+                    className="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1 border cursor-pointer shadow-sm hover:opacity-90 active:scale-95"
                     style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
                     title="Bookmark to your private Vocab Vault"
                   >
@@ -1210,7 +1210,7 @@ function InteractiveTargetPassage({
                   <button
                     type="button"
                     onClick={() => setSelectedWord(null)}
-                    className="p-1.5 rounded-xl text-xs font-bold hover:opacity-70 cursor-pointer ml-1"
+                    className="p-1.5 rounded-xl text-xs font-bold hover:opacity-70 cursor-pointer"
                     style={{ color: theme.cardSubtext }}
                   >
                     ✕
@@ -1218,9 +1218,9 @@ function InteractiveTargetPassage({
                 </div>
               </div>
 
-              <div className="text-xs font-medium italic flex items-center gap-1.5" style={{ color: theme.cardSubtext }}>
-                <span className="text-blue-500 font-bold shrink-0">💡 Learning Note:</span>
-                <span>{details.note}</span>
+              <div className="text-xs font-medium italic flex items-start gap-1.5" style={{ color: theme.cardSubtext }}>
+                <span className="text-blue-500 font-bold shrink-0">💡 Note:</span>
+                <span className="leading-relaxed">{details.note}</span>
               </div>
             </motion.div>
           );
