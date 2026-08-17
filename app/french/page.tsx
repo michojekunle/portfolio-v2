@@ -2658,6 +2658,16 @@ export default function FrenchPage() {
     setTimeout(() => setShowConfetti(false), 3500);
   };
 
+  const handleSelectDrill = (ch: Challenge) => {
+    setActiveChallenge(ch);
+    if (typeof window !== "undefined") {
+      const studioEl = document.getElementById("french-studio-container");
+      if (studioEl) {
+        studioEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
   const handleSignOut = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -2940,7 +2950,7 @@ export default function FrenchPage() {
                           <button
                             key={ch.id}
                             type="button"
-                            onClick={() => setActiveChallenge(ch)}
+                            onClick={() => handleSelectDrill(ch)}
                             className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer shrink-0 border"
                             style={{
                               backgroundColor: isActive ? theme.primaryBtnBg : theme.secondaryBtnBg,
@@ -2984,7 +2994,7 @@ export default function FrenchPage() {
                   {/* 12-Column Desktop Grid Layout */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Main Challenge Studio (Left 7-8 Columns) */}
-                    <div className="lg:col-span-7 xl:col-span-8">
+                    <div id="french-studio-container" className="lg:col-span-7 xl:col-span-8 scroll-mt-24">
                       <ChallengeTab
                         challenge={activeChallenge}
                         streak={streak}
@@ -3026,7 +3036,7 @@ export default function FrenchPage() {
                               <button
                                 key={ch.id}
                                 type="button"
-                                onClick={() => setActiveChallenge(ch)}
+                                onClick={() => handleSelectDrill(ch)}
                                 className="p-3 rounded-2xl border flex items-center justify-between text-left transition-all cursor-pointer shadow-sm active:scale-[0.98]"
                                 style={{
                                   backgroundColor: isActive ? theme.primaryBtnBg : theme.subCardBg,
