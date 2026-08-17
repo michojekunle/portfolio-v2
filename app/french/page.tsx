@@ -1260,11 +1260,19 @@ function InteractiveTargetPassage({
 }
 
 // ── Media Recorder (Audio & Video Camera Proof Capture) ───────────────────────
+function formatSeconds(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s < 10 ? "0" : ""}${s}`;
+}
+
 function MediaRecorderModule({
   onRecorded,
+  targetText,
   theme,
 }: {
   onRecorded: (blob: Blob, ext: string) => void;
+  targetText?: string;
   theme: (typeof THEMES)["cowrywise"];
 }) {
   const [mode, setMode] = useState<"audio" | "video">("audio");
@@ -1407,6 +1415,28 @@ function MediaRecorderModule({
             <Video className="w-3.5 h-3.5" /> Video Camera
           </button>
         </div>
+      )}
+
+      {/* Live Teleprompter Studio View while Recording */}
+      {recording && targetText && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full p-4 sm:p-5 rounded-2xl border bg-black/90 text-white shadow-2xl flex flex-col gap-3 relative overflow-hidden"
+        >
+          <div className="flex items-center justify-between border-b border-white/20 pb-2.5">
+            <span className="text-xs font-mono font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4" /> Live Teleprompter • Read out loud into mic/camera
+            </span>
+            <span className="text-xs font-mono font-bold text-red-400 animate-pulse flex items-center gap-1.5 bg-red-950/80 px-2.5 py-1 rounded-full border border-red-500/40">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" /> REC {formatSeconds(seconds)}
+            </span>
+          </div>
+
+          <div className="text-base sm:text-lg font-serif leading-relaxed sm:leading-loose text-white/95 max-h-56 overflow-y-auto pr-2 font-medium">
+            {targetText}
+          </div>
+        </motion.div>
       )}
 
       {/* Live Video Preview element if in video mode */}
@@ -1862,9 +1892,27 @@ function ChallengeTab({
 
   return (
     <div className="flex flex-col gap-5">
+      {/* 3-Step Guided Studio Stepper Bar */}
+      <div className="p-2 sm:p-2.5 rounded-2xl border shadow-md flex items-center justify-between gap-1 overflow-x-auto no-scrollbar" style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-xl flex items-center justify-center bg-blue-600 text-white font-mono font-bold text-[10px] sm:text-xs shadow-xs">1</span>
+          <span className="text-[11px] sm:text-xs font-bold" style={{ color: theme.cardTitle }}>1. Understand</span>
+        </div>
+        <ArrowRight className="w-3.5 h-3.5 text-blue-500 shrink-0 opacity-70" />
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-xl flex items-center justify-center font-mono font-bold text-[10px] sm:text-xs transition-colors shadow-xs ${canSubmit ? "bg-emerald-600 text-white" : "bg-blue-600 text-white"}`}>2</span>
+          <span className="text-[11px] sm:text-xs font-bold" style={{ color: theme.cardTitle }}>{isAudioChallenge ? "2. Record Teleprompter" : "2. Write Proof"}</span>
+        </div>
+        <ArrowRight className="w-3.5 h-3.5 text-blue-500 shrink-0 opacity-70" />
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-xl flex items-center justify-center font-mono font-bold text-[10px] sm:text-xs transition-colors shadow-xs ${canSubmit ? "bg-blue-600 text-white animate-pulse" : "bg-gray-400 text-white"}`}>3</span>
+          <span className="text-[11px] sm:text-xs font-bold" style={{ color: canSubmit ? theme.cardTitle : theme.cardSubtext }}>3. Submit</span>
+        </div>
+      </div>
+
       {/* Main Challenge Card */}
       <div
-        className="rounded-3xl p-6 border shadow-xl transition-all relative overflow-hidden"
+        className="rounded-3xl p-5 sm:p-7 border shadow-xl transition-all relative overflow-hidden"
         style={{
           backgroundColor: theme.cardBg,
           borderColor: theme.cardBorder,
@@ -1882,12 +1930,12 @@ function ChallengeTab({
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest block" style={{ color: theme.badgeText }}>
                 {config?.badge}
               </span>
-              <h2 className="text-base font-bold" style={{ color: theme.cardTitle }}>{config?.label}</h2>
+              <h2 className="text-base sm:text-lg font-bold" style={{ color: theme.cardTitle }}>{config?.label}</h2>
             </div>
           </div>
 
           <span
-            className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border"
+            className="text-[10px] font-mono font-bold px-3 py-1 rounded-full border"
             style={{ backgroundColor: theme.badgeBg, color: theme.badgeText, borderColor: theme.cardBorder }}
           >
             5 min drill
@@ -1895,7 +1943,7 @@ function ChallengeTab({
         </div>
 
         {/* Prompt Header */}
-        <p className="text-base font-bold leading-relaxed tracking-tight" style={{ color: theme.cardTitle }}>
+        <p className="text-base sm:text-lg font-bold leading-relaxed tracking-tight" style={{ color: theme.cardTitle }}>
           {challenge.prompt_text}
         </p>
 
@@ -1911,8 +1959,14 @@ function ChallengeTab({
         <p className="mt-4 text-xs font-semibold" style={{ color: theme.cardSubtext }}>{config?.hint}</p>
       </div>
 
-      {/* Input Module */}
-      {isAudioChallenge && <MediaRecorderModule onRecorded={handleRecorded} theme={theme} />}
+      {/* Input Module with Teleprompter Mode */}
+      {isAudioChallenge && (
+        <MediaRecorderModule
+          onRecorded={handleRecorded}
+          targetText={challenge.example_text}
+          theme={theme}
+        />
+      )}
 
 
       {challenge.type === "writing" && (
