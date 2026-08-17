@@ -37,6 +37,8 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
+              // media-src: blob: for local MediaRecorder audio/video previews; https: for Supabase storage media
+              `media-src 'self' blob: data: https: https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
               // next/font serves fonts from same origin after build-time download
               "font-src 'self' data:",
               // Only browser→API calls need to be listed here (server-side fetches are exempt).

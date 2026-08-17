@@ -952,6 +952,109 @@ function StreakCalendarModal({
   );
 }
 
+// ── French Interactive Dictionary & Grammar Inspector Engine ─────────────────────
+const COMMON_FRENCH_DICT: Record<string, { en: string; note: string; partOfSpeech: string }> = {
+  bonjour: { en: "hello / good morning", note: "Standard polite greeting throughout the day", partOfSpeech: "interjection" },
+  salut: { en: "hi / bye (informal)", note: "Used among friends and family", partOfSpeech: "interjection" },
+  merci: { en: "thank you", note: "Expresses gratitude; 'merci beaucoup' = thanks a lot", partOfSpeech: "interjection" },
+  oui: { en: "yes", note: "Use 'si' when contradicting a negative question", partOfSpeech: "adverb" },
+  non: { en: "no", note: "Negation particle", partOfSpeech: "adverb" },
+  "s'il": { en: "if it...", note: "Part of 's'il vous plaît' (please)", partOfSpeech: "phrase" },
+  plaît: { en: "pleases", note: "From verb plaire; 's'il vous plaît' = please", partOfSpeech: "verb" },
+  avais: { en: "had", note: "Imperfect tense of avoir (I/you had)", partOfSpeech: "verb" },
+  chance: { en: "luck / opportunity / chance", note: "Feminine noun (une chance)", partOfSpeech: "noun" },
+  incroyable: { en: "incredible / amazing", note: "Adjective describing something extraordinary", partOfSpeech: "adjective" },
+  choisirais: { en: "would choose", note: "Conditional mood of choisir", partOfSpeech: "verb" },
+  hésitation: { en: "hesitation", note: "Feminine noun (sans hésitation = without hesitation)", partOfSpeech: "noun" },
+  ville: { en: "city / town", note: "Feminine noun (la ville)", partOfSpeech: "noun" },
+  bilingue: { en: "bilingual", note: "Describes a person or place using two languages", partOfSpeech: "adjective" },
+  français: { en: "French (language / nationality)", note: "Capitalized for people (le Français), lowercase for language (le français)", partOfSpeech: "noun / adj" },
+  présent: { en: "present / widespread", note: "Masculine adjective (présente in feminine)", partOfSpeech: "adjective" },
+  environnement: { en: "environment", note: "Masculine noun (un environnement)", partOfSpeech: "noun" },
+  immersion: { en: "immersion", note: "Feminine noun (une immersion)", partOfSpeech: "noun" },
+  parfait: { en: "perfect", note: "Masculine adjective (parfaite in feminine)", partOfSpeech: "adjective" },
+  sécurité: { en: "security / safety", note: "Feminine noun (la sécurité)", partOfSpeech: "noun" },
+  anglophone: { en: "English-speaking", note: "Refers to English speakers or regions", partOfSpeech: "adjective" },
+  mélange: { en: "mixture / blend", note: "Masculine noun (un mélange)", partOfSpeech: "noun" },
+  culturel: { en: "cultural", note: "Masculine adjective (culturelle in feminine)", partOfSpeech: "adjective" },
+  dynamisme: { en: "dynamism / vitality", note: "Masculine noun (le dynamisme)", partOfSpeech: "noun" },
+  artistique: { en: "artistic", note: "Describes creative or art-related things", partOfSpeech: "adjective" },
+  réputation: { en: "reputation", note: "Feminine noun (une réputation)", partOfSpeech: "noun" },
+  étudiante: { en: "student (feminine)", note: "Refers to a female student or student-focused city", partOfSpeech: "noun / adj" },
+  défis: { en: "challenges", note: "Plural noun (un défi = a challenge)", partOfSpeech: "noun" },
+  adaptation: { en: "adaptation / adjustment", note: "Feminine noun (l'adaptation)", partOfSpeech: "noun" },
+  climat: { en: "climate / weather", note: "Masculine noun (le climat)", partOfSpeech: "noun" },
+  hivernal: { en: "wintry / winter", note: "Adjective (du climat hivernal)", partOfSpeech: "adjective" },
+  rigoureux: { en: "harsh / rigorous", note: "Masculine adjective describing severe weather or standards", partOfSpeech: "adjective" },
+  découverte: { en: "discovery", note: "Feminine noun (la découverte)", partOfSpeech: "noun" },
+  subtilités: { en: "subtleties / nuances", note: "Plural feminine noun (une subtilité)", partOfSpeech: "noun" },
+  accent: { en: "accent / pronunciation", note: "Masculine noun (l'accent)", partOfSpeech: "noun" },
+  québécois: { en: "Quebec / French-Canadian", note: "Describes regional accent or culture of Quebec", partOfSpeech: "adjective" },
+  fascinant: { en: "fascinating", note: "Masculine adjective (fascinante in feminine)", partOfSpeech: "adjective" },
+  opportunités: { en: "opportunities", note: "Plural feminine noun (une opportunité)", partOfSpeech: "noun" },
+  linguistique: { en: "linguistic / language", note: "Relating to language learning", partOfSpeech: "adjective" },
+  profonde: { en: "deep / profound", note: "Feminine adjective (profond in masculine)", partOfSpeech: "adjective" },
+  améliorer: { en: "to improve / enhance", note: "Infinitive verb (améliorer son français)", partOfSpeech: "verb" },
+  manière: { en: "way / manner", note: "Feminine noun (de manière exponentielle = exponentially)", partOfSpeech: "noun" },
+  exponentielle: { en: "exponential", note: "Feminine adjective", partOfSpeech: "adjective" },
+  découvrir: { en: "to discover", note: "Infinitive verb", partOfSpeech: "verb" },
+  nouvelle: { en: "new (feminine)", note: "Feminine singular form of nouveau", partOfSpeech: "adjective" },
+  "nord-américaine": { en: "North American (feminine)", note: "Compound adjective", partOfSpeech: "adjective" },
+  racines: { en: "roots", note: "Plural feminine noun (les racines)", partOfSpeech: "noun" },
+  élargir: { en: "to broaden / expand", note: "Infinitive verb (élargir son réseau)", partOfSpeech: "verb" },
+  réseau: { en: "network", note: "Masculine noun (le réseau professionnel)", partOfSpeech: "noun" },
+  professionnel: { en: "professional", note: "Masculine adjective", partOfSpeech: "adjective" },
+  quotidien: { en: "daily life / everyday", note: "Masculine noun (au quotidien = in daily life)", partOfSpeech: "noun / adj" },
+  envisagerais: { en: "would consider / envisage", note: "Conditional tense of envisager", partOfSpeech: "verb" },
+  partout: { en: "everywhere", note: "Adverb of place (absolument partout = absolutely everywhere)", partOfSpeech: "adverb" },
+  travail: { en: "work / job", note: "Masculine noun (au travail)", partOfSpeech: "noun" },
+  majoritairement: { en: "mostly / predominantly", note: "Adverb derived from majorité", partOfSpeech: "adverb" },
+  francophone: { en: "French-speaking", note: "Describes French speakers or environments", partOfSpeech: "adjective" },
+  idéal: { en: "ideal", note: "Masculine noun / adjective", partOfSpeech: "noun / adj" },
+  chercherais: { en: "would seek / look for", note: "Conditional tense of chercher", partOfSpeech: "verb" },
+  activement: { en: "actively", note: "Adverb", partOfSpeech: "adverb" },
+  rencontres: { en: "encounters / meetings / networking", note: "Plural feminine noun (faire des rencontres)", partOfSpeech: "noun" },
+  locales: { en: "local (feminine plural)", note: "Plural feminine adjective", partOfSpeech: "adjective" },
+  rejoignant: { en: "joining", note: "Present participle of rejoindre", partOfSpeech: "verb" },
+  clubs: { en: "clubs / groups", note: "Masculine plural noun", partOfSpeech: "noun" },
+  sport: { en: "sports / fitness", note: "Masculine noun", partOfSpeech: "noun" },
+  associations: { en: "organizations / associations", note: "Feminine plural noun", partOfSpeech: "noun" },
+  bénévolat: { en: "volunteering / charity work", note: "Masculine noun (du bénévolat)", partOfSpeech: "noun" },
+  marché: { en: "market", note: "Masculine noun (aller au marché)", partOfSpeech: "noun" },
+  commander: { en: "to order (food/drinks)", note: "Infinitive verb used in restaurants/cafés", partOfSpeech: "verb" },
+  restaurant: { en: "restaurant", note: "Masculine noun", partOfSpeech: "noun" },
+  courses: { en: "errands / grocery shopping", note: "Plural feminine noun (faire mes courses)", partOfSpeech: "noun" },
+  occasion: { en: "opportunity / chance", note: "Feminine noun (une occasion de pratiquer)", partOfSpeech: "noun" },
+  pratiquer: { en: "to practice", note: "Infinitive verb", partOfSpeech: "verb" },
+  films: { en: "movies / films", note: "Masculine plural noun", partOfSpeech: "noun" },
+  musique: { en: "music", note: "Feminine noun (la musique)", partOfSpeech: "noun" },
+  journaux: { en: "newspapers / journals", note: "Plural of journal", partOfSpeech: "noun" },
+  locaux: { en: "local (masculine plural)", note: "Plural masculine adjective", partOfSpeech: "adjective" },
+  objectif: { en: "goal / objective", note: "Masculine noun (l'objectif)", partOfSpeech: "noun" },
+  penser: { en: "to think", note: "Infinitive verb (penser en français)", partOfSpeech: "verb" },
+  rêver: { en: "to dream", note: "Infinitive verb (rêver en français)", partOfSpeech: "verb" },
+  vivre: { en: "to live", note: "Infinitive verb (vivre le français)", partOfSpeech: "verb" },
+  convaincu: { en: "convinced / certain", note: "Past participle / adjective of convaincre", partOfSpeech: "adjective" },
+  expérience: { en: "experience", note: "Feminine noun (une expérience)", partOfSpeech: "noun" },
+  transformatrice: { en: "life-changing / transformative", note: "Feminine adjective (transformateur in masculine)", partOfSpeech: "adjective" },
+};
+
+function getWordDetails(rawWord: string): { en: string; note: string; partOfSpeech: string } {
+  const clean = rawWord.toLowerCase().replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
+  if (COMMON_FRENCH_DICT[clean]) {
+    return COMMON_FRENCH_DICT[clean];
+  }
+  const stripped = clean.replace(/^(j'|c'|l'|d'|m'|t'|s'|n'|qu')/i, "");
+  if (COMMON_FRENCH_DICT[stripped]) {
+    return COMMON_FRENCH_DICT[stripped];
+  }
+  return {
+    en: `Meaning of "${clean || rawWord}"`,
+    note: "Tap 'Save to Vault' to bookmark this word for flashcards & spaced-repetition practice!",
+    partOfSpeech: "vocabulary term",
+  };
+}
+
 // ── Interactive Target Passage with Clickable Word Inspector & Translation ─────
 function InteractiveTargetPassage({
   text,
@@ -1037,46 +1140,91 @@ function InteractiveTargetPassage({
 
       {/* Word Inspector Modal Popover */}
       <AnimatePresence>
-        {selectedWord && (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            className="mt-3 p-3 rounded-xl border flex items-center justify-between gap-3 shadow-md"
-            style={{ backgroundColor: theme.cardBg, borderColor: theme.primaryBtnBg }}
-          >
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-              <div>
-                <span className="text-xs font-bold font-serif" style={{ color: theme.cardTitle }}>
-                  &ldquo;{selectedWord}&rdquo;
-                </span>
-                <span className="text-[10px] font-mono block text-blue-600 font-bold">
-                  Audio & Vocabulary Inspector
-                </span>
-              </div>
-            </div>
+        {selectedWord && (() => {
+          const details = getWordDetails(selectedWord);
+          const clean = selectedWord.replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              className="mt-4 p-4 rounded-2xl border flex flex-col gap-2.5 shadow-lg relative overflow-hidden"
+              style={{ backgroundColor: theme.cardBg, borderColor: theme.primaryBtnBg }}
+            >
+              <div className="flex items-start justify-between gap-3 border-b pb-2.5" style={{ borderColor: theme.cardBorder }}>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-extrabold font-serif" style={{ color: theme.cardTitle }}>
+                        &ldquo;{clean}&rdquo;
+                      </span>
+                      <span className="text-[9px] font-mono uppercase font-extrabold px-2 py-0.5 rounded-full border bg-blue-500/10 border-blue-500/30 text-blue-600">
+                        {details.partOfSpeech}
+                      </span>
+                    </div>
+                    <span className="text-xs font-semibold text-blue-600 block mt-0.5">
+                      Meaning: {details.en}
+                    </span>
+                  </div>
+                </div>
 
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => speakFrench(selectedWord)}
-                className="px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 border cursor-pointer"
-                style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
-              >
-                <Volume2 className="w-3.5 h-3.5" /> Listen
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedWord(null)}
-                className="p-1 rounded-lg text-xs hover:opacity-70"
-                style={{ color: theme.cardSubtext }}
-              >
-                ✕
-              </button>
-            </div>
-          </motion.div>
-        )}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => speakFrench(clean)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border cursor-pointer shadow-sm active:scale-95"
+                    style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+                  >
+                    <Volume2 className="w-3.5 h-3.5" /> Listen
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch("/api/french/vocab", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            entry_type: "word",
+                            french_text: clean,
+                            english_meaning: details.en,
+                            notes: details.note,
+                          }),
+                        });
+                        if (res.ok) {
+                          toast.success(`Saved "${clean}" to Vocab Vault! 🇫🇷`);
+                        } else {
+                          toast.info(`Please sign in to save "${clean}" to your Vocab Vault.`);
+                        }
+                      } catch {
+                        toast.error("Could not save to Vocab Vault.");
+                      }
+                    }}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 border cursor-pointer shadow-sm hover:opacity-90 active:scale-95"
+                    style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
+                    title="Bookmark to your private Vocab Vault"
+                  >
+                    <BookMarked className="w-3.5 h-3.5 text-amber-400" /> Save to Vault
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedWord(null)}
+                    className="p-1.5 rounded-xl text-xs font-bold hover:opacity-70 cursor-pointer ml-1"
+                    style={{ color: theme.cardSubtext }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              <div className="text-xs font-medium italic flex items-center gap-1.5" style={{ color: theme.cardSubtext }}>
+                <span className="text-blue-500 font-bold shrink-0">💡 Learning Note:</span>
+                <span>{details.note}</span>
+              </div>
+            </motion.div>
+          );
+        })()}
       </AnimatePresence>
 
       {/* English Translation Collapsible Drawer */}
