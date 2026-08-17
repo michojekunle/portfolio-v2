@@ -1009,26 +1009,26 @@ function InteractiveTargetPassage({
       </div>
 
       {/* Interactive Word Tokens */}
-      <div className="space-y-2 text-sm sm:text-base font-serif leading-relaxed font-semibold" style={{ color: theme.cardTitle }}>
+      <div className="space-y-3 text-sm sm:text-base font-serif leading-relaxed sm:leading-loose font-medium" style={{ color: theme.cardTitle }}>
         {paragraphs.map((para, pIdx) => (
-          <p key={pIdx} className="leading-loose">
-            {para.split(" ").map((token, wIdx) => {
+          <p key={pIdx} className="leading-relaxed sm:leading-loose whitespace-pre-wrap">
+            {para.split(/(\s+)/).map((token, wIdx) => {
+              if (/^\s+$/.test(token)) {
+                return <span key={wIdx}>{token}</span>;
+              }
               const clean = token.replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
-              return (
-                <span key={wIdx} className="inline-block mr-1">
-                  {clean ? (
-                    <button
-                      type="button"
-                      onClick={() => handleWordClick(token)}
-                      className="px-0.5 py-0.5 rounded transition-all hover:bg-blue-500/20 hover:text-blue-600 cursor-pointer active:scale-95"
-                      title={`Click to listen to "${clean}"`}
-                    >
-                      {token}
-                    </button>
-                  ) : (
-                    <span>{token}</span>
-                  )}
-                </span>
+              return clean ? (
+                <button
+                  key={wIdx}
+                  type="button"
+                  onClick={() => handleWordClick(token)}
+                  className="inline rounded px-0.5 transition-colors hover:bg-blue-500/20 hover:text-blue-600 cursor-pointer active:scale-95"
+                  title={`Click to listen to "${clean}"`}
+                >
+                  {token}
+                </button>
+              ) : (
+                <span key={wIdx}>{token}</span>
               );
             })}
           </p>
@@ -1813,10 +1813,11 @@ function ChallengeTab({
         type="button"
         onClick={user ? handleSubmit : onRequireAuth}
         disabled={!canSubmit && !!user}
-        className="w-full py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl cursor-pointer"
+        className="w-full py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-xl cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         style={{
-          backgroundColor: theme.primaryBtnBg,
-          color: theme.primaryBtnText,
+          backgroundColor: canSubmit ? theme.primaryBtnBg : theme.secondaryBtnBg,
+          color: canSubmit ? theme.primaryBtnText : theme.secondaryBtnText,
+          borderColor: theme.secondaryBtnBorder,
           boxShadow: canSubmit ? `0 8px 24px ${theme.accentGlow}` : "none",
         }}
       >
@@ -1826,6 +1827,16 @@ function ChallengeTab({
           <>
             <Lock className="w-4 h-4" /> Sign In to Log Proof & Update Streak
           </>
+        ) : !canSubmit ? (
+          isAudioChallenge ? (
+            <>
+              <Mic className="w-4 h-4 text-amber-400" /> Record Audio or Video Proof Above to Complete
+            </>
+          ) : (
+            <>
+              <PenTool className="w-4 h-4 text-amber-400" /> Write your French response above to complete
+            </>
+          )
         ) : (
           <>
             Complete Challenge & Log Proof <ArrowRight className="w-4 h-4" />
