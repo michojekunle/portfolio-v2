@@ -23,12 +23,22 @@ const STARTER_PROMPTS = [
 — Je vais commander un grand café crème avec une tartine beurrée. Et toi, tu as déjà pris ton petit-déjeuner ?
 — Pas encore ! Je vais prendre un thé vert et un croissant chaud. Dis-moi, tu as des nouvelles de Thomas depuis son voyage en Italie ?
 — Oui absolument ! Il m'a envoyé un message hier soir. Il adore Rome et il revient la semaine prochaine avec plein d'anecdotes à nous raconter !`,
+    english_translation: `Read this complete dialogue in a Parisian café out loud. Pay special attention to liaisons and natural intonation.
+
+— Hello Antoine! It's great to see you here. Have you been waiting long?
+— Hi Sophie! No, not at all, I arrived barely five minutes ago. I was almost late because of traffic jams near the Opera.
+— Ah I completely understand, traffic is terrible today. So, what are you going to get?
+— I'm going to order a large café crème with buttered toast. And you, have you had breakfast yet?
+— Not yet! I'm going to get a green tea and a warm croissant. Tell me, have you heard from Thomas since his trip to Italy?
+— Yes, absolutely! He sent me a message last night. He loves Rome and is coming back next week with lots of stories to tell us!`,
   },
   {
     type: "speaking",
     prompt_text: "Enregistrez votre réponse en français : Décrivez votre routine du matin idéale et expliquez pourquoi chaque étape est importante pour vous.",
-    example_text: `Modèle d'expression orale :
-Pour moi, la matinée idéale commence très tôt, vers six heures et demie. La première chose que je fais est d'ouvrir la fenêtre pour faire entrer de l'air frais. Ensuite, je prépare un expresso bien chaud tout en écoutant de la musique douce. Ce moment de calme me permet de faire le vide dans mon esprit et de planifier sereinement les tâches de la journée. Après avoir pris mon petit-déjeuner, je fais vingt minutes de méditation ou de marche rapide dehors. Cela me donne une énergie formidable pour attaquer la journée de travail avec enthousiasme et sérénité.`,
+    example_text: `Pour moi, la matinée idéale commence très tôt, vers six heures et demie. La première chose que je fais est d'ouvrir la fenêtre pour faire entrer de l'air frais. Ensuite, je prépare un expresso bien chaud tout en écoutant de la musique douce. Ce moment de calme me permet de faire le vide dans mon esprit et de planifier sereinement les tâches de la journée. Après avoir pris mon petit-déjeuner, je fais vingt minutes de méditation ou de marche rapide dehors. Cela me donne une énergie formidable pour attaquer la journée de travail avec enthousiasme et sérénité.`,
+    english_translation: `Record your answer in French: Describe your ideal morning routine and explain why each step is important to you.
+
+For me, the ideal morning starts very early, around six-thirty. The first thing I do is open the window to let in fresh air. Next, I make a piping hot espresso while listening to gentle music. This quiet moment allows me to clear my mind and calmly plan the day's tasks. After having my breakfast, I do twenty minutes of meditation or a brisk walk outside. This gives me wonderful energy to tackle the workday with enthusiasm and serenity.`,
   },
   {
     type: "writing",
@@ -39,6 +49,14 @@ Pour moi, la matinée idéale commence très tôt, vers six heures et demie. La 
 3. "Se rendre compte de..." (Expression réflexive)
 4. "Avoir l'intention de..." (Intention)
 5. "Du coup..." (Connecteur logique courant)`,
+    english_translation: `Write a complete paragraph in French (5 to 8 sentences) recounting an unforgettable holiday memory.
+
+Writing Guide — Target vocabulary & expressions required to be included:
+1. "After having arrived at..." (Past tense)
+2. "The weather was magnificent when..." (Imperfect tense)
+3. "To realize that..." (Reflexive expression)
+4. "To intend to..." (Intention)
+5. "As a result / so..." (Common logical connector)`,
   },
 ];
 
@@ -50,14 +68,12 @@ export async function GET(): Promise<Response> {
     const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
     const adminDb = getAdminSupabase();
 
-    // 1. Fetch today's generated challenges
     let { data: challenges } = await adminDb
       .from("french_challenges")
       .select("*")
       .eq("challenge_date", today)
       .order("created_at", { ascending: true });
 
-    // 2. If no challenge exists for today yet, auto-seed a starter prompt so visitors immediately get content
     if (!challenges || challenges.length === 0) {
       const seed = STARTER_PROMPTS[Math.floor(Math.random() * STARTER_PROMPTS.length)];
       const { data: newChallenge } = await adminDb
@@ -67,6 +83,7 @@ export async function GET(): Promise<Response> {
           type: seed.type,
           prompt_text: seed.prompt_text,
           example_text: seed.example_text,
+          english_translation: seed.english_translation,
         })
         .select()
         .single();
@@ -112,19 +129,12 @@ export async function GET(): Promise<Response> {
           .eq("user_id", user.id)
           .in("challenge_id", challengeIds);
 
-        if (logs) {
-          completedIds = logs.map((l) => l.challenge_id).filter(Boolean);
-        }
+        completedIds = logs?.map((l) => l.challenge_id) ?? [];
       }
     }
 
-    const completedToday =
-      completedIds.length > 0 || streak.last_completed_date === today;
-
-    const activeChallenge =
-      todayChallenges.find((c) => !completedIds.includes(c.id)) ??
-      todayChallenges[todayChallenges.length - 1] ??
-      null;
+    const activeChallenge = todayChallenges[0] ?? null;
+    const completedToday = challengeIds.some((id) => completedIds.includes(id));
 
     return NextResponse.json({
       challenges: todayChallenges,

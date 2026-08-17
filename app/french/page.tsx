@@ -46,6 +46,7 @@ interface Challenge {
   type: "speaking" | "writing" | "reading";
   prompt_text: string;
   example_text?: string;
+  english_translation?: string;
 }
 
 interface Streak {
@@ -914,9 +915,11 @@ function StreakCalendarModal({
 // ── Interactive Target Passage with Clickable Word Inspector & Translation ─────
 function InteractiveTargetPassage({
   text,
+  englishTranslation,
   theme,
 }: {
   text: string;
+  englishTranslation?: string;
   theme: (typeof THEMES)["cowrywise"];
 }) {
   const [showTranslation, setShowTranslation] = useState(false);
@@ -953,7 +956,7 @@ function InteractiveTargetPassage({
           <button
             type="button"
             onClick={() => setShowTranslation((s) => !s)}
-            className="flex items-center gap-1 text-[11px] font-extrabold px-2 py-1 rounded-lg border transition-all cursor-pointer"
+            className="flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-lg border transition-all cursor-pointer shadow-xs"
             style={{
               backgroundColor: showTranslation ? theme.primaryBtnBg : theme.cardBg,
               color: showTranslation ? theme.primaryBtnText : theme.cardTitle,
@@ -1008,8 +1011,8 @@ function InteractiveTargetPassage({
                 <span className="text-xs font-bold font-serif" style={{ color: theme.cardTitle }}>
                   &ldquo;{selectedWord}&rdquo;
                 </span>
-                <span className="text-[10px] font-mono block" style={{ color: theme.cardSubtext }}>
-                  French Word Inspector
+                <span className="text-[10px] font-mono block text-blue-600 font-bold">
+                  Audio & Vocabulary Inspector
                 </span>
               </div>
             </div>
@@ -1021,7 +1024,7 @@ function InteractiveTargetPassage({
                 className="px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 border cursor-pointer"
                 style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
               >
-                <Volume2 className="w-3 h-3" /> Listen
+                <Volume2 className="w-3.5 h-3.5" /> Listen
               </button>
               <button
                 type="button"
@@ -1046,12 +1049,21 @@ function InteractiveTargetPassage({
             className="mt-4 pt-3 border-t overflow-hidden"
             style={{ borderColor: theme.cardBorder }}
           >
-            <div className="flex items-center gap-1.5 mb-1.5 text-xs font-bold text-blue-600">
-              <Globe className="w-4 h-4" /> English Meaning & Guided Translation
+            <div className="flex items-center gap-1.5 mb-2 text-xs font-bold text-blue-600">
+              <Globe className="w-4 h-4" /> English Meaning & Translation
             </div>
-            <p className="text-xs font-medium leading-relaxed italic" style={{ color: theme.cardSubtext }}>
-              Practice reading or speaking the French passage out loud above, then compare with your natural understanding of the dialogue.
-            </p>
+
+            {englishTranslation ? (
+              <div className="space-y-2 text-xs sm:text-sm font-serif leading-relaxed italic p-3.5 rounded-2xl border" style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder, color: theme.cardTitle }}>
+                {englishTranslation.split("\n").filter(Boolean).map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))}
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-2xl border text-xs font-medium leading-relaxed italic" style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder, color: theme.cardSubtext }}>
+                English Translation Note: Compare the target French passage above with your natural understanding. Tap any individual word to hear native speech!
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -1686,7 +1698,11 @@ function ChallengeTab({
 
         {/* Interactive Target Passage with Word Inspector & Translation */}
         {challenge.example_text && (
-          <InteractiveTargetPassage text={challenge.example_text} theme={theme} />
+          <InteractiveTargetPassage
+            text={challenge.example_text}
+            englishTranslation={challenge.english_translation}
+            theme={theme}
+          />
         )}
 
         <p className="mt-4 text-xs font-semibold" style={{ color: theme.cardSubtext }}>{config?.hint}</p>

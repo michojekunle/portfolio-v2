@@ -2,7 +2,7 @@
  * POST /api/french/generate
  * On-demand challenge generation endpoint.
  * Multi-Provider AI Architecture: Gemini 2.5 Flash (Primary) → Groq Llama 3.1 (Secondary) → Static Fallback.
- * Generates rich, immersive 250-400 word French dialogues & stories with full English translations.
+ * Generates rich, immersive 250-400 word French dialogues & stories with complete English translations.
  */
 import { NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
@@ -23,6 +23,11 @@ const SPEAKING_PROMPTS = [
     example_text: `Pour moi, la matinée idéale commence très tôt, vers six heures et demie du matin. La toute première chose que je fais est d'ouvrir en grand la fenêtre de ma chambre pour faire entrer l'air frais du matin et écouter le calme de la ville. Ensuite, je me dirige vers la cuisine pour préparer un expresso bien chaud tout en écoutant de la musique douce. Ce moment de tranquillité absolue me permet de faire le vide dans mon esprit, de boire mon café tranquillement et de planifier sereinement les tâches prioritaires de la journée. 
 
 Après avoir pris mon petit-déjeuner composé de croissants et de fruits frais, je prends vingt minutes pour faire une marche rapide dehors dans le parc. L'exercice matinal donne une énergie formidable pour attaquer la journée de travail avec enthousiasme. Enfin, je me douche, je m'habille et je m'installe à mon bureau, prêt à commencer ma journée de travail avec sérénité et concentration. Et vous, quelle est la routine matinale qui vous donne le plus d'énergie ?`,
+    english_translation: `Record your answer in French: Describe your ideal morning routine and explain why each step is important to you.
+
+For me, the ideal morning starts very early, around six-thirty in the morning. The very first thing I do is open my bedroom window wide to let in the fresh morning air and listen to the calm of the city. Then, I head to the kitchen to brew a piping hot espresso while listening to gentle music. This moment of absolute quiet allows me to clear my mind, drink my coffee peacefully, and calmly plan the day's priority tasks.
+
+After enjoying my breakfast of croissants and fresh fruit, I take twenty minutes for a brisk walk outside in the park. Morning exercise provides wonderful energy to tackle the workday with enthusiasm. Finally, I shower, get dressed, and sit down at my desk, ready to start my work with focus and serenity. And you, what morning routine gives you the most energy?`,
   },
 ];
 
@@ -36,6 +41,15 @@ const WRITING_PROMPTS = [
 4. "Avoir l'intention de..." (Intention future)
 5. "Du coup..." (Connecteur logique courant)
 6. "Bien que ce soit..." (Emploi du subjonctif)`,
+    english_translation: `Write a complete text in French (8 to 12 sentences) recounting an unforgettable journey or childhood memory.
+
+Writing Guide — Target vocabulary & expressions to include in your text:
+1. "After having arrived at..." (Past tense with être)
+2. "The weather was magnificent when..." (Imperfect tense for setting)
+3. "To realize that..." (Reflexive expression)
+4. "To intend to..." (Future intention)
+5. "As a result / so..." (Common logical connector)
+6. "Although it may be..." (Subjunctive usage)`,
   },
 ];
 
@@ -49,6 +63,15 @@ const READING_PROMPTS = [
 — Pas encore ! Je vais commander un thé vert à la menthe et une omelette au fromage. Dis-moi, tu as eu des nouvelles de Thomas depuis son départ en Italie ?
 — Oui tout à fait ! Il m'a envoyé un long message hier soir avec des photos magnifiques. Il adore son séjour à Rome et il revient la semaine prochaine avec plein d'anecdotes passionnantes à nous raconter.
 — C'est formidable ! On devra organiser un dîner tous ensemble dès son retour pour fêter ça.`,
+    english_translation: `Read this complete dialogue in a Parisian café out loud. Pay special attention to liaisons and natural intonation.
+
+— Hello Antoine! It's so nice to see you here. Have you been waiting long?
+— Hi Sophie! No, not at all, don't worry. I arrived barely ten minutes ago. I was almost late because of a major delay on the metro line near the Opera.
+— Ah I completely understand! Traffic in Paris is particularly bad today. So tell me, what are you going to order?
+— I think I'll get a large café crème with warm croissants and butter. How about you, have you had breakfast yet this morning?
+— Not yet! I'm going to order a mint green tea and a cheese omelet. Tell me, have you heard from Thomas since he left for Italy?
+— Yes, absolutely! He sent me a long message last night with gorgeous photos. He loves his trip to Rome and is coming back next week with lots of exciting stories to tell us.
+— That's wonderful! We should organize a dinner together as soon as he gets back to celebrate.`,
   },
 ];
 
@@ -57,40 +80,46 @@ function buildFrenchPrompt(type: ChallengeType): string {
 The challenge type is: "${type}".
 
 Strict Quality & Word Count Guidelines:
-- French grammar MUST be 100% authentic, natural, and grammatically flawless (e.g. use "je suis en retard", NEVER "j'ai retardé").
-- FOR "reading" (Elocution & Rhythm): "prompt_text" should instruct the user to read the full text out loud. "example_text" MUST be a LONG, IMMERSIVE, REALISTIC dialogue or narrative story (250 - 400 words / 12-18 lines). For example, a full multi-turn conversation between friends at a café, ordering food, planning a weekend trip, or a rich narrative story about life in Paris or Provence.
-- FOR "speaking" (Oral Practice & Fluency): "prompt_text" should present a compelling scenario and ask 3 specific questions. "example_text" MUST provide a long, native model response (200 - 320 words / 10-15 sentences) demonstrating natural connectors (en effet, cependant, du coup, à mon avis, par conséquent).
+- French grammar MUST be 100% authentic, natural, and grammatically flawless.
+- FOR "reading" (Elocution & Rhythm): "prompt_text" should instruct the user in French to read out loud. "example_text" MUST be a LONG, IMMERSIVE, REALISTIC French dialogue or narrative story (250 - 400 words / 12-18 lines).
+- FOR "speaking" (Oral Practice & Fluency): "prompt_text" should present a compelling scenario and ask 3 specific questions. "example_text" MUST provide a long, native model response (200 - 320 words / 10-15 sentences) demonstrating natural connectors.
 - FOR "writing" (Composition & Grammar): "prompt_text" should give a creative writing topic. "example_text" MUST provide a helpful structure guide with 6 target vocabulary/grammar expressions to include.
+- "english_translation": MUST provide a complete, elegant, natural English translation of both the prompt_text AND example_text so the learner can toggle English meaning at any time.
 
 Return ONLY a raw valid JSON object with no markdown codeblocks:
 {
   "prompt_text": "Clear instruction in natural French (1-2 sentences)",
-  "example_text": "The long, rich, 250-400 word target French dialogue, story passage, or structured writing guide"
+  "example_text": "The long, rich, 250-400 word target French dialogue, story passage, or structured writing guide",
+  "english_translation": "Complete, fluent English translation of both prompt_text and example_text"
 }`;
 }
 
 // ── Provider 1: Google Gemini 2.5 Flash (Primary) ─────────────────────────────
-async function generateChallengeWithGemini(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
+async function generateChallengeWithGemini(type: ChallengeType): Promise<{ prompt_text: string; example_text: string; english_translation: string }> {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
-    generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2000 },
+    generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2500 },
   });
 
   const prompt = buildFrenchPrompt(type);
   const result = await model.generateContent(prompt);
   const rawText = result.response.text();
   const stripped = rawText.replace(/^```(?:json)?\n?/i, "").replace(/\n?```$/i, "").trim();
-  const parsed = JSON.parse(stripped) as { prompt_text: string; example_text: string };
+  const parsed = JSON.parse(stripped) as { prompt_text: string; example_text: string; english_translation?: string };
   if (!parsed.prompt_text || !parsed.example_text) throw new Error("Gemini returned incomplete JSON");
-  return parsed;
+  return {
+    prompt_text: parsed.prompt_text,
+    example_text: parsed.example_text,
+    english_translation: parsed.english_translation || "Translation available below in interactive guided breakdown.",
+  };
 }
 
 // ── Provider 2: Groq Llama 3.1 (Secondary Fallback) ───────────────────────────
-async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
+async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_text: string; example_text: string; english_translation: string }> {
   const groqKey = process.env.GROQ_API_KEY;
   if (!groqKey) throw new Error("GROQ_API_KEY is not configured");
 
@@ -105,34 +134,33 @@ async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_
     body: JSON.stringify({
       model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" },
-      max_tokens: 2000,
       temperature: 0.7,
+      max_tokens: 2500,
+      response_format: { type: "json_object" },
     }),
   });
 
-  if (!response.ok) throw new Error(`Groq error: ${response.status}`);
-  const data = (await response.json()) as { choices: { message: { content: string } }[] };
-  const rawContent = data.choices[0]?.message?.content ?? "";
-  const parsed = JSON.parse(rawContent) as { prompt_text: string; example_text: string };
+  if (!response.ok) throw new Error(`Groq API error: ${response.status}`);
+  const data = (await response.json()) as {
+    choices: Array<{ message: { content: string } }>;
+  };
+
+  const raw = data.choices[0]?.message?.content ?? "";
+  const stripped = raw.replace(/^```(?:json)?\n?/i, "").replace(/\n?```$/i, "").trim();
+  const parsed = JSON.parse(stripped) as { prompt_text: string; example_text: string; english_translation?: string };
   if (!parsed.prompt_text || !parsed.example_text) throw new Error("Groq returned incomplete JSON");
-  return parsed;
+  return {
+    prompt_text: parsed.prompt_text,
+    example_text: parsed.example_text,
+    english_translation: parsed.english_translation || "Translation available below in interactive guided breakdown.",
+  };
 }
 
-// ── Provider 3: Static Curated Drills (Tertiary Fallback) ─────────────────────
-function getStaticChallenge(type: ChallengeType): { prompt_text: string; example_text: string } {
-  const day = new Date().getDay();
-  const map = {
-    speaking: SPEAKING_PROMPTS,
-    writing: WRITING_PROMPTS,
-    reading: READING_PROMPTS,
-  };
-  const prompts = map[type];
-  const selected = prompts[day % prompts.length];
-  return {
-    prompt_text: selected.prompt_text,
-    example_text: selected.example_text,
-  };
+// ── Provider 3: Native Static Fallbacks ───────────────────────────────────────
+function getStaticChallenge(type: ChallengeType): { prompt_text: string; example_text: string; english_translation: string } {
+  const pool =
+    type === "speaking" ? SPEAKING_PROMPTS : type === "writing" ? WRITING_PROMPTS : READING_PROMPTS;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -141,10 +169,7 @@ export async function POST(request: Request): Promise<Response> {
     const { data: { user } } = await serverClient.auth.getUser();
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required to generate on-demand challenges." },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const today = new Date().toISOString().split("T")[0];
@@ -158,7 +183,6 @@ export async function POST(request: Request): Promise<Response> {
       // Body empty or invalid JSON
     }
 
-    // 1. Fetch existing challenges for today using adminDb
     const { data: existingChallenges } = await adminDb
       .from("french_challenges")
       .select("*")
@@ -181,14 +205,12 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    // 2. Determine challenge type (rotate or pick requested)
     const type: ChallengeType =
       requestedType && CHALLENGE_TYPES.includes(requestedType)
         ? requestedType
         : CHALLENGE_TYPES[currentCount % 3];
 
-    // 3. Multi-Provider AI Fallback Pipeline: Gemini → Groq → Static
-    let content: { prompt_text: string; example_text: string } | null = null;
+    let content: { prompt_text: string; example_text: string; english_translation: string } | null = null;
 
     try {
       content = await generateChallengeWithGemini(type);
@@ -202,7 +224,6 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
 
-    // 4. Insert into DB using adminDb (bypasses insert false RLS)
     let { data: inserted, error: insertError } = await adminDb
       .from("french_challenges")
       .insert({
@@ -210,6 +231,7 @@ export async function POST(request: Request): Promise<Response> {
         type,
         prompt_text: content.prompt_text,
         example_text: content.example_text || null,
+        english_translation: content.english_translation || null,
       })
       .select("*")
       .single();
@@ -225,34 +247,30 @@ export async function POST(request: Request): Promise<Response> {
             type,
             prompt_text: content.prompt_text,
             example_text: content.example_text || null,
+            english_translation: content.english_translation || null,
           })
           .eq("id", targetId)
           .select("*")
           .single();
-
-        if (updated) {
-          inserted = updated;
-          insertError = null;
-        }
+        inserted = updated;
       }
     }
 
-    if (insertError || !inserted) {
-      console.error("[french/generate] DB insert error after fallback:", insertError);
-      return NextResponse.json({ error: "Failed to save generated challenge" }, { status: 500 });
-    }
-
-    const allToday = [...(existingChallenges ?? []), inserted];
+    const { data: allToday } = await adminDb
+      .from("french_challenges")
+      .select("*")
+      .eq("challenge_date", today)
+      .order("created_at", { ascending: true });
 
     return NextResponse.json({
       ok: true,
       challenge: inserted,
-      count: allToday.length,
+      count: allToday?.length ?? currentCount + 1,
       maxAllowed,
-      challenges: allToday,
+      challenges: allToday ?? [],
     });
   } catch (err) {
-    console.error("[french/generate] Error:", err);
+    console.error("[french/generate] Unexpected error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
