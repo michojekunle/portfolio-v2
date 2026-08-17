@@ -37,6 +37,7 @@ import {
   Languages,
   Globe,
   Video,
+  Download,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -1508,14 +1509,37 @@ function MediaRecorderModule({
             <audio controls src={mediaUrl || undefined} className="w-full rounded-xl" />
           )}
 
-          <button
-            type="button"
-            onClick={reset}
-            className="flex items-center justify-center gap-1.5 text-xs font-bold transition-colors pt-1 cursor-pointer"
-            style={{ color: theme.cardSubtext }}
-          >
-            <RotateCcw className="w-3.5 h-3.5" /> Re-record {mode}
-          </button>
+          <div className="flex items-center justify-between pt-1 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (mediaUrl) {
+                  const a = document.createElement("a");
+                  a.href = mediaUrl;
+                  const ext = mimeTypeLabel.includes("mp4") ? "mp4" : mimeTypeLabel.includes("webm") ? "webm" : "mp3";
+                  a.download = `french_proof_${Date.now()}.${ext}`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  toast.success("Recording downloaded! 📥");
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-95"
+              style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+              title="Download recorded proof to your local device"
+            >
+              <Download className="w-3.5 h-3.5" /> Download {mode.toUpperCase()}
+            </button>
+
+            <button
+              type="button"
+              onClick={reset}
+              className="flex items-center gap-1.5 text-xs font-bold transition-colors cursor-pointer opacity-80 hover:opacity-100"
+              style={{ color: theme.cardSubtext }}
+            >
+              <RotateCcw className="w-3.5 h-3.5" /> Re-record {mode}
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -1678,12 +1702,45 @@ function HistoryTab({
 
               {log.proof_url && (
                 <div
-                  className="p-3 rounded-2xl border flex flex-col gap-2"
+                  className="p-3 rounded-2xl border flex flex-col gap-2.5"
                   style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
                 >
-                  <span className="text-[10px] font-mono uppercase tracking-wider font-bold flex items-center gap-1.5 text-emerald-600">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Recorded Media Proof
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-wider font-bold flex items-center gap-1.5 text-emerald-600">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Recorded Media Proof
+                    </span>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!log.proof_url) return;
+                        try {
+                          toast.loading("Preparing proof download…");
+                          const res = await fetch(log.proof_url);
+                          const blob = await res.blob();
+                          const blobUrl = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = blobUrl;
+                          const ext = isVideo ? "webm" : "mp3";
+                          a.download = `french_proof_${log.id.slice(0, 8)}.${ext}`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          URL.revokeObjectURL(blobUrl);
+                          toast.dismiss();
+                          toast.success("Proof downloaded! 📥");
+                        } catch {
+                          toast.dismiss();
+                          window.open(log.proof_url, "_blank");
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-xl text-[11px] font-bold flex items-center gap-1 border transition-all cursor-pointer shadow-xs active:scale-95"
+                      style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText, borderColor: theme.cardBorder }}
+                      title="Download recorded proof to your local device"
+                    >
+                      <Download className="w-3.5 h-3.5" /> Download
+                    </button>
+                  </div>
+
                   {isVideo ? (
                     <video controls src={log.proof_url} className="w-full rounded-xl aspect-video bg-black" />
                   ) : (
