@@ -17,6 +17,19 @@ function getAdminSupabase() {
 const CHALLENGE_TYPES = ["speaking", "writing", "reading"] as const;
 type ChallengeType = (typeof CHALLENGE_TYPES)[number];
 
+function safeParseJSON<T>(raw: string): T {
+  const stripped = raw.replace(/^```(?:json)?\n?/i, "").replace(/\n?```$/i, "").trim();
+  try {
+    return JSON.parse(stripped) as T;
+  } catch {
+    // Escape unescaped control characters and newlines inside JSON string values
+    const sanitized = stripped
+      .replace(/[\u0000-\u001F]+/g, " ")
+      .replace(/\r\n|\n|\r/g, "\\n");
+    return JSON.parse(sanitized) as T;
+  }
+}
+
 const SPEAKING_PROMPTS = [
   {
     prompt_text: "Enregistrez votre réponse en français : Décrivez votre routine du matin idéale et expliquez pourquoi chaque étape est importante pour vous.",
@@ -81,16 +94,16 @@ The challenge type is: "${type}".
 
 Strict Quality & Word Count Guidelines:
 - French grammar MUST be 100% authentic, natural, and grammatically flawless.
-- FOR "reading" (Elocution & Rhythm): "prompt_text" should instruct the user in French to read out loud. "example_text" MUST be a LONG, IMMERSIVE, REALISTIC French dialogue or narrative story (250 - 400 words / 12-18 lines).
-- FOR "speaking" (Oral Practice & Fluency): "prompt_text" should present a compelling scenario and ask 3 specific questions. "example_text" MUST provide a long, native model response (200 - 320 words / 10-15 sentences) demonstrating natural connectors.
+- FOR "reading" (Elocution & Rhythm): "prompt_text" should instruct the user in French to read out loud. "example_text" MUST be a LONG, IMMERSIVE, REALISTIC French dialogue or narrative story (250 - 350 words / 12-16 lines).
+- FOR "speaking" (Oral Practice & Fluency): "prompt_text" should present a compelling scenario and ask 3 specific questions. "example_text" MUST provide a long, native model response (200 - 300 words / 10-14 sentences).
 - FOR "writing" (Composition & Grammar): "prompt_text" should give a creative writing topic. "example_text" MUST provide a helpful structure guide with 6 target vocabulary/grammar expressions to include.
-- "english_translation": MUST provide a complete, elegant, natural English translation of both the prompt_text AND example_text so the learner can toggle English meaning at any time.
+- "english_translation": MUST provide a concise, natural, line-by-line English translation of both prompt_text AND example_text.
 
 Return ONLY a raw valid JSON object with no markdown codeblocks:
 {
   "prompt_text": "Clear instruction in natural French (1-2 sentences)",
-  "example_text": "The long, rich, 250-400 word target French dialogue, story passage, or structured writing guide",
-  "english_translation": "Complete, fluent English translation of both prompt_text and example_text"
+  "example_text": "The 250-350 word French dialogue or story passage",
+  "english_translation": "Concise English translation of both prompt_text and example_text"
 }`;
 }
 
@@ -102,19 +115,18 @@ async function generateChallengeWithGemini(type: ChallengeType): Promise<{ promp
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
-    generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2500 },
+    generationConfig: { responseMimeType: "application/json", maxOutputTokens: 3500 },
   });
 
   const prompt = buildFrenchPrompt(type);
   const result = await model.generateContent(prompt);
   const rawText = result.response.text();
-  const stripped = rawText.replace(/^```(?:json)?\n?/i, "").replace(/\n?```$/i, "").trim();
-  const parsed = JSON.parse(stripped) as { prompt_text: string; example_text: string; english_translation?: string };
+  const parsed = safeParseJSON<{ prompt_text: string; example_text: string; english_translation?: string }>(rawText);
   if (!parsed.prompt_text || !parsed.example_text) throw new Error("Gemini returned incomplete JSON");
   return {
     prompt_text: parsed.prompt_text,
     example_text: parsed.example_text,
-    english_translation: parsed.english_translation || "Translation available below in interactive guided breakdown.",
+    english_translation: parsed.english_translation || "English translation available below in guided breakdown.",
   };
 }
 
@@ -135,7 +147,7 @@ async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_
       model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 2500,
+      max_tokens: 3500,
       response_format: { type: "json_object" },
     }),
   });
@@ -146,13 +158,12 @@ async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_
   };
 
   const raw = data.choices[0]?.message?.content ?? "";
-  const stripped = raw.replace(/^```(?:json)?\n?/i, "").replace(/\n?```$/i, "").trim();
-  const parsed = JSON.parse(stripped) as { prompt_text: string; example_text: string; english_translation?: string };
+  const parsed = safeParseJSON<{ prompt_text: string; example_text: string; english_translation?: string }>(raw);
   if (!parsed.prompt_text || !parsed.example_text) throw new Error("Groq returned incomplete JSON");
   return {
     prompt_text: parsed.prompt_text,
     example_text: parsed.example_text,
-    english_translation: parsed.english_translation || "Translation available below in interactive guided breakdown.",
+    english_translation: parsed.english_translation || "English translation available below in guided breakdown.",
   };
 }
 
@@ -224,7 +235,10 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
 
-    let { data: inserted, error: insertError } = await adminDb
+    let inserted: Record<string, unknown> | null = null;
+
+    // Attempt insert with english_translation column first
+    const { data: firstInserted, error: insertError } = await adminDb
       .from("french_challenges")
       .insert({
         challenge_date: today,
@@ -236,10 +250,24 @@ export async function POST(request: Request): Promise<Response> {
       .select("*")
       .single();
 
-    if (insertError) {
-      console.warn("[french/generate] DB insert error:", insertError);
+    if (!insertError && firstInserted) {
+      inserted = firstInserted as Record<string, unknown>;
+    } else if (insertError) {
+      console.warn("[french/generate] Primary DB insert error:", insertError.message);
 
-      if (insertError.code === "23505" && existingChallenges && existingChallenges.length > 0) {
+      // Fallback: If english_translation column missing in PostgREST schema cache (PGRST204), insert without it
+      const { data: retryInserted, error: retryError } = await adminDb
+        .from("french_challenges")
+        .insert({
+          challenge_date: today,
+          type,
+          prompt_text: content.prompt_text,
+          example_text: content.example_text || null,
+        })
+        .select("*")
+        .single();
+
+      if (retryError && retryError.code === "23505" && existingChallenges && existingChallenges.length > 0) {
         const targetId = existingChallenges[existingChallenges.length - 1].id;
         const { data: updated } = await adminDb
           .from("french_challenges")
@@ -247,12 +275,15 @@ export async function POST(request: Request): Promise<Response> {
             type,
             prompt_text: content.prompt_text,
             example_text: content.example_text || null,
-            english_translation: content.english_translation || null,
           })
           .eq("id", targetId)
           .select("*")
           .single();
-        inserted = updated;
+        inserted = updated as Record<string, unknown>;
+      } else {
+        inserted = retryInserted
+          ? { ...(retryInserted as Record<string, unknown>), english_translation: content.english_translation }
+          : { id: `gen-${Date.now()}`, type, prompt_text: content.prompt_text, example_text: content.example_text, english_translation: content.english_translation };
       }
     }
 
@@ -267,7 +298,7 @@ export async function POST(request: Request): Promise<Response> {
       challenge: inserted,
       count: allToday?.length ?? currentCount + 1,
       maxAllowed,
-      challenges: allToday ?? [],
+      challenges: allToday ?? [inserted],
     });
   } catch (err) {
     console.error("[french/generate] Unexpected error:", err);

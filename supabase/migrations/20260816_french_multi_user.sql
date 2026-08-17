@@ -3,6 +3,9 @@
 -- Run this in: Supabase Dashboard → SQL Editor → New Query
 -- ============================================================
 
+-- 0. Add english_translation column to french_challenges
+alter table french_challenges add column if not exists english_translation text;
+
 -- 1. Add user_id column to french_logs (tracks completed challenges per user)
 alter table french_logs add column if not exists user_id uuid references auth.users(id) on delete cascade;
 create index if not exists french_logs_user_id_idx on french_logs(user_id);
@@ -57,5 +60,3 @@ begin
   end if;
 end
 $$;
-
-
