@@ -450,40 +450,52 @@ async function downloadUniversalMedia(mediaUrl: string, isVideo: boolean, defaul
     toast.loading("Preparing universal media download…");
     const res = await fetch(mediaUrl);
     const originalBlob = await res.blob();
+    const cleanBaseName = defaultFilename.replace(/\.(webm|ogg|mp3|m4a|wav|mp4)$/i, "");
 
-    if (!isVideo) {
-      // Audio: Convert to Universal WAV Audio Format if it's WebM/OGG
-      try {
-        const wavBlob = await convertAudioBlobToWavBlob(originalBlob);
-        const wavUrl = URL.createObjectURL(wavBlob);
-        const a = document.createElement("a");
-        a.href = wavUrl;
-        a.download = defaultFilename.replace(/\.(webm|ogg|mp3|m4a|wav|mp4)$/i, "") + ".wav";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(wavUrl);
-        toast.dismiss();
-        toast.success("Downloaded Universal WAV Audio! 🎧");
-        return;
-      } catch (convErr) {
-        console.warn("WAV conversion fallback to original blob:", convErr);
-      }
+    if (isVideo) {
+      // Force Universal MP4 Video format for all devices (iOS, Android, Windows, Mac)
+      const mp4Blob = new Blob([originalBlob], { type: "video/mp4" });
+      const blobUrl = URL.createObjectURL(mp4Blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `${cleanBaseName}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+      toast.dismiss();
+      toast.success("Downloaded Universal MP4 Video! 🎥");
+      return;
     }
 
-    // Video or Audio Fallback
-    const blobUrl = URL.createObjectURL(originalBlob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    const isMp4 = originalBlob.type.includes("mp4");
-    const ext = isVideo ? (isMp4 ? "mp4" : "webm") : (isMp4 ? "m4a" : "wav");
-    a.download = defaultFilename.replace(/\.[^.]+$/, "") + `.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(blobUrl);
-    toast.dismiss();
-    toast.success(`Downloaded Universal ${ext.toUpperCase()} file! 📥`);
+    // Audio: Convert to Universal WAV / MP3 Audio Format
+    try {
+      const wavBlob = await convertAudioBlobToWavBlob(originalBlob);
+      const wavUrl = URL.createObjectURL(wavBlob);
+      const a = document.createElement("a");
+      a.href = wavUrl;
+      a.download = `${cleanBaseName}.wav`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(wavUrl);
+      toast.dismiss();
+      toast.success("Downloaded Universal WAV Audio! 🎧");
+      return;
+    } catch (convErr) {
+      console.warn("WAV conversion fallback to original blob:", convErr);
+      const mp3Blob = new Blob([originalBlob], { type: "audio/mpeg" });
+      const blobUrl = URL.createObjectURL(mp3Blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `${cleanBaseName}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+      toast.dismiss();
+      toast.success("Downloaded Universal MP3 Audio! 🎧");
+    }
   } catch (err) {
     console.error("Download error:", err);
     toast.dismiss();
