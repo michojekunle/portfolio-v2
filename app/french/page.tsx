@@ -1159,8 +1159,57 @@ const COMMON_FRENCH_DICT: Record<string, { en: string; note: string; partOfSpeec
   vivre: { en: "to live", note: "Infinitive verb (vivre le français)", partOfSpeech: "verb" },
   convaincu: { en: "convinced / certain", note: "Past participle / adjective of convaincre", partOfSpeech: "adjective" },
   expérience: { en: "experience", note: "Feminine noun (une expérience)", partOfSpeech: "noun" },
-  transformatrice: { en: "life-changing / transformative", note: "Feminine adjective (transformateur in masculine)", partOfSpeech: "adjective" },
+  réflexive: { en: "reflexive / reflective", note: "Feminine adjective (réflexif in masculine)", partOfSpeech: "adjective" },
+  réflexif: { en: "reflexive / reflective", note: "Masculine adjective (réflexive in feminine)", partOfSpeech: "adjective" },
+  déménager: { en: "to relocate / move house", note: "Infinitive verb (déménager dans une nouvelle ville)", partOfSpeech: "verb" },
+  déménagement: { en: "relocation / moving", note: "Masculine noun (un déménagement)", partOfSpeech: "noun" },
+  opportunité: { en: "opportunity / chance", note: "Feminine noun (une opportunité)", partOfSpeech: "noun" },
+  intégrer: { en: "to integrate / fit in", note: "Infinitive verb (s'intégrer pleinement)", partOfSpeech: "verb" },
+  pleinement: { en: "fully / completely / thoroughly", note: "Adverb of degree", partOfSpeech: "adverb" },
+  considérer: { en: "to consider / reflect on", note: "Infinitive verb", partOfSpeech: "verb" },
+  considérerais: { en: "would consider", note: "Conditional mood of considérer", partOfSpeech: "verb" },
+  travailler: { en: "to work", note: "Infinitive verb", partOfSpeech: "verb" },
+  habitudes: { en: "habits / routines", note: "Plural feminine noun (les habitudes)", partOfSpeech: "noun" },
+  développement: { en: "development / growth", note: "Masculine noun", partOfSpeech: "noun" },
+  langue: { en: "language / tongue", note: "Feminine noun (la langue française)", partOfSpeech: "noun" },
+  imprégner: { en: "to soak up / immerse oneself", note: "Infinitive verb (s'imprégner de la culture)", partOfSpeech: "verb" },
+  regarderais: { en: "would watch / look at", note: "Conditional tense of regarder", partOfSpeech: "verb" },
+  écouterais: { en: "would listen to", note: "Conditional tense of écouter", partOfSpeech: "verb" },
+  lirais: { en: "would read", note: "Conditional tense of lire", partOfSpeech: "verb" },
 };
+
+function inferPartOfSpeech(frenchWord: string, translation: string): string {
+  const fw = frenchWord.toLowerCase();
+  const tr = translation.toLowerCase();
+
+  if (fw.endsWith("ment") || tr.endsWith("ly")) return "adverb";
+  if (fw.endsWith("er") || fw.endsWith("ir") || fw.endsWith("re") || tr.startsWith("to ")) return "verb";
+  if (
+    fw.endsWith("ive") ||
+    fw.endsWith("if") ||
+    fw.endsWith("able") ||
+    fw.endsWith("ible") ||
+    fw.endsWith("ique") ||
+    fw.endsWith("el") ||
+    fw.endsWith("elle") ||
+    fw.endsWith("eux") ||
+    fw.endsWith("euse") ||
+    fw.endsWith("al") ||
+    fw.endsWith("aux")
+  )
+    return "adjective";
+  if (
+    fw.endsWith("tion") ||
+    fw.endsWith("sion") ||
+    fw.endsWith("té") ||
+    fw.endsWith("ence") ||
+    fw.endsWith("ance") ||
+    fw.endsWith("eur")
+  )
+    return "noun";
+
+  return "vocabulary term";
+}
 
 function getWordDetails(rawWord: string): { en: string; note: string; partOfSpeech: string } {
   const clean = rawWord.toLowerCase().replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
@@ -1174,7 +1223,7 @@ function getWordDetails(rawWord: string): { en: string; note: string; partOfSpee
   return {
     en: `Meaning of "${clean || rawWord}"`,
     note: "Tap 'Save to Vault' to bookmark this word for flashcards & spaced-repetition practice!",
-    partOfSpeech: "vocabulary term",
+    partOfSpeech: inferPartOfSpeech(clean, clean),
   };
 }
 
@@ -1190,6 +1239,36 @@ function InteractiveTargetPassage({
 }) {
   const [showTranslation, setShowTranslation] = useState(false);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
+  const [dynamicDict, setDynamicDict] = useState<Record<string, { en: string; note: string; partOfSpeech: string }>>({});
+
+  useEffect(() => {
+    if (!selectedWord) return;
+    const clean = selectedWord.toLowerCase().replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
+    if (!clean) return;
+
+    const baseDetails = getWordDetails(clean);
+
+    if (baseDetails.en.startsWith("Meaning of ") && !dynamicDict[clean]) {
+      fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=fr|en`)
+        .then((res) => res.json())
+        .then((data: { responseData?: { translatedText?: string } }) => {
+          const translation = data.responseData?.translatedText;
+          if (translation && translation.toLowerCase() !== clean.toLowerCase()) {
+            const cleanTr = translation.toLowerCase();
+            const pos = inferPartOfSpeech(clean, cleanTr);
+            setDynamicDict((prev) => ({
+              ...prev,
+              [clean]: {
+                en: cleanTr,
+                note: `Dynamic French dictionary lookup for "${clean}".`,
+                partOfSpeech: pos,
+              },
+            }));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [selectedWord, dynamicDict]);
 
   // Split text by lines and space tokens
   const paragraphs = text.split("\n").filter(Boolean);
@@ -1264,8 +1343,9 @@ function InteractiveTargetPassage({
       {/* Word Inspector Modal Popover */}
       <AnimatePresence>
         {selectedWord && (() => {
-          const details = getWordDetails(selectedWord);
           const clean = selectedWord.replace(/[^a-zA-ZàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ'-]/g, "").trim();
+          const cleanLower = clean.toLowerCase();
+          const details = dynamicDict[cleanLower] || getWordDetails(clean);
           return (
             <motion.div
               initial={{ opacity: 0, y: 6 }}
