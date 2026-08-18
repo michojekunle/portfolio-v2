@@ -1388,7 +1388,7 @@ function InteractiveTargetPassage({
                       </span>
                     </div>
                     <span className="text-xs font-semibold text-blue-600 block mt-1">
-                      Meaning: {details.en}
+                      Meaning: {details.en.startsWith("Meaning of ") ? `${clean} (French term)` : details.en}
                     </span>
                   </div>
                 </div>
@@ -2204,9 +2204,10 @@ function ChallengeTab({
         </div>
 
         {/* Prompt Header */}
-        <p className="text-base sm:text-lg font-bold leading-relaxed tracking-tight" style={{ color: theme.cardTitle }}>
-          {challenge.prompt_text}
-        </p>
+        <InteractiveTargetPassage
+          text={challenge.prompt_text}
+          theme={theme}
+        />
 
         {/* Interactive Target Passage with Word Inspector & Translation */}
         {challenge.example_text && (
