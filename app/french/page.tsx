@@ -338,13 +338,13 @@ function speakFrench(text: string) {
   window.speechSynthesis.speak(utterance);
 }
 
-// ── Audio & Video MIME Helpers ────────────────────────────────────────────────
+// ── Audio & Video MIME & Universal Converter Helpers ─────────────────────────────
 function getSupportedAudioMimeType(): string {
   const types = [
-    "audio/webm;codecs=opus",
-    "audio/webm",
     "audio/mp4",
     "audio/aac",
+    "audio/webm;codecs=opus",
+    "audio/webm",
     "audio/ogg",
   ];
   for (const type of types) {
@@ -357,10 +357,11 @@ function getSupportedAudioMimeType(): string {
 
 function getSupportedVideoMimeType(): string {
   const types = [
+    'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
     "video/mp4;codecs=avc1",
     "video/mp4",
-    "video/webm;codecs=vp9",
-    "video/webm;codecs=vp8",
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
     "video/webm",
   ];
   for (const type of types) {
@@ -376,9 +377,118 @@ function getMediaExtension(mimeType: string, mode: "audio" | "video"): string {
     if (mimeType.includes("mp4")) return "mp4";
     return "webm";
   }
-  if (mimeType.includes("mp4") || mimeType.includes("aac")) return "mp4";
-  if (mimeType.includes("ogg")) return "ogg";
-  return "webm";
+  if (mimeType.includes("mp4") || mimeType.includes("aac")) return "m4a";
+  if (mimeType.includes("wav")) return "wav";
+  return "wav";
+}
+
+// Convert any WebM / OGG / AAC audio blob into standard Universal PCM WAV (16-bit 44.1kHz)
+async function convertAudioBlobToWavBlob(audioBlob: Blob): Promise<Blob> {
+  const arrayBuffer = await audioBlob.arrayBuffer();
+  const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  const audioContext = new AudioCtx();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+  const numOfChan = audioBuffer.numberOfChannels;
+  const length = audioBuffer.length * numOfChan * 2 + 44;
+  const buffer = new ArrayBuffer(length);
+  const view = new DataView(buffer);
+  const channels: Float32Array[] = [];
+  const sampleRate = audioBuffer.sampleRate;
+  let offset = 0;
+  let pos = 0;
+
+  function setUint16(data: number) {
+    view.setUint16(pos, data, true);
+    pos += 2;
+  }
+  function setUint32(data: number) {
+    view.setUint32(pos, data, true);
+    pos += 4;
+  }
+
+  // RIFF header
+  setUint32(0x46464952); // "RIFF"
+  setUint32(length - 8);
+  setUint32(0x45564157); // "WAVE"
+
+  // fmt sub-chunk
+  setUint32(0x20746d66); // "fmt "
+  setUint32(16); // SubChunk1Size (16 for PCM)
+  setUint16(1); // AudioFormat (1 for PCM)
+  setUint16(numOfChan);
+  setUint32(sampleRate);
+  setUint32(sampleRate * 2 * numOfChan); // ByteRate
+  setUint16(numOfChan * 2); // BlockAlign
+  setUint16(16); // BitsPerSample
+
+  // data sub-chunk
+  setUint32(0x61746164); // "data"
+  setUint32(length - pos - 4);
+
+  for (let i = 0; i < numOfChan; i++) {
+    channels.push(audioBuffer.getChannelData(i));
+  }
+
+  while (offset < audioBuffer.length) {
+    for (let i = 0; i < numOfChan; i++) {
+      let sample = Math.max(-1, Math.min(1, channels[i][offset]));
+      sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+      view.setInt16(pos, sample, true);
+      pos += 2;
+    }
+    offset++;
+  }
+
+  audioContext.close();
+  return new Blob([buffer], { type: "audio/wav" });
+}
+
+// Universal Cross-Device Download Helper
+async function downloadUniversalMedia(mediaUrl: string, isVideo: boolean, defaultFilename: string) {
+  try {
+    toast.loading("Preparing universal media download…");
+    const res = await fetch(mediaUrl);
+    const originalBlob = await res.blob();
+
+    if (!isVideo) {
+      // Audio: Convert to Universal WAV Audio Format if it's WebM/OGG
+      try {
+        const wavBlob = await convertAudioBlobToWavBlob(originalBlob);
+        const wavUrl = URL.createObjectURL(wavBlob);
+        const a = document.createElement("a");
+        a.href = wavUrl;
+        a.download = defaultFilename.replace(/\.(webm|ogg|mp3|m4a|wav|mp4)$/i, "") + ".wav";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(wavUrl);
+        toast.dismiss();
+        toast.success("Downloaded Universal WAV Audio! 🎧");
+        return;
+      } catch (convErr) {
+        console.warn("WAV conversion fallback to original blob:", convErr);
+      }
+    }
+
+    // Video or Audio Fallback
+    const blobUrl = URL.createObjectURL(originalBlob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    const isMp4 = originalBlob.type.includes("mp4");
+    const ext = isVideo ? (isMp4 ? "mp4" : "webm") : (isMp4 ? "m4a" : "wav");
+    a.download = defaultFilename.replace(/\.[^.]+$/, "") + `.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+    toast.dismiss();
+    toast.success(`Downloaded Universal ${ext.toUpperCase()} file! 📥`);
+  } catch (err) {
+    console.error("Download error:", err);
+    toast.dismiss();
+    window.open(mediaUrl, "_blank");
+  }
 }
 
 // ── Confetti Burst ────────────────────────────────────────────────────────────
@@ -1514,14 +1624,7 @@ function MediaRecorderModule({
               type="button"
               onClick={() => {
                 if (mediaUrl) {
-                  const a = document.createElement("a");
-                  a.href = mediaUrl;
-                  const ext = mimeTypeLabel.includes("mp4") ? "mp4" : mimeTypeLabel.includes("webm") ? "webm" : "mp3";
-                  a.download = `french_proof_${Date.now()}.${ext}`;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                  toast.success("Recording downloaded! 📥");
+                  downloadUniversalMedia(mediaUrl, mode === "video", `french_proof_${Date.now()}`);
                 }
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-95"
@@ -1711,26 +1814,9 @@ function HistoryTab({
                     </span>
                     <button
                       type="button"
-                      onClick={async () => {
-                        if (!log.proof_url) return;
-                        try {
-                          toast.loading("Preparing proof download…");
-                          const res = await fetch(log.proof_url);
-                          const blob = await res.blob();
-                          const blobUrl = URL.createObjectURL(blob);
-                          const a = document.createElement("a");
-                          a.href = blobUrl;
-                          const ext = isVideo ? "webm" : "mp3";
-                          a.download = `french_proof_${log.id.slice(0, 8)}.${ext}`;
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          URL.revokeObjectURL(blobUrl);
-                          toast.dismiss();
-                          toast.success("Proof downloaded! 📥");
-                        } catch {
-                          toast.dismiss();
-                          window.open(log.proof_url, "_blank");
+                      onClick={() => {
+                        if (log.proof_url) {
+                          downloadUniversalMedia(log.proof_url, Boolean(isVideo), `french_proof_${log.id.slice(0, 8)}`);
                         }
                       }}
                       className="px-2.5 py-1 rounded-xl text-[11px] font-bold flex items-center gap-1 border transition-all cursor-pointer shadow-xs active:scale-95"
