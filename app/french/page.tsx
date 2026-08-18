@@ -1176,6 +1176,26 @@ const COMMON_FRENCH_DICT: Record<string, { en: string; note: string; partOfSpeec
   regarderais: { en: "would watch / look at", note: "Conditional tense of regarder", partOfSpeech: "verb" },
   écouterais: { en: "would listen to", note: "Conditional tense of écouter", partOfSpeech: "verb" },
   lirais: { en: "would read", note: "Conditional tense of lire", partOfSpeech: "verb" },
+  logique: { en: "logical / logic", note: "Adjective describing something coherent ('connecteur logique' = logical connector)", partOfSpeech: "adjective" },
+  connecteur: { en: "connector / transition word", note: "Masculine noun (un connecteur logique)", partOfSpeech: "noun" },
+  intention: { en: "intention / intent", note: "Feminine noun (avoir l'intention de = to intend to)", partOfSpeech: "noun" },
+  magnifique: { en: "magnificent / beautiful", note: "Adjective (un temps magnifique = wonderful weather)", partOfSpeech: "adjective" },
+  arrivé: { en: "arrived / arrival", note: "Past participle of arriver (après être arrivé = after arriving)", partOfSpeech: "verb" },
+  arrivée: { en: "arrived / arrival", note: "Feminine past participle / noun", partOfSpeech: "verb / noun" },
+  temps: { en: "weather / time", note: "Masculine noun (il faisait un temps magnifique)", partOfSpeech: "noun" },
+  faisait: { en: "was making / was doing", note: "Imperfect tense of faire (il faisait un temps...)", partOfSpeech: "verb" },
+  rendre: { en: "to render / return", note: "Infinitive verb (se rendre compte de = to realize)", partOfSpeech: "verb" },
+  compte: { en: "account / realization", note: "Masculine noun (se rendre compte = to realize)", partOfSpeech: "noun" },
+  coup: { en: "blow / stroke", note: "Masculine noun ('du coup' = so / as a result)", partOfSpeech: "noun" },
+  rédaction: { en: "writing / drafting", note: "Feminine noun (guide de rédaction)", partOfSpeech: "noun" },
+  guide: { en: "guide / handbook", note: "Masculine noun (un guide)", partOfSpeech: "noun" },
+  expressions: { en: "expressions / phrases", note: "Plural feminine noun (des expressions)", partOfSpeech: "noun" },
+  cibles: { en: "target / target words", note: "Plural feminine noun (mots cibles)", partOfSpeech: "noun / adj" },
+  obligatoirement: { en: "mandatory / compulsorily", note: "Adverb derived from obligatoire", partOfSpeech: "adverb" },
+  inclure: { en: "to include", note: "Infinitive verb", partOfSpeech: "verb" },
+  après: { en: "after", note: "Preposition of time (après être arrivé = after arriving)", partOfSpeech: "preposition" },
+  être: { en: "to be", note: "Auxiliary infinitive verb", partOfSpeech: "verb" },
+  avoir: { en: "to have", note: "Auxiliary infinitive verb", partOfSpeech: "verb" },
 };
 
 function inferPartOfSpeech(frenchWord: string, translation: string): string {
@@ -1249,19 +1269,20 @@ function InteractiveTargetPassage({
     const baseDetails = getWordDetails(clean);
 
     if (baseDetails.en.startsWith("Meaning of ") && !dynamicDict[clean]) {
-      fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=fr|en`)
+      fetch("/api/french/translate-word", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ word: clean }),
+      })
         .then((res) => res.json())
-        .then((data: { responseData?: { translatedText?: string } }) => {
-          const translation = data.responseData?.translatedText;
-          if (translation && translation.toLowerCase() !== clean.toLowerCase()) {
-            const cleanTr = translation.toLowerCase();
-            const pos = inferPartOfSpeech(clean, cleanTr);
+        .then((data: { ok?: boolean; en?: string; partOfSpeech?: string; note?: string }) => {
+          if (data.ok && data.en) {
             setDynamicDict((prev) => ({
               ...prev,
               [clean]: {
-                en: cleanTr,
-                note: `Dynamic French dictionary lookup for "${clean}".`,
-                partOfSpeech: pos,
+                en: data.en!,
+                note: data.note || `French term "${clean}".`,
+                partOfSpeech: data.partOfSpeech || inferPartOfSpeech(clean, data.en!),
               },
             }));
           }
