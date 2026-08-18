@@ -2689,6 +2689,27 @@ export default function FrenchPage() {
 
   const theme = THEMES[themeMode];
 
+  // Restore saved theme preference on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("french_pwa_theme") as ThemeMode | null;
+      if (saved && (saved === "cowrywise" || saved === "light" || saved === "noir")) {
+        setThemeMode(saved);
+      }
+    }
+  }, []);
+
+  const handleThemeToggle = () => {
+    const modes: ThemeMode[] = ["cowrywise", "light", "noir"];
+    const nextIndex = (modes.indexOf(themeMode) + 1) % modes.length;
+    const nextMode = modes[nextIndex];
+    setThemeMode(nextMode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("french_pwa_theme", nextMode);
+    }
+    toast.info(`Theme: ${THEMES[nextMode].name}`);
+  };
+
   // Pre-warm SpeechSynthesis Voices
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -2936,12 +2957,7 @@ export default function FrenchPage() {
             {/* Theme Toggle */}
             <button
               type="button"
-              onClick={() => {
-                const modes: ThemeMode[] = ["cowrywise", "light", "noir"];
-                const nextIndex = (modes.indexOf(themeMode) + 1) % modes.length;
-                setThemeMode(modes[nextIndex]);
-                toast.info(`Theme: ${THEMES[modes[nextIndex]].name}`);
-              }}
+              onClick={handleThemeToggle}
               className="p-2.5 sm:p-3 rounded-2xl border transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-sm"
               style={{
                 backgroundColor: theme.headerBtnBg,
