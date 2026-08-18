@@ -374,11 +374,11 @@ function getSupportedVideoMimeType(): string {
 
 function getMediaExtension(mimeType: string, mode: "audio" | "video"): string {
   if (mode === "video") {
-    if (mimeType.includes("mp4")) return "mp4";
-    return "webm";
+    if (mimeType.includes("quicktime") || mimeType.includes("mov")) return "mov";
+    return "mp4";
   }
-  if (mimeType.includes("mp4") || mimeType.includes("aac")) return "m4a";
-  if (mimeType.includes("wav")) return "wav";
+  if (mimeType.includes("aac")) return "aac";
+  if (mimeType.includes("mp4") || mimeType.includes("m4a")) return "m4a";
   return "wav";
 }
 
@@ -1762,7 +1762,12 @@ function HistoryTab({
           const type = log.type || ch?.type || "speaking";
           const config = TYPE_CONFIG[type];
           const IconComponent = config?.icon || Sparkles;
-          const isVideo = log.proof_url?.includes(".webm") || log.proof_url?.includes(".mp4");
+          const isVideo = Boolean(
+            log.proof_url &&
+              (log.proof_url.includes("video_") || log.proof_url.includes("/video/")) &&
+              type !== "speaking" &&
+              type !== "reading"
+          );
 
           return (
             <div
