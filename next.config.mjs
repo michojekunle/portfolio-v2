@@ -46,7 +46,7 @@ const nextConfig = {
               // before they can render a video — without these, script-src/frame-src alone
               // still leave the embed stuck on the placeholder blockquote.
               [
-                "connect-src 'self'",
+                "connect-src 'self' blob:",
                 "https://bible-api.com",
                 "https://*.instagram.com",
                 "https://*.tiktok.com",
