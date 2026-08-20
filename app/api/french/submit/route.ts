@@ -59,30 +59,36 @@ export async function POST(request: Request): Promise<Response> {
     const freezesCount = streak?.streak_freezes ?? 2;
     const lastDate = streak?.last_completed_date ?? null;
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split("T")[0];
-
     let newStreak = currentStreak;
     let newFreezes = freezesCount;
     let usedFreeze = false;
 
-    // Streak Calculation & Freeze logic
-    if (lastDate === today) {
-      // Already completed today
-      return NextResponse.json({ ok: true, streak: streak ?? { current_streak: 1, longest_streak: 1, streak_freezes: 2, total_completions: 1, last_completed_date: today } });
-    } else if (!lastDate || lastDate === yesterdayStr) {
-      // Consecutive completion
-      newStreak += 1;
-    } else {
-      // Missed a day — check if a Streak Freeze is available
-      if (newFreezes > 0) {
-        newFreezes -= 1;
-        newStreak += 1; // Freeze saved the streak!
-        usedFreeze = true;
+    if (lastDate) {
+      const d1 = new Date(lastDate);
+      const d2 = new Date(today);
+      const utc1 = Date.UTC(d1.getUTCFullYear(), d1.getUTCMonth(), d1.getUTCDate());
+      const utc2 = Date.UTC(d2.getUTCFullYear(), d2.getUTCMonth(), d2.getUTCDate());
+      const daysDiff = Math.floor((utc2 - utc1) / (24 * 60 * 60 * 1000));
+
+      if (daysDiff === 0) {
+        // Already completed today
+        return NextResponse.json({ ok: true, streak: streak ?? { current_streak: 1, longest_streak: 1, streak_freezes: 2, total_completions: 1, last_completed_date: today } });
+      } else if (daysDiff === 1) {
+        // Consecutive completion
+        newStreak += 1;
       } else {
-        newStreak = 1; // Streak resets
+        // Missed days
+        const missedDays = daysDiff - 1;
+        if (newFreezes >= missedDays) {
+          newFreezes -= missedDays;
+          newStreak += 1;
+          usedFreeze = true;
+        } else {
+          newStreak = 1; // Streak resets
+        }
       }
+    } else {
+      newStreak = 1; // First completion ever
     }
 
     const newLongest = Math.max(streak?.longest_streak ?? 0, newStreak);

@@ -113,12 +113,60 @@ export async function GET(): Promise<Response> {
         .maybeSingle();
 
       if (userStreak) {
+        let currentStreak = userStreak.current_streak ?? 0;
+        let longestStreak = userStreak.longest_streak ?? 0;
+        let streakFreezes = userStreak.streak_freezes ?? 2;
+        let lastCompletedDate = userStreak.last_completed_date ?? null;
+        let needsUpdate = false;
+
+        if (lastCompletedDate) {
+          const todayDateStr = new Date().toISOString().split("T")[0];
+          const d1 = new Date(lastCompletedDate);
+          const d2 = new Date(todayDateStr);
+          const utc1 = Date.UTC(d1.getUTCFullYear(), d1.getUTCMonth(), d1.getUTCDate());
+          const utc2 = Date.UTC(d2.getUTCFullYear(), d2.getUTCMonth(), d2.getUTCDate());
+          const daysDiff = Math.floor((utc2 - utc1) / (24 * 60 * 60 * 1000));
+
+          if (daysDiff > 1) {
+            // User missed days!
+            const missedDays = daysDiff - 1;
+            if (streakFreezes >= missedDays) {
+              // Consume freezes to keep streak alive
+              streakFreezes -= missedDays;
+              // Set last completed date to yesterday so it's kept alive
+              const yesterday = new Date();
+              yesterday.setDate(yesterday.getDate() - 1);
+              lastCompletedDate = yesterday.toISOString().split("T")[0];
+              needsUpdate = true;
+            } else {
+              // No freezes left or not enough to cover missed days, streak resets to 0
+              currentStreak = 0;
+              needsUpdate = true;
+            }
+          }
+        }
+
+        if (needsUpdate) {
+          const updatedStreak = {
+            user_id: user.id,
+            current_streak: currentStreak,
+            longest_streak: longestStreak,
+            streak_freezes: streakFreezes,
+            last_completed_date: lastCompletedDate,
+            total_completions: userStreak.total_completions ?? 0,
+            updated_at: new Date().toISOString(),
+          };
+          await adminDb
+            .from("french_user_streaks")
+            .upsert(updatedStreak, { onConflict: "user_id" });
+        }
+
         streak = {
-          current_streak: userStreak.current_streak ?? 0,
-          longest_streak: userStreak.longest_streak ?? 0,
-          streak_freezes: userStreak.streak_freezes ?? 2,
+          current_streak: currentStreak,
+          longest_streak: longestStreak,
+          streak_freezes: streakFreezes,
           total_completions: userStreak.total_completions ?? 0,
-          last_completed_date: userStreak.last_completed_date ?? null,
+          last_completed_date: lastCompletedDate,
         };
       }
 

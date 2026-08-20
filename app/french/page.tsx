@@ -1060,6 +1060,68 @@ function VocabDetailModal({
   );
 }
 
+// ── Duolingo-style Streak Countdown Timer ─────────────────────────────────────
+function StreakCountdown({ isCompleted, theme }: { isCompleted: boolean; theme: (typeof THEMES)["cowrywise"] }) {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    if (isCompleted) return;
+
+    const updateTimer = () => {
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0); // Next midnight
+
+      const diffMs = midnight.getTime() - now.getTime();
+      if (diffMs <= 0) {
+        setTimeLeft("00h 00m 00s");
+        return;
+      }
+
+      const hours = Math.floor(diffMs / (3600 * 1000));
+      const minutes = Math.floor((diffMs % (3600 * 1000)) / (60 * 1000));
+      const seconds = Math.floor((diffMs % (60 * 1000)) / 1000);
+
+      const pad = (n: number) => String(n).padStart(2, "0");
+      setTimeLeft(`${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [isCompleted]);
+
+  if (isCompleted) {
+    return (
+      <div
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors shadow-sm"
+        style={{
+          backgroundColor: "rgba(34,197,94,0.1)",
+          borderColor: "rgba(34,197,94,0.2)",
+          color: "#22c55e",
+        }}
+      >
+        <Check className="w-3.5 h-3.5 shrink-0" />
+        <span>Streak safe for today! 🎉</span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors shadow-sm animate-pulse"
+      style={{
+        backgroundColor: "rgba(245,158,11,0.08)",
+        borderColor: "rgba(245,158,11,0.2)",
+        color: "#f59e0b",
+      }}
+    >
+      <Clock className="w-3.5 h-3.5 shrink-0" />
+      <span>{timeLeft} left to save your streak! 🔥</span>
+    </div>
+  );
+}
+
 // ── Duolingo-style Streak Calendar Modal ──────────────────────────────────────
 function StreakCalendarModal({
   isOpen,
@@ -3150,10 +3212,14 @@ export default function FrenchPage() {
               >
                 French Daily
               </h1>
-              <p className="text-xs mt-1 truncate font-medium flex items-center gap-1 opacity-90" style={{ color: theme.headerSubtext }}>
-                <span>{todayDateStr}</span>
-                <span className="hidden sm:inline">• On-Demand Practice</span>
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 mt-1">
+                <p className="text-xs font-medium opacity-90 truncate" style={{ color: theme.headerSubtext }}>
+                  {todayDateStr} • On-Demand Practice
+                </p>
+                <div className="flex sm:inline-flex shrink-0">
+                  <StreakCountdown isCompleted={completedToday} theme={theme} />
+                </div>
+              </div>
             </div>
           </div>
 
