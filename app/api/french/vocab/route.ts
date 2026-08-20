@@ -126,3 +126,53 @@ export async function DELETE(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request): Promise<Response> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required to update vocabulary entries." },
+        { status: 401 }
+      );
+    }
+
+    const body = (await request.json()) as {
+      id: string;
+      french_text?: string;
+      english_meaning?: string;
+      notes?: string;
+    };
+
+    const { id, french_text, english_meaning, notes } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing entry id" }, { status: 400 });
+    }
+
+    const updates: Record<string, any> = {};
+    if (french_text !== undefined) updates.french_text = french_text.trim();
+    if (english_meaning !== undefined) updates.english_meaning = english_meaning.trim();
+    if (notes !== undefined) updates.notes = notes.trim() || null;
+
+    const { data, error } = await supabase
+      .from("french_vocabulary")
+      .update(updates)
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[french/vocab] PUT error:", error);
+      return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
+    }
+
+    return NextResponse.json({ entry: data });
+  } catch (err) {
+    console.error("[french/vocab] Unexpected error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

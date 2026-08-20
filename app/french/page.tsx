@@ -38,6 +38,7 @@ import {
   Globe,
   Video,
   Download,
+  Edit3,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -825,18 +826,66 @@ function VocabDetailModal({
   entry,
   onClose,
   theme,
+  onSave,
 }: {
   entry: VocabEntry | null;
   onClose: () => void;
   theme: (typeof THEMES)["cowrywise"];
+  onSave: (updated: VocabEntry) => void;
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFrench, setEditFrench] = useState("");
+  const [editEnglish, setEditEnglish] = useState("");
+  const [editNotes, setEditNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (entry) {
+      setEditFrench(entry.french_text);
+      setEditEnglish(entry.english_meaning);
+      setEditNotes(entry.notes ?? "");
+      setIsEditing(false);
+      setIsFlipped(false);
+    }
+  }, [entry]);
 
   if (!entry) return null;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(`${entry.french_text} - ${entry.english_meaning}`);
     toast.success("Copied to clipboard!");
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editFrench.trim() || !editEnglish.trim()) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/french/vocab", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: entry.id,
+          french_text: editFrench,
+          english_meaning: editEnglish,
+          notes: editNotes,
+        }),
+      });
+      if (!res.ok) throw new Error("Update failed");
+      const data = (await res.json()) as { entry: VocabEntry };
+      onSave(data.entry);
+      setIsEditing(false);
+      toast.success("Flashcard updated! 📝");
+    } catch {
+      toast.error("Failed to update flashcard. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const insertEditAccent = (char: string) => {
+    setEditFrench((prev) => prev + char);
   };
 
   return (
@@ -870,58 +919,141 @@ function VocabDetailModal({
             </span>
           </div>
 
-          <div
-            onClick={() => setIsFlipped((f) => !f)}
-            className="relative w-full min-h-[180px] p-6 rounded-3xl border flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:scale-[1.01] shadow-inner select-none mb-6"
-            style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
-          >
-            <span className="text-[10px] font-mono uppercase tracking-widest block mb-3 font-semibold" style={{ color: theme.cardSubtext }}>
-              {isFlipped ? "English Translation" : "French Practice (Tap to Flip)"}
-            </span>
+          {isEditing ? (
+            <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
+              <h3 className="text-base font-bold font-serif" style={{ color: theme.cardTitle }}>Edit Flashcard</h3>
 
-            {!isFlipped ? (
-              <h3 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight leading-snug" style={{ color: theme.cardTitle }}>
-                {entry.french_text}
-              </h3>
-            ) : (
-              <p className="text-xl sm:text-2xl font-sans font-bold leading-snug" style={{ color: theme.englishText }}>
-                {entry.english_meaning}
-              </p>
-            )}
+              {/* Accent Toolbar */}
+              <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
+                {FRENCH_ACCENTS.map((char) => (
+                  <button
+                    key={char}
+                    type="button"
+                    onClick={() => insertEditAccent(char)}
+                    className="w-7 h-7 rounded-lg border text-xs font-bold shrink-0 cursor-pointer"
+                    style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.cardBorder, color: theme.cardTitle }}
+                  >
+                    {char}
+                  </button>
+                ))}
+              </div>
 
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-[11px] font-mono font-medium" style={{ color: theme.cardSubtext }}>
-                {isFlipped ? "Tap card to see French" : "Tap card to reveal meaning"}
-              </span>
-            </div>
-          </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-mono uppercase font-bold" style={{ color: theme.cardSubtext }}>French Text</label>
+                <input
+                  required
+                  className="rounded-2xl px-4 py-2.5 text-xs border focus:outline-none transition-all font-medium"
+                  style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.inputText }}
+                  value={editFrench}
+                  onChange={(e) => setEditFrench(e.target.value)}
+                />
+              </div>
 
-          {entry.notes && (
-            <div className="p-3.5 rounded-2xl border mb-6 text-xs" style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}>
-              <span className="font-mono text-[10px] uppercase font-bold block mb-1" style={{ color: theme.cardSubtext }}>Memory Hook / Context</span>
-              <p className="italic font-medium" style={{ color: theme.cardTitle }}>{entry.notes}</p>
-            </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-mono uppercase font-bold" style={{ color: theme.cardSubtext }}>English Meaning</label>
+                <input
+                  required
+                  className="rounded-2xl px-4 py-2.5 text-xs border focus:outline-none transition-all font-medium"
+                  style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.inputText }}
+                  value={editEnglish}
+                  onChange={(e) => setEditEnglish(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-mono uppercase font-bold" style={{ color: theme.cardSubtext }}>Memory Hook / Context</label>
+                <input
+                  className="rounded-2xl px-4 py-2.5 text-xs border focus:outline-none transition-all font-medium"
+                  style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.inputText }}
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="py-3 px-4 rounded-2xl font-bold text-xs border transition-all cursor-pointer text-center"
+                  style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving || !editFrench.trim() || !editEnglish.trim()}
+                  className="py-3 px-4 rounded-2xl font-bold text-xs transition-all cursor-pointer text-center shadow-md disabled:opacity-50"
+                  style={{ backgroundColor: theme.primaryBtnBg, color: theme.primaryBtnText }}
+                >
+                  {saving ? "Saving…" : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <div
+                onClick={() => setIsFlipped((f) => !f)}
+                className="relative w-full min-h-[180px] p-6 rounded-3xl border flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:scale-[1.01] shadow-inner select-none mb-6"
+                style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}
+              >
+                <span className="text-[10px] font-mono uppercase tracking-widest block mb-3 font-semibold" style={{ color: theme.cardSubtext }}>
+                  {isFlipped ? "English Translation" : "French Practice (Tap to Flip)"}
+                </span>
+
+                {!isFlipped ? (
+                  <h3 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight leading-snug" style={{ color: theme.cardTitle }}>
+                    {entry.french_text}
+                  </h3>
+                ) : (
+                  <p className="text-xl sm:text-2xl font-sans font-bold leading-snug" style={{ color: theme.englishText }}>
+                    {entry.english_meaning}
+                  </p>
+                )}
+
+                <div className="mt-4 flex items-center gap-2">
+                  <span className="text-[11px] font-mono font-medium" style={{ color: theme.cardSubtext }}>
+                    {isFlipped ? "Tap card to see French" : "Tap card to reveal meaning"}
+                  </span>
+                </div>
+              </div>
+
+              {entry.notes && (
+                <div className="p-3.5 rounded-2xl border mb-6 text-xs" style={{ backgroundColor: theme.subCardBg, borderColor: theme.cardBorder }}>
+                  <span className="font-mono text-[10px] uppercase font-bold block mb-1" style={{ color: theme.cardSubtext }}>Memory Hook / Context</span>
+                  <p className="italic font-medium" style={{ color: theme.cardTitle }}>{entry.notes}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => speakFrench(entry.french_text)}
+                  className="py-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                  style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
+                >
+                  <Volume2 className="w-3.5 h-3.5 text-blue-600" /> Listen
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="py-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                  style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-amber-500" /> Edit
+                </button>
+
+                <button
+                  type="button"
+                  onClick={copyToClipboard}
+                  className="py-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                  style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
+                >
+                  <Copy className="w-3.5 h-3.5" /> Copy
+                </button>
+              </div>
+            </>
           )}
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => speakFrench(entry.french_text)}
-              className="py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition-all cursor-pointer"
-              style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
-            >
-              <Volume2 className="w-4 h-4 text-blue-600" /> Listen Audio
-            </button>
-
-            <button
-              type="button"
-              onClick={copyToClipboard}
-              className="py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition-all cursor-pointer"
-              style={{ backgroundColor: theme.secondaryBtnBg, borderColor: theme.secondaryBtnBorder, color: theme.secondaryBtnText }}
-            >
-              <Copy className="w-4 h-4" /> Copy Text
-            </button>
-          </div>
         </motion.div>
       </div>
     </AnimatePresence>
@@ -2316,12 +2448,10 @@ function VocabTab({
   theme,
   user,
   onRequireAuth,
-  onSelectEntry,
 }: {
   theme: (typeof THEMES)["cowrywise"];
   user: User | null;
   onRequireAuth: () => void;
-  onSelectEntry: (entry: VocabEntry) => void;
 }) {
   const [entries, setEntries] = useState<VocabEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2333,6 +2463,7 @@ function VocabTab({
   const [englishMeaning, setEnglishMeaning] = useState("");
   const [notes, setNotes] = useState("");
   const [search, setSearch] = useState("");
+  const [selectedVocabEntry, setSelectedVocabEntry] = useState<VocabEntry | null>(null);
 
   const fetchEntries = useCallback(async () => {
     try {
@@ -2592,7 +2723,7 @@ function VocabTab({
               key={entry.id}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              onClick={() => onSelectEntry(entry)}
+              onClick={() => setSelectedVocabEntry(entry)}
               className="rounded-2xl p-4 border flex items-start justify-between gap-3 group transition-all hover:scale-[1.02] cursor-pointer shadow-md"
               style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
             >
@@ -2639,6 +2770,16 @@ function VocabTab({
           ))}
         </div>
       )}
+
+      <VocabDetailModal
+        entry={selectedVocabEntry}
+        onClose={() => setSelectedVocabEntry(null)}
+        theme={theme}
+        onSave={(updated) => {
+          setEntries((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+          setSelectedVocabEntry(updated);
+        }}
+      />
     </div>
   );
 }
@@ -2784,7 +2925,6 @@ export default function FrenchPage() {
 
   const [showStreakModal, setShowStreakModal] = useState(false);
   const [showScheduleDrawer, setShowScheduleDrawer] = useState(false);
-  const [selectedVocabEntry, setSelectedVocabEntry] = useState<VocabEntry | null>(null);
 
   const [notifSupported, setNotifSupported] = useState(false);
   const [notifSubscribed, setNotifSubscribed] = useState(false);
@@ -2985,12 +3125,6 @@ export default function FrenchPage() {
         isOpen={showStreakModal}
         onClose={() => setShowStreakModal(false)}
         streak={streak}
-        theme={theme}
-      />
-
-      <VocabDetailModal
-        entry={selectedVocabEntry}
-        onClose={() => setSelectedVocabEntry(null)}
         theme={theme}
       />
 
@@ -3448,7 +3582,6 @@ export default function FrenchPage() {
                 theme={theme}
                 user={user}
                 onRequireAuth={() => setShowAuthModal(true)}
-                onSelectEntry={(entry) => setSelectedVocabEntry(entry)}
               />
             ) : (
               <HistoryTab
