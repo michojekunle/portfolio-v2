@@ -76,7 +76,8 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createSupabaseAdmin(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY!;
+  const supabase = createSupabaseAdmin(process.env.SUPABASE_URL!, serviceKey);
   const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
   const today = new Date().toISOString().split("T")[0];
 
@@ -121,7 +122,8 @@ export async function POST(request: Request): Promise<Response> {
   // Get logs of challenge completed today (matching challenge dates)
   const { data: logs } = await supabase
     .from("french_logs")
-    .select("user_id, created_at");
+    .select("user_id, created_at")
+    .gte("created_at", `${today}T00:00:00.000Z`);
 
   // Fetch all users using admin DB client
   const { data: authData } = await supabase.auth.admin.listUsers();
