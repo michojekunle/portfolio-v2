@@ -33,14 +33,14 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com",
-              "style-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://vercel.live https://*.vercel.live",
+              "style-src 'self' 'unsafe-inline' https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
               // media-src: blob: for local MediaRecorder audio/video previews; https: for Supabase storage media
               `media-src 'self' blob: data: https: https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
               // next/font serves fonts from same origin after build-time download
-              "font-src 'self' data:",
+              "font-src 'self' data: https://assets.vercel.com https://vercel.live https://*.vercel.live",
               // Only browser→API calls need to be listed here (server-side fetches are exempt).
               // Instagram/TikTok's embed.js each fetch their own oEmbed endpoint client-side
               // before they can render a video — without these, script-src/frame-src alone
@@ -58,9 +58,13 @@ const nextConfig = {
                 "https://*.push.services.mozilla.com",
                 "https://*.notify.windows.com",
                 "https://*.apple.com",
+                // Vercel Live Preview / Toolbar
+                "https://vercel.live",
+                "https://*.vercel.live",
+                "wss://*.vercel.live",
               ].join(" "),
               // Allow YouTube, Instagram, TikTok, and Vimeo embeds (plus blob: for epubjs)
-              "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.vimeo.com",
+              "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.vimeo.com https://vercel.live https://*.vercel.live",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

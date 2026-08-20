@@ -1,50 +1,41 @@
 /**
  * POST /api/french/trigger
- * Called by the GitHub Action every day at 10 PM.
- * 1. Generates today's challenge via Groq (falls back to static rotation if API fails)
- * 2. Saves it to the database
- * 3. Sends a Web Push notification to all subscribed devices
- *
+ * Called by the GitHub Action/cron job every hour.
+ * 
+ * 1. Generates today's challenge via Groq (seeds automatically if not exists)
+ * 2. Fetches all users and filters those who HAVE NOT completed their challenge today.
+ * 3. Sends custom Push notifications and Emails using Resend at:
+ *    - Custom user-selected reminder times
+ *    - Noon (12:00) check-in
+ *    - Evening (18:00) check-in
+ *    - 4 hours before day end (20:00)
+ *    - 2 hours before day end (22:00)
+ *    - 1 hour final countdown (23:00)
+ * 
  * Protected by FRENCH_CRON_SECRET in Authorization header.
  */
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import webpush from "web-push";
+import { Resend } from "resend";
 
-// ── Groq LLM prompt ──────────────────────────────────────────────────────────
 const CHALLENGE_TYPES = ["speaking", "writing", "reading"] as const;
 type ChallengeType = (typeof CHALLENGE_TYPES)[number];
 
 function getTodayType(): ChallengeType {
-  // Rotate day of year mod 3: speaking → writing → reading
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
   );
   return CHALLENGE_TYPES[dayOfYear % 3];
 }
 
-const SPEAKING_PROMPTS = [
-  "Record yourself introducing yourself in French. Include your name, where you're from, and one thing you love.",
-  "Record yourself describing what you did today — in French. Use at least 5 sentences.",
-  "Read this sentence out loud 3 times until it flows naturally: 'Je fais des efforts chaque jour pour m'améliorer.'",
-  "Record a 60-second French rant or opinion about any topic — sports, food, tech, anything.",
-  "Describe your room or workspace in French. Record yourself for at least 45 seconds.",
-];
-
-const WRITING_PROMPTS = [
-  "Write 3 sentences about your day in French and post it as your Twitter/X status.",
-  "Write a short journal entry in French: What was the best part of today?",
-  "Translate your thoughts from the last 10 minutes into French sentences. Write at least 4.",
-  "Write a mini review of the last thing you watched, read, or listened to — in French.",
-  "Write 5 French sentences using the passé composé (past tense). Describe something that happened this week.",
-];
-
-const READING_PROMPTS = [
-  "Read this paragraph out loud until you can say it without hesitation: 'Apprendre une nouvelle langue, c'est comme ouvrir une nouvelle fenêtre sur le monde. Chaque mot appris est un pas de plus vers la maîtrise.'",
-  "Go to r/france or a French news site. Pick any article and read the first 3 paragraphs out loud.",
-  "Read the lyrics of any French song out loud while it plays. Focus on matching the rhythm.",
-  "Read these 5 common French expressions out loud and say their English meaning after each: 'C'est la vie', 'Savoir-faire', 'Joie de vivre', 'Comme ci comme ça', 'Coup de grâce'.",
-  "Open a French Wikipedia article on any topic you find interesting and read the intro section out loud.",
+const STARTER_PROMPTS = [
+  {
+    type: "reading",
+    prompt_text: "Lisez ce dialogue complet dans un café parisien à voix haute. Prêtez une attention particulière aux liaisons et à l'intonation naturelle.",
+    example_text: `— Bonjour Antoine ! Ça fait plaisir de te voir ici. Tu m'attends depuis longtemps ?
+— Pas du tout. Je viens tout juste d'arriver.`,
+  },
 ];
 
 async function generateChallengeWithGroq(type: ChallengeType): Promise<{ prompt_text: string; example_text: string }> {
@@ -78,33 +69,18 @@ Keep it achievable in under 5 minutes. Be specific and actionable. No fluff.`;
   return JSON.parse(data.choices[0].message.content) as { prompt_text: string; example_text: string };
 }
 
-function getStaticChallenge(type: ChallengeType): { prompt_text: string; example_text: string } {
-  const day = new Date().getDay();
-  const map: Record<ChallengeType, string[]> = {
-    speaking: SPEAKING_PROMPTS,
-    writing: WRITING_PROMPTS,
-    reading: READING_PROMPTS,
-  };
-  const prompts = map[type];
-  return {
-    prompt_text: prompts[day % prompts.length],
-    example_text: "",
-  };
-}
-
-// ── Main handler ─────────────────────────────────────────────────────────────
 export async function POST(request: Request): Promise<Response> {
-  // Verify secret
   const authHeader = request.headers.get("authorization") ?? "";
   const secret = process.env.FRENCH_CRON_SECRET;
   if (!secret || authHeader !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+  const supabase = createSupabaseAdmin(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+  const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
   const today = new Date().toISOString().split("T")[0];
 
-  // 1. Check if challenge already exists for today
+  // 1. Ensure daily challenge is loaded
   const { data: existing } = await supabase
     .from("french_challenges")
     .select("id, type, prompt_text")
@@ -113,22 +89,17 @@ export async function POST(request: Request): Promise<Response> {
     .limit(1)
     .maybeSingle();
 
-  let challenge: { id: string; type: string; prompt_text: string } | null = existing;
+  let challenge = existing;
 
   if (!challenge) {
-    // 2. Generate challenge
     const type = getTodayType();
-    let content: { prompt_text: string; example_text: string };
-
+    let content;
     try {
       content = await generateChallengeWithGroq(type);
-    } catch (err) {
-      console.warn("[french/trigger] Groq failed, using static fallback:", err);
-      content = getStaticChallenge(type);
+    } catch {
+      content = { prompt_text: STARTER_PROMPTS[0].prompt_text, example_text: STARTER_PROMPTS[0].example_text };
     }
-
-    // 3. Save to DB
-    const { data: inserted, error: insertError } = await supabase
+    const { data: inserted } = await supabase
       .from("french_challenges")
       .insert({
         challenge_date: today,
@@ -138,91 +109,163 @@ export async function POST(request: Request): Promise<Response> {
       })
       .select("id, type, prompt_text")
       .single();
-
-    if (insertError || !inserted) {
-      console.error("[french/trigger] Insert error:", insertError);
-      return NextResponse.json({ error: "DB insert failed" }, { status: 500 });
-    }
-
     challenge = inserted;
   }
 
-  // TypeScript narrowing: after the if-block above, challenge is guaranteed non-null
   const safeChallenge = challenge!;
 
-  // 4. Load push subscriptions (match current WAT hour or all if manual)
-  // Calculate current West Africa Time (UTC+1) hour in "HH:00" format
-  const nowWAT = new Date(Date.now() + 3600000);
-  const currentWatHour = `${String(nowWAT.getUTCHours()).padStart(2, "0")}:00`;
-
+  // 2. Fetch all user subscriptions, streaks, and completion logs for today
   const { data: subs } = await supabase.from("french_subscriptions").select("*");
-  if (!subs || subs.length === 0) {
-    console.log("[french/trigger] No push subscriptions found.");
-    return NextResponse.json({ ok: true, pushed: 0, challenge });
+  const { data: streaks } = await supabase.from("french_user_streaks").select("*");
+  
+  // Get logs of challenge completed today (matching challenge dates)
+  const { data: logs } = await supabase
+    .from("french_logs")
+    .select("user_id, created_at");
+
+  // Fetch all users using admin DB client
+  const { data: authData } = await supabase.auth.admin.listUsers();
+  const allUsers = authData?.users ?? [];
+
+  // Calculate current West Africa Time (UTC+1) hour
+  const nowWAT = new Date(Date.now() + 3600000);
+  const currentHour = nowWAT.getUTCHours(); // 0 to 23
+  const currentWatHourStr = `${String(currentHour).padStart(2, "0")}:00`;
+
+  // Find users who HAVE NOT completed today's challenge
+  const completedUserIds = new Set();
+  if (logs) {
+    for (const log of logs) {
+      const logDate = new Date(log.created_at).toISOString().split("T")[0];
+      if (logDate === today) {
+        completedUserIds.add(log.user_id);
+      }
+    }
   }
+  const pendingUsers = allUsers.filter((u) => !completedUserIds.has(u.id));
 
-  // Target subscriptions matching the current hour or default 22:00
-  const targetSubs = subs.filter((s) => {
-    if (!s.reminder_time) return currentWatHour === "22:00";
-    return s.reminder_time === currentWatHour || currentWatHour === "22:00";
-  });
-
-  // 5. Configure web-push VAPID
+  // Initialize Web Push
   const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
   const vapidPrivate = process.env.VAPID_PRIVATE_KEY!;
-  if (!vapidPublic || !vapidPrivate) {
-    console.error("[french/trigger] VAPID keys missing");
-    return NextResponse.json({ error: "VAPID keys not configured" }, { status: 500 });
+  if (vapidPublic && vapidPrivate) {
+    webpush.setVapidDetails(
+      `mailto:${process.env.CONTACT_TO_EMAIL ?? "michojekunle1@gmail.com"}`,
+      vapidPublic,
+      vapidPrivate
+    );
   }
 
-  webpush.setVapidDetails(
-    `mailto:${process.env.CONTACT_TO_EMAIL ?? "michojekunle1@gmail.com"}`,
-    vapidPublic,
-    vapidPrivate
-  );
+  let pushesSent = 0;
+  let emailsSent = 0;
 
-  const typeEmoji: Record<string, string> = {
-    speaking: "🗣️",
-    writing: "✍️",
-    reading: "📖",
-  };
+  for (const user of pendingUsers) {
+    const userSub = subs?.find((s) => s.user_id === user.id);
+    const userStreak = streaks?.find((s) => s.user_id === user.id);
+    const streakCount = userStreak?.current_streak ?? 0;
 
-  const payload = JSON.stringify({
-    title: `${typeEmoji[safeChallenge.type] ?? "🇫🇷"} French Challenge — ${safeChallenge.type}`,
-    body: safeChallenge.prompt_text,
-    url: "/french",
-  });
+    let triggerPush = false;
+    let triggerEmail = false;
 
-  // 6. Send push to all subscriptions (remove expired ones)
-  let pushed = 0;
-  const expiredEndpoints: string[] = [];
+    let pushTitle = "🇫🇷 French Daily";
+    let pushBody = "Practice your French today to save your streak!";
+    let emailSubject = "Save your French streak today!";
+    let emailBody = "Bonjour! Don't forget to practice French today and keep your streak active.";
 
-  await Promise.allSettled(
-    targetSubs.map(async (sub) => {
+    // ── Evaluator logic for trigger intervals ───────────────────────────────
+    
+    // Trigger 1: User Scheduled Reminder time
+    if (userSub?.reminder_time === currentWatHourStr) {
+      triggerPush = true;
+      triggerEmail = true;
+      pushTitle = "🇫🇷 Challenge Ready!";
+      pushBody = `It's time! Start today's French challenge and keep your ${streakCount}-day streak alive!`;
+      emailSubject = `Your Daily French Challenge is Ready! 🇫🇷`;
+      emailBody = `<p>Bonjour!</p><p>It's time for your scheduled daily French drill. Spend just 5 minutes today to save your <strong>${streakCount}-day streak</strong>!</p>`;
+    }
+    // Trigger 2: Noon Check-in
+    else if (currentHour === 12) {
+      triggerPush = true;
+      triggerEmail = true;
+      pushTitle = "🥖 Noon Check-in";
+      pushBody = `Bonjour! Don't forget to do your 5-minute French drill.`;
+      emailSubject = `Noon French Check-in 🥖`;
+      emailBody = `<p>Bonjour!</p><p>This is your midday reminder to keep your learning going. Fit in today's French drill during your lunch break to keep your streak active!</p>`;
+    }
+    // Trigger 3: Evening Check-in
+    else if (currentHour === 18) {
+      triggerPush = true;
+      triggerEmail = true;
+      pushTitle = "🍷 Evening Practice";
+      pushBody = `Complete your drill now to secure your streak before the day ends.`;
+      emailSubject = `Evening French Practice 🍷`;
+      emailBody = `<p>Bonsoir!</p><p>The day is winding down. Don't go to bed without securing your French streak. Practice now!</p>`;
+    }
+    // Trigger 4: 4 Hours Left (20:00)
+    else if (currentHour === 20) {
+      triggerPush = true;
+      triggerEmail = true;
+      pushTitle = "🔥 4 Hours Left!";
+      pushBody = `Quick! Save your ${streakCount}-day French streak before midnight.`;
+      emailSubject = `Only 4 hours left to save your French streak! 🔥`;
+      emailBody = `<p>Urgent Reminder:</p><p>You have only 4 hours remaining to complete today's French challenge and protect your <strong>${streakCount}-day streak</strong> from breaking!</p>`;
+    }
+    // Trigger 5: 2 Hours Left (22:00)
+    else if (currentHour === 22) {
+      triggerPush = true;
+      triggerEmail = true;
+      pushTitle = "⏰ 2 Hours Left!";
+      pushBody = `Hurry! Complete today's French drill to protect your streak.`;
+      emailSubject = `Hurry! 2 hours remaining for your French challenge ⏰`;
+      emailBody = `<p>Action Required:</p><p>Your <strong>${streakCount}-day streak</strong> will break in just 2 hours. Tap in to complete your speaking/writing drill now!</p>`;
+    }
+    // Trigger 6: 1 Hour Final Countdown (23:00)
+    else if (currentHour === 23) {
+      triggerPush = true;
+      pushTitle = "🚨 FINAL COUNTDOWN: 1 Hour Left!";
+      pushBody = `Your French streak is about to break in 60 minutes. Open the app now!`;
+    }
+
+    // ── Dispatch notifications ─────────────────────────────────────────────
+    if (triggerPush && userSub && vapidPublic && vapidPrivate) {
       try {
+        const payload = JSON.stringify({
+          title: pushTitle,
+          body: pushBody,
+          url: "/french",
+        });
         await webpush.sendNotification(
-          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          { endpoint: userSub.endpoint, keys: { p256dh: userSub.p256dh, auth: userSub.auth } },
           payload
         );
-        pushed++;
-      } catch (err: unknown) {
-        const status = (err as { statusCode?: number }).statusCode;
-        if (status === 404 || status === 410) {
-          expiredEndpoints.push(sub.endpoint);
-        } else {
-          console.error("[french/trigger] Push error:", err);
+        pushesSent++;
+      } catch (err: any) {
+        if (err.statusCode === 404 || err.statusCode === 410) {
+          // Clean expired subscriptions
+          await supabase.from("french_subscriptions").delete().eq("id", userSub.id);
         }
       }
-    })
-  );
+    }
 
-  // Clean up expired endpoints
-  if (expiredEndpoints.length > 0) {
-    await supabase
-      .from("french_subscriptions")
-      .delete()
-      .in("endpoint", expiredEndpoints);
+    if (triggerEmail && resend && user.email) {
+      try {
+        await resend.emails.send({
+          from: "French Daily <onboarding@resend.dev>", // Or custom domain when configured
+          to: user.email,
+          subject: emailSubject,
+          html: emailBody + `<p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://michojekunle.com'}/french" style="display: inline-block; padding: 10px 20px; background-color: #2563eb; color: #fff; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">Open French Daily Studio</a></p>`,
+        });
+        emailsSent++;
+      } catch (err) {
+        console.error(`[french/trigger] Email send error for ${user.email}:`, err);
+      }
+    }
   }
 
-  return NextResponse.json({ ok: true, pushed, challenge });
+  return NextResponse.json({
+    ok: true,
+    hour: currentWatHourStr,
+    usersChecked: pendingUsers.length,
+    pushesSent,
+    emailsSent,
+  });
 }
