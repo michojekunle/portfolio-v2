@@ -111,37 +111,40 @@ export function Navbar(): React.ReactNode {
       className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-3.5 border-b border-(--rule)"
       aria-label="Main navigation"
     >
-      <div className="max-w-(--maxw) mx-auto px-(--gutter) py-4.5 flex justify-between items-center gap-8">
-        <MagneticWrapper strength={10}>
-          <Link
-            href="/"
-            aria-label="Michael Ojekunle — home"
-            className="flex items-center gap-4 font-display italic text-[22px] font-normal cursor-pointer text-(--ink) no-underline fvs-soft group"
-          >
-            <div className="transition-transform duration-300 group-hover:scale-105">
-              <MoMark dim={34} />
-            </div>
-            <span className="max-[480px]:hidden">
-              Michael Ojekunle<em>.</em>
-            </span>
-          </Link>
-        </MagneticWrapper>
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) py-4.5 flex justify-between items-center gap-8 min-[820px]:grid min-[820px]:grid-cols-[1fr_auto_1fr]">
+        <div className="flex justify-start">
+          <MagneticWrapper strength={10}>
+            <Link
+              href="/"
+              aria-label="Michael Ojekunle — home"
+              className="flex items-center gap-4 font-display italic text-[22px] font-normal cursor-pointer text-(--ink) no-underline fvs-soft group"
+            >
+              <div className="transition-transform duration-300 group-hover:scale-105">
+                <MoMark dim={34} />
+              </div>
+              <span className="max-[480px]:hidden">
+                Michael Ojekunle<em>.</em>
+              </span>
+            </Link>
+          </MagneticWrapper>
+        </div>
 
         {/* Center: Desktop Nav Links */}
-        <div className="flex gap-6 max-[820px]:hidden items-center">
+        <div className="flex gap-6 max-[820px]:hidden items-center justify-self-center">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               data-active={isActive(link.href)}
-              className="font-mono text-[10px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) data-[active=true]:font-bold"
+              className="group relative font-mono text-[10px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2"
             >
               {link.name}
+              <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-(--v3-accent) scale-x-0 transition-transform duration-200 origin-left group-hover:scale-x-100 group-data-[active=true]:scale-x-100" />
             </Link>
           ))}
         </div>
 
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 items-center justify-self-end">
           <CommandPaletteTrigger />
 
           <MagneticWrapper strength={15}>
