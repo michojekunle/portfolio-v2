@@ -17,6 +17,7 @@ import { TaskItem } from "@tiptap/extension-task-item";
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
 
+import {
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3, 
   Quote, List, ListOrdered, Undo, Redo, Link2, Image as ImageIcon,
   Underline as UnderlineIcon, Table as TableIcon, CheckSquare, 
