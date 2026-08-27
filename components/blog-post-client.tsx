@@ -3,6 +3,7 @@
 import { motion, useScroll, useSpring } from "framer-motion"
 import { format } from "date-fns"
 import Link from "next/link"
+import Image from "next/image"
 import { ViewCounter } from "./view-counter"
 
 interface BlogPostClientProps {
@@ -12,6 +13,7 @@ interface BlogPostClientProps {
     category: string | null
     published_at: string | null
     read_time: string | null
+    cover_image?: string | null
   }
   slug: string
 }
@@ -67,6 +69,17 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
             </motion.span>
           ))}
         </h1>
+
+        {post.cover_image && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full relative aspect-[21/9] rounded-xl overflow-hidden mb-12 border border-(--rule)"
+          >
+            <Image src={post.cover_image} alt={post.title} fill className="object-cover" priority />
+          </motion.div>
+        )}
 
         {post.excerpt && (
           <motion.p 

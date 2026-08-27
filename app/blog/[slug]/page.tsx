@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data: post } = await supabase
     .from("blog_posts")
-    .select("title, excerpt, category, published_at, updated_at")
+    .select("title, excerpt, category, published_at, updated_at, cover_image")
     .eq("slug", slug)
     .eq("published", true)
     .single();
@@ -62,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: post.updated_at ?? undefined,
       authors: ["https://michaelojekunle.dev"],
       tags: post.category ? [post.category] : undefined,
+      images: post.cover_image ? [{ url: post.cover_image }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -112,7 +113,10 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
         },
         mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
         articleSection: post.category ?? undefined,
-        image: {
+        image: post.cover_image ? {
+          "@type": "ImageObject",
+          url: post.cover_image,
+        } : {
           "@type": "ImageObject",
           url: `${SITE}/blog/${slug}/opengraph-image`,
           width: 1200,

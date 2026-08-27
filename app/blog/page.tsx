@@ -19,7 +19,7 @@ export default async function BlogPage(): Promise<React.ReactElement> {
   const { data: rawPosts, error: postsErr } = await supabase
     .from("blog_posts")
     .select(`
-      id, title, slug, excerpt, category, read_time, published_at, updated_at, views, external_url, clicks,
+      id, title, slug, excerpt, category, read_time, published_at, updated_at, views, external_url, clicks, cover_image,
       reactions:blog_reactions(count),
       comments:blog_comments(count)
     `)

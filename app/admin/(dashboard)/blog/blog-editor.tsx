@@ -6,8 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, Eye } from "lucide-react";
+import { Loader2, Save, Eye, Upload } from "lucide-react";
 import { TiptapEditor } from "@/components/admin/tiptap-editor";
+import Image from "next/image";
 
 interface BlogPost {
   id?: string;
@@ -19,6 +20,7 @@ interface BlogPost {
   read_time: string;
   published: boolean;
   external_url?: string;
+  cover_image?: string;
 }
 
 function slugify(text: string): string {
@@ -48,8 +50,10 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
     read_time: post?.read_time ?? "",
     published: post?.published ?? false,
     external_url: post?.external_url ?? "",
+    cover_image: post?.cover_image ?? "",
   });
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
@@ -60,6 +64,33 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
       title,
       slug: isNew ? slugify(title) : f.slug,
     }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("bucket", "blog");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const { url } = await res.json();
+      setForm((f) => ({ ...f, cover_image: url }));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload image");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSave = async (publish?: boolean): Promise<void> => {
@@ -170,6 +201,36 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
           />
           <p className="text-[10px] text-muted-foreground">If provided, this post will link directly to the external platform.</p>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Cover Image</label>
+        <div className="flex items-center gap-4">
+          <Input
+            value={form.cover_image}
+            onChange={(e) => setForm((f) => ({ ...f, cover_image: e.target.value }))}
+            placeholder="Image URL or upload one ->"
+            className="flex-1"
+          />
+          <div className="relative">
+            <input
+              type="file"
+              accept="image/*"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              onChange={handleImageUpload}
+              disabled={uploadingImage}
+            />
+            <Button type="button" variant="outline" disabled={uploadingImage}>
+              {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+              {uploadingImage ? "Uploading..." : "Upload Image"}
+            </Button>
+          </div>
+        </div>
+        {form.cover_image && (
+          <div className="relative w-full h-48 mt-4 rounded-md overflow-hidden border border-border">
+            <Image src={form.cover_image} alt="Cover preview" fill className="object-cover" />
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">

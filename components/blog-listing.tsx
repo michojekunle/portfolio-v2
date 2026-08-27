@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Search, ExternalLink, X, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 interface Post {
   id: string;
@@ -18,6 +19,7 @@ interface Post {
   commentCount: number;
   external_url?: string;
   clicks?: number;
+  cover_image?: string | null;
 }
 
 const CATEGORIES = ["All", "Technical", "Web3", "Reflection", "ZKML", "First Principles", "Life & Learning"];
@@ -121,7 +123,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                   {dateStr}
                 </span>
                 
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5 flex-1">
                   <div className="font-display text-[22px] leading-[1.2] text-(--ink) group-hover:text-(--v3-accent) transition-colors duration-200 fvs-text">
                     {post.title}
                     <span className="inline-flex items-center ml-3 font-mono text-[10px] uppercase tracking-widest px-2 py-0.75 rounded bg-(--bg-2) border border-(--rule) text-muted-foreground align-middle">
@@ -136,11 +138,17 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                   )}
                 </div>
                 
-                <span className="hidden sm:block font-mono text-[11px] text-muted-foreground text-right">
+                {post.cover_image && (
+                  <div className="hidden sm:block relative w-[60px] h-[60px] rounded overflow-hidden shrink-0 border border-(--rule)">
+                    <Image src={post.cover_image} alt={post.title} fill className="object-cover" />
+                  </div>
+                )}
+                
+                <span className="hidden sm:block font-mono text-[11px] text-muted-foreground text-right w-[100px] shrink-0">
                   {post.read_time ?? ""}
                 </span>
                 
-                <span className="hidden sm:flex justify-end text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-(--v3-accent)" aria-hidden="true">
+                <span className="hidden sm:flex justify-end text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-(--v3-accent) w-[40px] shrink-0" aria-hidden="true">
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>

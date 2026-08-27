@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useRef } from "react";
+
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
@@ -15,11 +17,10 @@ import { TaskItem } from "@tiptap/extension-task-item";
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
 
-import { 
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3, 
   Quote, List, ListOrdered, Undo, Redo, Link2, Image as ImageIcon,
   Underline as UnderlineIcon, Table as TableIcon, CheckSquare, 
-  Minus, Code2, PlusSquare
+  Minus, Code2, Upload, Loader2
 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 
@@ -31,10 +32,44 @@ interface TiptapEditorProps {
 }
 
 const MenuBar = ({ editor }: { editor: any }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   if (!editor) return null;
 
   const addTable = () => {
     editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("bucket", "blog");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const { url } = await res.json();
+      editor.chain().focus().setImage({ src: url }).run();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   return (
@@ -125,10 +160,26 @@ const MenuBar = ({ editor }: { editor: any }) => {
             if (url) editor.chain().focus().setImage({ src: url }).run();
           }}
           className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-          title="Image"
+          title="Image URL"
         >
           <ImageIcon className="h-4 w-4" />
         </button>
+        <button 
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
+          title="Upload Image"
+        >
+          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+        </button>
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          className="hidden" 
+          accept="image/*" 
+          onChange={handleImageUpload} 
+        />
         <button 
           type="button"
           onClick={addTable}
