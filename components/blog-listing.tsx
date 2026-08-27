@@ -14,6 +14,7 @@ interface Post {
   category: string;
   read_time: string | null;
   published_at: string | null;
+  updated_at?: string | null;
   views: number;
   reactionCount: number;
   commentCount: number;
@@ -106,9 +107,11 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
           {filteredPosts.map((post) => {
             const isExternal = !!post.external_url;
             const href = isExternal ? post.external_url! : `/blog/${post.slug}`;
-            const dateStr = post.published_at
-              ? format(new Date(post.published_at), "MMM yyyy")
-              : "";
+            const publishedDate = post.published_at ? new Date(post.published_at) : null;
+            const updatedDate = post.updated_at ? new Date(post.updated_at) : null;
+            const isUpdated = publishedDate && updatedDate && format(publishedDate, "yyyy-MM-dd") !== format(updatedDate, "yyyy-MM-dd");
+            const dateStr = publishedDate ? format(publishedDate, "MMM yyyy") : "";
+            const updatedStr = isUpdated ? ` (Upd: ${format(updatedDate!, "MMM yyyy")})` : "";
 
             return (
               <Link
@@ -119,8 +122,9 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                 onClick={isExternal ? () => handleExternalClick(post.id) : undefined}
                 className="group flex flex-col sm:grid sm:grid-cols-[120px_1fr_100px_40px] items-start sm:items-center gap-3 sm:gap-6 py-8 border-b border-(--rule) no-underline transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--bg-2)_50%,transparent)]"
               >
-                <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-1 sm:mt-0">
-                  {dateStr}
+                <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-1 sm:mt-0 flex flex-col sm:block gap-1">
+                  <span>{dateStr}</span>
+                  {isUpdated && <span className="opacity-70 sm:ml-1 text-[9px]">{updatedStr}</span>}
                 </span>
                 
                 <div className="flex flex-col gap-1.5 flex-1">

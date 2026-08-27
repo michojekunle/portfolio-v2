@@ -12,6 +12,7 @@ interface BlogPostClientProps {
     excerpt: string | null
     category: string | null
     published_at: string | null
+    updated_at?: string | null
     read_time: string | null
     cover_image?: string | null
   }
@@ -104,6 +105,11 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
               <time dateTime={post.published_at}>
                 {format(new Date(post.published_at as string), "MMMM d, yyyy")}
               </time>
+              {post.updated_at && format(new Date(post.published_at as string), "yyyy-MM-dd") !== format(new Date(post.updated_at as string), "yyyy-MM-dd") && (
+                <span className="text-muted-foreground ml-2 font-normal italic">
+                  (Updated {format(new Date(post.updated_at as string), "MMM d, yyyy")})
+                </span>
+              )}
             </span>
           )}
           {post.read_time && <span>{post.read_time}</span>}
