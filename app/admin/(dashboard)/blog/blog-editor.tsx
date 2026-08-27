@@ -137,7 +137,7 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
             disabled={saving}
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
-            Save draft
+            {form.published ? "Save changes" : "Save draft"}
           </Button>
           <Button
             size="sm"
