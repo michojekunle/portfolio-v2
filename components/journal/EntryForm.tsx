@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Plus, X, Save, Loader2, Sparkles, ChevronDown, AlertCircle, Sunrise, ArrowRight } from "lucide-react";
+import { Plus, X, Save, Loader2, Sparkles, ChevronDown, AlertCircle, Sunrise, ArrowRight, Check } from "lucide-react";
 import type { JoEntry, JoObjectiveWithMilestones } from "@/lib/journal/types";
 import { ENERGY_LABELS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 import { SaveToast } from "@/components/journal/SaveToast";
@@ -426,10 +426,58 @@ export function EntryForm({
               {/* Accomplished */}
               <div>
                 <SectionLabel>What Got Done</SectionLabel>
+
+                {priorities.length > 0 && (
+                  <div className="mb-4 space-y-1.5">
+                    <div className="text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: "var(--ink-4)" }}>From today's priorities</div>
+                    {priorities.map((p, i) => {
+                      const isDone = accomplished.includes(p);
+                      return (
+                        <button
+                          key={`priority-check-${i}`}
+                          onClick={() => {
+                            if (isDone) {
+                              setAccomplished(accomplished.filter(x => x !== p));
+                            } else {
+                              setAccomplished([...accomplished, p]);
+                            }
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-left transition-colors cursor-pointer"
+                          style={{
+                            background: isDone ? "rgba(22,163,74,0.05)" : "var(--bg-2)",
+                            borderColor: isDone ? "rgba(22,163,74,0.3)" : "var(--rule)",
+                          }}
+                        >
+                          <div
+                            className="w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors"
+                            style={{
+                              background: isDone ? "#16A34A" : "transparent",
+                              borderColor: isDone ? "#16A34A" : "var(--rule)",
+                              color: "#fff"
+                            }}
+                          >
+                            {isDone && <Check size={12} strokeWidth={3} />}
+                          </div>
+                          <span 
+                            className="flex-1 text-[14px]"
+                            style={{
+                              color: isDone ? "var(--ink-3)" : "var(--ink)",
+                              textDecoration: isDone ? "line-through" : "none"
+                            }}
+                          >
+                            {p}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="text-[10px] font-mono uppercase tracking-widest mb-2 mt-4" style={{ color: "var(--ink-4)" }}>Other Accomplishments</div>
                 <div className="space-y-1.5">
-                  {accomplished.map((a, i) => (
+                  {accomplished.filter(a => !priorities.includes(a)).map((a, i) => (
                     <div
-                      key={i}
+                      key={`other-${i}`}
                       className="flex items-center gap-2.5 group px-3 py-2.5 rounded-lg"
                       style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
                     >
@@ -441,7 +489,7 @@ export function EntryForm({
                       </span>
                       <span className="flex-1 text-[14px] text-(--ink)">{a}</span>
                       <button
-                        onClick={() => removeItem(accomplished, setAccomplished, i)}
+                        onClick={() => setAccomplished(accomplished.filter(x => x !== a))}
                         className="w-5 h-5 flex items-center justify-center rounded-full border-none bg-transparent cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                         style={{ color: "var(--ink-3)" }}
                         aria-label="Remove"
