@@ -85,6 +85,12 @@ const nextConfig = {
   },
 
   images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+    ],
     formats: ["image/avif", "image/webp"],
     // Reasonable device sizes for a portfolio site
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
