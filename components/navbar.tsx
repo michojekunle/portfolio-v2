@@ -122,7 +122,7 @@ export function Navbar(): React.ReactNode {
               <div className="transition-transform duration-300 group-hover:scale-105">
                 <MoMark dim={34} />
               </div>
-              <span className="max-[480px]:hidden">
+              <span className="max-[1024px]:hidden">
                 Michael Ojekunle<em>.</em>
               </span>
             </Link>
@@ -161,7 +161,7 @@ export function Navbar(): React.ReactNode {
           <MagneticWrapper strength={20}>
             <Link
               href="/contact"
-              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 h-9.5 rounded-full font-mono text-[11px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 h-9.5 rounded-full font-mono text-[11px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
               aria-label="Book a call"
             >
               Book a call{" "}
