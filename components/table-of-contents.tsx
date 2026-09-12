@@ -147,8 +147,8 @@ export function TableOfContents({
       </div>
 
       {/* Desktop sticky sidebar */}
-      <aside className="hidden xl:block w-64 shrink-0">
-        <div className="sticky top-32">
+      <aside className="hidden xl:block w-64 shrink-0 sticky top-32 self-start max-h-[calc(100vh-8rem)] overflow-y-auto" data-lenis-prevent="true">
+        <div>
           <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-4 flex items-center gap-1.5">
             <List className="h-3 w-3" />
             On this page
