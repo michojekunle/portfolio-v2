@@ -1,8 +1,25 @@
 "use client"
 
 import { CheckCircle2, MessageSquare, ShieldAlert, Sparkles } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export function ContactHeroWidget() {
+  const [status, setStatus] = useState<any>(null)
+  
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch("/api/profile/status")
+        if (res.ok) {
+          const data = await res.json()
+          setStatus(data)
+        }
+      } catch (e) {
+        console.warn("Failed to fetch profile status:", e)
+      }
+    }
+    void fetchStatus()
+  }, [])
   return (
     <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md flex flex-col gap-4">
       {/* Decorative gradient flare */}
@@ -21,7 +38,7 @@ export function ContactHeroWidget() {
         </div>
         <div>
           <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Availability</div>
-          <div className="text-[13px] font-semibold text-(--ink)">Open to selective roles & contract work</div>
+          <div className="text-[13px] font-semibold text-(--ink)">{status?.status || "Open to selective roles & contract work"}</div>
         </div>
       </div>
 

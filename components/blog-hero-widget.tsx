@@ -5,6 +5,7 @@ import { BookOpen, Sparkles, TrendingUp } from "lucide-react"
 
 export function BlogHeroWidget() {
   const [status, setStatus] = useState<any>(null)
+  const [stats, setStats] = useState<{ trendingTags: { name: string; count: number }[]; pipelineTitle: string; pipelineExcerpt: string } | null>(null)
   
   useEffect(() => {
     const fetchStatus = async () => {
@@ -18,15 +19,24 @@ export function BlogHeroWidget() {
         console.warn("Failed to fetch profile status:", e)
       }
     }
+    
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/blog/hero-stats")
+        if (res.ok) {
+          const data = await res.json()
+          setStats(data)
+        }
+      } catch (e) {
+        console.warn("Failed to fetch blog stats:", e)
+      }
+    }
+    
     void fetchStatus()
+    void fetchStats()
   }, [])
 
-  const trendingTags = [
-    { name: "Web3", count: 8 },
-    { name: "Technical", count: 5 },
-    { name: "ZKML", count: 3 },
-    { name: "Reflection", count: 4 }
-  ]
+  const trendingTags = stats?.trendingTags || []
 
   return (
     <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md flex flex-col gap-5">
@@ -67,10 +77,10 @@ export function BlogHeroWidget() {
             <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-(--v3-accent) font-semibold">80% ready</span>
           </div>
           <h5 className="m-0 font-display text-[13px] text-(--ink) font-semibold mb-2">
-            The Anatomy of a Zero-Knowledge Proof
+            {stats?.pipelineTitle || "Gathering thoughts..."}
           </h5>
           <p className="m-0 text-[11px] leading-[1.4] text-muted-foreground">
-            A first-principles breakdown of SNARKs, math constraints, and proving systems. Currently revising the zk-circuit code examples.
+            {stats?.pipelineExcerpt || "Outlining the next deep dive."}
           </p>
         </div>
       </div>

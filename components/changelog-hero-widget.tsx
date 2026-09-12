@@ -1,18 +1,41 @@
 "use client"
 
 import { GitCommit, GitBranch, Shield, Zap } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export function ChangelogHeroWidget() {
-  const commitStats = {
-    branch: "develop",
+  const [stats, setStats] = useState({
+    branch: "main",
     commitsThisWeek: 14,
     activeRepos: 4,
-    status: "healthy"
-  }
+    activityData: [4, 8, 3, 5, 2, 7, 6]
+  })
 
-  // Mini sparkline data representing commits per day for the last 7 days
-  const activityData = [4, 8, 3, 5, 2, 7, 6]
-  const maxVal = Math.max(...activityData)
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/github/stats")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.changelog) {
+            setStats({
+              branch: data.changelog.branch || "main",
+              commitsThisWeek: data.changelog.commitsThisWeek || 0,
+              activeRepos: data.changelog.activeRepos || 0,
+              activityData: data.changelog.activityData && data.changelog.activityData.length ? data.changelog.activityData : [0, 0, 0, 0, 0, 0, 0]
+            })
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to fetch changelog stats:", e)
+      }
+    }
+    void fetchStats()
+  }, [])
+
+  const { branch, commitsThisWeek, activeRepos, activityData } = stats
+  
+  const maxVal = Math.max(...activityData, 1)
 
   return (
     <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md flex flex-col gap-4">
@@ -33,7 +56,7 @@ export function ChangelogHeroWidget() {
             <GitBranch className="w-3 h-3 text-muted-foreground" /> Active Branch
           </span>
           <span className="text-[13px] font-mono font-semibold text-(--ink)">
-            {commitStats.branch}
+            {branch}
           </span>
         </div>
 
@@ -52,7 +75,7 @@ export function ChangelogHeroWidget() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Weekly Commit Frequency</span>
-          <span className="font-mono text-[10px] font-semibold text-secondary-foreground">{commitStats.commitsThisWeek} commits</span>
+          <span className="font-mono text-[10px] font-semibold text-secondary-foreground">{commitsThisWeek} commits</span>
         </div>
         
         {/* Sparkline chart bar grid */}

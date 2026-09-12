@@ -1,13 +1,38 @@
 "use client"
 
 import { MessageSquare, Users } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export function GuestbookHeroWidget() {
-  const highlights = [
-    { name: "Alex K.", msg: "Love the minimal design and typography!", date: "2 days ago" },
-    { name: "Sarah L.", msg: "Great essays on ZK. Extremely clean explanations.", date: "1 week ago" },
-    { name: "David M.", msg: "Arc + Claude Code is an elite dev combo.", date: "2 weeks ago" },
-    { name: "Elena R.", msg: "Saying hi from Berlin! The Lagos time clock is cool.", date: "3 weeks ago" }
+  const [highlights, setHighlights] = useState<{ name: string; msg: string; date: string }[]>([])
+  
+  useEffect(() => {
+    const fetchGuestbook = async () => {
+      try {
+        const res = await fetch("/api/guestbook")
+        if (res.ok) {
+          const data = await res.json()
+          const mapped = data.slice(0, 4).map((entry: any) => {
+            const date = new Date(entry.created_at)
+            const daysAgo = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
+            const dateStr = daysAgo === 0 ? "today" : daysAgo === 1 ? "1 day ago" : `${daysAgo} days ago`
+            return {
+              name: entry.name,
+              msg: entry.message,
+              date: dateStr
+            }
+          })
+          setHighlights(mapped)
+        }
+      } catch (e) {
+        console.warn("Failed to fetch guestbook:", e)
+      }
+    }
+    void fetchGuestbook()
+  }, [])
+  
+  const displayHighlights = highlights.length > 0 ? highlights : [
+    { name: "Loading...", msg: "Fetching recent entries...", date: "" }
   ]
 
   return (
@@ -34,7 +59,7 @@ export function GuestbookHeroWidget() {
 
         <div className="flex flex-col gap-2 animate-[marquee-y_16s_linear_infinite] hover:[animation-play-state:paused]">
           {/* Render highlights twice for seamless looping */}
-          {[...highlights, ...highlights].map((item, idx) => (
+          {[...displayHighlights, ...displayHighlights].map((item, idx) => (
             <div
               key={idx}
               className="p-3 rounded-lg bg-(--paper) border border-(--rule) flex flex-col gap-1 text-[12px] transition-all duration-200 hover:border-muted-foreground"

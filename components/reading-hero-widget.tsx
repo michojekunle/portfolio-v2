@@ -1,12 +1,27 @@
 "use client"
 
 import { Award, BookOpen, Calendar, CheckCircle2 } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export function ReadingHeroWidget() {
-  const goal = 12
-  const completed = 8
-  const currentStreak = 18
-  const percentage = Math.round((completed / goal) * 100)
+  const [stats, setStats] = useState({ goal: 12, completed: 8, currentStreak: 18, percentage: 67 })
+  
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/reading/stats")
+        if (res.ok) {
+          const data = await res.json()
+          setStats(data)
+        }
+      } catch (e) {
+        console.warn("Failed to fetch reading stats:", e)
+      }
+    }
+    void fetchStats()
+  }, [])
+  
+  const { goal, completed, currentStreak, percentage } = stats
   
   // Calculate SVG stroke offset for a radius of 40
   const radius = 40

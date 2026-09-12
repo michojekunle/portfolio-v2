@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { Code2, Terminal, Shield, Cpu, Layers, Box } from "lucide-react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Code2, Terminal, Shield, Cpu, Layers } from "lucide-react"
 
 interface TechItem {
   name: string
@@ -13,51 +13,48 @@ interface TechItem {
   color: string
 }
 
-const TECHS: TechItem[] = [
-  {
-    name: "TypeScript",
-    icon: Code2,
-    level: 95,
-    projects: 12,
-    desc: "Primary language for high-fidelity frontends, Creator Suite tools, and type-safe systems.",
-    color: "#3178C6"
-  },
-  {
-    name: "Next.js",
-    icon: Layers,
-    level: 90,
-    projects: 8,
-    desc: "Framework of choice for SSR, SEO-optimized web apps, server actions, and edge routes.",
-    color: "var(--ink)"
-  },
-  {
-    name: "Solidity",
-    icon: Shield,
-    level: 80,
-    projects: 3,
-    desc: "Smart contracts shipped on EVM-compatible chains, protocol integrations, and audits.",
-    color: "#E29051"
-  },
-  {
-    name: "ZK / Cryptography",
-    icon: Cpu,
-    level: 70,
-    projects: 2,
-    desc: "ZK-snark applications, verification circuits, and privacy-preserving interactive frontends.",
-    color: "var(--v3-accent)"
-  },
-  {
-    name: "Rust",
-    icon: Terminal,
-    level: 75,
-    projects: 4,
-    desc: "Systems engineering, CLI builders, and performance-critical pipeline optimization.",
-    color: "#DEA584"
-  }
-]
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  "TypeScript": Code2,
+  "JavaScript": Code2,
+  "Next.js": Layers,
+  "Solidity": Shield,
+  "Rust": Terminal,
+  "C++": Cpu,
+  "Go": Box,
+  "default": Box
+}
 
 export function WorkHeroWidget() {
   const [hovered, setHovered] = useState<string | null>(null)
+  const [techs, setTechs] = useState<TechItem[]>([
+    // Fallback/loading state
+    { name: "Loading...", icon: Box, level: 0, projects: 0, desc: "Fetching data from GitHub...", color: "var(--rule)" }
+  ])
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/github/stats")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.languages && data.languages.length > 0) {
+            const mapped = data.languages.map((l: any) => ({
+              name: l.name,
+              icon: ICON_MAP[l.name] || ICON_MAP["default"],
+              level: l.level,
+              projects: l.projects,
+              desc: l.desc,
+              color: l.color
+            }))
+            setTechs(mapped)
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to fetch work stats:", e)
+      }
+    }
+    void fetchStats()
+  }, [])
 
   return (
     <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md">
@@ -73,7 +70,7 @@ export function WorkHeroWidget() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {TECHS.map((tech) => {
+        {techs.map((tech) => {
           const Icon = tech.icon
           const isHovered = hovered === tech.name
 
