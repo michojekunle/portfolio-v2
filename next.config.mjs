@@ -33,8 +33,8 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://vercel.live https://*.vercel.live",
-              "style-src 'self' 'unsafe-inline' https://vercel.live https://*.vercel.live",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
+              "style-src 'self' 'unsafe-inline' https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
               // media-src: blob: for local MediaRecorder audio/video previews; https: for Supabase storage media
@@ -50,6 +50,8 @@ const nextConfig = {
                 "https://bible-api.com",
                 "https://*.instagram.com",
                 "https://*.tiktok.com",
+                "https://*.tiktokcdn.com",
+                "https://*.ttwstatic.com",
                 `https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
                 // WebSocket for Supabase realtime (if ever enabled)
                 `wss://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
@@ -64,7 +66,7 @@ const nextConfig = {
                 "wss://*.vercel.live",
               ].join(" "),
               // Allow YouTube, Instagram, TikTok, and Vimeo embeds (plus blob: for epubjs)
-              "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.vimeo.com https://vercel.live https://*.vercel.live",
+              "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://*.vimeo.com https://vercel.live https://*.vercel.live",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
