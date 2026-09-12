@@ -11,7 +11,7 @@ import { BlogComments } from "@/components/blog-comments";
 import { NewsletterCTA } from "@/components/newsletter-cta";
 import { BlogPostClient } from "@/components/blog-post-client";
 import { MagneticWrapper } from "@/components/magnetic-wrapper";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 export const revalidate = 60;
 
 const SITE = "https://michaelojekunle.dev";
@@ -86,6 +86,25 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
 
   if (!post) notFound();
 
+  // Fetch prev and next posts based on published_at date
+  const { data: prevPost } = await supabase
+    .from("blog_posts")
+    .select("slug, title")
+    .eq("published", true)
+    .lt("published_at", post.published_at)
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const { data: nextPost } = await supabase
+    .from("blog_posts")
+    .select("slug, title")
+    .eq("published", true)
+    .gt("published_at", post.published_at)
+    .order("published_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
   const postUrl = `${SITE}/blog/${slug}`;
   const content = (post.content as string) ?? "";
 
@@ -146,10 +165,18 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
         <BlogPostClient post={post} slug={slug} />
 
         {/* Post body */}
-        <article className="v3-post-body v3-container-narrow">
+        <div className="v3-container flex flex-col xl:flex-row gap-12 xl:gap-20 items-start relative pb-20">
+          <article className="v3-post-body flex-1 min-w-0 w-full xl:max-w-[800px]">
+            <MarkdownRenderer content={content} />
+          </article>
           <TableOfContents content={content} />
-          <MarkdownRenderer content={content} />
-        </article>
+        </div>
+
+        {/* Reactions and comments */}
+        <section className="v3-container-narrow" style={{ paddingTop: 40, paddingBottom: 80 }}>
+          <BlogReactions postId={post.id} />
+          <BlogComments postId={post.id} />
+        </section>
 
         {/* Newsletter CTA */}
         <NewsletterCTA 
@@ -157,20 +184,44 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
           description="Get more engineering field notes and technical deep dives delivered straight to your inbox."
         />
 
-        {/* Reactions and comments */}
-        <section className="v3-container-narrow" style={{ paddingBottom: 80 }}>
-          <BlogReactions postId={post.id} />
-          <BlogComments postId={post.id} />
-        </section>
-
         {/* Prev/next nav */}
-        <section className="v3-container flex justify-center py-20">
-          <MagneticWrapper>
-            <Link href="/blog" className="v3-case-next inline-block text-center decoration-none text-inherit">
-              <div className="lbl flex items-center justify-center gap-2"><ArrowLeft className="w-3 h-3" /> All notes</div>
-              <div className="nm">Index</div>
-            </Link>
-          </MagneticWrapper>
+        <section className="v3-container border-t border-(--rule)">
+          <div className="flex max-[720px]:flex-col justify-between items-center py-20 max-[720px]:py-12 gap-8 max-[720px]:gap-12">
+            
+            <div className="flex-1 flex justify-start">
+              {prevPost && (
+                <MagneticWrapper strength={20}>
+                  <Link href={`/blog/${prevPost.slug}`} className="group flex flex-col items-start gap-2">
+                    <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">
+                      <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Previous
+                    </div>
+                    <div className="font-display text-[24px] md:text-[32px] text-(--ink) text-balance leading-tight max-w-[280px]">{prevPost.title}</div>
+                  </Link>
+                </MagneticWrapper>
+              )}
+            </div>
+
+            <MagneticWrapper strength={20}>
+              <Link href="/blog" className="group flex flex-col items-center gap-2">
+                <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">All notes</div>
+                <div className="font-display text-[32px] text-(--ink)">Index</div>
+              </Link>
+            </MagneticWrapper>
+            
+            <div className="flex-1 flex justify-end text-right">
+              {nextPost && (
+                <MagneticWrapper strength={20}>
+                  <Link href={`/blog/${nextPost.slug}`} className="group flex flex-col items-end gap-2">
+                    <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">
+                      Next <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                    <div className="font-display text-[24px] md:text-[32px] text-(--ink) text-balance leading-tight max-w-[280px]">{nextPost.title}</div>
+                  </Link>
+                </MagneticWrapper>
+              )}
+            </div>
+
+          </div>
         </section>
       </main>
     </>

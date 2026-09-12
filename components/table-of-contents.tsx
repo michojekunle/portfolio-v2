@@ -147,30 +147,32 @@ export function TableOfContents({
       </div>
 
       {/* Desktop sticky sidebar */}
-      <aside className="hidden xl:block fixed right-[max(1rem,calc((100vw-42rem)/2-16rem))] top-32 w-56">
-        <p className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
-          <List className="h-3 w-3" />
-          On this page
-        </p>
-        <nav className="space-y-1 border-l border-border/60 pl-3">
-          {headings.map((h) => (
-            <a
-              key={h.id}
-              href={`#${h.id}`}
-              onClick={(e) => handleScroll(e, h.id)}
-              className={cn(
-                "block text-xs transition-colors leading-relaxed py-0.5",
-                h.level === 3 && "pl-3",
-                h.level === 4 && "pl-6",
-                activeId === h.id
-                  ? "text-foreground font-medium border-l-2 border-foreground -ml-0.25 pl-2.75"
-                  : "text-muted-foreground/70 hover:text-foreground"
-              )}
-            >
-              {h.text}
-            </a>
-          ))}
-        </nav>
+      <aside className="hidden xl:block w-64 shrink-0">
+        <div className="sticky top-32">
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-4 flex items-center gap-1.5">
+            <List className="h-3 w-3" />
+            On this page
+          </p>
+          <nav className="space-y-1.5 border-l border-(--rule) pl-3.5">
+            {headings.map((h) => (
+              <a
+                key={h.id}
+                href={`#${h.id}`}
+                onClick={(e) => handleScroll(e, h.id)}
+                className={cn(
+                  "block text-[13px] transition-colors leading-relaxed py-0.5",
+                  h.level === 3 && "pl-3",
+                  h.level === 4 && "pl-6",
+                  activeId === h.id
+                    ? "text-(--ink) font-medium border-l-[2px] border-(--ink) -ml-[15px] pl-[13px]"
+                    : "text-secondary-foreground hover:text-(--ink)"
+                )}
+              >
+                {h.text}
+              </a>
+            ))}
+          </nav>
+        </div>
       </aside>
     </>
   );

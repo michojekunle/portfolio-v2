@@ -42,7 +42,7 @@ export async function BlogSection(): Promise<React.ReactElement> {
               <h3>{post.title}</h3>
               {post.excerpt && <p>{post.excerpt}</p>}
               <div className="read">
-                Read{post.read_time ? ` · ${post.read_time} min` : ""}{" "}
+                Read{post.read_time ? ` · ${post.read_time}` : ""}{" "}
                 <ArrowRight className="inline w-4 h-4 ml-1" aria-hidden="true" />
               </div>
             </Link>

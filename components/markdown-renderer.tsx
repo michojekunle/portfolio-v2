@@ -27,7 +27,8 @@ export function MarkdownRenderer({
       const id = slugify(text.replace(/<[^>]+>/g, ""));
       return `<h${level}${attrs} id="${id}">${text}</h${level}>`;
     }
-  );
+  ).replace(/<pre/gi, '<pre data-lenis-prevent="true"')
+   .replace(/<table/gi, '<table data-lenis-prevent="true"');
 
   const cleanHtml = sanitizeHtml(htmlWithIds, {
     allowedTags: [
@@ -36,7 +37,7 @@ export function MarkdownRenderer({
     ],
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
-      "*": ["class", "id"],
+      "*": ["class", "id", "data-lenis-prevent"],
       "img": ["src", "alt", "width", "height"],
       "input": ["type", "checked", "disabled"]
     },
@@ -56,11 +57,12 @@ export function MarkdownRenderer({
         .public-article h2 { font-size: 2rem !important; font-weight: 700 !important; margin-top: 2rem !important; margin-bottom: 1rem !important; line-height: 1.2 !important; color: hsl(var(--foreground)) !important; border-bottom: 1px solid hsl(var(--border)) !important; padding-bottom: 0.5rem !important; }
         .public-article h3 { font-size: 1.5rem !important; font-weight: 600 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; line-height: 1.3 !important; color: hsl(var(--foreground)) !important; }
         .public-article p { margin: 1rem 0 !important; font-size: 1.1rem !important; line-height: 1.7 !important; }
+        .public-article strong, .public-article b { color: hsl(var(--foreground)) !important; font-weight: 700 !important; }
         .public-article ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 1rem 0 !important; }
         .public-article ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 1rem 0 !important; }
         .public-article li { margin-bottom: 0.5rem !important; display: list-item !important; }
         .public-article blockquote { border-left: 4px solid hsl(var(--primary)) !important; padding: 0.75rem 1.5rem !important; font-style: italic !important; color: hsl(var(--muted-foreground)) !important; background: hsl(var(--muted)/0.3) !important; border-radius: 0 0.5rem 0.5rem 0 !important; margin: 2rem 0 !important; }
-        .public-article img { max-width: 100% !important; border-radius: 1rem !important; margin: 2.5rem auto !important; border: 1px solid hsl(var(--border)) !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; }
+        .public-article img { display: block !important; max-width: 100% !important; border-radius: 1rem !important; margin: 3rem auto !important; border: 1px solid rgba(255,255,255,0.05) !important; box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2) !important; }
         .public-article a { color: hsl(var(--primary)) !important; text-decoration: underline !important; text-underline-offset: 4px !important; font-weight: 500 !important; }
         .public-article hr { border: 0 !important; border-top: 2px solid hsl(var(--border)) !important; margin: 3rem 0 !important; }
         

@@ -35,87 +35,91 @@ export function BlogPostClient({ post, slug }: BlogPostClientProps) {
         className="fixed top-0 left-0 right-0 h-0.75 bg-(--v3-accent) z-[500] origin-left" 
         style={{ scaleX }} 
       />
-      <section className="v3-post-hero v3-container-narrow pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 relative">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="crumbs font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase mb-8 flex gap-2" 
-          aria-label="Breadcrumb"
-        >
-          <Link href="/" className="hover:text-(--ink) transition-colors">Home</Link>
-          <span className="text-(--rule)">/</span>
-          <Link href="/blog" className="hover:text-(--ink) transition-colors">Notes</Link>
-          {post.category && (
-            <>
-              <span className="text-(--rule)">/</span>
-              <span className="text-(--ink)">{post.category}</span>
-            </>
-          )}
-        </motion.div>
-
-        <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,100px)] leading-[0.9] tracking-[-0.03em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-2 max-[720px]:gap-x-2.5">
-          {titleWords.map((word, i) => (
-            <motion.span
-              key={i}
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{
-                duration: 0.8,
-                ease: [0.16, 1, 0.3, 1],
-                delay: i * 0.08
-              }}
+      <section className="pt-40 pb-8 max-[720px]:pt-28 max-[720px]:pb-8 relative w-full">
+        <div className="v3-container">
+          <div className="w-full xl:max-w-[800px]">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="crumbs font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase mb-8 flex gap-2" 
+              aria-label="Breadcrumb"
             >
-              {word}
-            </motion.span>
-          ))}
-        </h1>
+              <Link href="/" className="hover:text-(--ink) transition-colors">Home</Link>
+              <span className="text-(--rule)">/</span>
+              <Link href="/blog" className="hover:text-(--ink) transition-colors">Notes</Link>
+              {post.category && (
+                <>
+                  <span className="text-(--rule)">/</span>
+                  <span className="text-(--ink)">{post.category}</span>
+                </>
+              )}
+            </motion.div>
 
-        {post.cover_image && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full relative aspect-[21/9] rounded-xl overflow-hidden mb-12 border border-(--rule)"
-          >
-            <Image src={post.cover_image} alt={post.title} fill className="object-cover" priority />
-          </motion.div>
-        )}
+            <h1 className="m-0 font-display font-light text-[clamp(36px,5vw,64px)] leading-[1.05] tracking-[-0.02em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-2 max-[720px]:gap-x-2.5">
+              {titleWords.map((word, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: i * 0.08
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </h1>
 
-        {post.excerpt && (
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="lede text-[20px] text-secondary-foreground max-w-[56ch] leading-[1.65] m-0 mb-12"
-          >
-            {post.excerpt}
-          </motion.p>
-        )}
+            {post.excerpt && (
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="lede text-[20px] text-secondary-foreground max-w-[56ch] leading-[1.65] m-0 mb-8"
+              >
+                {post.excerpt}
+              </motion.p>
+            )}
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="meta-line flex flex-wrap gap-6 items-center pt-6 border-t border-(--rule) font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase"
-        >
-          {post.category && <span className="px-2.5 py-1 border border-(--rule) rounded-full text-secondary-foreground">{post.category}</span>}
-          {post.published_at && (
-            <span className="text-(--ink) font-medium">
-              <time dateTime={post.published_at}>
-                {format(new Date(post.published_at as string), "MMMM d, yyyy")}
-              </time>
-              {post.updated_at && format(new Date(post.published_at as string), "yyyy-MM-dd") !== format(new Date(post.updated_at as string), "yyyy-MM-dd") && (
-                <span className="text-muted-foreground ml-2 font-normal italic">
-                  (Updated {format(new Date(post.updated_at as string), "MMM d, yyyy")})
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="meta-line flex flex-wrap gap-6 items-center mb-12 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase"
+            >
+              {post.category && <span className="px-2.5 py-1 border border-(--rule) rounded-full text-secondary-foreground">{post.category}</span>}
+              {post.published_at && (
+                <span className="text-(--ink) font-medium" suppressHydrationWarning>
+                  <time dateTime={post.published_at} suppressHydrationWarning>
+                    {format(new Date(post.published_at as string), "MMMM d, yyyy")}
+                  </time>
+                  {post.updated_at && format(new Date(post.published_at as string), "yyyy-MM-dd") !== format(new Date(post.updated_at as string), "yyyy-MM-dd") && (
+                    <span className="text-muted-foreground ml-2 font-normal italic" suppressHydrationWarning>
+                      (Updated {format(new Date(post.updated_at as string), "MMM d, yyyy")})
+                    </span>
+                  )}
                 </span>
               )}
-            </span>
+              {post.read_time && <span>{post.read_time}</span>}
+              <div className="flex-1" />
+              <ViewCounter slug={slug} increment />
+            </motion.div>
+          </div>
+
+          {post.cover_image && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="w-full relative aspect-[16/9] md:aspect-[2/1] xl:aspect-[21/9] rounded-xl overflow-hidden mb-12 border border-(--rule) shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]"
+            >
+              <Image src={post.cover_image} alt={post.title} fill className="object-cover" priority />
+            </motion.div>
           )}
-          {post.read_time && <span>{post.read_time}</span>}
-          <div className="flex-1" />
-          <ViewCounter slug={slug} increment />
-        </motion.div>
+        </div>
       </section>
     </>
   )
