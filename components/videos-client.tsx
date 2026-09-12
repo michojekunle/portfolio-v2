@@ -6,6 +6,7 @@ import { TiltCard } from "./tilt-card";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { PlatformEmbed } from "./videos/PlatformEmbed";
 import { YoutubeEmbed } from "./videos/YoutubeEmbed";
+import { TopicSuggestionDialog } from "./topic-suggestion-dialog";
 import type { SiteVideo } from "@/lib/videos/types";
 
 interface Platform {
@@ -356,13 +357,14 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
             else.
           </p>
           <MagneticWrapper strength={15}>
-            <a
-              href="/contact"
-              className="inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase font-medium no-underline px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-0.25"
-            >
-              Suggest a topic
-              <ArrowUpRight size={13} aria-hidden="true" />
-            </a>
+            <TopicSuggestionDialog>
+              <button
+                className="inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase font-medium cursor-pointer px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-0.25"
+              >
+                Suggest a topic
+                <ArrowUpRight size={13} aria-hidden="true" />
+              </button>
+            </TopicSuggestionDialog>
           </MagneticWrapper>
         </motion.div>
       </section>
