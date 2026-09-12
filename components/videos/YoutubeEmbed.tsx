@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Play } from "lucide-react";
-import { extractYoutubeId, getYoutubeThumbnail } from "@/lib/videos/youtube";
+import { extractYoutubeId, getYoutubeThumbnail, isYoutubeShort } from "@/lib/videos/youtube";
 
 interface Props {
   url: string;
@@ -14,11 +14,13 @@ export function YoutubeEmbed({ url, title, className="" }: Props): React.ReactEl
   const [playing, setPlaying] = useState(false);
   const id = extractYoutubeId(url);
   const thumbnail = getYoutubeThumbnail(url);
+  const isShort = isYoutubeShort(url);
+  const aspectClass = isShort ? "aspect-[9/16]" : "aspect-video";
 
   if (!id) {
     return (
       <div
-        className={`flex items-center justify-center aspect-video rounded-2xl bg-(--bg-2) border border-(--rule) ${className}`}
+        className={`flex items-center justify-center ${aspectClass} rounded-2xl bg-(--bg-2) border border-(--rule) ${className}`}
       >
         <span className="font-mono text-[11px] text-muted-foreground">Invalid YouTube URL</span>
       </div>
@@ -27,7 +29,7 @@ export function YoutubeEmbed({ url, title, className="" }: Props): React.ReactEl
 
   if (playing) {
     return (
-      <div className={`relative aspect-video rounded-2xl overflow-hidden bg-black ${className}`}>
+      <div className={`relative ${aspectClass} rounded-2xl overflow-hidden bg-black ${className}`}>
         <iframe
           src={`https://www.youtube.com/embed/${id}?autoplay=1&rel=0`}
           title={title}
@@ -43,7 +45,7 @@ export function YoutubeEmbed({ url, title, className="" }: Props): React.ReactEl
     <button
       onClick={() => setPlaying(true)}
       aria-label={`Play video: ${title}`}
-      className="group relative block w-full aspect-video rounded-2xl overflow-hidden border-none cursor-pointer p-0 bg-(--bg-2)"
+      className={`group relative block w-full ${aspectClass} rounded-2xl overflow-hidden border-none cursor-pointer p-0 bg-(--bg-2)`}
     >
       {thumbnail && (
         // eslint-disable-next-line @next/next/no-img-element

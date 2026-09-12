@@ -10,5 +10,10 @@ export function extractYoutubeId(url: string): string | null {
 
 export function getYoutubeThumbnail(url: string): string | null {
   const id = extractYoutubeId(url);
-  return id ? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg` : null;
+  // We use hqdefault instead of maxresdefault as maxresdefault is often missing for shorts
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
+}
+
+export function isYoutubeShort(url: string): boolean {
+  return url.includes("/shorts/");
 }

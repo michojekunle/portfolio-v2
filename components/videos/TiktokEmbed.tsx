@@ -24,11 +24,15 @@ export function TiktokEmbed({ url, className="" }: Props): React.ReactElement {
     };
   }, [url]);
 
+  const videoIdMatch = url.match(/\/(?:video|photo)\/(\d+)/);
+  const videoId = videoIdMatch ? videoIdMatch[1] : undefined;
+
   return (
     <div ref={containerRef} className={`flex justify-center ${className}`}>
       <blockquote
         className="tiktok-embed"
         cite={url}
+        data-video-id={videoId}
         style={{ maxWidth: 605, minWidth: 325, margin: 0 }}
       >
         <section />

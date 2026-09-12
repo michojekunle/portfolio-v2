@@ -210,45 +210,63 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       </section>
 
       {/* ── Highlights ── */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-[720px]:py-12 border-b border-(--rule)">
-        <div className="flex items-center justify-between mb-8">
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-16 md:py-24 border-b border-(--rule)">
+        <div className="flex items-center justify-between mb-8 md:mb-12">
           <div>
-            <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1.5">
-              Highlights
+            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2 flex items-center gap-2">
+              <Sparkles size={12} className="text-(--v3-accent)" aria-hidden="true" /> Highlights
             </div>
-            <h2 className="font-display text-[28px] font-normal tracking-[-0.02em] text-(--ink) m-0">
+            <h2 className="font-display text-[28px] md:text-[32px] font-normal tracking-[-0.02em] text-(--ink) m-0 fvs-display">
               Recent clips
             </h2>
           </div>
         </div>
 
         {highlightVideos.length > 0 ? (
-          <div className="grid grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1 gap-6">
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6 lg:gap-8 space-y-5 md:space-y-6 lg:space-y-8">
             {highlightVideos.map((video, i) => (
               <motion.div
                 key={video.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: i * 0.06 }}
-                className="rounded-[14px] overflow-hidden border border-(--rule) bg-(--bg-2)"
+                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                className="group break-inside-avoid relative rounded-[16px] md:rounded-[20px] overflow-hidden border border-(--rule) bg-(--bg-2) transition-all duration-300 hover:border-muted-foreground hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.03)]"
               >
-                <PlatformEmbed video={video} />
-                <div className="px-3.5 py-3">
-                  <div className="font-mono text-[8px] tracking-widest uppercase mb-1 text-muted-foreground">
-                    {video.platform}
+                <div className="relative w-full overflow-hidden bg-black/5 dark:bg-white/5">
+                  <PlatformEmbed video={video} />
+                </div>
+                
+                <div className="p-4 md:p-5 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-muted-foreground flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) opacity-80" />
+                      {video.platform}
+                    </div>
                   </div>
-                  <div className="text-[13px] font-medium text-(--ink) line-clamp-2">
+                  <h3 className="text-[13px] md:text-[14px] font-medium leading-[1.5] text-(--ink) line-clamp-2 m-0 group-hover:text-(--v3-accent) transition-colors duration-200">
                     {video.title}
+                  </h3>
+                  
+                  <div className="mt-1 flex items-center">
+                    <a
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground hover:text-(--v3-accent) transition-colors duration-200"
+                    >
+                      Watch on {video.platform}
+                      <ArrowUpRight size={10} className="ml-0.5" aria-hidden="true" />
+                    </a>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-(--rule) py-12 text-center">
-            <p className="text-[13px] text-muted-foreground m-0">
-              New clips get added here regularly — check back soon.
+          <div className="rounded-[20px] md:rounded-[24px] border border-dashed border-(--rule) py-12 md:py-16 text-center bg-(--bg-2)/50">
+            <p className="text-[13px] md:text-[14px] text-muted-foreground m-0 max-w-[32ch] mx-auto px-4">
+              New clips get added here regularly. Check back soon for more content.
             </p>
           </div>
         )}
