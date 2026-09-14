@@ -11,7 +11,12 @@ export interface ToolColorSet {
   accentBorder: string;
 }
 
-function buildColorSet(hex: string, r: number, g: number, b: number): ToolColorSet {
+function buildColorSet(
+  hex: string,
+  r: number,
+  g: number,
+  b: number
+): ToolColorSet {
   return {
     accent: hex,
     accentSoft: `rgba(${r},${g},${b},0.12)`,

@@ -18,10 +18,27 @@ import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
 
 import {
-  Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3, 
-  Quote, List, ListOrdered, Undo, Redo, Link2, Image as ImageIcon,
-  Underline as UnderlineIcon, Table as TableIcon, CheckSquare, 
-  Minus, Code2, Upload, Loader2
+  Bold,
+  Italic,
+  Strikethrough,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  Quote,
+  List,
+  ListOrdered,
+  Undo,
+  Redo,
+  Link2,
+  Image as ImageIcon,
+  Underline as UnderlineIcon,
+  Table as TableIcon,
+  CheckSquare,
+  Minus,
+  Code2,
+  Upload,
+  Loader2,
 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 
@@ -39,7 +56,11 @@ const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null;
 
   const addTable = () => {
-    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    editor
+      .chain()
+      .focus()
+      .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+      .run();
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,16 +97,36 @@ const MenuBar = ({ editor }: { editor: any }) => {
   return (
     <div className="flex flex-wrap items-center gap-1 p-2 bg-muted/20 border-b border-border">
       <div className="flex items-center gap-0.5 mr-1">
-        <Toggle size="sm" pressed={editor.isActive("bold")} onPressedChange={() => editor.chain().focus().toggleBold().run()} title="Bold">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("bold")}
+          onPressedChange={() => editor.chain().focus().toggleBold().run()}
+          title="Bold"
+        >
           <Bold className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("italic")} onPressedChange={() => editor.chain().focus().toggleItalic().run()} title="Italic">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("italic")}
+          onPressedChange={() => editor.chain().focus().toggleItalic().run()}
+          title="Italic"
+        >
           <Italic className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("underline")} onPressedChange={() => editor.chain().focus().toggleUnderline().run()} title="Underline">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("underline")}
+          onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
+          title="Underline"
+        >
           <UnderlineIcon className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("strike")} onPressedChange={() => editor.chain().focus().toggleStrike().run()} title="Strikethrough">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("strike")}
+          onPressedChange={() => editor.chain().focus().toggleStrike().run()}
+          title="Strikethrough"
+        >
           <Strikethrough className="h-4 w-4" />
         </Toggle>
       </div>
@@ -93,13 +134,34 @@ const MenuBar = ({ editor }: { editor: any }) => {
       <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5 mr-1">
-        <Toggle size="sm" pressed={editor.isActive("heading", { level: 1 })} onPressedChange={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} title="Heading 1">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("heading", { level: 1 })}
+          onPressedChange={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          title="Heading 1"
+        >
           <Heading1 className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("heading", { level: 2 })} onPressedChange={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} title="Heading 2">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("heading", { level: 2 })}
+          onPressedChange={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          title="Heading 2"
+        >
           <Heading2 className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("heading", { level: 3 })} onPressedChange={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} title="Heading 3">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("heading", { level: 3 })}
+          onPressedChange={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          title="Heading 3"
+        >
           <Heading3 className="h-4 w-4" />
         </Toggle>
       </div>
@@ -107,13 +169,32 @@ const MenuBar = ({ editor }: { editor: any }) => {
       <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5 mr-1">
-        <Toggle size="sm" pressed={editor.isActive("bulletList")} onPressedChange={() => editor.chain().focus().toggleBulletList().run()} title="Bullet List">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("bulletList")}
+          onPressedChange={() =>
+            editor.chain().focus().toggleBulletList().run()
+          }
+          title="Bullet List"
+        >
           <List className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("orderedList")} onPressedChange={() => editor.chain().focus().toggleOrderedList().run()} title="Ordered List">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("orderedList")}
+          onPressedChange={() =>
+            editor.chain().focus().toggleOrderedList().run()
+          }
+          title="Ordered List"
+        >
           <ListOrdered className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("taskList")} onPressedChange={() => editor.chain().focus().toggleTaskList().run()} title="Task List">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("taskList")}
+          onPressedChange={() => editor.chain().focus().toggleTaskList().run()}
+          title="Task List"
+        >
           <CheckSquare className="h-4 w-4" />
         </Toggle>
       </div>
@@ -121,16 +202,33 @@ const MenuBar = ({ editor }: { editor: any }) => {
       <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5 mr-1">
-        <Toggle size="sm" pressed={editor.isActive("blockquote")} onPressedChange={() => editor.chain().focus().toggleBlockquote().run()} title="Blockquote">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("blockquote")}
+          onPressedChange={() =>
+            editor.chain().focus().toggleBlockquote().run()
+          }
+          title="Blockquote"
+        >
           <Quote className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("code")} onPressedChange={() => editor.chain().focus().toggleCode().run()} title="Inline Code">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("code")}
+          onPressedChange={() => editor.chain().focus().toggleCode().run()}
+          title="Inline Code"
+        >
           <Code className="h-4 w-4" />
         </Toggle>
-        <Toggle size="sm" pressed={editor.isActive("codeBlock")} onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()} title="Code Block">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive("codeBlock")}
+          onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
+          title="Code Block"
+        >
           <Code2 className="h-4 w-4" />
         </Toggle>
-        <button 
+        <button
           type="button"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -143,18 +241,22 @@ const MenuBar = ({ editor }: { editor: any }) => {
       <div className="w-0.25 h-4 bg-border mx-1" />
 
       <div className="flex items-center gap-0.5">
-        <button 
+        <button
           type="button"
           onClick={() => {
             const url = prompt("Enter link URL:");
             if (url) editor.chain().focus().setLink({ href: url }).run();
           }}
-          className={`p-1.5 rounded-md transition-colors ${editor.isActive("link") ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}
+          className={`p-1.5 rounded-md transition-colors ${
+            editor.isActive("link")
+              ? "bg-muted text-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          }`}
           title="Link"
         >
           <Link2 className="h-4 w-4" />
         </button>
-        <button 
+        <button
           type="button"
           onClick={() => {
             const url = prompt("Enter image URL:");
@@ -165,23 +267,27 @@ const MenuBar = ({ editor }: { editor: any }) => {
         >
           <ImageIcon className="h-4 w-4" />
         </button>
-        <button 
+        <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
           className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
           title="Upload Image"
         >
-          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          {isUploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
         </button>
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          className="hidden" 
-          accept="image/*" 
-          onChange={handleImageUpload} 
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleImageUpload}
         />
-        <button 
+        <button
           type="button"
           onClick={addTable}
           className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -192,20 +298,20 @@ const MenuBar = ({ editor }: { editor: any }) => {
       </div>
 
       <div className="flex-1" />
-      
+
       <div className="flex items-center gap-0.5">
-        <button 
+        <button
           type="button"
-          onClick={() => editor.chain().focus().undo().run()} 
-          disabled={!editor.can().undo()} 
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().undo()}
           className="p-1.5 text-muted-foreground hover:text-foreground disabled:opacity-30 rounded-md hover:bg-muted"
         >
           <Undo className="h-4 w-4" />
         </button>
-        <button 
+        <button
           type="button"
-          onClick={() => editor.chain().focus().redo().run()} 
-          disabled={!editor.can().redo()} 
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().redo()}
           className="p-1.5 text-muted-foreground hover:text-foreground disabled:opacity-30 rounded-md hover:bg-muted"
         >
           <Redo className="h-4 w-4" />
@@ -236,7 +342,8 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
     content: content,
     editorProps: {
       attributes: {
-        class: "max-w-none min-h-[500px] p-8 focus:outline-none text-[var(--ink)] font-sans blog-editor-instance",
+        class:
+          "max-w-none min-h-[500px] p-8 focus:outline-none text-[var(--ink)] font-sans blog-editor-instance",
       },
     },
     immediatelyRender: false,
@@ -249,7 +356,7 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
     <div className="border border-border rounded-xl bg-background/50 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 shadow-md overflow-hidden transition-all relative">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
-      
+
       <style>{`
         .blog-editor-instance h1 { font-family: var(--display-font); font-variation-settings: "opsz" 144; font-size: 2.5rem; font-weight: 300; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.1; color: var(--ink); }
         .blog-editor-instance h2 { font-family: var(--display-font); font-variation-settings: "opsz" 144; font-size: 2rem; font-weight: 300; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.2; color: var(--ink); border-bottom: 1px solid var(--rule); padding-bottom: 0.5rem; }

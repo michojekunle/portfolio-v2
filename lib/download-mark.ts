@@ -8,7 +8,11 @@ const SVG_FRACTION: Record<MarkId, number> = { mo: 0.64, amd: 0.72 };
 const STROKE_WIDTH: Record<MarkId, number> = { mo: 6.4, amd: 8 };
 const AMD_ACCENT = "#d97a4d";
 
-function renderMarkToCanvas(mark: MarkId, size: number, variant: MarkVariant): HTMLCanvasElement {
+function renderMarkToCanvas(
+  mark: MarkId,
+  size: number,
+  variant: MarkVariant
+): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -26,7 +30,13 @@ function renderMarkToCanvas(mark: MarkId, size: number, variant: MarkVariant): H
     ctx.strokeStyle = "rgba(255,255,255,0.14)";
     ctx.lineWidth = border;
     ctx.beginPath();
-    ctx.roundRect(border / 2, border / 2, size - border, size - border, Math.max(0, r - border));
+    ctx.roundRect(
+      border / 2,
+      border / 2,
+      size - border,
+      size - border,
+      Math.max(0, r - border)
+    );
     ctx.stroke();
   }
 
@@ -53,7 +63,11 @@ function renderMarkToCanvas(mark: MarkId, size: number, variant: MarkVariant): H
   return canvas;
 }
 
-function triggerDownload(canvas: HTMLCanvasElement, filename: string, format: MarkFormat): void {
+function triggerDownload(
+  canvas: HTMLCanvasElement,
+  filename: string,
+  format: MarkFormat
+): void {
   const mime = format === "jpg" ? "image/jpeg" : "image/png";
   const url = canvas.toDataURL(mime, format === "jpg" ? 0.95 : undefined);
   const a = document.createElement("a");
@@ -62,7 +76,12 @@ function triggerDownload(canvas: HTMLCanvasElement, filename: string, format: Ma
   a.click();
 }
 
-export function downloadMark(mark: MarkId, size: number, variant: MarkVariant, format: MarkFormat): void {
+export function downloadMark(
+  mark: MarkId,
+  size: number,
+  variant: MarkVariant,
+  format: MarkFormat
+): void {
   // JPEG has no alpha channel — always flatten onto the dark badge for that format.
   const effectiveVariant: MarkVariant = format === "jpg" ? "badge" : variant;
   const canvas = renderMarkToCanvas(mark, size, effectiveVariant);

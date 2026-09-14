@@ -40,7 +40,13 @@ function titleSize(title: string): number {
   return 100;
 }
 
-export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOptions): ImageResponse {
+export function renderOgCard({
+  eyebrow,
+  title,
+  subtitle,
+  cta,
+  path,
+}: OgCardOptions): ImageResponse {
   return new ImageResponse(
     (
       <div
@@ -64,7 +70,8 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
             right: -160,
             width: 720,
             height: 620,
-            background: "radial-gradient(ellipse, rgba(255,255,255,0.10) 0%, transparent 68%)",
+            background:
+              "radial-gradient(ellipse, rgba(255,255,255,0.10) 0%, transparent 68%)",
             borderRadius: "50%",
             display: "flex",
           }}
@@ -77,7 +84,8 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
             left: -180,
             width: 640,
             height: 520,
-            background: "radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%)",
+            background:
+              "radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%)",
             borderRadius: "50%",
             display: "flex",
           }}
@@ -94,10 +102,24 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
         />
 
         {/* Top row — logomark + name, and eyebrow pill */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <MoMark dim={48} />
-            <span style={{ fontSize: 18, fontWeight: 600, color: INK, letterSpacing: "0.2px" }}>
+            <span
+              style={{
+                fontSize: 18,
+                fontWeight: 600,
+                color: INK,
+                letterSpacing: "0.2px",
+              }}
+            >
               Michael Ojekunle
             </span>
           </div>
@@ -122,8 +144,27 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
         </div>
 
         {/* Middle — title + subtitle */}
-        <div style={{ display: "flex", flexDirection: "column", position: "relative", flex: 1, justifyContent: "center", paddingTop: 24, paddingBottom: 24 }}>
-          <div style={{ display: "flex", width: 52, height: 3, background: ACCENT, borderRadius: 2, marginBottom: 30 }} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+            flex: 1,
+            justifyContent: "center",
+            paddingTop: 24,
+            paddingBottom: 24,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: 52,
+              height: 3,
+              background: ACCENT,
+              borderRadius: 2,
+              marginBottom: 30,
+            }}
+          />
           <div
             style={{
               display: "flex",
@@ -156,7 +197,14 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
         </div>
 
         {/* Bottom row — CTA pill + domain */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
           <div
             style={{
               display: "flex",
@@ -173,8 +221,18 @@ export function renderOgCard({ eyebrow, title, subtitle, cta, path }: OgCardOpti
             {cta}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ display: "flex", width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-            <span style={{ fontSize: 17, color: INK_FAINT, letterSpacing: "0.3px" }}>
+            <div
+              style={{
+                display: "flex",
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: ACCENT,
+              }}
+            />
+            <span
+              style={{ fontSize: 17, color: INK_FAINT, letterSpacing: "0.3px" }}
+            >
               michaelojekunle.dev{path ?? ""}
             </span>
           </div>

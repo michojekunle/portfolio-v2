@@ -1,7 +1,10 @@
 import { Redis } from "@upstash/redis";
 
 let redis: Redis | null = null;
-if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+) {
   redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL,
     token: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -53,14 +56,19 @@ export async function getProfileStatus(): Promise<ProfileStatusData> {
       currentlyReading = `${book.title} by ${book.author}`;
     }
   } catch (e) {
-    console.error("[getProfileStatus] failed to fetch currently reading book:", e);
+    console.error(
+      "[getProfileStatus] failed to fetch currently reading book:",
+      e
+    );
   }
 
   if (!redis) {
     return { ...DEFAULT_STATUS, currently_reading: currentlyReading };
   }
   try {
-    const data = await redis.get<Partial<ProfileStatusData>>("profile_status_data");
+    const data = await redis.get<Partial<ProfileStatusData>>(
+      "profile_status_data"
+    );
     return { ...DEFAULT_STATUS, ...data, currently_reading: currentlyReading };
   } catch (e) {
     console.error("[redis] getProfileStatus error:", e);
@@ -68,11 +76,16 @@ export async function getProfileStatus(): Promise<ProfileStatusData> {
   }
 }
 
-export async function setProfileStatus(data: Partial<ProfileStatusData>): Promise<void> {
+export async function setProfileStatus(
+  data: Partial<ProfileStatusData>
+): Promise<void> {
   if (!redis) return;
   try {
     const current = await getProfileStatus();
-    await redis.set("profile_status_data", JSON.stringify({ ...current, ...data }));
+    await redis.set(
+      "profile_status_data",
+      JSON.stringify({ ...current, ...data })
+    );
   } catch (e) {
     console.error("[redis] setProfileStatus error:", e);
   }
