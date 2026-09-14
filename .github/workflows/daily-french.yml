@@ -14,7 +14,8 @@ on:
         options:
           - production
           - preview
-          - both
+          - v2
+          - all
 
 jobs:
   trigger-french-challenge:
@@ -26,8 +27,12 @@ jobs:
         target_env: >-
           ${{
             github.event_name == 'workflow_dispatch' && (
-              inputs.target_env == 'both' && '["production", "preview"]' || format('["{0}"]', inputs.target_env)
-            ) || '["production"]'
+              inputs.target_env == 'all' && '["production", "preview", "v2"]' ||
+              inputs.target_env == 'both' && '["production", "preview"]' ||
+              format('["{0}"]', inputs.target_env)
+            ) || (
+              github.ref_name == 'v2' && '["v2"]' || '["production"]'
+            )
           }}
     environment: ${{ matrix.target_env }}
 
