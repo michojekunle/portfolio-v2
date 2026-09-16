@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDistanceToNow, format } from "date-fns";
 import { ComposeForm } from "./compose-form";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/admin/ui/page-header";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 
 interface NewsletterSend {
   id: string;
@@ -46,55 +48,55 @@ export default async function AdminNewsletterPage(): Promise<React.ReactElement>
   const posts = (publishedPosts ?? []) as PublishedPost[];
 
   return (
-    <div className="space-y-10">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Newsletter</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {subscriberCount ?? 0} subscriber{subscriberCount !== 1 ? "s" : ""}
-          </p>
-        </div>
-      </div>
+    <div className="space-y-12">
+      <PageHeader
+        title="Newsletter"
+        description={`${subscriberCount ?? 0} subscriber${subscriberCount !== 1 ? "s" : ""}`}
+      />
 
       {/* Compose */}
       <section>
-        <h2 className="text-sm font-medium mb-4">Send an update</h2>
-        <ComposeForm
-          subscriberCount={subscriberCount ?? 0}
-          publishedPosts={posts}
-        />
+        <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">Send an update</h2>
+        <GlassCard className="p-6">
+          <ComposeForm
+            subscriberCount={subscriberCount ?? 0}
+            publishedPosts={posts}
+          />
+        </GlassCard>
       </section>
 
       {/* Send history */}
       {sends.length > 0 && (
         <section>
-          <h2 className="text-sm font-medium mb-4">Send history</h2>
-          <div className="content-card divide-y divide-border">
-            {sends.map((s) => (
-              <div
-                key={s.id}
-                className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{s.subject}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {s.recipient_count} recipients ·{" "}
-                    {formatDistanceToNow(new Date(s.sent_at), {
-                      addSuffix: true,
-                    })}
-                  </p>
+          <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground mb-4">Send history</h2>
+          <GlassCard className="p-0 overflow-hidden" hoverEffect={false}>
+            <div className="divide-y divide-border/40">
+              {sends.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center justify-between gap-4 py-4 px-5 hover:bg-secondary/20 transition-colors"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold tracking-tight text-foreground/90 truncate">{s.subject}</p>
+                    <p className="text-[11px] font-medium text-muted-foreground/80 mt-1 uppercase tracking-wide">
+                      {s.recipient_count} recipients <span className="mx-1.5 opacity-50">·</span>{" "}
+                      {formatDistanceToNow(new Date(s.sent_at), {
+                        addSuffix: true,
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-medium bg-secondary/50 text-foreground/70 border-border/50">
+                      {s.type.replace("_", " ")}
+                    </Badge>
+                    <span className="text-[11px] font-medium text-muted-foreground/60 hidden sm:block uppercase tracking-wide">
+                      {format(new Date(s.sent_at), "MMM d")}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Badge variant="secondary" className="text-xs capitalize">
-                    {s.type.replace("_", " ")}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground hidden sm:block">
-                    {format(new Date(s.sent_at), "MMM d")}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </GlassCard>
         </section>
       )}
     </div>

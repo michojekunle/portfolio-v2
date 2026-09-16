@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDistanceToNow } from "date-fns";
 import { MessageItem } from "./message-item";
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/admin/ui/page-header";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 
 interface Message {
   id: string;
@@ -35,26 +37,24 @@ export default async function AdminMessagesPage(): Promise<React.ReactElement> {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Messages</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {all.length} total
-            {unreadCount > 0 && (
-              <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-foreground text-background">
-                {unreadCount} unread
-              </span>
-            )}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Messages"
+        description={`${all.length} total`}
+        action={
+          unreadCount > 0 && (
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-foreground text-background">
+              {unreadCount} unread
+            </span>
+          )
+        }
+      />
 
       {!all.length ? (
-        <div className="content-card text-center py-16">
-          <p className="text-sm text-muted-foreground">No messages yet.</p>
-        </div>
+        <GlassCard className="text-center py-16" hoverEffect={false}>
+          <p className="text-sm font-medium text-muted-foreground">No messages yet.</p>
+        </GlassCard>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {all.map((msg) => (
             <MessageItem
               key={msg.id}

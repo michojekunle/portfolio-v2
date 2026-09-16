@@ -5,6 +5,7 @@ import { BuildingManager } from "./building-manager";
 import { StatusManager } from "./status-manager";
 import { SpotifyConnectionCard } from "./spotify-connection-card";
 import { getProfileStatus } from "@/lib/profile-status";
+import { PageHeader } from "@/components/admin/ui/page-header";
 
 interface Props {
   searchParams: Promise<{ spotify_connected?: string; spotify_error?: string }>;
@@ -30,12 +31,10 @@ export default async function AdminNowPage({ searchParams }: Props): Promise<Rea
 
   return (
     <div className="space-y-12">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight mb-1">Now</h1>
-        <p className="text-sm text-muted-foreground">
-          Books, learning progress, and active projects
-        </p>
-      </div>
+      <PageHeader 
+        title="Now" 
+        description="Books, learning progress, and active projects" 
+      />
 
       <section>
         <h2 className="text-sm font-medium mb-4">Spotify</h2>

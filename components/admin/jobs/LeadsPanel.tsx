@@ -68,10 +68,10 @@ function LeadColumn({
       </div>
 
       {items.length === 0 ? (
-        <div className="content-card text-center py-8 border-dashed">
-          <p className="text-2xl mb-2">{emoji}</p>
-          <p className="text-sm font-medium mb-1">{label} leads appear here</p>
-          <p className="text-xs text-muted-foreground">Posted automatically at 7:30 AM &amp; 10:30 PM.</p>
+        <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl text-center py-16 px-6">
+          <p className="text-3xl mb-3">{emoji}</p>
+          <p className="text-[13px] font-semibold tracking-tight text-foreground/90 mb-1">{label} leads appear here</p>
+          <p className="text-[11px] text-muted-foreground">Posted automatically at 7:30 AM &amp; 10:30 PM.</p>
         </div>
       ) : (
         <>
@@ -86,15 +86,15 @@ function LeadColumn({
             return (
               <div
                 key={j.id}
-                className="content-card py-3 space-y-2 cursor-pointer hover:border-primary/40 transition-colors"
+                className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl p-5 space-y-3 cursor-pointer hover:bg-foreground/5 hover:border-border/80 hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ease-out group"
                 onClick={() => onOpenLead(j, role)}
               >
-                <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{j.company || "—"}</p>
-                    <p className="text-xs text-muted-foreground truncate">{j.title || "—"} {j.board ? `· ${j.board}` : ""}</p>
+                    <p className="text-[14px] font-semibold tracking-tight text-foreground/90 truncate">{j.company || "—"}</p>
+                    <p className="text-[12px] font-medium text-muted-foreground truncate mt-0.5">{j.title || "—"} {j.board ? `· ${j.board}` : ""}</p>
                   </div>
-                  <Badge variant="secondary" className="text-xs shrink-0">{isR ? "🦀 Rust" : "🐦 Flutter"}</Badge>
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-semibold shrink-0 bg-background/50 border border-border/40">{isR ? "🦀 Rust" : "🐦 Flutter"}</Badge>
                 </div>
                 {j.tip && (
                   <p className="text-xs text-muted-foreground leading-relaxed border-l-2 border-primary/40 pl-2.5 flex gap-1.5">
@@ -119,15 +119,16 @@ function LeadColumn({
                     )}
                   </div>
                 )}
-                <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                <div className="flex gap-2 pt-2" onClick={(e) => e.stopPropagation()}>
                   {j.url && (
-                    <Button size="sm" className="flex-1" asChild>
+                    <Button size="sm" className="flex-1 h-8 text-xs font-medium" asChild>
                       <a href={j.url} target="_blank" rel="noopener noreferrer">Apply Now ↗</a>
                     </Button>
                   )}
                   <Button
                     size="sm"
                     variant="outline"
+                    className="h-8 text-xs font-medium bg-background/50"
                     onClick={() => onLogLead({ company: j.company ?? "", role, board: j.board ?? "", url: j.url ?? "" })}
                   >
                     + Log

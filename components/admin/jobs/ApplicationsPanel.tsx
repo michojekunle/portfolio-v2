@@ -85,10 +85,12 @@ export function ApplicationsPanel({
       </div>
 
       {rows.length === 0 ? (
-        <div className="content-card text-center py-10">
-          <Inbox className="h-8 w-8 mx-auto mb-3 text-muted-foreground/50" />
-          <p className="text-sm font-medium mb-1">No applications yet</p>
-          <p className="text-xs text-muted-foreground">Hit &ldquo;Log Application&rdquo; after each apply.</p>
+        <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl text-center py-16 px-6">
+          <div className="h-12 w-12 rounded-2xl bg-foreground/5 border border-border/40 flex items-center justify-center mx-auto mb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+            <Inbox className="h-5 w-5 text-muted-foreground/70" strokeWidth={1.5} />
+          </div>
+          <p className="text-[13px] font-semibold tracking-tight text-foreground/90 mb-1">No applications yet</p>
+          <p className="text-[11px] text-muted-foreground">Hit &ldquo;Log Application&rdquo; after each apply.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -99,15 +101,15 @@ export function ApplicationsPanel({
               tabIndex={0}
               onClick={() => setSelectedId(a.id)}
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedId(a.id); } }}
-              className="content-card w-full flex items-center gap-3 py-3 text-left hover:border-foreground/20 transition-colors cursor-pointer"
+              className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl w-full flex items-center gap-4 p-4 text-left hover:bg-foreground/5 hover:border-border/80 hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ease-out cursor-pointer group"
             >
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <p className="text-sm font-medium truncate">{a.company}</p>
-                  <Badge variant="secondary" className="text-xs shrink-0">{ROLE_LABEL[a.role]}</Badge>
-                  <Badge variant={STATUS_BADGE_VARIANT[a.status]} className="text-xs shrink-0">{STATUS_LABEL[a.status]}</Badge>
+                <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                  <p className="text-[14px] font-semibold tracking-tight text-foreground/90 truncate">{a.company}</p>
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-semibold shrink-0 bg-background/50 border border-border/40">{ROLE_LABEL[a.role]}</Badge>
+                  <Badge variant={STATUS_BADGE_VARIANT[a.status]} className="text-[10px] uppercase tracking-wider font-semibold shrink-0">{STATUS_LABEL[a.status]}</Badge>
                 </div>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-[12px] text-muted-foreground truncate font-medium">
                   {a.board || "—"}
                   {a.notes ? ` · ${a.notes}` : ""}
                 </p>

@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Save, Eye, Upload } from "lucide-react";
 import { TiptapEditor } from "@/components/admin/tiptap-editor";
 import Image from "next/image";
+import { PageHeader } from "@/components/admin/ui/page-header";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 
 interface BlogPost {
   id?: string;
@@ -124,138 +126,154 @@ export function BlogEditor({ post }: { post?: BlogPost }) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {isNew ? "New post" : "Edit post"}
-        </h1>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleSave()}
-            disabled={saving}
-          >
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
-            {form.published ? "Save changes" : "Save draft"}
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => handleSave(!form.published)}
-            disabled={saving}
-          >
-            {form.published ? "Unpublish" : "Publish"}
-          </Button>
-        </div>
-      </div>
-
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
-      {/* Meta fields */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Title</label>
-          <Input
-            value={form.title}
-            onChange={(e) => handleTitleChange(e.target.value)}
-            placeholder="Post title"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Slug</label>
-          <Input
-            value={form.slug}
-            onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-            placeholder="post-slug"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Category</label>
-          <div className="flex flex-wrap gap-2">
-            {["Technical", "Web3", "Reflection", "ZKML", "First Principles", "Life & Learning"].map((cat) => (
-              <Badge
-                key={cat}
-                variant={form.category === cat ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => setForm((f) => ({ ...f, category: cat }))}
-              >
-                {cat}
-              </Badge>
-            ))}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Read time</label>
-          <Input
-            value={form.read_time}
-            onChange={(e) => setForm((f) => ({ ...f, read_time: e.target.value }))}
-            placeholder="5 min read"
-          />
-        </div>
-        <div className="space-y-2 sm:col-span-2">
-          <label className="text-sm font-medium">External URL (Optional)</label>
-          <Input
-            value={form.external_url}
-            onChange={(e) => setForm((f) => ({ ...f, external_url: e.target.value }))}
-            placeholder="https://medium.com/@username/post-slug"
-          />
-          <p className="text-[10px] text-muted-foreground">If provided, this post will link directly to the external platform.</p>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Cover Image</label>
-        <div className="flex items-center gap-4">
-          <Input
-            value={form.cover_image}
-            onChange={(e) => setForm((f) => ({ ...f, cover_image: e.target.value }))}
-            placeholder="Image URL or upload one ->"
-            className="flex-1"
-          />
-          <div className="relative">
-            <input
-              type="file"
-              accept="image/*"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={handleImageUpload}
-              disabled={uploadingImage}
-            />
-            <Button type="button" variant="outline" disabled={uploadingImage}>
-              {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
-              {uploadingImage ? "Uploading..." : "Upload Image"}
+      <PageHeader
+        title={isNew ? "New Post" : "Edit Post"}
+        description={isNew ? "Create a new entry in your journal" : "Update this post"}
+        action={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleSave()}
+              disabled={saving}
+              className="bg-transparent border-border/40 hover:bg-secondary/40 hover:text-foreground"
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" strokeWidth={1.5} />}
+              {form.published ? "Save changes" : "Save draft"}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => handleSave(!form.published)}
+              disabled={saving}
+            >
+              {form.published ? "Unpublish" : "Publish"}
             </Button>
           </div>
-        </div>
-        {form.cover_image && (
-          <div className="relative w-full h-48 mt-4 rounded-md overflow-hidden border border-border">
-            <Image src={form.cover_image} alt="Cover preview" fill className="object-cover" />
-          </div>
-        )}
-      </div>
+        }
+      />
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Excerpt</label>
-        <Input
-          value={form.excerpt}
-          onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
-          placeholder="Short summary shown in blog listing"
-        />
-      </div>
+      {error && (
+        <div className="p-4 bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium rounded-lg">
+          {error}
+        </div>
+      )}
+
+      <GlassCard className="p-6 space-y-6" hoverEffect={false}>
+        {/* Meta fields */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="space-y-2.5">
+            <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Title</label>
+            <Input
+              value={form.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="Post title"
+              className="bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-foreground/20"
+            />
+          </div>
+          <div className="space-y-2.5">
+            <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Slug</label>
+            <Input
+              value={form.slug}
+              onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+              placeholder="post-slug"
+              className="bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-foreground/20"
+            />
+          </div>
+          <div className="space-y-2.5">
+            <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Category</label>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {["Technical", "Web3", "Reflection", "ZKML", "First Principles", "Life & Learning"].map((cat) => (
+                <Badge
+                  key={cat}
+                  variant={form.category === cat ? "default" : "outline"}
+                  className={`cursor-pointer transition-colors text-[10px] uppercase tracking-wider font-medium ${form.category === cat ? "" : "border-border/40 hover:border-border/80 text-muted-foreground"}`}
+                  onClick={() => setForm((f) => ({ ...f, category: cat }))}
+                >
+                  {cat}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2.5">
+            <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Read time</label>
+            <Input
+              value={form.read_time}
+              onChange={(e) => setForm((f) => ({ ...f, read_time: e.target.value }))}
+              placeholder="5 min read"
+              className="bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-foreground/20"
+            />
+          </div>
+          <div className="space-y-2.5 sm:col-span-2">
+            <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">External URL (Optional)</label>
+            <Input
+              value={form.external_url}
+              onChange={(e) => setForm((f) => ({ ...f, external_url: e.target.value }))}
+              placeholder="https://medium.com/@username/post-slug"
+              className="bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-foreground/20"
+            />
+            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">If provided, this post will link directly to the external platform.</p>
+          </div>
+        </div>
+
+        <div className="space-y-2.5">
+          <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Cover Image</label>
+          <div className="flex items-center gap-4">
+            <Input
+              value={form.cover_image}
+              onChange={(e) => setForm((f) => ({ ...f, cover_image: e.target.value }))}
+              placeholder="Image URL or upload one ->"
+              className="flex-1 bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-foreground/20"
+            />
+            <div className="relative shrink-0">
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={handleImageUpload}
+                disabled={uploadingImage}
+              />
+              <Button type="button" variant="outline" disabled={uploadingImage} className="bg-transparent border-border/40 hover:bg-secondary/40">
+                {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-2" strokeWidth={1.5} />}
+                {uploadingImage ? "Uploading..." : "Upload Image"}
+              </Button>
+            </div>
+          </div>
+          {form.cover_image && (
+            <div className="relative w-full h-48 mt-4 rounded-xl overflow-hidden border border-border/40 shadow-sm">
+              <Image src={form.cover_image} alt="Cover preview" fill className="object-cover" />
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2.5">
+          <label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Excerpt</label>
+          <Input
+            value={form.excerpt}
+            onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
+            placeholder="Short summary shown in blog listing"
+            className="bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-foreground/20"
+          />
+        </div>
+      </GlassCard>
 
       {/* Content editor (Tiptap) */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Content</label>
-        <TiptapEditor 
-          content={form.content} 
-          onChange={(html, text) => {
-            setForm((f) => ({
-              ...f,
-              content: html,
-              read_time: computeReadTime(text),
-            }));
-          }} 
-        />
-      </div>
+      <GlassCard className="p-0 overflow-hidden border-border/40" hoverEffect={false}>
+        <div className="px-6 py-4 border-b border-border/40 bg-secondary/10">
+          <h2 className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Content</h2>
+        </div>
+        <div className="p-4 sm:p-6 bg-background/20">
+          <TiptapEditor 
+            content={form.content} 
+            onChange={(html, text) => {
+              setForm((f) => ({
+                ...f,
+                content: html,
+                read_time: computeReadTime(text),
+              }));
+            }} 
+          />
+        </div>
+      </GlassCard>
     </div>
   );
 }

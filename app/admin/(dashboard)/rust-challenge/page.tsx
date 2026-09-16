@@ -23,7 +23,7 @@ export default async function RustChallengePage(): Promise<React.ReactElement> {
 
   return (
     <div>
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card px-6 py-8 sm:px-10 sm:py-12 mb-8">
+      <div className="relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] px-6 py-8 sm:px-10 sm:py-12 mb-8">
         <span
           aria-hidden
           className="pointer-events-none select-none absolute -right-6 -top-10 text-[10rem] sm:text-[14rem] leading-none opacity-[0.06]"
