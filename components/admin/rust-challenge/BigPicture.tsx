@@ -180,7 +180,7 @@ function WhyAndQuotes({ initialMeta }: { initialMeta: RustChallengeMeta }): Reac
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border border-orange-200/70 dark:border-orange-900/40 bg-gradient-to-br from-orange-50 via-card to-card dark:from-orange-950/25 dark:via-card dark:to-card transition-all ${
+      className={`relative overflow-hidden rounded-2xl border border-orange-500/20 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all ${
         minimized ? "p-4 space-y-0" : "p-6 sm:p-8 space-y-6"
       }`}
     >
@@ -291,7 +291,7 @@ export function BigPicture({ initialMeta }: Props): React.ReactElement {
     <div className="space-y-6">
       <WhyAndQuotes initialMeta={initialMeta} />
 
-      <details className="rounded-lg border border-border bg-card overflow-hidden">
+      <details className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] overflow-hidden">
         <summary className="cursor-pointer px-4 py-3 flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-muted-foreground" />
@@ -349,8 +349,8 @@ export function BigPicture({ initialMeta }: Props): React.ReactElement {
             <SectionHeading icon={Brain} thread="rust">Four checks, weekly</SectionHeading>
             <div className="grid gap-3 sm:grid-cols-2">
               {MENTAL_MODELS.map((m) => (
-                <div key={m.name} className="rounded-md border border-border/70 p-3">
-                  <p className="text-xs font-medium text-primary mb-1">{m.name}</p>
+                <div key={m.name} className="rounded-xl border border-border/40 bg-background/30 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                  <p className="text-xs font-medium text-primary mb-1.5">{m.name}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{m.text}</p>
                 </div>
               ))}
@@ -389,9 +389,9 @@ export function BigPicture({ initialMeta }: Props): React.ReactElement {
             </div>
           </div>
 
-          <div className="rounded-lg bg-muted/60 p-4 flex items-start gap-2.5 text-xs text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 shrink-0 mt-0.5 text-orange-500" />
-            <p>Identity over goals — the target isn&apos;t &ldquo;get a $100k Rust job in 6 months,&rdquo; it&apos;s &ldquo;become someone who ships Rust and posts about it daily.&rdquo; The income follows the identity.</p>
+          <div className="rounded-xl bg-orange-500/5 border border-orange-500/10 p-4 flex items-start gap-3 text-xs text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+            <Sparkles className="h-4 w-4 shrink-0 mt-0.5 text-orange-500" />
+            <p className="leading-relaxed">Identity over goals — the target isn&apos;t &ldquo;get a $100k Rust job in 6 months,&rdquo; it&apos;s &ldquo;become someone who ships Rust and posts about it daily.&rdquo; The income follows the identity.</p>
           </div>
         </div>
       </details>

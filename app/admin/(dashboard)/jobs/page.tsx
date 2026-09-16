@@ -3,6 +3,7 @@ import { JobsDashboard } from "@/components/admin/jobs/JobsDashboard";
 import type { JobApplication } from "@/components/admin/jobs/constants";
 import type { JobLead, JobSkillGap, JobProjectToBuild } from "@/app/api/job-leads/route";
 import { JOB_LEADS_PAGE_SIZE } from "@/lib/admin/job-leads-constants";
+import { PageHeader } from "@/components/admin/ui/page-header";
 
 // Leads/applications are written by an external cron POST and by admin
 // mutations independent of this render — without this, Next's fetch cache
@@ -62,13 +63,11 @@ export default async function JobsPage(): Promise<React.ReactElement> {
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Job Search HQ</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Flutter &amp; Rust application tracker, leads, and skills gap
-        </p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Job Search HQ"
+        description="Flutter & Rust application tracker, leads, and skills gap"
+      />
       <JobsDashboard
         initialApplications={(applications ?? []) as JobApplication[]}
         initialLeads={initialLeads}

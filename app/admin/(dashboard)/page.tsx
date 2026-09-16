@@ -1,18 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  Flame,
+  Briefcase,
+  Mail,
+  Users,
+  PenTool,
+  Code2,
+  BookOpen,
+  MonitorPlay,
+  Hammer,
+  GraduationCap
+} from "lucide-react";
 import { redirect } from "next/navigation";
-
-interface TableStat {
-  label: string;
-  count: number;
-  countLabel?: string;
-  lastUpdated: string | null;
-  href: string;
-  badge?: string;
-  urgent?: boolean;
-}
 
 function todayStr(): string {
   const d = new Date();
@@ -22,66 +24,23 @@ function todayStr(): string {
   )}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function StatGrid({
-  title,
-  stats,
-}: {
-  title: string;
-  stats: TableStat[];
-}): React.ReactElement {
-  return (
-    <div className="mt-10 first:mt-0">
-      <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
-        {title}
-      </h2>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-        {stats.map((stat) => (
-          <Link
-            key={stat.label}
-            href={stat.href}
-            className={`rounded-lg border bg-card p-3 sm:p-6 hover:border-foreground/30 transition-colors group min-w-0 ${
-              stat.urgent ? "border-foreground/40" : "border-border"
-            }`}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <p className="text-xs sm:text-sm text-muted-foreground truncate">{stat.label}</p>
-                </div>
-                {stat.badge && (
-                  <span
-                    className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-medium mt-1 ${
-                      stat.urgent
-                        ? "bg-foreground text-background"
-                        : "bg-secondary text-muted-foreground"
-                    }`}
-                  >
-                    {stat.badge}
-                  </span>
-                )}
-                <p className="text-xl sm:text-3xl font-semibold mt-1 tabular-nums leading-tight">
-                  {stat.count}
-                  {stat.countLabel && (
-                    <span className="text-xs sm:text-sm font-normal text-muted-foreground ml-1">
-                      {stat.countLabel}
-                    </span>
-                  )}
-                </p>
-                {stat.lastUpdated && (
-                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-2 truncate">
-                    Updated {formatDistanceToNow(new Date(stat.lastUpdated))}{" "}
-                    ago
-                  </p>
-                )}
-              </div>
-              <ArrowRight className="hidden sm:block h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-1 shrink-0" />
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
+// Abstract SVG patterns for visual flair
+const GridPattern = () => (
+  <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="grid-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
+        <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="1" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+  </svg>
+);
+
+const Sparkline = ({ active }: { active: boolean }) => (
+  <svg className={`absolute right-0 bottom-0 w-32 h-16 opacity-10 transition-opacity duration-700 ${active ? 'opacity-30' : ''} pointer-events-none`} viewBox="0 0 100 50" preserveAspectRatio="none">
+    <path d="M0 50 C 20 40, 40 10, 60 30 S 80 10, 100 20 L 100 50 Z" fill="currentColor" />
+  </svg>
+);
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -95,10 +54,10 @@ export default async function AdminDashboard() {
 
   const [
     { count: blogCount, data: latestBlog },
-    { count: projectCount, data: latestProject },
-    { count: bookCount, data: latestBook },
+    { count: projectCount },
+    { count: bookCount },
     { count: learningCount },
-    { count: buildingCount, data: latestBuilding },
+    { count: buildingCount },
     { count: videoCount },
     { count: jobAppCount },
     { count: jobActiveCount },
@@ -112,26 +71,12 @@ export default async function AdminDashboard() {
       .select("updated_at", { count: "exact" })
       .order("updated_at", { ascending: false })
       .limit(1),
-    supabase
-      .from("projects")
-      .select("updated_at", { count: "exact" })
-      .order("updated_at", { ascending: false })
-      .limit(1),
-    supabase
-      .from("books")
-      .select("updated_at", { count: "exact" })
-      .order("updated_at", { ascending: false })
-      .limit(1),
+    supabase.from("projects").select("*", { count: "exact", head: true }),
+    supabase.from("books").select("*", { count: "exact", head: true }),
     supabase.from("learning_items").select("*", { count: "exact", head: true }),
-    supabase
-      .from("building_projects")
-      .select("updated_at", { count: "exact" })
-      .order("updated_at", { ascending: false })
-      .limit(1),
+    supabase.from("building_projects").select("*", { count: "exact", head: true }),
     supabase.from("site_videos").select("*", { count: "exact", head: true }),
-    supabase
-      .from("job_applications")
-      .select("*", { count: "exact", head: true }),
+    supabase.from("job_applications").select("*", { count: "exact", head: true }),
     supabase
       .from("job_applications")
       .select("*", { count: "exact", head: true })
@@ -141,9 +86,7 @@ export default async function AdminDashboard() {
       .from("messages")
       .select("*", { count: "exact", head: true })
       .eq("read", false),
-    supabase
-      .from("email_subscribers")
-      .select("*", { count: "exact", head: true }),
+    supabase.from("email_subscribers").select("*", { count: "exact", head: true }),
     supabase
       .from("rust_challenge_days")
       .select("day_number, challenge_date, completed"),
@@ -152,145 +95,224 @@ export default async function AdminDashboard() {
   const rustRows = rustDays ?? [];
   const rustCompleted = rustRows.filter((r) => r.completed).length;
   const rustToday = rustRows.find((r) => r.challenge_date === todayStr());
+  const rustProgress = rustRows.length > 0 ? Math.round((rustCompleted / rustRows.length) * 100) : 0;
+  
+  // Calculate Streak
+  const byDate = new Map(rustRows.map((d) => [d.challenge_date, d]));
+  const todayDate = new Date();
+  let streak = 0;
+  const cursor = new Date(todayDate);
+  const todayEntry = byDate.get(todayStr());
+  if (!todayEntry?.completed) cursor.setDate(cursor.getDate() - 1);
+  while (true) {
+    const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}-${String(cursor.getDate()).padStart(2, "0")}`;
+    const entry = byDate.get(key);
+    if (!entry || !entry.completed) break;
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
 
-  const contentStats: TableStat[] = [
-    {
-      label: "Blog Posts",
-      count: blogCount ?? 0,
-      lastUpdated: latestBlog?.[0]?.updated_at ?? null,
-      href: "/admin/blog",
-    },
-    {
-      label: "Projects",
-      count: projectCount ?? 0,
-      lastUpdated: latestProject?.[0]?.updated_at ?? null,
-      href: "/admin/projects",
-    },
-    {
-      label: "Videos",
-      count: videoCount ?? 0,
-      lastUpdated: null,
-      href: "/admin/videos",
-    },
-    {
-      label: "Books",
-      count: bookCount ?? 0,
-      lastUpdated: latestBook?.[0]?.updated_at ?? null,
-      href: "/admin/now",
-    },
-    {
-      label: "Learning Items",
-      count: learningCount ?? 0,
-      lastUpdated: null,
-      href: "/admin/now",
-    },
-    {
-      label: "Building Projects",
-      count: buildingCount ?? 0,
-      lastUpdated: latestBuilding?.[0]?.updated_at ?? null,
-      href: "/admin/now",
-    },
-  ];
-
-  const opsStats: TableStat[] = [
-    {
-      label: "Job Applications",
-      count: jobAppCount ?? 0,
-      countLabel: "total",
-      lastUpdated: null,
-      href: "/admin/jobs",
-      badge: jobActiveCount ? `${jobActiveCount} active` : undefined,
-    },
-    {
-      label: "Rust Challenge",
-      count: rustCompleted,
-      countLabel: `/ ${rustRows.length || 180}`,
-      lastUpdated: null,
-      href: "/admin/rust-challenge",
-      badge: rustToday
-        ? rustToday.completed
-          ? "today done"
-          : `day ${rustToday.day_number} pending`
-        : undefined,
-      urgent: !!rustToday && !rustToday.completed,
-    },
-    {
-      label: "Messages",
-      count: messageCount ?? 0,
-      countLabel: "total",
-      lastUpdated: null,
-      href: "/admin/messages",
-      badge: unreadMessageCount ? `${unreadMessageCount} unread` : undefined,
-      urgent: !!unreadMessageCount,
-    },
-    {
-      label: "Newsletter",
-      count: subscriberCount ?? 0,
-      countLabel: "subscribers",
-      lastUpdated: null,
-      href: "/admin/newsletter",
-    },
-  ];
+  // Base card class for glassmorphism, subtle borders, and smooth hover lifts
+  const cardBaseClass = "group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-xl border border-border/40 hover:border-border/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ease-out hover:-translate-y-[2px] p-5 sm:p-6 flex flex-col";
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Everything on the site, one click away
-        </p>
-      </div>
-
-      <StatGrid title="Ops" stats={opsStats} />
-      <StatGrid title="Content" stats={contentStats} />
-
-      <div className="mt-10 content-card">
-        <h2 className="text-sm font-medium mb-3">Quick links</h2>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/admin/blog/new"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            + New blog post
+    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6">
+      <div className="mb-10 flex items-end justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground/90">Welcome back.</h1>
+          <p className="text-sm text-muted-foreground mt-1.5 font-medium tracking-wide">COMMAND CENTER</p>
+        </div>
+        <div className="hidden sm:flex items-center gap-3">
+          <Link href="/" target="_blank" className="text-xs text-muted-foreground hover:text-foreground flex items-center transition-colors">
+            View Site <ArrowUpRight className="ml-1 w-3.5 h-3.5" strokeWidth={1.5} />
           </Link>
-          <span className="text-muted-foreground/30">·</span>
-          <Link
-            href="/admin/projects"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Sync GitHub repos
-          </Link>
-          <span className="text-muted-foreground/30">·</span>
-          <Link
-            href="/admin/newsletter"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Compose newsletter
-          </Link>
-          <span className="text-muted-foreground/30">·</span>
-          <Link
-            href="/admin/rust-challenge"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Today's Rust target
-          </Link>
-          <span className="text-muted-foreground/30">·</span>
-          <Link
-            href="/"
-            target="_blank"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            View site <ArrowUpRight className="inline w-3 h-3 ml-1" />
-          </Link>
-          <span className="text-muted-foreground/30">·</span>
-          <Link
-            href="/blog"
-            target="_blank"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            View blog <ArrowUpRight className="inline w-3 h-3 ml-1" />
+          <div className="w-px h-3 bg-border/60" />
+          <Link href="/admin/blog/new" className="text-xs bg-foreground text-background font-medium px-3 py-1.5 rounded-full hover:bg-foreground/90 transition-colors">
+            + New Post
           </Link>
         </div>
+      </div>
+
+      {/* Bento Box Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[minmax(160px,auto)]">
+        
+        {/* HERO: Rust Challenge (2x2) */}
+        <Link href="/admin/rust-challenge" className={`col-span-1 sm:col-span-2 lg:col-span-2 lg:row-span-2 ${cardBaseClass}`}>
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <GridPattern />
+          <div className="relative flex justify-between items-start mb-auto">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 border border-orange-500/20">
+                <Flame className="w-5 h-5" strokeWidth={1.5} />
+              </div>
+              <span className="text-sm font-medium tracking-wide text-foreground/80">Rust Challenge</span>
+            </div>
+            {rustToday && !rustToday.completed && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse">
+                Day {rustToday.day_number} Pending
+              </span>
+            )}
+          </div>
+          <div className="relative mt-8">
+            <div className="flex items-baseline gap-2">
+              <span className="text-6xl tracking-tighter font-semibold text-foreground/90">{streak}</span>
+              <span className="text-lg text-muted-foreground font-medium uppercase tracking-wider">Day Streak</span>
+            </div>
+            <div className="mt-6">
+              <div className="flex justify-between text-xs text-muted-foreground mb-2 font-medium">
+                <span>{rustProgress}% Completed</span>
+                <span className="tabular-nums">{rustCompleted} / {rustRows.length || 180}</span>
+              </div>
+              <div className="h-1.5 w-full bg-muted/50 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-orange-500/80 rounded-full relative"
+                  style={{ width: `${rustProgress}%` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <ArrowUpRight className="absolute top-6 right-6 w-5 h-5 text-muted-foreground/30 group-hover:text-foreground/70 transition-colors" strokeWidth={1.5} />
+        </Link>
+
+        {/* HERO: Job Applications (1x2 on Desktop) */}
+        <Link href="/admin/jobs" className={`col-span-1 lg:col-span-1 lg:row-span-2 ${cardBaseClass}`}>
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <Sparkline active={!!jobActiveCount} />
+          <div className="relative flex justify-between items-start mb-auto">
+            <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400 border border-blue-500/20">
+              <Briefcase className="w-4 h-4" strokeWidth={1.5} />
+            </div>
+            {jobActiveCount ? (
+              <span className="inline-flex items-center px-2 py-1 rounded text-[10px] font-medium bg-blue-500 text-white">
+                {jobActiveCount} Active
+              </span>
+            ) : null}
+          </div>
+          <div className="relative mt-8">
+            <span className="text-4xl tracking-tighter font-semibold text-foreground/90">{jobAppCount ?? 0}</span>
+            <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider font-medium">Total Apps</p>
+          </div>
+        </Link>
+
+        {/* Messages */}
+        <Link href="/admin/messages" className={`col-span-1 ${cardBaseClass}`}>
+          <div className="relative flex justify-between items-start mb-auto">
+            <div className="p-2 bg-zinc-500/10 rounded-lg text-zinc-400 border border-zinc-500/20 group-hover:text-zinc-200 transition-colors">
+              <Mail className="w-4 h-4" strokeWidth={1.5} />
+            </div>
+            {unreadMessageCount ? (
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            ) : null}
+          </div>
+          <div className="relative mt-4">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl tracking-tighter font-semibold text-foreground/90">{messageCount ?? 0}</span>
+              {unreadMessageCount ? (
+                 <span className="text-xs text-red-400 font-medium">{unreadMessageCount} new</span>
+              ) : null}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider font-medium">Messages</p>
+          </div>
+        </Link>
+
+        {/* Newsletter */}
+        <Link href="/admin/newsletter" className={`col-span-1 ${cardBaseClass}`}>
+          <div className="relative flex justify-between items-start mb-auto">
+            <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20 group-hover:text-indigo-300 transition-colors">
+              <Users className="w-4 h-4" strokeWidth={1.5} />
+            </div>
+          </div>
+          <div className="relative mt-4">
+            <span className="text-3xl tracking-tighter font-semibold text-foreground/90">{subscriberCount ?? 0}</span>
+            <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider font-medium">Subscribers</p>
+          </div>
+        </Link>
+
+        {/* Blog Posts */}
+        <Link href="/admin/blog" className={`col-span-1 ${cardBaseClass}`}>
+          <div className="relative flex justify-between items-start mb-auto">
+            <div className="p-2 bg-zinc-500/10 rounded-lg text-zinc-400 border border-zinc-500/20 group-hover:text-zinc-200 transition-colors">
+              <PenTool className="w-4 h-4" strokeWidth={1.5} />
+            </div>
+          </div>
+          <div className="relative mt-4">
+            <span className="text-3xl tracking-tighter font-semibold text-foreground/90">{blogCount ?? 0}</span>
+            <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider font-medium">Blog Posts</p>
+            {latestBlog?.[0]?.updated_at && (
+              <p className="text-[10px] text-muted-foreground/60 mt-2 truncate">Updated {formatDistanceToNow(new Date(latestBlog[0].updated_at))} ago</p>
+            )}
+          </div>
+        </Link>
+
+        {/* Projects */}
+        <Link href="/admin/projects" className={`col-span-1 ${cardBaseClass}`}>
+          <div className="relative flex justify-between items-start mb-auto">
+            <div className="p-2 bg-zinc-500/10 rounded-lg text-zinc-400 border border-zinc-500/20 group-hover:text-zinc-200 transition-colors">
+              <Code2 className="w-4 h-4" strokeWidth={1.5} />
+            </div>
+          </div>
+          <div className="relative mt-4">
+            <span className="text-3xl tracking-tighter font-semibold text-foreground/90">{projectCount ?? 0}</span>
+            <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider font-medium">Projects</p>
+          </div>
+        </Link>
+
+        {/* Learning & Building (2 col span on large) */}
+        <Link href="/admin/now" className={`col-span-1 sm:col-span-2 lg:col-span-2 ${cardBaseClass} sm:flex-row sm:items-center justify-between`}>
+           <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 w-full">
+              {/* Books */}
+              <div className="flex-1">
+                 <div className="flex items-center gap-2 mb-3">
+                    <BookOpen className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={1.5} />
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Reading</span>
+                 </div>
+                 <span className="text-2xl tracking-tight font-semibold text-foreground/90">{bookCount ?? 0}</span>
+              </div>
+              
+              <div className="hidden sm:block w-px bg-border/50" />
+              
+              {/* Building */}
+              <div className="flex-1">
+                 <div className="flex items-center gap-2 mb-3">
+                    <Hammer className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={1.5} />
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Building</span>
+                 </div>
+                 <span className="text-2xl tracking-tight font-semibold text-foreground/90">{buildingCount ?? 0}</span>
+              </div>
+              
+              <div className="hidden sm:block w-px bg-border/50" />
+              
+              {/* Learning */}
+              <div className="flex-1">
+                 <div className="flex items-center gap-2 mb-3">
+                    <GraduationCap className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={1.5} />
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Learning</span>
+                 </div>
+                 <span className="text-2xl tracking-tight font-semibold text-foreground/90">{learningCount ?? 0}</span>
+              </div>
+           </div>
+           <ArrowUpRight className="hidden sm:block absolute top-6 right-6 w-5 h-5 text-muted-foreground/30 group-hover:text-foreground/70 transition-colors" strokeWidth={1.5} />
+        </Link>
+        
+        {/* Videos */}
+        <Link href="/admin/videos" className={`col-span-1 sm:col-span-2 lg:col-span-2 ${cardBaseClass}`}>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative flex justify-between items-center h-full">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 bg-purple-500/10 rounded-md text-purple-400 border border-purple-500/20">
+                  <MonitorPlay className="w-3.5 h-3.5" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Videos Published</span>
+              </div>
+              <span className="text-3xl tracking-tighter font-semibold text-foreground/90">{videoCount ?? 0}</span>
+            </div>
+            <ArrowUpRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-foreground/70 transition-colors" strokeWidth={1.5} />
+          </div>
+        </Link>
+
       </div>
     </div>
   );

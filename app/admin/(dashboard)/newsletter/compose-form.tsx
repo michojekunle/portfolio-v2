@@ -110,7 +110,7 @@ export function ComposeForm({
   };
 
   return (
-    <div className="content-card space-y-6">
+    <div className="space-y-6">
       {/* No subscribers warning */}
       {subscriberCount === 0 && (
         <div className="flex items-center gap-2 p-3 rounded-md bg-muted text-sm text-muted-foreground">
@@ -130,10 +130,10 @@ export function ComposeForm({
               key={t}
               onClick={() => setType(t)}
               className={cn(
-                "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-300 border",
                 type === t
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
+                  ? "bg-foreground text-background border-foreground shadow-sm"
+                  : "bg-transparent text-muted-foreground border-transparent hover:bg-secondary/50 hover:text-foreground"
               )}
             >
               {TYPE_CONFIG[t].label}
@@ -159,7 +159,7 @@ export function ComposeForm({
             <select
               value={postId}
               onChange={(e) => setPostId(e.target.value)}
-              className="w-full h-9 bg-muted border border-border rounded-md px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 bg-background/50 border border-border/50 rounded-md px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
             >
               {publishedPosts.map((post) => (
                 <option key={post.id} value={post.id}>
@@ -174,7 +174,7 @@ export function ComposeForm({
 
       {/* Digest — no input needed */}
       {type === "digest" && (
-        <div className="rounded-md bg-muted/60 border border-border/60 p-4 space-y-1.5">
+        <div className="rounded-xl bg-background/30 border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-5 space-y-1.5">
           <p className="text-xs font-medium">Auto-generated content:</p>
           <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
             <li>Last 3 published blog posts</li>
@@ -197,6 +197,7 @@ export function ComposeForm({
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g. A quick update from me"
               maxLength={200}
+              className="h-10 bg-background/50 border-border/50 transition-colors"
             />
           </div>
           <div>
@@ -208,7 +209,7 @@ export function ComposeForm({
               onChange={(e) => setBody(e.target.value)}
               rows={8}
               placeholder="Write your message here. Blank lines create paragraphs."
-              className="w-full bg-muted/60 border border-border rounded-md p-3 text-sm font-mono resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full bg-background/50 border border-border/50 rounded-md p-3 text-sm font-mono resize-y focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
               maxLength={20000}
             />
             <p className="text-xs text-muted-foreground mt-1 text-right">

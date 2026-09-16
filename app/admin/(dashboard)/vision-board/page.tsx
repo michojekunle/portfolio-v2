@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { TiptapEditor } from "@/components/admin/tiptap-editor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TiltCard } from "@/components/tilt-card";
+import { PageHeader } from "@/components/admin/ui/page-header";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 import { Save, Plus, Target, Compass, Zap, Flame, X, Edit2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -208,45 +210,36 @@ export default function VisionBoardPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="v3-container max-w-6xl mx-auto py-12 v3-page-enter">
+    <div>
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[var(--rule)] pb-8">
-        <div className="space-y-4">
-          <div className="v3-eyebrow">
-            <span className="dot"></span>
-            <b>Living Strategy</b>
-          </div>
-          <h1 className="text-5xl md:text-7xl fvs-display tracking-tight text-[var(--ink)] m-0 leading-[0.9]">
-            The Titan <em className="text-[var(--v3-accent)]">Vision</em>
-          </h1>
-          <p className="text-[var(--ink-2)] text-lg max-w-xl leading-relaxed font-sans">
-            Your ultimate execution manual. Time is your most valuable asset—protect your deep work blocks, scale Zamir, and master Rust.
-          </p>
-        </div>
-        
-        <button 
-          onClick={handleSave} 
-          disabled={isSaving} 
-          className="v3-btn v3-btn-primary self-start md:self-end"
-        >
-          <Save className="w-4 h-4 mr-2" />
-          {isSaving ? "Saving..." : "Save to Cloud"}
-        </button>
-      </div>
+      <PageHeader
+        title="Vision Board"
+        description="Your ultimate execution manual. Time is your most valuable asset."
+        action={
+          <button 
+            onClick={handleSave} 
+            disabled={isSaving} 
+            className="inline-flex items-center justify-center rounded-full text-xs font-medium bg-foreground text-background hover:bg-foreground/90 h-9 px-4 transition-colors"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {isSaving ? "Saving..." : "Save to Cloud"}
+          </button>
+        }
+      />
 
       <Tabs defaultValue="visual" className="w-full">
         <div className="flex items-center justify-between mb-8">
-          <TabsList className="bg-[var(--bg-2)] p-1 border border-[var(--rule)]">
+          <TabsList className="bg-card/40 backdrop-blur-xl p-1 border border-border/40 rounded-xl">
             <TabsTrigger 
               value="visual" 
-              className="font-sans data-[state=active]:bg-[var(--paper)] data-[state=active]:text-[var(--ink)] data-[state=active]:shadow-sm"
+              className="text-xs font-medium data-[state=active]:bg-background/80 data-[state=active]:text-foreground rounded-lg"
             >
               Visual Canvas
             </TabsTrigger>
             <TabsTrigger 
               value="text"
-              className="font-sans data-[state=active]:bg-[var(--paper)] data-[state=active]:text-[var(--ink)] data-[state=active]:shadow-sm"
+              className="text-xs font-medium data-[state=active]:bg-background/80 data-[state=active]:text-foreground rounded-lg"
             >
               Text Blueprint
             </TabsTrigger>
@@ -256,18 +249,18 @@ export default function VisionBoardPage() {
         {/* --- VISUAL CANVAS TAB --- */}
         <TabsContent value="visual" className="mt-0 outline-none">
           <div className="mb-4 flex justify-end">
-             <button onClick={addCard} className="v3-btn v3-btn-sm v3-btn-ghost">
+             <button onClick={addCard} className="inline-flex items-center justify-center rounded-md text-xs font-medium border border-border/40 bg-secondary/20 hover:bg-secondary/60 text-foreground h-8 px-3 transition-colors">
                 <Plus className="w-4 h-4 mr-1.5" />
                 Add Goal Card
              </button>
           </div>
           
-          <div className="w-full overflow-x-auto rounded-2xl border border-[var(--rule)] bg-[var(--bg-2)] custom-scrollbar">
+          <div className="w-full overflow-x-auto rounded-2xl border border-border/40 bg-card/20 backdrop-blur-sm custom-scrollbar">
             <div 
               ref={canvasRef} 
               className="w-[1200px] lg:w-full h-[75vh] min-h-[600px] relative overflow-hidden"
               style={{
-                backgroundImage: 'radial-gradient(var(--rule) 1px, transparent 1px)',
+                backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)',
                 backgroundSize: '40px 40px',
                 backgroundPosition: '-19px -19px'
               }}
@@ -289,20 +282,20 @@ export default function VisionBoardPage() {
                     style={{ touchAction: 'none' }}
                   >
                   <TiltCard intensity={isEditing ? 0 : 25}>
-                    <div className="w-80 h-auto bg-[var(--paper)] p-6 rounded-xl border border-[var(--rule)] shadow-2xl flex flex-col gap-4 relative group">
+                    <div className="w-80 h-auto bg-card/80 backdrop-blur-xl p-6 rounded-2xl border border-border/40 shadow-2xl flex flex-col gap-4 relative group">
                       
                       {!isEditing && (
                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                          <button onClick={() => setEditingCardId(card.id)} className="p-1.5 bg-[var(--bg)] border border-[var(--rule)] rounded-md text-[var(--ink-2)] hover:text-[var(--ink)]">
+                          <button onClick={() => setEditingCardId(card.id)} className="p-1.5 bg-background border border-border/40 rounded-md text-muted-foreground hover:text-foreground">
                              <Edit2 className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => deleteCard(card.id)} className="p-1.5 bg-[var(--bg)] border border-[var(--rule)] rounded-md text-red-500 hover:bg-red-500/10">
+                          <button onClick={() => deleteCard(card.id)} className="p-1.5 bg-background border border-border/40 rounded-md text-destructive hover:bg-destructive/10">
                              <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       )}
 
-                      <div className="flex items-center gap-3 border-b border-[var(--rule)] pb-4">
+                      <div className="flex items-center gap-3 border-b border-border/40 pb-4">
                         <div 
                            className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0"
                            style={{ backgroundColor: card.color === 'var(--ink)' ? '#333' : card.color }}
@@ -316,10 +309,10 @@ export default function VisionBoardPage() {
                               type="text" 
                               value={card.title}
                               onChange={e => updateCard(card.id, { title: e.target.value })}
-                              className="w-full bg-[var(--bg)] border border-[var(--rule)] rounded px-2 py-1 text-sm mb-1 text-[var(--ink)] outline-none"
+                              className="w-full bg-background/50 border border-border/40 rounded px-2 py-1 text-sm mb-1 text-foreground/90 outline-none"
                             />
                           ) : (
-                            <h3 className="v3-serif text-xl leading-none m-0 text-[var(--ink)]">{card.title}</h3>
+                            <h3 className="font-display text-xl leading-none tracking-tight text-foreground/90 font-semibold">{card.title}</h3>
                           )}
 
                           {isEditing ? (
@@ -327,20 +320,20 @@ export default function VisionBoardPage() {
                               type="text" 
                               value={card.subtitle}
                               onChange={e => updateCard(card.id, { subtitle: e.target.value })}
-                              className="w-full bg-[var(--bg)] border border-[var(--rule)] rounded px-2 py-1 text-[9px] text-[var(--ink)] outline-none"
+                              className="w-full bg-background/50 border border-border/40 rounded px-2 py-1 text-[9px] text-foreground/90 outline-none"
                             />
                           ) : (
-                            <span className="v3-eyebrow text-[9px] block mt-1">{card.subtitle}</span>
+                            <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground block mt-1">{card.subtitle}</span>
                           )}
                         </div>
                       </div>
 
-                      <div className="font-sans text-sm text-[var(--ink-2)]">
+                      <div className="font-sans text-sm text-muted-foreground">
                         {isEditing ? (
                           <textarea 
                             value={card.content}
                             onChange={e => updateCard(card.id, { content: e.target.value })}
-                            className="w-full bg-[var(--bg)] border border-[var(--rule)] rounded p-2 text-sm text-[var(--ink)] outline-none min-h-[100px] resize-none"
+                            className="w-full bg-background/50 border border-border/40 rounded p-2 text-sm text-foreground/90 outline-none min-h-[100px] resize-none"
                           />
                         ) : (
                           <div className="whitespace-pre-wrap">{card.content}</div>
@@ -348,7 +341,7 @@ export default function VisionBoardPage() {
                       </div>
 
                       {isEditing && (
-                         <div className="flex justify-between items-center pt-2 border-t border-[var(--rule)] mt-2">
+                         <div className="flex justify-between items-center pt-2 border-t border-border/40 mt-2">
                            <div className="flex gap-2">
                               {['var(--ink)', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444', '#3b82f6'].map(color => (
                                  <button 
@@ -359,7 +352,7 @@ export default function VisionBoardPage() {
                                  />
                               ))}
                            </div>
-                           <button onClick={() => setEditingCardId(null)} className="v3-btn v3-btn-primary py-1.5 px-3 text-xs">
+                           <button onClick={() => setEditingCardId(null)} className="inline-flex items-center justify-center rounded-md text-xs font-medium bg-foreground text-background hover:bg-foreground/90 h-7 px-3 transition-colors">
                              <Check className="w-3.5 h-3.5 mr-1" /> Done
                            </button>
                          </div>
@@ -372,17 +365,17 @@ export default function VisionBoardPage() {
             })}
             </div>
           </div>
-          <p className="text-center text-[var(--ink-3)] text-xs mt-4 font-sans">
+          <p className="text-center text-muted-foreground/60 text-xs mt-4 font-sans">
             Drag cards to arrange. Hover over a card and click the edit icon to customize it. Remember to save to the cloud!
           </p>
         </TabsContent>
 
         {/* --- TEXT BLUEPRINT TAB (HYBRID) --- */}
         <TabsContent value="text" className="mt-0 outline-none">
-          <div className="bg-[var(--bg)] rounded-2xl overflow-hidden shadow-sm border border-[var(--rule)] mb-12">
-            <div className="p-6 border-b border-[var(--rule)] bg-[var(--paper)]">
-               <h2 className="v3-serif text-3xl text-[var(--ink)] m-0">Strategy Preamble</h2>
-               <p className="text-[var(--ink-3)] text-sm mt-2 font-sans">Use this free-form space to write out your long-form thoughts, principles, and daily routines.</p>
+          <div className="bg-card/40 backdrop-blur-xl rounded-2xl overflow-hidden border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] mb-12">
+            <div className="p-6 border-b border-border/40 bg-card/60">
+               <h2 className="v3-serif text-3xl text-foreground/90 m-0">Strategy Preamble</h2>
+               <p className="text-muted-foreground/60 text-sm mt-2 font-sans">Use this free-form space to write out your long-form thoughts, principles, and daily routines.</p>
             </div>
             <TiptapEditor 
               content={content} 
@@ -391,12 +384,12 @@ export default function VisionBoardPage() {
           </div>
           
           <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-[var(--rule)] pb-4">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div>
-                 <h2 className="v3-serif text-3xl text-[var(--ink)] m-0">Structured Goals</h2>
-                 <p className="text-[var(--ink-3)] text-sm mt-2 font-sans">Changes made here instantly sync with the 3D cards on your Visual Canvas.</p>
+                 <h2 className="v3-serif text-3xl text-foreground/90 m-0">Structured Goals</h2>
+                 <p className="text-muted-foreground/60 text-sm mt-2 font-sans">Changes made here instantly sync with the 3D cards on your Visual Canvas.</p>
               </div>
-              <button onClick={addCard} className="v3-btn v3-btn-sm v3-btn-ghost flex-shrink-0">
+              <button onClick={addCard} className="inline-flex items-center justify-center rounded-md text-xs font-medium border border-border/40 bg-secondary/20 hover:bg-secondary/60 text-foreground h-8 px-3 transition-colors flex-shrink-0">
                 <Plus className="w-4 h-4 mr-1.5" />
                 Add Goal
               </button>
@@ -404,32 +397,32 @@ export default function VisionBoardPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                {cards.map(card => (
-                 <div key={card.id} className="bg-[var(--paper)] rounded-xl border border-[var(--rule)] p-6 shadow-sm flex flex-col gap-6 transition-all hover:border-[var(--v3-accent-soft)]">
+                 <div key={card.id} className="bg-card/60 rounded-xl border border-[var(--rule)] p-6 shadow-sm flex flex-col gap-6 transition-all hover:border-[var(--v3-accent-soft)]">
                    <div className="flex-1 space-y-4">
                       <input 
-                        className="w-full bg-transparent border-b border-[var(--rule)] pb-2 text-2xl v3-serif text-[var(--ink)] outline-none focus:border-[var(--v3-accent)] transition-colors"
+                        className="w-full bg-transparent border-b border-border/40 pb-2 text-2xl v3-serif text-foreground/90 outline-none focus:border-[var(--v3-accent)] transition-colors"
                         value={card.title}
                         onChange={e => updateCard(card.id, { title: e.target.value })}
                         placeholder="Goal Title"
                       />
                       <input 
-                        className="w-full bg-transparent text-sm v3-eyebrow text-[var(--ink-2)] outline-none"
+                        className="w-full bg-transparent text-sm v3-eyebrow text-muted-foreground outline-none"
                         value={card.subtitle}
                         onChange={e => updateCard(card.id, { subtitle: e.target.value })}
                         placeholder="Subtitle (e.g. 6-Month Sprint)"
                       />
                       <textarea
-                        className="w-full bg-[var(--bg)] border border-[var(--rule)] rounded-md p-4 text-sm text-[var(--ink)] outline-none min-h-[140px] resize-y mt-2 font-sans leading-relaxed"
+                        className="w-full bg-background/50 border border-border/40 rounded-md p-4 text-sm text-foreground/90 outline-none min-h-[140px] resize-y mt-2 font-sans leading-relaxed"
                         value={card.content}
                         onChange={e => updateCard(card.id, { content: e.target.value })}
                         placeholder="Goal details..."
                       />
                    </div>
                    
-                   <div className="flex flex-wrap items-end justify-between gap-4 border-t border-[var(--rule)] pt-4">
+                   <div className="flex flex-wrap items-end justify-between gap-4 border-t border-border/40 pt-4">
                       <div className="flex gap-4">
                          <div>
-                            <div className="text-xs v3-eyebrow text-[var(--ink-3)] mb-2">Color</div>
+                            <div className="text-xs v3-eyebrow text-muted-foreground/60 mb-2">Color</div>
                             <div className="flex gap-1">
                                {['var(--ink)', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444', '#3b82f6'].map(color => (
                                   <button 
@@ -442,9 +435,9 @@ export default function VisionBoardPage() {
                             </div>
                          </div>
                          <div>
-                            <div className="text-xs v3-eyebrow text-[var(--ink-3)] mb-2">Icon</div>
+                            <div className="text-xs v3-eyebrow text-muted-foreground/60 mb-2">Icon</div>
                             <select 
-                              className="bg-[var(--bg)] border border-[var(--rule)] rounded-md py-1 px-2 text-xs text-[var(--ink)] outline-none font-sans"
+                              className="bg-background/50 border border-border/40 rounded-md py-1 px-2 text-xs text-foreground/90 outline-none font-sans"
                               value={card.iconName}
                               onChange={e => updateCard(card.id, { iconName: e.target.value })}
                             >

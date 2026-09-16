@@ -187,11 +187,11 @@ export function JobsDashboard({
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-4 h-auto gap-1 p-1 mb-6">
-        <TabsTrigger value="overview" className="text-xs sm:text-sm px-1.5 sm:px-3 py-2 truncate">Overview</TabsTrigger>
-        <TabsTrigger value="applications" className="text-xs sm:text-sm px-1.5 sm:px-3 py-2 truncate">Applications</TabsTrigger>
-        <TabsTrigger value="leads" className="text-xs sm:text-sm px-1.5 sm:px-3 py-2 truncate">Leads</TabsTrigger>
-        <TabsTrigger value="resources" className="text-xs sm:text-sm px-1.5 sm:px-3 py-2 truncate">Resources</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-4 h-auto gap-1 p-1 mb-8 bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-xl">
+        <TabsTrigger value="overview" className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-1.5 sm:px-3 py-2 truncate data-[state=active]:bg-background/80 data-[state=active]:text-foreground rounded-lg">Overview</TabsTrigger>
+        <TabsTrigger value="applications" className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-1.5 sm:px-3 py-2 truncate data-[state=active]:bg-background/80 data-[state=active]:text-foreground rounded-lg">Applications</TabsTrigger>
+        <TabsTrigger value="leads" className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-1.5 sm:px-3 py-2 truncate data-[state=active]:bg-background/80 data-[state=active]:text-foreground rounded-lg">Leads</TabsTrigger>
+        <TabsTrigger value="resources" className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-1.5 sm:px-3 py-2 truncate data-[state=active]:bg-background/80 data-[state=active]:text-foreground rounded-lg">Resources</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview">

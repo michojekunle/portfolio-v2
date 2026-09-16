@@ -75,18 +75,12 @@ function emailHeader(): string {
   <td class="eh" style="background-color:#0a0a0a;border-radius:16px 16px 0 0;padding:36px 48px;">
     <table role="presentation" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <!-- M badge -->
-        <td style="vertical-align:middle;">
-          <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td style="width:52px;height:52px;background-color:#161616;border:1px solid rgba(255,255,255,0.12);border-radius:10px;text-align:center;vertical-align:middle;line-height:52px;">
-                <span style="font-family:${F};font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-1.5px;">M</span>
-              </td>
-            </tr>
-          </table>
+        <!-- MoMark Badge Image -->
+        <td style="vertical-align:middle;padding-right:14px;">
+          <img src="${SITE_URL}/apple-icon.png" width="52" height="52" alt="M" style="display:block;border:0;border-radius:10px;" />
         </td>
         <!-- Name + role -->
-        <td style="padding-left:14px;vertical-align:middle;">
+        <td style="vertical-align:middle;">
           <p style="margin:0 0 3px 0;font-family:${F};font-size:15px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;line-height:1.2;">Michael Ojekunle</p>
           <p style="margin:0;font-family:${F};font-size:12px;color:#555;letter-spacing:0.2px;line-height:1.2;">Software Engineer &amp; Builder</p>
         </td>

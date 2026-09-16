@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertTriangle, Brain, Check, ChevronDown, Copy, Flame, Loader2, Send } from "lucide-react";
+import { AlertTriangle, Brain, Check, ChevronDown, Copy, Flame, Loader2, Send, Palette } from "lucide-react";
 import type { RustChallengeDay } from "@/app/api/admin/rust-challenge/route";
 
 interface Props {
@@ -208,7 +208,7 @@ function HeroCard({ day, onUpdate }: { day: RustChallengeDay; onUpdate: UpdateFn
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-orange-300/50 dark:border-orange-800/50 bg-gradient-to-br from-orange-50/60 via-card to-card dark:from-orange-950/20 dark:via-card dark:to-card p-5 sm:p-7 shadow-sm space-y-5">
+    <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-5 sm:p-7 space-y-5">
       <span
         aria-hidden
         className="pointer-events-none select-none absolute -right-4 -top-8 font-display font-black text-[7rem] sm:text-[9rem] leading-none text-orange-900/[0.04] dark:text-orange-100/[0.04] tabular-nums"
@@ -231,6 +231,13 @@ function HeroCard({ day, onUpdate }: { day: RustChallengeDay; onUpdate: UpdateFn
         <Brain className="h-4 w-4 shrink-0 mt-0.5 text-teal-600 dark:text-teal-400" />
         <span className="leading-relaxed">{day.dsa_rep}</span>
       </div>
+
+      {day.frontend_task && (
+        <div className="relative flex items-start gap-2.5 text-xs bg-orange-500/5 text-muted-foreground px-3.5 py-3 rounded-xl border border-orange-500/20">
+          <Palette className="h-4 w-4 shrink-0 mt-0.5 text-orange-600 dark:text-orange-400" />
+          <span className="leading-relaxed whitespace-pre-wrap">{day.frontend_task}</span>
+        </div>
+      )}
 
       <div className="border-t border-border pt-4">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Suggested post</p>
@@ -271,7 +278,7 @@ function CompactDayCard({ day, onUpdate }: { day: RustChallengeDay; onUpdate: Up
   };
 
   return (
-    <div className={`rounded-lg border border-border p-3.5 space-y-2 transition-opacity ${day.completed ? "opacity-60" : ""}`}>
+    <div className={`rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-4 space-y-2 transition-opacity ${day.completed ? "opacity-60" : ""}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
           <span className="font-medium text-foreground shrink-0">Day {day.day_number}</span>
@@ -280,6 +287,7 @@ function CompactDayCard({ day, onUpdate }: { day: RustChallengeDay; onUpdate: Up
         <MarkDoneButton day={day} saving={saving} onToggle={() => void handleToggle()} size="sm" />
       </div>
       <p className="text-sm">{day.daily_task}</p>
+      {day.frontend_task && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">🎨 {day.frontend_task}</p>}
       <button
         type="button"
         onClick={() => setLogOpen((v) => !v)}
@@ -390,7 +398,7 @@ export function RustChallengeDashboard({ initialDays }: Props): React.ReactEleme
 
   if (days.length === 0) {
     return (
-      <div className="content-card text-center py-12">
+      <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-xl text-center py-12">
         <p className="text-sm font-medium mb-1">No challenge days found</p>
         <p className="text-xs text-muted-foreground">Run the rust_challenge_days migration in Supabase, then refresh.</p>
       </div>
@@ -400,7 +408,7 @@ export function RustChallengeDashboard({ initialDays }: Props): React.ReactEleme
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-3 gap-2 sm:gap-4">
-        <div className="relative overflow-hidden rounded-xl border border-orange-300/50 dark:border-orange-800/50 bg-gradient-to-br from-orange-50 to-card dark:from-orange-950/30 dark:to-card p-3 sm:p-5 flex items-center gap-2.5 sm:gap-4">
+        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-3 sm:p-5 flex items-center gap-2.5 sm:gap-4">
           <Flame className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 ${streak > 0 ? "text-orange-500" : "text-muted-foreground/40"}`} />
           <div className="min-w-0">
             <p className="font-display text-2xl sm:text-4xl font-extrabold tabular-nums leading-none fvs-display text-(--ink)">{streak}</p>
@@ -409,14 +417,14 @@ export function RustChallengeDashboard({ initialDays }: Props): React.ReactEleme
             </p>
           </div>
         </div>
-        <div className="rounded-xl border border-border bg-card p-3 sm:p-5 flex flex-col justify-center min-w-0">
+        <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-3 sm:p-5 flex flex-col justify-center min-w-0">
           <p className="font-display text-xl sm:text-3xl font-bold tabular-nums leading-none fvs-display text-(--ink)">{progressPct}%</p>
           <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-2.5 mt-1 tabular-nums uppercase tracking-wider font-mono">
             {completedCount}/{days.length} done
           </p>
           <Progress value={progressPct} className="h-1.5 sm:h-2" />
         </div>
-        <div className="rounded-xl border border-border bg-card p-3 sm:p-5 min-w-0 flex flex-col justify-center">
+        <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-3 sm:p-5 min-w-0 flex flex-col justify-center">
           <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wider font-mono">Today</p>
           <p className="text-sm sm:text-lg font-semibold mt-1.5 tabular-nums truncate text-(--ink)">{today}</p>
         </div>
@@ -456,7 +464,7 @@ export function RustChallengeDashboard({ initialDays }: Props): React.ReactEleme
       {thisWeekDays.length > 0 && (
         <div>
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">This week at a glance</p>
-          <div className="rounded-xl border border-border bg-card p-4 flex gap-1 sm:gap-2">
+          <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-4 flex gap-1 sm:gap-2">
             {thisWeekDays.map((d) => (
               <WeekPill key={d.id} day={d} isToday={d.challenge_date === today} />
             ))}
@@ -470,7 +478,7 @@ export function RustChallengeDashboard({ initialDays }: Props): React.ReactEleme
           {phases.map(({ phase, weeks, days: phaseDays }) => {
             const phaseDone = phaseDays.filter((d) => d.completed).length;
             return (
-              <details key={phase} className="rounded-lg border border-border bg-card overflow-hidden">
+              <details key={phase} className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] overflow-hidden">
                 <summary className="cursor-pointer px-4 py-3 flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden">
                   <span className="text-sm font-medium">
                     Phase {phase} — {PHASE_LABEL[phase]}
@@ -484,7 +492,7 @@ export function RustChallengeDashboard({ initialDays }: Props): React.ReactEleme
                     const weekDone = weekDays.filter((d) => d.completed).length;
                     const isCurrentWeek = weekNumber === focusWeekNumber;
                     return (
-                      <details key={weekNumber} className="rounded-md border border-border/70 overflow-hidden" open={isCurrentWeek}>
+                      <details key={weekNumber} className="rounded-xl border border-border/40 bg-background/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] overflow-hidden" open={isCurrentWeek}>
                         <summary className="cursor-pointer px-3 py-2.5 flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden">
                           <span className="text-xs font-medium truncate">
                             Week {weekNumber} — {weekDays[0].week_focus}

@@ -139,7 +139,7 @@ export function StatusManager({ initialStatus }: Props): React.ReactElement {
         </div>
 
         {/* Spotify Override */}
-        <div className="rounded-xl border border-border p-4 bg-muted/10 space-y-4">
+        <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl p-5 sm:p-6 space-y-4 transition-all duration-300">
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
             Spotify Dashboard Override
           </h3>

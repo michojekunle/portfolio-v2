@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -314,7 +316,7 @@ function BookRow({
   };
 
   return (
-    <div className="content-card space-y-3 py-4">
+    <GlassCard className="space-y-4 p-5 sm:p-6" hoverEffect={false}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
           value={form.title}
@@ -414,7 +416,7 @@ function BookRow({
       {notesOpen && (
         <NotesPanel bookId={book.id} initialNotes={initialNotes} />
       )}
-    </div>
+    </GlassCard>
   );
 }
 

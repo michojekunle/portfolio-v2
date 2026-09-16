@@ -13,6 +13,7 @@ export interface RustChallengeDay {
   week_focus: string;
   daily_task: string;
   dsa_rep: string;
+  frontend_task: string | null;
   completed: boolean;
   completed_at: string | null;
   x_post_url: string | null;

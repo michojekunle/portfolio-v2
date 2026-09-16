@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Chart, type ChartConfiguration } from "chart.js/auto";
-import { CheckCircle2, Circle, Clock, MessagesSquare, Send } from "lucide-react";
+import { Clock, Send, CheckCircle2, Circle, Search, ArrowRight, LayoutDashboard, Plus, Briefcase, MessagesSquare } from "lucide-react";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 import { DAILY_GOAL, type JobApplication } from "./constants";
 
 const SEARCH_TIMES = [{ h: 7, m: 30 }, { h: 22, m: 30 }];
@@ -119,108 +120,161 @@ export function OverviewPanel({ apps }: { apps: JobApplication[] }): React.React
   }, []);
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="content-card py-4">
-          <Send className="h-4 w-4 text-muted-foreground mb-2" />
-          <p className="text-3xl font-semibold tabular-nums tracking-tight">{stats.total}</p>
-          <p className="text-xs text-muted-foreground mt-1">Total Applied</p>
-          <p className="text-xs text-muted-foreground/70">{stats.thisWeek} this week</p>
-        </div>
-        <div className="content-card py-4">
-          <span className="text-base leading-none mb-2 block">🐦</span>
-          <p className="text-3xl font-semibold tabular-nums tracking-tight">{stats.flutter}</p>
-          <p className="text-xs text-muted-foreground mt-1">Flutter Apps</p>
-        </div>
-        <div className="content-card py-4">
-          <span className="text-base leading-none mb-2 block">🦀</span>
-          <p className="text-3xl font-semibold tabular-nums tracking-tight">{stats.rust}</p>
-          <p className="text-xs text-muted-foreground mt-1">Rust Apps</p>
-        </div>
-        <div className="content-card py-4">
-          <MessagesSquare className="h-4 w-4 text-muted-foreground mb-2" />
-          <p className="text-3xl font-semibold tabular-nums tracking-tight">{stats.active}</p>
-          <p className="text-xs text-muted-foreground mt-1">Active (Interview/Offer)</p>
-          <p className="text-xs text-muted-foreground/70">{stats.offers} offer(s)</p>
-        </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
+              <Send className="h-4 w-4 text-foreground/70" strokeWidth={1.5} />
+            </div>
+          </div>
+          <div>
+            <p className="text-3xl sm:text-4xl font-semibold tabular-nums tracking-tight text-foreground/90">{stats.total}</p>
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground mt-2">Total Applied</p>
+            <p className="text-[10px] text-muted-foreground/60 mt-1">{stats.thisWeek} this week</p>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
+              <span className="text-sm">🐦</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-3xl sm:text-4xl font-semibold tabular-nums tracking-tight text-foreground/90">{stats.flutter}</p>
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground mt-2">Flutter Apps</p>
+          </div>
+        </GlassCard>
+
+        <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
+              <span className="text-sm">🦀</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-3xl sm:text-4xl font-semibold tabular-nums tracking-tight text-foreground/90">{stats.rust}</p>
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground mt-2">Rust Apps</p>
+          </div>
+        </GlassCard>
+
+        <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
+              <span className="text-sm">💼</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-3xl sm:text-4xl font-semibold tabular-nums tracking-tight text-foreground/90">{stats.active}</p>
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground mt-2">Active (Interview/Offer)</p>
+            <p className="text-[10px] text-muted-foreground/60 mt-1">{stats.offers} offer(s)</p>
+          </div>
+        </GlassCard>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="content-card">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-medium">Scheduled Job Searches</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <GlassCard className="p-5 sm:p-6" hoverEffect={false}>
+          <div className="flex items-center gap-2 mb-6">
+            <Clock className="h-4 w-4 text-foreground/70" strokeWidth={1.5} />
+            <h3 className="text-sm font-semibold tracking-tight text-foreground/90">Scheduled Job Searches</h3>
           </div>
-          <div className="rounded-md bg-muted/60 p-4 mb-4">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Next search runs in</span>
-              <span className="text-xs text-muted-foreground">{countdown.next}</span>
+          <div className="rounded-xl border border-border/40 bg-background/30 p-5 mb-5 relative overflow-hidden">
+            <div className="flex items-center justify-between mb-2 relative z-10">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Next search runs in</span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">{countdown.next}</span>
             </div>
-            <p className="text-2xl font-semibold tabular-nums tracking-tight text-primary">{countdown.label}</p>
-            <div className="mt-2 h-1 bg-border rounded-full overflow-hidden">
-              <div className="h-full bg-primary transition-[width] duration-1000 ease-linear" style={{ width: `${countdown.pct}%` }} />
+            <p className="text-3xl sm:text-4xl font-semibold tabular-nums tracking-tight text-foreground/90 relative z-10">{countdown.label}</p>
+            <div className="mt-4 h-[2px] bg-border/40 rounded-full overflow-hidden relative z-10">
+              <div className="h-full bg-foreground/80 transition-[width] duration-1000 ease-linear shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ width: `${countdown.pct}%` }} />
             </div>
+            {/* Ambient Glow */}
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-foreground/5 blur-2xl rounded-full pointer-events-none" />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-xl bg-foreground/5 border border-border/40 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="h-5 w-5 text-foreground/70" strokeWidth={1.5} />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium truncate">Daily Job Search — Flutter &amp; Rust</p>
-              <p className="text-xs text-muted-foreground">7:30 AM &amp; 10:30 PM, every day</p>
+              <p className="text-[13px] font-semibold text-foreground/90 truncate">Daily Job Search — Flutter & Rust</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">7:30 AM & 10:30 PM, every day</p>
             </div>
           </div>
-        </div>
+        </GlassCard>
 
-        <div className="content-card flex flex-col">
-          <h3 className="text-sm font-medium mb-4">Application Split</h3>
-          <div className="flex-1 flex flex-col sm:flex-row items-center gap-6">
-            <div className="relative w-32 h-32 shrink-0">
+        <GlassCard className="p-5 sm:p-6 flex flex-col" hoverEffect={false}>
+          <h3 className="text-sm font-semibold tracking-tight text-foreground/90 mb-6">Application Split</h3>
+          <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-10">
+            <div className="relative w-36 h-36 shrink-0 drop-shadow-xl">
               <canvas ref={chartCanvasRef} />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-2xl font-semibold tabular-nums">{stats.flutter + stats.rust}</span>
-                <span className="text-xs text-muted-foreground">total</span>
+                <span className="text-2xl font-semibold tabular-nums text-foreground/90">{stats.flutter + stats.rust}</span>
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">total</span>
               </div>
             </div>
-            <div className="flex-1 w-full space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="h-2.5 w-2.5 rounded-sm bg-primary shrink-0" /><span className="text-muted-foreground flex-1">Flutter</span><span className="font-semibold">{stats.flutter}</span>
+            <div className="flex-1 w-full space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-primary shrink-0 shadow-[0_0_8px_hsl(var(--primary))]" />
+                  <span className="text-[13px] font-medium text-muted-foreground">Flutter</span>
+                </div>
+                <span className="font-semibold tabular-nums text-foreground/90">{stats.flutter}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="h-2.5 w-2.5 rounded-sm shrink-0" style={{ background: "hsl(var(--indigo))" }} /><span className="text-muted-foreground flex-1">Rust</span><span className="font-semibold">{stats.rust}</span>
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full shrink-0 shadow-[0_0_8px_hsl(var(--indigo))]" style={{ background: "hsl(var(--indigo))" }} />
+                  <span className="text-[13px] font-medium text-muted-foreground">Rust</span>
+                </div>
+                <span className="font-semibold tabular-nums text-foreground/90">{stats.rust}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="h-2.5 w-2.5 rounded-sm bg-muted-foreground/40 shrink-0" /><span className="text-muted-foreground flex-1">Interviewing</span><span className="font-semibold">{stats.interviewing}</span>
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0" />
+                  <span className="text-[13px] font-medium text-muted-foreground">Interviewing</span>
+                </div>
+                <span className="font-semibold tabular-nums text-foreground/90">{stats.interviewing}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="h-2.5 w-2.5 rounded-sm bg-muted-foreground/20 shrink-0" /><span className="text-muted-foreground flex-1">Offers</span><span className="font-semibold">{stats.offers}</span>
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-muted-foreground/20 shrink-0" />
+                  <span className="text-[13px] font-medium text-muted-foreground">Offers</span>
+                </div>
+                <span className="font-semibold tabular-nums text-foreground/90">{stats.offers}</span>
               </div>
             </div>
           </div>
-        </div>
+        </GlassCard>
       </div>
 
-      <div className="content-card">
-        <h3 className="text-sm font-medium mb-4">Today&apos;s Goal</h3>
-        <div className="flex items-center gap-4">
-          <div className="flex gap-1.5 shrink-0">
+      <GlassCard className="p-5 sm:p-6" hoverEffect={false}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+          <h3 className="text-sm font-semibold tracking-tight text-foreground/90">Today's Goal</h3>
+          <div className="text-right">
+            <p className="text-[13px] font-semibold text-foreground/90">{stats.goalDone} / {DAILY_GOAL} applications</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {stats.goalDone >= DAILY_GOAL ? "🎉 Goal smashed!" : `${DAILY_GOAL - stats.goalDone} more to target`}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="flex gap-2 shrink-0 w-full sm:w-auto justify-between sm:justify-start">
             {Array.from({ length: DAILY_GOAL }, (_, i) => (
               i < stats.goalDone
-                ? <CheckCircle2 key={i} className="h-8 w-8 text-primary" />
-                : <Circle key={i} className="h-8 w-8 text-muted-foreground/30" />
+                ? <div key={i} className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-foreground/10 border border-foreground/20 flex items-center justify-center transition-all duration-500 shadow-[0_0_12px_rgba(255,255,255,0.1)]">
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-foreground/90" strokeWidth={1.5} />
+                  </div>
+                : <div key={i} className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-background/50 border border-border/40 flex items-center justify-center transition-all duration-500">
+                    <Circle className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground/30" strokeWidth={1.5} />
+                  </div>
             ))}
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold">{stats.goalDone} / {DAILY_GOAL} applications today</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {stats.goalDone >= DAILY_GOAL ? "🎉 Goal smashed! Keep the momentum going." : `${DAILY_GOAL - stats.goalDone} more to hit today's target`}
-            </p>
-            <div className="mt-2 h-1.5 bg-border rounded-full overflow-hidden">
-              <div className="h-full bg-primary transition-[width] duration-500" style={{ width: `${Math.min(100, (stats.goalDone / DAILY_GOAL) * 100)}%` }} />
+          <div className="flex-1 w-full mt-2 sm:mt-0">
+            <div className="h-[2px] w-full bg-border/40 rounded-full overflow-hidden">
+              <div className="h-full bg-foreground/80 transition-[width] duration-700 ease-out shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ width: `${Math.min(100, (stats.goalDone / DAILY_GOAL) * 100)}%` }} />
             </div>
           </div>
         </div>
-      </div>
+      </GlassCard>
     </div>
   );
 }

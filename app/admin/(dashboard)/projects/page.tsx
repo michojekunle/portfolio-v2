@@ -4,6 +4,8 @@ import { format } from "date-fns";
 import { SyncGitHubButton } from "./sync-github-button";
 import { ProjectActions } from "./project-actions";
 import { AddProjectForm } from "./add-project-form";
+import { PageHeader } from "@/components/admin/ui/page-header";
+import { GlassCard } from "@/components/admin/ui/glass-card";
 
 export default async function AdminProjectsPage() {
   const supabase = await createClient();
@@ -15,57 +17,55 @@ export default async function AdminProjectsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {projects?.length ?? 0} projects · synced from GitHub pinned repos
-          </p>
-        </div>
-        <SyncGitHubButton />
-      </div>
+      <PageHeader
+        title="Projects"
+        description={`${projects?.length ?? 0} projects · synced from GitHub pinned repos`}
+        action={<SyncGitHubButton />}
+      />
 
-      <div className="space-y-2 mb-10">
+      <div className="space-y-3 mb-12">
         {!projects?.length ? (
-          <div className="content-card text-center py-10">
-            <p className="text-sm text-muted-foreground">No projects yet. Sync from GitHub or add manually.</p>
-          </div>
+          <GlassCard className="text-center py-12">
+            <p className="text-sm text-muted-foreground font-medium">No projects yet. Sync from GitHub or add manually.</p>
+          </GlassCard>
         ) : (
           projects.map((project) => (
-            <div
+            <GlassCard
               key={project.id}
-              className="content-card flex items-center justify-between gap-4 py-4"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 px-5 transition-all duration-300"
             >
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-medium truncate">{project.title}</p>
-                  <Badge variant="secondary" className="text-xs shrink-0">{project.category}</Badge>
-                  {project.is_hidden && <Badge variant="outline" className="text-xs shrink-0">Hidden</Badge>}
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <p className="text-base font-semibold tracking-tight text-foreground/90 truncate">{project.title}</p>
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-medium bg-secondary/50 text-foreground/70 shrink-0">{project.category}</Badge>
+                  {project.is_hidden && <Badge variant="outline" className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground shrink-0 border-border/50">Hidden</Badge>}
                 </div>
-                <p className="text-xs text-muted-foreground truncate">{project.description}</p>
-                <div className="flex gap-2 mt-1">
-                  {project.tags?.slice(0, 3).map((tag: string) => (
-                    <span key={tag} className="text-xs text-muted-foreground">{tag}</span>
+                <p className="text-sm text-muted-foreground truncate mb-2">{project.description}</p>
+                <div className="flex flex-wrap gap-x-3 gap-y-1">
+                  {project.tags?.slice(0, 4).map((tag: string) => (
+                    <span key={tag} className="text-[11px] font-medium text-muted-foreground/80 tracking-wide uppercase">{tag}</span>
                   ))}
                   {project.stars != null && (
-                    <span className="text-xs text-muted-foreground">★ {project.stars}</span>
+                    <span className="text-[11px] font-medium text-amber-500/80 tracking-wide">★ {project.stars}</span>
                   )}
                 </div>
               </div>
-              <div className="text-right shrink-0">
-                <p className="text-xs text-muted-foreground mb-2">
-                  {format(new Date(project.updated_at), "MMM d")}
+              <div className="text-left sm:text-right shrink-0 flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1">
+                <p className="text-xs font-medium text-muted-foreground/60">
+                  {format(new Date(project.updated_at), "MMM d, yyyy")}
                 </p>
                 <ProjectActions project={project} />
               </div>
-            </div>
+            </GlassCard>
           ))
         )}
       </div>
 
-      <div className="content-card">
-        <h2 className="text-sm font-medium mb-4">Add project manually</h2>
-        <AddProjectForm />
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground/90 mb-4">Add project manually</h2>
+        <GlassCard className="p-6">
+          <AddProjectForm />
+        </GlassCard>
       </div>
     </div>
   );

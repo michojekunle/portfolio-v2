@@ -21,7 +21,7 @@ export async function SpotifyConnectionCard({ connectedNotice, errorCode }: Prop
   const status = await getSpotifyConnectionStatus();
 
   return (
-    <div className="content-card space-y-4">
+    <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl p-5 sm:p-6 space-y-4 transition-all duration-300">
       {connectedNotice && (
         <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-500/10 border border-green-500/20 rounded-md px-3 py-2">
           <CheckCircle2 className="h-4 w-4 shrink-0" />

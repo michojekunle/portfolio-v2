@@ -48,7 +48,7 @@ function ItemRow({ item, onDelete }: ItemRowProps): React.ReactElement {
   };
 
   return (
-    <div className="content-card py-4 space-y-3">
+    <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl p-5 sm:p-6 space-y-4 transition-all duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
           value={form.name}
