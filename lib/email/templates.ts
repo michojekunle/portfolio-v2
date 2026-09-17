@@ -77,7 +77,7 @@ function emailHeader(): string {
       <tr>
         <!-- MoMark Badge Image -->
         <td style="vertical-align:middle;padding-right:14px;">
-          <img src="${SITE_URL}/apple-icon.png" width="52" height="52" alt="M" style="display:block;border:0;border-radius:10px;" />
+          <img src="${SITE_URL}/apple-icon" width="52" height="52" alt="M" style="display:block;border:0;border-radius:10px;" />
         </td>
         <!-- Name + role -->
         <td style="vertical-align:middle;">
