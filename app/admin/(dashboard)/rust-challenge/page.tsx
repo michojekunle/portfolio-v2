@@ -37,7 +37,7 @@ export default async function RustChallengePage(): Promise<React.ReactElement> {
           The 180-Day Rust Challenge
         </h1>
         <p className="relative text-sm sm:text-base text-muted-foreground mt-3 max-w-[52ch] leading-relaxed">
-          Aug 5, 2026 → Jan 31, 2027 — systems Rust as the trunk, ZK → zkML as the crown. One rep a day, no exceptions.
+          Aug 5, 2026 → May 28, 2027 — systems Rust as the trunk, ZK → zkML as the crown. One rep a day, no exceptions.
         </p>
       </div>
       <div className="mb-8">

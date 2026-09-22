@@ -89,27 +89,26 @@ export default async function AdminDashboard() {
     supabase.from("email_subscribers").select("*", { count: "exact", head: true }),
     supabase
       .from("rust_challenge_days")
-      .select("day_number, challenge_date, completed"),
+      .select("day_number, challenge_date, completed, rust_completed, dsa_completed, frontend_completed, system_design_completed")
+      .order("day_number", { ascending: true }),
   ]);
 
-  const rustRows = rustDays ?? [];
+  const rustRows = (rustDays ?? []).map((r: any) => ({
+    ...r,
+    isActive: Boolean(r.completed || r.rust_completed || r.dsa_completed || r.frontend_completed || r.system_design_completed),
+  }));
   const rustCompleted = rustRows.filter((r) => r.completed).length;
-  const rustToday = rustRows.find((r) => r.challenge_date === todayStr());
+  const nextPending = rustRows.find((r: any) => !r.completed);
   const rustProgress = rustRows.length > 0 ? Math.round((rustCompleted / rustRows.length) * 100) : 0;
   
-  // Calculate Streak
-  const byDate = new Map(rustRows.map((d) => [d.challenge_date, d]));
-  const todayDate = new Date();
+  // Calculate Sequential Non-Breaking Streak
   let streak = 0;
-  const cursor = new Date(todayDate);
-  const todayEntry = byDate.get(todayStr());
-  if (!todayEntry?.completed) cursor.setDate(cursor.getDate() - 1);
-  while (true) {
-    const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}-${String(cursor.getDate()).padStart(2, "0")}`;
-    const entry = byDate.get(key);
-    if (!entry || !entry.completed) break;
-    streak++;
-    cursor.setDate(cursor.getDate() - 1);
+  for (const r of rustRows) {
+    if (r.isActive) {
+      streak++;
+    } else {
+      break;
+    }
   }
 
   // Base card class for glassmorphism, subtle borders, and smooth hover lifts
@@ -147,9 +146,9 @@ export default async function AdminDashboard() {
               </div>
               <span className="text-sm font-medium tracking-wide text-foreground/80">Rust Challenge</span>
             </div>
-            {rustToday && !rustToday.completed && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse">
-                Day {rustToday.day_number} Pending
+            {nextPending && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                Day {nextPending.day_number} Active
               </span>
             )}
           </div>
