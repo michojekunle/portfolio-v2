@@ -16,5 +16,11 @@ export interface SiteVideo {
 
 export type SiteVideoInput = Pick<
   SiteVideo,
-  "platform" | "url" | "title" | "description" | "section" | "display_order" | "is_published"
+  | "platform"
+  | "url"
+  | "title"
+  | "description"
+  | "section"
+  | "display_order"
+  | "is_published"
 >;

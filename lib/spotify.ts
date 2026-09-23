@@ -5,7 +5,10 @@ const REDIS_KEY = "spotify_auth";
 const REFRESH_TOKEN_LIFETIME_DAYS = 180;
 
 let redis: Redis | null = null;
-if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+) {
   redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL,
     token: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -49,12 +52,11 @@ export async function getSpotifyAuth(): Promise<SpotifyAuthRecord | null> {
 
 export async function setSpotifyAuth(refresh_token: string): Promise<void> {
   if (!redis) return;
-  const record: SpotifyAuthRecord = { refresh_token, authorized_at: new Date().toISOString() };
-  try {
-    await withTimeout(redis.set(REDIS_KEY, record));
-  } catch (e) {
-    console.error("[spotify] redis write error:", e);
-  }
+  const record: SpotifyAuthRecord = {
+    refresh_token,
+    authorized_at: new Date().toISOString(),
+  };
+  await redis.set(REDIS_KEY, record);
 }
 
 export async function clearSpotifyAuth(): Promise<void> {
@@ -75,10 +77,18 @@ export interface SpotifyConnectionStatus {
 
 export async function getSpotifyConnectionStatus(): Promise<SpotifyConnectionStatus> {
   const auth = await getSpotifyAuth();
-  if (!auth) return { connected: false, authorizedAt: null, expiresAt: null, expired: false };
+  if (!auth)
+    return {
+      connected: false,
+      authorizedAt: null,
+      expiresAt: null,
+      expired: false,
+    };
 
   const authorizedAt = new Date(auth.authorized_at);
-  const expiresAt = new Date(authorizedAt.getTime() + REFRESH_TOKEN_LIFETIME_DAYS * 86_400_000);
+  const expiresAt = new Date(
+    authorizedAt.getTime() + REFRESH_TOKEN_LIFETIME_DAYS * 86_400_000
+  );
   return {
     connected: true,
     authorizedAt: auth.authorized_at,
@@ -92,7 +102,8 @@ export async function getSpotifyConnectionStatus(): Promise<SpotifyConnectionSta
 // Mode in late 2024 — recommendations, related-artists, featured-playlists,
 // audio-features/analysis). These remain available to an app in Development
 // Mode for the app owner's own account, which is this integration's only use.
-export const SPOTIFY_SCOPES = "user-read-currently-playing user-read-playback-state user-read-recently-played user-top-read";
+export const SPOTIFY_SCOPES =
+  "user-read-currently-playing user-read-playback-state user-read-recently-played user-top-read";
 
 /** Exchanges the stored refresh token for a fresh access token. Shared by every Spotify data fetcher below so token-refresh/expiry handling lives in exactly one place. */
 async function getSpotifyAccessToken(): Promise<string | null> {
@@ -103,11 +114,14 @@ async function getSpotifyAccessToken(): Promise<string | null> {
   const stored = await getSpotifyAuth();
   // Falls back to the legacy env-var token for a first deploy that hasn't
   // gone through the /admin/now "Connect Spotify" flow yet.
-  const refresh_token = stored?.refresh_token ?? process.env.SPOTIFY_REFRESH_TOKEN;
+  const refresh_token =
+    stored?.refresh_token ?? process.env.SPOTIFY_REFRESH_TOKEN;
   if (!refresh_token) return null;
 
   try {
-    const basic = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
+    const basic = Buffer.from(`${client_id}:${client_secret}`).toString(
+      "base64"
+    );
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: {
@@ -120,12 +134,17 @@ async function getSpotifyAccessToken(): Promise<string | null> {
 
     if (!response.ok) {
       const body: unknown = await response.json().catch(() => null);
-      const errorCode = body && typeof body === "object" && "error" in body ? (body as { error: string }).error : null;
+      const errorCode =
+        body && typeof body === "object" && "error" in body
+          ? (body as { error: string }).error
+          : null;
       if (errorCode === "invalid_grant") {
         // Expired (6-month lifetime) or revoked — stop retrying with a dead
         // token and surface a clear "reconnect" state in /admin/now instead
         // of failing silently on every request.
-        console.error("[spotify] refresh token invalid/expired — reconnect at /admin/now");
+        console.error(
+          "[spotify] refresh token invalid/expired — reconnect at /admin/now"
+        );
         await clearSpotifyAuth();
       } else {
         console.error("[spotify] token refresh failed:", response.status, body);
@@ -133,7 +152,10 @@ async function getSpotifyAccessToken(): Promise<string | null> {
       return null;
     }
 
-    const tokenData = (await response.json()) as { access_token: string; refresh_token?: string };
+    const tokenData = (await response.json()) as {
+      access_token: string;
+      refresh_token?: string;
+    };
 
     // Persist a rotated refresh token if Spotify issues one, so the old
     // string doesn't get invalidated out from under a token we didn't save.
@@ -156,7 +178,11 @@ async function getSpotifyAccessToken(): Promise<string | null> {
  * one of those, not per-visitor. Falls back to calling `fetcher` directly if
  * Redis isn't configured (dev/local).
  */
-async function withCache<T>(key: string, ttlSeconds: number, fetcher: () => Promise<T>): Promise<T> {
+async function withCache<T>(
+  key: string,
+  ttlSeconds: number,
+  fetcher: () => Promise<T>
+): Promise<T> {
   if (!redis) return fetcher();
   try {
     const cached = await withTimeout(redis.get<T>(key));
@@ -215,36 +241,53 @@ function toTrackRef(item: {
 
 /** Live "now playing" with playback progress — cached for a few seconds so concurrent site visitors share one upstream call. */
 export async function getSpotifyNowPlaying(): Promise<SpotifyNowPlaying> {
-  return withCache(NOW_PLAYING_CACHE_KEY, NOW_PLAYING_CACHE_TTL_SECONDS, async () => {
-    const empty: SpotifyNowPlaying = { isPlaying: false, track: null, progressMs: 0, fetchedAt: Date.now() };
-    const access_token = await getSpotifyAccessToken();
-    if (!access_token) return empty;
-
-    try {
-      const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-        headers: { Authorization: `Bearer ${access_token}` },
-        cache: "no-store",
-      });
-      if (res.status === 204 || res.status >= 400) return empty;
-
-      const data = await res.json();
-      if (!data || !data.item) return empty;
-
-      return {
-        isPlaying: Boolean(data.is_playing),
-        track: toTrackRef(data.item),
-        progressMs: data.progress_ms ?? 0,
+  return withCache(
+    NOW_PLAYING_CACHE_KEY,
+    NOW_PLAYING_CACHE_TTL_SECONDS,
+    async () => {
+      const empty: SpotifyNowPlaying = {
+        isPlaying: false,
+        track: null,
+        progressMs: 0,
         fetchedAt: Date.now(),
       };
-    } catch (e) {
-      console.error("[spotify] now-playing fetch error:", e);
-      return empty;
+      const access_token = await getSpotifyAccessToken();
+      if (!access_token) return empty;
+
+      try {
+        const res = await fetch(
+          "https://api.spotify.com/v1/me/player/currently-playing",
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+            cache: "no-store",
+          }
+        );
+        if (res.status === 204 || res.status >= 400) return empty;
+
+        const data = await res.json();
+        if (!data || !data.item) return empty;
+
+        return {
+          isPlaying: Boolean(data.is_playing),
+          track: toTrackRef(data.item),
+          progressMs: data.progress_ms ?? 0,
+          fetchedAt: Date.now(),
+        };
+      } catch (e) {
+        console.error("[spotify] now-playing fetch error:", e);
+        return empty;
+      }
     }
-  });
+  );
 }
 
 /** Legacy simple shape, kept for /api/profile/status and the About-page hero widget so neither needs to change. */
-export async function getSpotifyLiveTrack(): Promise<{ title: string; artist: string; playlist: string; active: boolean } | null> {
+export async function getSpotifyLiveTrack(): Promise<{
+  title: string;
+  artist: string;
+  playlist: string;
+  active: boolean;
+} | null> {
   const now = await getSpotifyNowPlaying();
   if (!now.track) return null;
   return {
@@ -263,25 +306,42 @@ const RECENTLY_PLAYED_CACHE_KEY = "spotify_recently_played_cache";
 const STATS_CACHE_TTL_SECONDS = 600; // 10 min — this data doesn't meaningfully change minute to minute.
 
 /** Last N tracks played, most recent first. */
-export async function getSpotifyRecentlyPlayed(limit = 10): Promise<SpotifyRecentTrack[]> {
-  return withCache(`${RECENTLY_PLAYED_CACHE_KEY}:${limit}`, STATS_CACHE_TTL_SECONDS, async () => {
-    const access_token = await getSpotifyAccessToken();
-    if (!access_token) return [];
+export async function getSpotifyRecentlyPlayed(
+  limit = 10
+): Promise<SpotifyRecentTrack[]> {
+  return withCache(
+    `${RECENTLY_PLAYED_CACHE_KEY}:${limit}`,
+    STATS_CACHE_TTL_SECONDS,
+    async () => {
+      const access_token = await getSpotifyAccessToken();
+      if (!access_token) return [];
 
-    try {
-      const res = await fetch(`https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`, {
-        headers: { Authorization: `Bearer ${access_token}` },
-        cache: "no-store",
-      });
-      if (!res.ok) return [];
+      try {
+        const res = await fetch(
+          `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+            cache: "no-store",
+          }
+        );
+        if (!res.ok) return [];
 
-      const data = (await res.json()) as { items: { played_at: string; track: Parameters<typeof toTrackRef>[0] }[] };
-      return (data.items ?? []).map((entry) => ({ ...toTrackRef(entry.track), playedAt: entry.played_at }));
-    } catch (e) {
-      console.error("[spotify] recently-played fetch error:", e);
-      return [];
+        const data = (await res.json()) as {
+          items: {
+            played_at: string;
+            track: Parameters<typeof toTrackRef>[0];
+          }[];
+        };
+        return (data.items ?? []).map((entry) => ({
+          ...toTrackRef(entry.track),
+          playedAt: entry.played_at,
+        }));
+      } catch (e) {
+        console.error("[spotify] recently-played fetch error:", e);
+        return [];
+      }
     }
-  });
+  );
 }
 
 export type SpotifyTimeRange = "short_term" | "medium_term" | "long_term";
@@ -289,23 +349,35 @@ export type SpotifyTimeRange = "short_term" | "medium_term" | "long_term";
 const TOP_TRACKS_CACHE_KEY = "spotify_top_tracks_cache";
 
 /** Most-played tracks. time_range: short_term ≈ 4 weeks, medium_term ≈ 6 months, long_term ≈ several years. */
-export async function getSpotifyTopTracks(timeRange: SpotifyTimeRange = "short_term", limit = 10): Promise<SpotifyTrackRef[]> {
-  return withCache(`${TOP_TRACKS_CACHE_KEY}:${timeRange}:${limit}`, STATS_CACHE_TTL_SECONDS, async () => {
-    const access_token = await getSpotifyAccessToken();
-    if (!access_token) return [];
+export async function getSpotifyTopTracks(
+  timeRange: SpotifyTimeRange = "short_term",
+  limit = 10
+): Promise<SpotifyTrackRef[]> {
+  return withCache(
+    `${TOP_TRACKS_CACHE_KEY}:${timeRange}:${limit}`,
+    STATS_CACHE_TTL_SECONDS,
+    async () => {
+      const access_token = await getSpotifyAccessToken();
+      if (!access_token) return [];
 
-    try {
-      const res = await fetch(`https://api.spotify.com/v1/me/top/tracks?time_range=${timeRange}&limit=${limit}`, {
-        headers: { Authorization: `Bearer ${access_token}` },
-        cache: "no-store",
-      });
-      if (!res.ok) return [];
+      try {
+        const res = await fetch(
+          `https://api.spotify.com/v1/me/top/tracks?time_range=${timeRange}&limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+            cache: "no-store",
+          }
+        );
+        if (!res.ok) return [];
 
-      const data = (await res.json()) as { items: Parameters<typeof toTrackRef>[0][] };
-      return (data.items ?? []).map(toTrackRef);
-    } catch (e) {
-      console.error("[spotify] top-tracks fetch error:", e);
-      return [];
+        const data = (await res.json()) as {
+          items: Parameters<typeof toTrackRef>[0][];
+        };
+        return (data.items ?? []).map(toTrackRef);
+      } catch (e) {
+        console.error("[spotify] top-tracks fetch error:", e);
+        return [];
+      }
     }
-  });
+  );
 }

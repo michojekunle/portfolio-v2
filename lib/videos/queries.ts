@@ -3,7 +3,10 @@ import type { SiteVideo } from "./types";
 
 export { extractYoutubeId, getYoutubeThumbnail } from "./youtube";
 
-async function getPublishedBySection(section: SiteVideo["section"], limit?: number): Promise<SiteVideo[]> {
+async function getPublishedBySection(
+  section: SiteVideo["section"],
+  limit?: number
+): Promise<SiteVideo[]> {
   const supabase = await createClient();
   let query = supabase
     .from("site_videos")
@@ -34,4 +37,3 @@ export async function getFeaturedVideos(limit = 2): Promise<SiteVideo[]> {
 export async function getHighlightVideos(limit = 12): Promise<SiteVideo[]> {
   return getPublishedBySection("highlight", limit);
 }
-

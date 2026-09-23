@@ -62,7 +62,10 @@ interface Window {
 }
 const fallbackStore = new Map<string, Window>();
 
-function checkRateLimitFallback(key: string, config: RateLimitConfig): RateLimitResult {
+function checkRateLimitFallback(
+  key: string,
+  config: RateLimitConfig
+): RateLimitResult {
   // Lazy prune of fallback store (10% chance on fallback requests)
   if (Math.random() < 0.1) {
     const nowTime = Date.now();
@@ -94,11 +97,13 @@ function checkRateLimitFallback(key: string, config: RateLimitConfig): RateLimit
 
 export async function checkRateLimit(
   key: string,
-  config: RateLimitConfig,
+  config: RateLimitConfig
 ): Promise<RateLimitResult> {
   const limiter = getLimiter(config);
   if (!limiter) {
-    console.warn("[rate-limit] UPSTASH_REDIS_REST_URL/_TOKEN not set — using in-memory fallback");
+    console.warn(
+      "[rate-limit] UPSTASH_REDIS_REST_URL/_TOKEN not set — using in-memory fallback"
+    );
     return checkRateLimitFallback(key, config);
   }
 
@@ -108,6 +113,10 @@ export async function checkRateLimit(
   } catch (err) {
     // Redis unreachable — fail open rather than blocking every request.
     console.error("[rate-limit] Redis error, failing open:", err);
-    return { allowed: true, remaining: config.limit, resetAt: Date.now() + config.windowMs };
+    return {
+      allowed: true,
+      remaining: config.limit,
+      resetAt: Date.now() + config.windowMs,
+    };
   }
 }
