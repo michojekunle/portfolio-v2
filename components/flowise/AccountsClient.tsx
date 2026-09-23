@@ -6,11 +6,12 @@ import { NIGERIAN_PROVIDERS, FREE_ACCOUNT_LIMIT } from "@/lib/flowise/types";
 import { formatCurrency } from "@/lib/flowise/calculator";
 import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { Plus, X, Check, Landmark, Wallet, Coins, TrendingUp, CreditCard } from "lucide-react";
+import { FlowiseIcon } from "./FlowiseIcon";
 
 const ACCENT = "#16A34A";
 
 const ACCOUNT_ICONS: Record<string, string> = {
-  bank: "🏦", wallet: "📱", cash: "💵", investment: "📈", credit: "💳",
+  bank: "bank", wallet: "wallet", cash: "cash", investment: "investment", credit: "credit",
 };
 const ACCOUNT_COLORS = ["#16A34A","#3B82F6","#8B5CF6","#F97316","#EC4899","#0EA5E9","#F59E0B","#EF4444","#6B7280","#0D9488"];
 
@@ -56,7 +57,9 @@ const [accounts, setAccounts] = useState(initialAccounts);
 
       {accounts.length === 0 ? (
         <div className="rounded-xl py-15 text-center" style={{ border: "1px dashed var(--rule)" }}>
-          <div className="text-[40px] mb-3">🏦</div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3 text-emerald-600 dark:text-emerald-400">
+            <Landmark size={24} />
+          </div>
           <div className="text-[15px] font-medium text-(--ink) mb-1.5">No accounts yet</div>
           <div className="text-[13px] text-muted-foreground mb-5">Add your bank, wallet, or cash account to start tracking.</div>
           <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
@@ -88,8 +91,8 @@ function AccountCard({ account }: { account: FwAccount }): React.ReactElement {
   return (
     <div className="rounded-[14px] px-6 py-5" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
       <div className="flex items-start justify-between mb-4">
-        <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-[20px]" style={{ background: `${account.color}18` }}>
-          {account.icon}
+        <div className="w-11 h-11 rounded-[10px] flex items-center justify-center" style={{ background: `${account.color}18`, color: account.color }}>
+          <FlowiseIcon icon={account.icon || account.type} size={20} />
         </div>
         <span className="font-mono text-[9px] tracking-widest uppercase px-2 py-0.75 rounded-full" style={{ background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink-3)" }}>
           {account.type}
@@ -121,7 +124,7 @@ function AddAccountForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const icon = ACCOUNT_ICONS[type] ?? "🏦";
+  const icon = ACCOUNT_ICONS[type] ?? "bank";
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();

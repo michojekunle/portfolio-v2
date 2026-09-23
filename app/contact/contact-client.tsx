@@ -56,14 +56,6 @@ export function ContactPage(): React.ReactElement {
       {/* Hero */}
       <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
-          >
-            05 — CONTACT · BOOKING
-          </motion.div>
           <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-4 max-[720px]:gap-x-2.5 max-[720px]:gap-y-2">
             <motion.span
               initial={{ y: "100%", opacity: 0 }}
@@ -107,10 +99,10 @@ export function ContactPage(): React.ReactElement {
             {/* Calendar card */}
             <div className="v3-calendar-card">
               <div className="v3-calendar-head">
-                <h4 className="flex items-center gap-3">
+                <h2 className="flex items-center gap-3">
                   Pick a time
                   <span className="v3-calendar-tz">Lagos (GMT+1)</span>
-                </h4>
+                </h2>
                 <div className="v3-calendar-nav">
                   <button onClick={() => setMonthOffset(Math.max(0, monthOffset - 1))} disabled={monthOffset === 0} aria-label="Previous month"><ChevronLeft className="w-4 h-4" /></button>
                   <span className="month">{monthName}</span>
@@ -223,7 +215,7 @@ export function ContactPage(): React.ReactElement {
 
               <div className="body">
                 <div className="mb-12">
-                  <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-4 font-bold">
+                  <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4 font-bold">
                     Email
                   </div>
                   <a href="mailto:michojekunle1@gmail.com" className="text-[22px] font-display text-(--v3-accent) no-underline hover:underline fvs-text">
@@ -257,21 +249,18 @@ export function ContactPage(): React.ReactElement {
         {/* FAQs */}
         <section className="py-30 max-[720px]:py-18 bg-(--bg-2) border-y border-(--rule)">
           <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-            <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-3 items-baseline mb-20 max-[720px]:mb-12">
-              <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5">06 — FAQS</div>
-              <div>
-                <h2 className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
-                  Common <em className="not-italic italic text-(--v3-accent) fvs-soft">questions.</em>
-                </h2>
-              </div>
+            <div className="mb-20 max-[720px]:mb-12">
+              <h2 className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+                Common <em className="not-italic italic text-(--v3-accent) fvs-soft">questions.</em>
+              </h2>
             </div>
             
             <div className="grid grid-cols-2 max-[920px]:grid-cols-1 gap-x-20 gap-y-12">
               {FAQS.map((faq, i) => (
                 <div key={i} className="group">
-                  <h4 className="font-display font-normal text-[22px] leading-[1.3] text-(--ink) mb-4 fvs-text group-hover:text-(--v3-accent) transition-colors">
+                  <h3 className="font-display font-normal text-[22px] leading-[1.3] text-(--ink) mb-4 fvs-text group-hover:text-(--v3-accent) transition-colors">
                     {faq.q}
-                  </h4>
+                  </h3>
                   <p className="text-[15px] text-secondary-foreground leading-[1.65] m-0 max-w-[48ch]">
                     {faq.a}
                   </p>

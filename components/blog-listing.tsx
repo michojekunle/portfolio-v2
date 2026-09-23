@@ -78,7 +78,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              className={`px-4 py-2 rounded-full font-mono text-[11px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeCategory === cat ? "bg-(--ink) text-(--bg) border border-(--ink)" : "bg-transparent text-secondary-foreground border border-(--rule) hover:border-muted-foreground hover:text-(--ink)"}`}
+              className={`px-4 py-2 rounded-full font-mono text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer ${activeCategory === cat ? "bg-(--ink) text-(--bg) border border-(--ink)" : "bg-transparent text-secondary-foreground border border-(--rule) hover:border-muted-foreground hover:text-(--ink)"}`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
@@ -86,7 +86,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
           ))}
           {(searchQuery || activeCategory !== "All") && (
             <button
-              className="px-4 py-2 rounded-full font-mono text-[11px] uppercase tracking-widest transition-all duration-200 cursor-pointer text-(--v3-accent) border border-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)]"
+              className="px-4 py-2 rounded-full font-mono text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer text-(--v3-accent) border border-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)]"
               onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
             >
               Clear ×
@@ -122,15 +122,15 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                 onClick={isExternal ? () => handleExternalClick(post.id) : undefined}
                 className="group flex flex-col sm:grid sm:grid-cols-[120px_1fr_100px_40px] items-start sm:items-center gap-3 sm:gap-6 py-8 border-b border-(--rule) no-underline transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--bg-2)_50%,transparent)]"
               >
-                <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-1 sm:mt-0 flex flex-col sm:block gap-1">
+                <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1 sm:mt-0 flex flex-col sm:block gap-1">
                   <span>{dateStr}</span>
-                  {isUpdated && <span className="opacity-70 sm:ml-1 text-[9px]">{updatedStr}</span>}
+                  {isUpdated && <span className="sm:ml-1 text-xs">{updatedStr}</span>}
                 </span>
                 
                 <div className="flex flex-col gap-1.5 flex-1">
-                  <div className="font-display text-[22px] leading-[1.2] text-(--ink) group-hover:text-(--v3-accent) transition-colors duration-200 fvs-text">
+                  <div className="font-display text-[22px] leading-[1.35] text-(--ink) group-hover:text-(--v3-accent) transition-colors duration-200 fvs-text">
                     {post.title}
-                    <span className="inline-flex items-center ml-3 font-mono text-[10px] uppercase tracking-widest px-2 py-0.75 rounded bg-(--bg-2) border border-(--rule) text-muted-foreground align-middle">
+                    <span className="inline-flex items-center ml-3 font-mono text-xs uppercase tracking-wider px-2 py-0.75 rounded bg-(--bg-2) border border-(--rule) text-muted-foreground align-middle">
                       {isExternal && <ExternalLink size={10} className="mr-1" />}
                       {post.category}
                     </span>
@@ -148,7 +148,7 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.R
                   </div>
                 )}
                 
-                <span className="hidden sm:block font-mono text-[11px] text-muted-foreground text-right w-[100px] shrink-0">
+                <span className="hidden sm:block font-mono text-xs text-muted-foreground text-right w-[100px] shrink-0">
                   {post.read_time ?? ""}
                 </span>
                 

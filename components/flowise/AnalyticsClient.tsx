@@ -87,7 +87,7 @@ const [months, setMonths] = useState(3);
           return {
             id,
             name: cat?.name ?? id,
-            icon: cat?.icon ?? "📌",
+            icon: cat?.icon ?? "tag",
             color: cat?.color ?? "#6B7280",
             amount: Math.abs(amount),
           };

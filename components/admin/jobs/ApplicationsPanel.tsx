@@ -15,11 +15,11 @@ type Filter = "all" | JobRole | ApplicationStatus;
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "flutter", label: "🐦 Flutter" },
-  { value: "rust", label: "🦀 Rust" },
+  { value: "flutter", label: "Flutter" },
+  { value: "rust", label: "Rust" },
   { value: "applied", label: "Applied" },
   { value: "interviewing", label: "Interviewing" },
-  { value: "offer", label: "🎉 Offer" },
+  { value: "offer", label: "Offer" },
 ];
 
 interface Props {

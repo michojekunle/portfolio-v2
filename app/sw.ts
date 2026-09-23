@@ -37,7 +37,7 @@ swSelf.addEventListener("push", (event: { data?: { json(): unknown; text(): stri
     data = { body: event.data?.text() ?? "Time for your French challenge!" };
   }
 
-  const title = data.title ?? "🇫🇷 Daily French Challenge";
+  const title = data.title ?? "Daily French Challenge";
   const body  = data.body  ?? "Tap to complete today's task and keep your streak alive!";
   const url   = data.url   ?? "/french";
 

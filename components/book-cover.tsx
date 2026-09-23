@@ -10,15 +10,15 @@ interface Props {
   titleSize?: number;
 }
 
-// Deterministic string hash so the same title always produces the same hue —
-// no randomness, no flash of a different color on re-render.
+const BOOK_HUES = [24, 40, 220, 270, 330]; // Terracotta, Amber, Classic Navy, Slate Violet, Burgundy
+
 function hashHue(input: string): number {
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
     hash = (hash << 5) - hash + input.charCodeAt(i);
     hash |= 0;
   }
-  return Math.abs(hash) % 360;
+  return BOOK_HUES[Math.abs(hash) % BOOK_HUES.length];
 }
 
 // Book cover: renders the real image when available, and falls back to a
@@ -42,7 +42,7 @@ export function BookCover({ title, coverUrl, className="", titleSize = 15 }: Pro
   }
 
   const hue = hashHue(title);
-  const hue2 = (hue + 45) % 360;
+  const hue2 = (hue + 15) % 360;
 
   return (
     <div

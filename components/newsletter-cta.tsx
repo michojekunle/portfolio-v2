@@ -24,7 +24,6 @@ export function NewsletterCTA({
   return (
     <div id="newsletter" className="py-20 px-(--gutter) bg-(--bg-2) border-y border-(--rule) text-center">
       <div className="max-w-[500px] mx-auto flex flex-col items-center">
-        <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-(--v3-accent) mb-6 font-bold">Newsletter</div>
         <h2 className="m-0 font-display text-[clamp(32px,5vw,48px)] font-normal text-(--ink) leading-[1.1] tracking-[-0.03em] mb-4 fvs-display">
           {title}
         </h2>

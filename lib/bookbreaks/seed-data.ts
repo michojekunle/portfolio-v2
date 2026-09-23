@@ -263,7 +263,7 @@ He won because he:
 
 Read my full breakdown with examples at michaelojekunle.dev
 
-Follow for more book breakdowns every week 📚`,
+Follow for more book breakdowns every week.`,
     metadata: { tweet_count: 11 },
   },
   {
@@ -275,21 +275,21 @@ Follow for more book breakdowns every week 📚`,
 
 Here's what stuck:
 
-📖 The Law of Open Doors — every opportunity comes through a person. Build relationships before you need them.
+• The Law of Open Doors — every opportunity comes through a person. Build relationships before you need them.
 
-📈 Consistency compounds — 1% better daily = 37× better by year end. Not motivation. Compound interest.
+• Consistency compounds — 1% better daily = 37× better by year end. Not motivation. Compound interest.
 
-🔓 Vulnerability wins — your story, including the failures, is your strongest asset. People connect with your humanity, not your highlight reel.
+• Vulnerability wins — your story, including the failures, is your strongest asset. People connect with your humanity, not your highlight reel.
 
-🏗️ Systems over willpower — successful people don't rely on discipline. They build environments that make good behaviour automatic.
+• Systems over willpower — successful people don't rely on discipline. They build environments that make good behaviour automatic.
 
-🎯 The 1% rule — before every decision: does this make me 1% better or worse? Simple filter. Powerful results.
+• The 1% rule — before every decision: does this make me 1% better or worse? Simple filter. Powerful results.
 
 The big idea: building something great isn't about being extraordinary. It's about being consistently ordinary for an uncommon amount of time.
 
 → Read my full breakdown with real examples at michaelojekunle.dev
 
-Which of these hits hardest for you? Drop it in the comments 👇
+Which of these hits hardest for you? Drop it in the comments.
 
 #BookReview #DiaryOfACEO #StevenBartlett #LearningInPublic #Entrepreneurship #PersonalBrand #BuildInPublic`,
     metadata: {},
@@ -372,7 +372,7 @@ Lateral thinkers manufacture it.
 
 11/ Read my full breakdown at michaelojekunle.dev
 
-I post book breakdowns every week. Follow for more 📚`,
+I post book breakdowns every week. Follow for more.`,
     metadata: { tweet_count: 11 },
   },
   {
@@ -386,11 +386,11 @@ Because you're probably thinking about it wrong.
 
 Just finished "Thinking Sideways" by Edward de Bono and here's what shifted:
 
-🔵 Vertical thinking = drilling deeper (what most of us do)
-🔵 Lateral thinking = moving sideways to find better ground
-🔵 The PO Technique = use absurd ideas as stepping stones
-🔵 All assumptions can be questioned. Most constraints are imaginary.
-🔵 Creativity isn't a trait — it's a skill you can practise deliberately
+• Vertical thinking = drilling deeper (what most of us do)
+• Lateral thinking = moving sideways to find better ground
+• The PO Technique = use absurd ideas as stepping stones
+• All assumptions can be questioned. Most constraints are imaginary.
+• Creativity isn't a trait — it's a skill you can practise deliberately
 
 The hardest part: realising you're working hard in the wrong direction.
 
@@ -398,7 +398,7 @@ The 10 hours you spent optimising the wrong approach would have been better spen
 
 → Full breakdown at michaelojekunle.dev
 
-What problem are you stuck on where lateral thinking could help? DM me 👇
+What problem are you stuck on where lateral thinking could help? DM me.
 
 #ThinkingSideways #EdwardDeBono #LateralThinking #Creativity #ProblemSolving #LearningInPublic #BookReview`,
     metadata: {},
@@ -585,7 +585,7 @@ That's the whole game.
 
 11/ If you're building a business or freelancing, this book is required reading.
 
-Full breakdown at michaelojekunle.dev 📚`,
+Full breakdown at michaelojekunle.dev.`,
     metadata: { tweet_count: 11 },
   },
   // ── SELL OR BE SOLD ──────────────────────────────────────────────────────
@@ -669,7 +669,7 @@ That's selling.
 
 11/ If you're in any kind of business — or trying to build anything in life — read this book.
 
-Full breakdown at michaelojekunle.dev 📚`,
+Full breakdown at michaelojekunle.dev.`,
     metadata: { tweet_count: 11 },
   },
   {
@@ -685,11 +685,11 @@ If you genuinely believe your product, service, or idea helps people — withhol
 
 Here's what else landed hard:
 
-💥 You're always selling — products, ideas, yourself. Consciously or not.
-💥 Half-commitment = half-results. Always.
-💥 "I'll think about it" is a slow no. Follow up until you get a real answer.
-💥 Expand in uncertain times while others contract. Downturns are the biggest discounts in history.
-💥 Conviction is the fuel. If you don't believe in what you're offering, prospects feel it instantly.
+• You're always selling — products, ideas, yourself. Consciously or not.
+• Half-commitment = half-results. Always.
+• "I'll think about it" is a slow no. Follow up until you get a real answer.
+• Expand in uncertain times while others contract. Downturns are the biggest discounts in history.
+• Conviction is the fuel. If you don't believe in what you're offering, prospects feel it instantly.
 
 The big shift: sales isn't a department. It's a life skill.
 
@@ -699,7 +699,7 @@ That's selling.
 
 → Full breakdown at michaelojekunle.dev
 
-Are you selling your ideas with full conviction or holding back? Be honest 👇
+Are you selling your ideas with full conviction or holding back? Be honest.
 
 #SellOrBeSold #GrantCardone #Sales #BusinessMindset #LearningInPublic #BookReview #Entrepreneurship`,
     metadata: {},

@@ -201,7 +201,7 @@ export function CSVImportWizard({ accounts, onClose, onImported }: Props): React
             <div className="flex items-center gap-2 mt-1">
               {["Upload", "Map", "Preview", "Done"].map((s, i) => (
                 <div key={s} className="flex items-center gap-1">
-                  <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-mono font-bold" style={{ background: i <= stepIdx ? ACCENT : "var(--rule)", color: i <= stepIdx ? "white" : "var(--ink-4)" }}>{i < stepIdx ? "✓" : i + 1}</div>
+                  <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-mono font-bold" style={{ background: i <= stepIdx ? ACCENT : "var(--rule)", color: i <= stepIdx ? "white" : "var(--ink-4)" }}>{i < stepIdx ? <Check size={8} strokeWidth={3} /> : i + 1}</div>
                   <span className="font-mono text-[9px] text-muted-foreground">{s}</span>
                   {i < 3 && <ChevronRight size={10} className="text-(--ink-4)" />}
                 </div>

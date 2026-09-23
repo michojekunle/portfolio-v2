@@ -12,15 +12,6 @@ export function GuestbookClient() {
     <>
       <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
-          >
-            /GUESTBOOK · LEAVE A NOTE
-          </motion.div>
-          
           <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.85] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 max-[720px]:gap-x-2.5">
             {titleWords.map((word, i) => (
               <motion.span

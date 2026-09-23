@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Send, Users } from "lucide-react";
+import { Loader2, Send, Users, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SendType = "blog_post" | "digest" | "custom";
@@ -229,9 +229,14 @@ export function ComposeForm({
               : "bg-destructive/10 text-destructive"
           )}
         >
-          {result.success
-            ? `✓ Sent successfully to ${result.sent} subscriber${result.sent !== 1 ? "s" : ""}.`
-            : `Error: ${typeof result.error === "string" ? result.error : JSON.stringify(result.error)}`}
+          {result.success ? (
+            <span className="flex items-center gap-1.5">
+              <Check size={14} className="shrink-0" />
+              <span>Sent successfully to {result.sent} subscriber{result.sent !== 1 ? "s" : ""}.</span>
+            </span>
+          ) : (
+            `Error: ${typeof result.error === "string" ? result.error : JSON.stringify(result.error)}`
+          )}
         </div>
       )}
 

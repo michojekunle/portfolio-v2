@@ -103,15 +103,6 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
         <div className="grid grid-cols-[1.05fr_0.95fr] max-[960px]:grid-cols-1 gap-14 max-[960px]:gap-10 items-start">
           {/* Left: heading + copy */}
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
-            >
-              /VIDEOS · ELSEWHERE
-            </motion.div>
-
             <h1 className="m-0 font-display font-light text-[clamp(40px,6vw,88px)] leading-[0.9] tracking-[-0.04em] text-(--ink) mb-7 text-balance fvs-display flex flex-wrap gap-x-3.5">
               {titleWords.map((word, i) => {
                 const isBuild = word === "build.";
@@ -152,7 +143,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                 className="mt-9 flex items-center gap-2.5"
               >
                 <Sparkles size={13} style={{ color: "var(--v3-accent)" }} aria-hidden="true" />
-                <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+                <span className="font-mono text-xs tracking-wider text-muted-foreground">
                   Recently posted — {featuredVideos.length === 1 ? "1 pick" : `${featuredVideos.length} picks`} on the right
                 </span>
               </motion.div>
@@ -170,7 +161,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
               <div className="rounded-2xl overflow-hidden border border-(--rule)">
                 <PlatformEmbed video={introVideo} />
                 <div className="px-4 py-3 bg-(--bg-2)">
-                  <div className="font-mono text-[8px] tracking-[0.14em] uppercase mb-0.75" style={{ color: "var(--v3-accent)" }}>
+                  <div className="font-mono text-xs tracking-wider uppercase mb-0.75" style={{ color: "var(--v3-accent)" }}>
                     Start here
                   </div>
                   <div className="text-[13px] font-medium text-(--ink)">{introVideo.title}</div>
@@ -179,7 +170,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
             ) : (
               <div className="rounded-2xl border border-dashed border-(--rule) bg-(--bg-2) aspect-video flex flex-col items-center justify-center gap-2.5 px-6 text-center">
                 <Sparkles size={20} style={{ color: "var(--ink-3)" }} aria-hidden="true" />
-                <div className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
                   Intro video coming soon
                 </div>
                 <p className="text-[12px] text-muted-foreground max-w-[32ch] m-0">
@@ -198,7 +189,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                       <PlatformEmbed video={video} />
                     )}
                     <div className="px-2.5 py-2 bg-(--bg-2)">
-                      <div className="text-[11px] font-medium text-(--ink) line-clamp-1">
+                      <div className="text-xs font-medium text-(--ink) line-clamp-1">
                         {video.title}
                       </div>
                     </div>
@@ -214,9 +205,6 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-16 md:py-24 border-b border-(--rule)">
         <div className="flex items-center justify-between mb-8 md:mb-12">
           <div>
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2 flex items-center gap-2">
-              <Sparkles size={12} className="text-(--v3-accent)" aria-hidden="true" /> Highlights
-            </div>
             <h2 className="font-display text-[28px] md:text-[32px] font-normal tracking-[-0.02em] text-(--ink) m-0 fvs-display">
               Recent clips
             </h2>
@@ -240,7 +228,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                 
                 <div className="p-4 md:p-5 flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-muted-foreground flex items-center gap-1.5">
+                    <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) opacity-80" />
                       {video.platform}
                     </div>
@@ -254,7 +242,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                       href={video.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground hover:text-(--v3-accent) transition-colors duration-200"
+                      className="inline-flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-(--v3-accent) transition-colors duration-200"
                     >
                       Watch on {video.platform}
                       <ArrowUpRight size={10} className="ml-0.5" aria-hidden="true" />
@@ -276,9 +264,6 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
       {/* ── Platform links ── */}
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-20 max-[720px]:py-12">
         <div className="mb-8">
-          <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1.5">
-            Follow along
-          </div>
           <h2 className="font-display text-[28px] font-normal tracking-[-0.02em] text-(--ink) m-0">
             Everywhere I post
           </h2>
@@ -328,14 +313,14 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                   <h3 className="font-display text-[26px] font-normal tracking-[-0.02em] text-(--ink) m-0 mb-1.5 fvs-text">
                     {platform.name}
                   </h3>
-                  <div className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground mb-4">
+                  <div className="font-mono text-xs tracking-wider text-muted-foreground mb-4">
                     {platform.handle}
                   </div>
                   <p className="font-sans text-[14px] leading-[1.6] text-secondary-foreground m-0 mb-6 max-w-[38ch]">
                     {platform.tagline}
                   </p>
 
-                  <div className="mt-auto flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase font-semibold text-(--ink)">
+                  <div className="mt-auto flex items-center gap-2 font-mono text-xs tracking-wider uppercase font-semibold text-(--ink)">
                     Watch on {platform.name}
                     <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                   </div>
@@ -359,7 +344,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
           <MagneticWrapper strength={15}>
             <TopicSuggestionDialog>
               <button
-                className="inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase font-medium cursor-pointer px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-0.25"
+                className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase font-medium cursor-pointer px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-0.25"
               >
                 Suggest a topic
                 <ArrowUpRight size={13} aria-hidden="true" />

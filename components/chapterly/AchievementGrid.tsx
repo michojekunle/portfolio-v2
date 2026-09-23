@@ -21,6 +21,7 @@ import {
   Gauge,
   BookMarked,
   CheckCircle2,
+  Check,
 } from "lucide-react";
 import { BADGE_DEFS, BADGE_LIST } from "@/lib/chapterly/achievements";
 import type { BadgeId, ChAchievement } from "@/lib/chapterly/types";
@@ -141,7 +142,13 @@ export function AchievementGrid({ earned }: Props): React.ReactElement {
                     className="font-mono text-[8px] text-muted-foreground leading-[1.4]"
                     style={{ fontSize: "8px" }}
                   >
-                    {isEarned ? "✓ Earned" : "Locked"}
+                    {isEarned ? (
+                      <span className="inline-flex items-center gap-0.5 text-emerald-500 font-medium">
+                        <Check size={9} /> Earned
+                      </span>
+                    ) : (
+                      "Locked"
+                    )}
                   </div>
                 </div>
               );

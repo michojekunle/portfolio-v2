@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { BOOK_THEMES } from "@/lib/bookbreaks/constants";
 import type { BookTheme } from "@/lib/bookbreaks/types";
 import { motion } from "framer-motion";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Star } from "lucide-react";
 
 const THEME_OPTIONS = Object.entries(BOOK_THEMES).map(([value, cfg]) => ({
   value: value as BookTheme,
@@ -232,7 +232,7 @@ function AddBookModal({
                   }`}
                   aria-label={`${n} star${n !== 1 ? "s" : ""}`}
                 >
-                  ★
+                  <Star size={14} className="mx-auto" fill={n <= rating ? "currentColor" : "none"} />
                 </button>
               ))}
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BookOpen } from "lucide-react";
 
 interface CarouselSlide {
   headline: string;
@@ -114,8 +115,8 @@ export function CarouselPreview({ content, bookTheme, bookTitle }: Props): React
 
         {/* CTA slide icon */}
         {isCTA && (
-          <div className="text-[40px] mb-4" aria-hidden="true">
-            📚
+          <div className="mb-4 flex items-center justify-center" aria-hidden="true" style={{ color: bookTheme.accent }}>
+            <BookOpen size={40} />
           </div>
         )}
 

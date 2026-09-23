@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 
 interface TiltCardProps {
@@ -24,10 +24,11 @@ export function TiltCard({ children, className="", intensity = 15 }: TiltCardPro
   const [isHovered, setIsHovered] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
 
-  // Avoid hydration mismatch by checking window on mount
-  if (typeof window !== "undefined" && !isTouch && window.matchMedia("(pointer: coarse)").matches) {
-    setIsTouch(true)
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
+      setIsTouch(true)
+    }
+  }, [])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch || !ref.current) return

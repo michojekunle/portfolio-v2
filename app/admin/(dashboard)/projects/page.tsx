@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { Star } from "lucide-react";
 import { SyncGitHubButton } from "./sync-github-button";
 import { ProjectActions } from "./project-actions";
 import { AddProjectForm } from "./add-project-form";
@@ -46,7 +47,9 @@ export default async function AdminProjectsPage() {
                     <span key={tag} className="text-[11px] font-medium text-muted-foreground/80 tracking-wide uppercase">{tag}</span>
                   ))}
                   {project.stars != null && (
-                    <span className="text-[11px] font-medium text-amber-500/80 tracking-wide">★ {project.stars}</span>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-500/80 tracking-wide">
+                      <Star size={11} className="fill-amber-500/80" /> {project.stars}
+                    </span>
                   )}
                 </div>
               </div>

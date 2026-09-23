@@ -153,7 +153,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           .maybeSingle();
 
         if (!link || (link.code_expires_at && new Date(link.code_expires_at) < new Date())) {
-          await waSend(from, "❌ That code is invalid or expired. Generate a fresh one in Flowise → Settings → Chat Bots.");
+          await waSend(from, "That code is invalid or expired. Generate a fresh one in Flowise → Settings → Chat Bots.");
           continue;
         }
 
@@ -171,12 +171,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           from,
           error
             ? "Something went wrong linking your account — please try again."
-            : "✅ Linked! Send me any receipt, bank alert, or transfer screenshot and I'll log it to Flowise for you."
+            : "Linked! Send me any receipt, bank alert, or transfer screenshot and I'll log it to Flowise for you."
         );
         continue;
       }
 
-      await waSend(from, "👋 Flowise Receipt Bot. Send a photo of a receipt or bank alert to log it.\n\nNot linked yet? Get a code in Flowise → Settings → Chat Bots, then send: link YOUR-CODE");
+      await waSend(from, "Flowise Receipt Bot. Send a photo of a receipt or bank alert to log it.\n\nNot linked yet? Get a code in Flowise → Settings → Chat Bots, then send: link YOUR-CODE");
       continue;
     }
 
@@ -214,7 +214,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const extracted = await extractReceipt(file.buffer, file.mime);
       if (!extracted || extracted.amount === null) {
-        await waSend(from, "🤔 I couldn't read a transaction from that image. Try a clearer shot of the receipt or alert.");
+        await waSend(from, "I couldn't read a transaction from that image. Try a clearer shot of the receipt or alert.");
         continue;
       }
 
@@ -264,7 +264,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const categoryName = extracted.category_id
         ? SYSTEM_CATEGORIES.find((c) => c.id === extracted.category_id)?.name ?? "Uncategorised"
         : "Uncategorised";
-      const kind = extracted.amount > 0 ? "💰 Income" : "💸 Expense";
+      const kind = extracted.amount > 0 ? "Income" : "Expense";
 
       let budgetAlert = "";
       if (extracted.category_id && extracted.amount < 0) {
@@ -283,7 +283,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       await waSend(
         from,
-        `${kind} logged ✅\n\n${fmtAmount(extracted.amount)} — ${description}\n📁 ${categoryName}\n📅 ${date}\n🏦 ${account.name}${budgetAlert}\n\nWrong details? Edit it in Flowise → Transactions.`
+        `${kind} Logged\n\n${fmtAmount(extracted.amount)} — ${description}\nCategory: ${categoryName}\nDate: ${date}\nAccount: ${account.name}${budgetAlert}\n\nWrong details? Edit it in Flowise → Transactions.`
       );
     } catch (err) {
       console.error("[flowise/whatsapp] processing error:", err);

@@ -20,10 +20,11 @@ export function MagneticWrapper({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isTouch, setIsTouch] = useState(false);
 
-  // Avoid hydration mismatch
-  if (typeof window !== "undefined" && !isTouch && window.matchMedia("(pointer: coarse)").matches) {
-    setIsTouch(true);
-  }
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
+      setIsTouch(true);
+    }
+  }, []);
 
   const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch) return;

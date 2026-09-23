@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { Banknote, Cpu, Hammer, Loader2, RefreshCw, Smartphone, Sparkles, Target } from "lucide-react";
 import type { JobLead } from "@/app/api/job-leads/route";
 import { JOB_LEADS_PAGE_SIZE } from "@/lib/admin/job-leads-constants";
 import type { ApplicationPrefill } from "./ApplicationFormDialog";
@@ -56,20 +56,22 @@ function LeadColumn({
   onLoadMore: () => void;
 }): React.ReactElement {
   const isR = role === "rust";
-  const emoji = isR ? "🦀" : "🐦";
+  const RoleIcon = isR ? Cpu : Smartphone;
   const label = isR ? "Rust" : "Flutter";
 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-1">
-        <span className="text-base">{emoji}</span>
+        <RoleIcon className="w-4 h-4 text-muted-foreground" />
         <h3 className="text-sm font-medium">{label} Leads</h3>
         {items.length > 0 && <Badge variant="secondary" className="text-xs">{items.length}{hasMore ? "+" : ""}</Badge>}
       </div>
 
       {items.length === 0 ? (
         <div className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl text-center py-16 px-6">
-          <p className="text-3xl mb-3">{emoji}</p>
+          <div className="w-10 h-10 rounded-xl bg-muted/60 border border-border/40 flex items-center justify-center mx-auto mb-3 text-muted-foreground">
+            <RoleIcon className="w-5 h-5" />
+          </div>
           <p className="text-[13px] font-semibold tracking-tight text-foreground/90 mb-1">{label} leads appear here</p>
           <p className="text-[11px] text-muted-foreground">Posted automatically at 7:30 AM &amp; 10:30 PM.</p>
         </div>
@@ -94,7 +96,7 @@ function LeadColumn({
                     <p className="text-[14px] font-semibold tracking-tight text-foreground/90 truncate">{j.company || "—"}</p>
                     <p className="text-[12px] font-medium text-muted-foreground truncate mt-0.5">{j.title || "—"} {j.board ? `· ${j.board}` : ""}</p>
                   </div>
-                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-semibold shrink-0 bg-background/50 border border-border/40">{isR ? "🦀 Rust" : "🐦 Flutter"}</Badge>
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-semibold shrink-0 bg-background/50 border border-border/40">{isR ? "Rust" : "Flutter"}</Badge>
                 </div>
                 {j.tip && (
                   <p className="text-xs text-muted-foreground leading-relaxed border-l-2 border-primary/40 pl-2.5 flex gap-1.5">
@@ -103,18 +105,20 @@ function LeadColumn({
                   </p>
                 )}
                 {j.salary && (
-                  <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">💰 {j.salary}</p>
+                  <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                    <Banknote className="w-3.5 h-3.5" /> {j.salary}
+                  </p>
                 )}
                 {(skills.length > 0 || projects.length > 0) && (
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {skills.length > 0 && (
-                      <Badge variant={learnedCount === skills.length ? "secondary" : "outline"} className="text-xs">
-                        🎯 {learnedCount}/{skills.length} skills learned
+                      <Badge variant={learnedCount === skills.length ? "secondary" : "outline"} className="text-xs gap-1">
+                        <Target className="w-3 h-3" /> {learnedCount}/{skills.length} skills learned
                       </Badge>
                     )}
                     {projects.length > 0 && (
-                      <Badge variant={builtCount === projects.length ? "secondary" : "outline"} className="text-xs">
-                        🔨 {builtCount}/{projects.length} projects built
+                      <Badge variant={builtCount === projects.length ? "secondary" : "outline"} className="text-xs gap-1">
+                        <Hammer className="w-3 h-3" /> {builtCount}/{projects.length} projects built
                       </Badge>
                     )}
                   </div>

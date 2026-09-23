@@ -1,7 +1,6 @@
 import { CASE_STUDIES } from "@/lib/case-studies"
 import { MagneticWrapper } from "./magnetic-wrapper"
-import { TiltCard } from "./tilt-card"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Star } from "lucide-react"
 
 interface PinnedRepo {
   name: string
@@ -116,14 +115,13 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
       id="open-source"
       aria-labelledby="bento-heading"
     >
-      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — OSS</div>
+      <div className="mb-20 max-[720px]:mb-12">
         <div>
           <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Other notable <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
           </h2>
-          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-            Open source projects on GitHub — tools, experiments, and things I built
+          <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+            Open source projects on GitHub including tools, experiments, and libraries built
             to scratch my own itch.
           </div>
         </div>
@@ -135,44 +133,41 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
           const isWide = i === 0 || i === 4
 
           return (
-            <TiltCard key={repo.name} className={`${isWide ? "col-span-2 max-[920px]:col-span-1" : ""}`}>
-              <a
-                href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group flex flex-col bg-(--paper) border border-(--rule) rounded-xl p-6 h-full no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-(--v3-accent) hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)]`}
-                aria-label={`${repo.name} on GitHub`}
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div className="font-display font-normal text-[24px] text-(--ink) leading-[1.1] fvs-text">{repo.name}</div>
-                  <span className="font-mono text-[11px] text-muted-foreground border border-(--rule) px-1.5 py-0.5 rounded" aria-label={`${repo.stars} stars`}>
-                    ★ {repo.stars}
+            <a
+              key={repo.name}
+              href={repo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group flex flex-col bg-(--paper) border border-(--rule) rounded-xl p-6 h-full no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-(--v3-accent) hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)] ${isWide ? "col-span-2 max-[920px]:col-span-1" : ""}`}
+              aria-label={`${repo.name} on GitHub`}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div className="font-display font-normal text-[24px] text-(--ink) leading-[1.1] fvs-text">{repo.name}</div>
+                <span className="inline-flex items-center gap-1 font-mono text-[12px] text-muted-foreground" aria-label={`${repo.stars} stars`}>
+                  <Star size={12} className="fill-amber-500 text-amber-500" /> {repo.stars}
+                </span>
+              </div>
+
+              {repo.description && (
+                <p className="text-[14px] leading-[1.6] text-secondary-foreground m-6 flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
+              )}
+
+              <div className="flex flex-wrap gap-2.5 items-center mt-auto">
+                {repo.language && (
+                  <span className="flex items-center gap-1.5 font-mono text-[12px] text-muted-foreground">
+                    <svg className="w-2 h-2 shrink-0" viewBox="0 0 8 8" aria-hidden="true">
+                      <circle cx="4" cy="4" r="4" fill={langColor} />
+                    </svg>
+                    {repo.language}
                   </span>
-                </div>
-
-                {repo.description && (
-                  <p className="text-[14px] leading-[1.6] text-secondary-foreground m-6 flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
                 )}
+                {repo.topics.slice(0, 2).map((t) => (
+                  <span key={t} className="font-mono text-[12px] text-muted-foreground/70">{t}</span>
+                ))}
+              </div>
 
-                <div className="flex flex-wrap gap-2 items-center mt-auto">
-                  {repo.language && (
-                    <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
-                      <span
-                        className="w-2 h-2 rounded-full"
-                        style={{ background: langColor }}
-                        aria-hidden="true"
-                      />
-                      {repo.language}
-                    </span>
-                  )}
-                  {repo.topics.slice(0, 2).map((t) => (
-                    <span key={t} className="font-mono text-[10px] text-muted-foreground bg-(--bg) border border-(--rule) px-2 py-0.5 rounded-full">{t}</span>
-                  ))}
-                </div>
-
-                <div className="absolute top-6 right-6 text-(--v3-accent) opacity-0 -translate-x-1 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true"><ArrowUpRight className="w-5 h-5" /></div>
-              </a>
-            </TiltCard>
+              <div className="absolute top-6 right-6 text-(--v3-accent) opacity-0 -translate-x-1 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true"><ArrowUpRight className="w-5 h-5" /></div>
+            </a>
           )
         })}
       </div>

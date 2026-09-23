@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { CommandPaletteTrigger } from "@/components/command-palette";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { MoMark } from "@/lib/brand-mark";
 
@@ -136,7 +136,7 @@ export function Navbar(): React.ReactNode {
               key={link.name}
               href={link.href}
               data-active={isActive(link.href)}
-              className="group relative font-mono text-[10px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2"
+              className="group relative font-mono text-[12px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2"
             >
               {link.name}
               <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-(--v3-accent) scale-x-0 transition-transform duration-200 origin-left group-hover:scale-x-100 group-data-[active=true]:scale-x-100" />
@@ -149,19 +149,19 @@ export function Navbar(): React.ReactNode {
 
           <MagneticWrapper strength={15}>
             <button
-              className="w-9.5 h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] sm:w-9.5 sm:h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
               onClick={() => setTheme(isDark ? "light" : "dark")}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               suppressHydrationWarning
             >
-              {mounted ? (isDark ? "☾" : "☀") : "☀"}
+              {mounted ? (isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />) : <Sun className="w-4 h-4" />}
             </button>
           </MagneticWrapper>
 
           <MagneticWrapper strength={20}>
             <Link
               href="/contact"
-              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 h-9.5 rounded-full font-mono text-[11px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 py-2 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
               aria-label="Book a call"
             >
               Book a call{" "}
@@ -171,7 +171,7 @@ export function Navbar(): React.ReactNode {
 
           <button
             ref={triggerRef}
-            className="hidden max-[820px]:flex items-center justify-center w-9.5 h-9.5 rounded-lg border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer transition-all duration-150 hover:border-muted-foreground hover:text-(--ink)"
+            className="hidden max-[820px]:flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-lg border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer transition-all duration-150 hover:border-muted-foreground hover:text-(--ink)"
             onClick={() => setIsOpen((v) => !v)}
             aria-expanded={isOpen}
             aria-controls="v3-mobile-menu"

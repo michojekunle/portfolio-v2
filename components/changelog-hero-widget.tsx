@@ -38,22 +38,19 @@ export function ChangelogHeroWidget() {
   const maxVal = Math.max(...activityData, 1)
 
   return (
-    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md flex flex-col gap-4">
-      {/* Decorative gradient flare */}
-      <div className="absolute top-0 right-0 w-30 h-30 bg-gradient-to-br from-(--v3-accent-soft) to-transparent rounded-full blur-10 opacity-60 pointer-events-none transition-all duration-500 group-hover:scale-125" />
-
+    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center gap-2">
         <GitCommit className="w-4 h-4 text-(--v3-accent)" />
-        <h4 className="m-0 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">Git Activity</h4>
+        <div className="font-mono text-xs tracking-wider text-muted-foreground uppercase">Git Activity</div>
       </div>
 
       {/* Grid of stats */}
       <div className="grid grid-cols-2 gap-3">
         {/* Active Branch */}
-        <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule) flex flex-col gap-1">
-          <span className="font-mono text-[8px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-            <GitBranch className="w-3 h-3 text-muted-foreground" /> Active Branch
+        <div className="p-3 rounded-lg bg-(--bg-2) flex flex-col gap-1">
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <GitBranch className="w-3.5 h-3.5 text-muted-foreground" /> Active Branch
           </span>
           <span className="text-[13px] font-mono font-semibold text-(--ink)">
             {branch}
@@ -61,11 +58,11 @@ export function ChangelogHeroWidget() {
         </div>
 
         {/* Status */}
-        <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule) flex flex-col gap-1">
-          <span className="font-mono text-[8px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-            <Shield className="w-3 h-3 text-muted-foreground" /> Build Pipeline
+        <div className="p-3 rounded-lg bg-(--bg-2) flex flex-col gap-1">
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <Shield className="w-3.5 h-3.5 text-muted-foreground" /> Build Pipeline
           </span>
-          <span className="text-[13px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+          <span className="text-[13px] font-mono font-semibold text-(--ink) flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> passing
           </span>
         </div>
@@ -74,12 +71,12 @@ export function ChangelogHeroWidget() {
       {/* Section 2: Commits Sparkline */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Weekly Commit Frequency</span>
-          <span className="font-mono text-[10px] font-semibold text-secondary-foreground">{commitsThisWeek} commits</span>
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Weekly Commit Frequency</span>
+          <span className="font-mono text-xs font-semibold text-secondary-foreground">{commitsThisWeek} commits</span>
         </div>
         
         {/* Sparkline chart bar grid */}
-        <div className="flex items-end justify-between h-12 px-2 py-1 rounded-xl bg-(--bg-2) border border-(--rule)">
+        <div className="flex items-end justify-between h-12 px-2 py-1 rounded-lg bg-(--bg-2)">
           {activityData.map((val, idx) => {
             const pct = (val / maxVal) * 100
             return (
@@ -98,7 +95,7 @@ export function ChangelogHeroWidget() {
       <div className="h-0.25 bg-(--rule) w-full" />
 
       {/* Footer: Live syncing status */}
-      <div className="flex items-center gap-2 text-[11px] text-secondary-foreground">
+      <div className="flex items-center gap-2 text-xs text-secondary-foreground">
         <Zap className="w-3.5 h-3.5 text-(--v3-accent)" />
         <span>Synced with GitHub GraphQL API v4</span>
       </div>

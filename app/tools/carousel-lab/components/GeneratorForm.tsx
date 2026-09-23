@@ -1,4 +1,4 @@
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, Rocket } from "lucide-react";
 import type { InputMode } from "../lib/types";
 
 const TABS: { id: InputMode; label: string }[] = [
@@ -131,7 +131,7 @@ export function GeneratorForm({
       {inputMode === "manual" && (
         <div className="p-6 rounded-[10px] border border-(--rule) bg-(--bg) text-center">
           <p className="text-[13px] leading-[1.65] text-secondary-foreground m-0">
-            🚀 Skip AI generation entirely! Start with a default empty 3-slide template (Hook Cover, Body Point, Brand CTA Card) and craft your
+            <Rocket size={14} className="inline mr-1 text-primary align-text-bottom" /> Skip AI generation entirely! Start with a default empty 3-slide template (Hook Cover, Body Point, Brand CTA Card) and craft your
             layout parameters, brand initials logo, and custom content slides directly in the sidebar design panels.
           </p>
         </div>

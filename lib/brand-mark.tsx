@@ -38,17 +38,9 @@ function badgeShell(
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
+        boxShadow: `inset 0 0 0 ${border}px rgba(255,255,255,0.14)`,
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: border,
-          borderRadius: Math.max(0, r - border),
-          border: `${border}px solid rgba(255,255,255,0.14)`,
-          display: "flex",
-        }}
-      />
       {children}
     </div>
   );

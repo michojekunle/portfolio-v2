@@ -9,18 +9,15 @@ import { TextReveal } from "./text-reveal"
 const ROLES = [
   {
     title: "Software Engineer",
-    desc: "Four years full-stack, two deep in web3. Now going lower down the stack, doubling down on Rust systems programming.",
-    tag: "ENGINEERING"
+    desc: "Four years full-stack, two deep in web3. Now going lower down the stack, doubling down on Rust systems programming."
   },
   {
     title: "Builder",
-    desc: "Building a handful of my own products and businesses — shipping real tools, not demos, and learning what it takes to run them.",
-    tag: "PRODUCTS"
+    desc: "Building a handful of my own products and businesses: shipping real tools, not demos, and learning what it takes to run them."
   },
   {
     title: "Writer",
-    desc: "Writing essays as I learn in public — distilling hard technical ideas into accessible, high-signal pieces.",
-    tag: "CONTENT"
+    desc: "Writing essays as I learn in public, distilling hard technical ideas into accessible, high-signal pieces."
   }
 ]
 
@@ -32,9 +29,8 @@ export function AboutPreviewSection(): React.ReactElement {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12"
+        className="mb-20 max-[720px]:mb-12"
       >
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">01 — IDENTITY</div>
         <div>
           <h2 id="about-preview-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             <TextReveal delay={0.1}>Engineering with</TextReveal> <br className="max-[720px]:hidden" />
@@ -45,9 +41,9 @@ export function AboutPreviewSection(): React.ReactElement {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
+            className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
           >
-            I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface — and increasingly, the business around it.
+            I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface, and increasingly the business around it.
           </motion.div>
         </div>
       </motion.div>
@@ -60,9 +56,8 @@ export function AboutPreviewSection(): React.ReactElement {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: i * 0.15 }}
-            className="flex flex-col gap-5"
+            className="flex flex-col gap-4"
           >
-            <div className="font-mono text-[10px] tracking-[0.2em] text-(--v3-accent) font-bold uppercase">{role.tag}</div>
             <h3 className="m-0 font-display font-normal text-[28px] leading-[1.1] text-(--ink) fvs-text">
               {role.title}
             </h3>
@@ -81,7 +76,7 @@ export function AboutPreviewSection(): React.ReactElement {
         className="mt-20 pt-10 border-t border-(--rule) flex justify-center"
       >
         <MagneticWrapper strength={20}>
-          <Link href="/about" className="group inline-flex items-center justify-center px-8 h-13 rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+          <Link href="/about" className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
             More about my journey <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2.5 w-3 h-3" aria-hidden="true" />
           </Link>
         </MagneticWrapper>

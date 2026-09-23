@@ -7,7 +7,7 @@ const { exec } = require("child_process");
 const envPath = path.join(__dirname, "../.env");
 
 if (!fs.existsSync(envPath)) {
-  console.error("❌ Could not find .env file at:", envPath);
+  console.error("[error] Could not find .env file at:", envPath);
   process.exit(1);
 }
 
@@ -34,12 +34,12 @@ const PORT = 8888;
 const redirect_uri = `http://localhost:${PORT}/callback`;
 
 if (!client_id || !client_secret) {
-  console.error("❌ SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET is missing from your .env file!");
+  console.error("[error] SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET is missing from your .env file!");
   process.exit(1);
 }
 
 console.log("=========================================");
-console.log("🟢 Spotify Auth Helper Initialized");
+console.log("[info] Spotify Auth Helper Initialized");
 console.log(`Using Client ID: ${client_id}`);
 console.log(`Redirect URI: ${redirect_uri}`);
 console.log("=========================================\n");
@@ -86,7 +86,7 @@ const server = http.createServer(async (req, res) => {
         const errorText = await response.text();
         res.writeHead(response.status, { "Content-Type": "text/html" });
         res.end(`<h1>Token Exchange Failed</h1><pre>${errorText}</pre>`);
-        console.error("❌ Token exchange failed:", errorText);
+        console.error("[error] Token exchange failed:", errorText);
         return;
       }
 
@@ -112,19 +112,19 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { "Content-Type": "text/html" });
       res.end(`
         <div style="font-family: sans-serif; text-align: center; padding-top: 50px;">
-          <h1 style="color: #1DB954;">🎉 Spotify Authenticated Successfully!</h1>
+          <h1 style="color: #1DB954;">Spotify Authenticated Successfully!</h1>
           <p>The new refresh token has been written directly to your <strong>.env</strong> file.</p>
           <p>You can close this tab and stop the Node script now.</p>
         </div>
       `);
 
       console.log("\n=========================================");
-      console.log("✅ SUCCESS!");
+      console.log("[success] Authentication Successful!");
       console.log(`New Refresh Token saved: ${newRefreshToken}`);
       console.log("=========================================\n");
       process.exit(0);
     } catch (err) {
-      console.error("❌ Error during token exchange:", err);
+      console.error("[error] Error during token exchange:", err);
       res.writeHead(500, { "Content-Type": "text/html" });
       res.end(`<h1>Internal Server Error</h1><pre>${err.stack}</pre>`);
     }
@@ -133,8 +133,8 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   const localUrl = `http://localhost:${PORT}`;
-  console.log(`👉 Please make sure "${redirect_uri}" is added to your Spotify Developer Dashboard under "Redirect URIs".`);
-  console.log(`👉 Open this link in your browser to log in:\n   \x1b[36m${localUrl}\x1b[0m\n`);
+  console.log(`Please make sure "${redirect_uri}" is added to your Spotify Developer Dashboard under "Redirect URIs".`);
+  console.log(`Open this link in your browser to log in:\n   \x1b[36m${localUrl}\x1b[0m\n`);
   
   // Try to open automatically
   exec(`open "${localUrl}"`, (err) => {

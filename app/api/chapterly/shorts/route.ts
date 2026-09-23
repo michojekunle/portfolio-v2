@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { DEFAULT_MODEL_CHAIN } from "../chat/route";
+import { DEFAULT_MODEL_CHAIN } from "@/lib/chapterly/constants";
 import { z } from "zod";
 
 export interface ConceptCard {

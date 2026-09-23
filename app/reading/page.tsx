@@ -22,7 +22,6 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
       {/* Hero */}
       <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6">03 — READING LOG</div>
           <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">
             Curated <em className="not-italic italic text-(--v3-accent) fvs-soft">takeaways.</em>
           </h1>
@@ -42,19 +41,19 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
           <div className="max-w-(--maxw) mx-auto px-(--gutter) py-7 grid grid-cols-4 max-[600px]:grid-cols-2 gap-6">
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{books.length}</div>
-              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mt-1.5">Books logged</div>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Books logged</div>
             </div>
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{currentlyReading.length}</div>
-              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mt-1.5">Currently reading</div>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Currently reading</div>
             </div>
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{completed.length}</div>
-              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mt-1.5">Finished</div>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Finished</div>
             </div>
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{totalNotes}</div>
-              <div className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground mt-1.5">Notes & quotes</div>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Notes & quotes</div>
             </div>
           </div>
         </section>
@@ -71,9 +70,9 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
 
           {currentlyReading.length > 0 && (
             <div className="mb-16">
-              <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground mb-6">
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-6 font-normal m-0">
                 Currently reading
-              </div>
+              </h2>
               <div className="grid grid-cols-4 max-[1100px]:grid-cols-3 max-[820px]:grid-cols-2 max-[480px]:grid-cols-1 gap-5">
                 {currentlyReading.map((b) => <BookTeaserCard key={b.id} book={b} />)}
               </div>
@@ -82,9 +81,9 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
 
           {completed.length > 0 && (
             <div>
-              <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground mb-6">
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-6 font-normal m-0">
                 Archive
-              </div>
+              </h2>
               <div className="grid grid-cols-4 max-[1100px]:grid-cols-3 max-[820px]:grid-cols-2 max-[480px]:grid-cols-1 gap-5">
                 {completed.map((b) => <BookTeaserCard key={b.id} book={b} />)}
               </div>

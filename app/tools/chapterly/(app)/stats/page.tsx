@@ -214,7 +214,6 @@ function MonthlyBarChart({
                 height={barH}
                 rx={4}
                 fill={isCurrentMonth ? accent : accent + "55"}
-                style={{ transition: "height 0.4s ease, y 0.4s ease" }}
               >
                 <title>{d.minutes > 0 ? `${d.minutes} min in ${monthLabel}` : `No reading in ${monthLabel}`}</title>
               </rect>

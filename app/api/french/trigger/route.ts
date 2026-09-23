@@ -168,7 +168,7 @@ export async function POST(request: Request): Promise<Response> {
     let triggerPush = false;
     let triggerEmail = false;
 
-    let pushTitle = "🇫🇷 French Daily";
+    let pushTitle = "French Daily";
     let pushBody = "Practice your French today to save your streak!";
     let emailSubject = "Save your French streak today!";
     let emailBody = "Bonjour! Don't forget to practice French today and keep your streak active.";
@@ -179,51 +179,51 @@ export async function POST(request: Request): Promise<Response> {
     if (userSub?.reminder_time === currentWatHourStr) {
       triggerPush = true;
       triggerEmail = true;
-      pushTitle = "🇫🇷 Challenge Ready!";
+      pushTitle = "Challenge Ready!";
       pushBody = `It's time! Start today's French challenge and keep your ${streakCount}-day streak alive!`;
-      emailSubject = `Your Daily French Challenge is Ready! 🇫🇷`;
+      emailSubject = `Your Daily French Challenge is Ready!`;
       emailBody = `<p>Bonjour!</p><p>It's time for your scheduled daily French drill. Spend just 5 minutes today to save your <strong>${streakCount}-day streak</strong>!</p>`;
     }
     // Trigger 2: Noon Check-in
     else if (currentHour === 12) {
       triggerPush = true;
       triggerEmail = true;
-      pushTitle = "🥖 Noon Check-in";
+      pushTitle = "Midday Check-in";
       pushBody = `Bonjour! Don't forget to do your 5-minute French drill.`;
-      emailSubject = `Noon French Check-in 🥖`;
+      emailSubject = `Midday French Check-in`;
       emailBody = `<p>Bonjour!</p><p>This is your midday reminder to keep your learning going. Fit in today's French drill during your lunch break to keep your streak active!</p>`;
     }
     // Trigger 3: Evening Check-in
     else if (currentHour === 18) {
       triggerPush = true;
       triggerEmail = true;
-      pushTitle = "🍷 Evening Practice";
+      pushTitle = "Evening Practice";
       pushBody = `Complete your drill now to secure your streak before the day ends.`;
-      emailSubject = `Evening French Practice 🍷`;
+      emailSubject = `Evening French Practice`;
       emailBody = `<p>Bonsoir!</p><p>The day is winding down. Don't go to bed without securing your French streak. Practice now!</p>`;
     }
     // Trigger 4: 4 Hours Left (20:00)
     else if (currentHour === 20) {
       triggerPush = true;
       triggerEmail = true;
-      pushTitle = "🔥 4 Hours Left!";
+      pushTitle = "4 Hours Left!";
       pushBody = `Quick! Save your ${streakCount}-day French streak before midnight.`;
-      emailSubject = `Only 4 hours left to save your French streak! 🔥`;
+      emailSubject = `Only 4 hours left to save your French streak!`;
       emailBody = `<p>Urgent Reminder:</p><p>You have only 4 hours remaining to complete today's French challenge and protect your <strong>${streakCount}-day streak</strong> from breaking!</p>`;
     }
     // Trigger 5: 2 Hours Left (22:00)
     else if (currentHour === 22) {
       triggerPush = true;
       triggerEmail = true;
-      pushTitle = "⏰ 2 Hours Left!";
+      pushTitle = "2 Hours Left!";
       pushBody = `Hurry! Complete today's French drill to protect your streak.`;
-      emailSubject = `Hurry! 2 hours remaining for your French challenge ⏰`;
+      emailSubject = `Hurry! 2 hours remaining for your French challenge`;
       emailBody = `<p>Action Required:</p><p>Your <strong>${streakCount}-day streak</strong> will break in just 2 hours. Tap in to complete your speaking/writing drill now!</p>`;
     }
     // Trigger 6: 1 Hour Final Countdown (23:00)
     else if (currentHour === 23) {
       triggerPush = true;
-      pushTitle = "🚨 FINAL COUNTDOWN: 1 Hour Left!";
+      pushTitle = "FINAL COUNTDOWN: 1 Hour Left!";
       pushBody = `Your French streak is about to break in 60 minutes. Open the app now!`;
     }
 

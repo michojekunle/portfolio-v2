@@ -46,7 +46,7 @@ export function NewsletterForm(): React.ReactElement {
           error.code === "23505" ||
           error.message.toLowerCase().includes("duplicate")
         ) {
-          toast.success("You're already subscribed! 🎉");
+          toast.success("You're already subscribed!");
           setStatus('idle');
           setEmail("")
           return;
@@ -77,6 +77,7 @@ export function NewsletterForm(): React.ReactElement {
       <Input
         type="email"
         name="email"
+        aria-label="Your email address"
         placeholder="your@email.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +88,7 @@ export function NewsletterForm(): React.ReactElement {
       <button 
         type="submit" 
         disabled={status !== "idle"}
-        className="h-12 px-6 bg-(--ink) text-(--bg) rounded-md font-mono text-[11px] uppercase tracking-[0.15em] font-medium transition-all duration-300 hover:bg-(--v3-accent) disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-30"
+        className="py-3 px-6 bg-(--ink) text-(--bg) rounded-md font-mono text-[12px] uppercase tracking-[0.15em] font-medium transition-all duration-300 hover:bg-(--v3-accent) disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-30"
       >
         {status === "loading" ? (
           <Loader2 className="animate-spin w-4 h-4" />

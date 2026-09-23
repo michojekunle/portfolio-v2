@@ -67,15 +67,6 @@ export function UsesClient() {
     <>
       <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
-          >
-            /USES · SETUP
-          </motion.div>
-          
           <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.9] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 max-[720px]:gap-x-2.5">
             {titleWords.map((word, i) => {
               const isActually = word === "actually"
@@ -119,21 +110,17 @@ export function UsesClient() {
 
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-30 max-[720px]:py-18">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((cat, catIdx) => (
-            <motion.div 
+          {categories.map((cat) => (
+            <div 
               key={cat.title} 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, delay: catIdx * 0.1 }}
               className="flex flex-col gap-6"
             >
-              <h2 className="font-mono text-[12px] tracking-[0.16em] uppercase text-muted-foreground border-b border-(--rule) pb-3 mb-3">
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground border-b border-(--rule) pt-4 pb-2 mb-1">
                 {cat.title}
               </h2>
-              {cat.items.map((item, itemIdx) => (
+              {cat.items.map((item) => (
                 <TiltCard key={item.name} className="p-6 bg-(--paper) border border-(--rule) rounded-xl h-full">
-                  <h4 className="font-display font-medium text-[20px] mb-3 text-(--ink)">
+                  <h3 className="font-display font-medium text-[20px] mb-3 text-(--ink)">
                     {item.url ? (
                       <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-(--v3-accent) transition-colors decoration-none">
                         {item.name}
@@ -141,13 +128,13 @@ export function UsesClient() {
                     ) : (
                       item.name
                     )}
-                  </h4>
+                  </h3>
                   <p className="text-[15px] leading-[1.6] text-secondary-foreground m-0">
                     {item.description}
                   </p>
                 </TiltCard>
               ))}
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>

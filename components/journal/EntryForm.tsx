@@ -6,6 +6,7 @@ import { Plus, X, Save, Loader2, Sparkles, ChevronDown, AlertCircle, Sunrise, Ar
 import type { JoEntry, JoObjectiveWithMilestones } from "@/lib/journal/types";
 import { ENERGY_LABELS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 import { SaveToast } from "@/components/journal/SaveToast";
+import { EnergyLevelIcons } from "./JournalIcons";
 import { db } from "@/lib/journal/db";
 import { createClient } from "@/lib/supabase/client";
 
@@ -258,7 +259,7 @@ export function EntryForm({
     "w-full px-3 py-2.5 rounded-lg text-[14px] leading-[1.65] outline-none transition-colors resize-none";
 
   const dailyLogSummary = accomplished.length > 0 || energy !== null || blockers.trim() || notes.trim()
-    ? `${accomplished.length} accomplished${energy ? ` · ${"⚡".repeat(energy)} ${ENERGY_LABELS[energy]}` : ""}`
+    ? `${accomplished.length} accomplished${energy ? ` · Energy: ${energy}/5 (${ENERGY_LABELS[energy]})` : ""}`
     : "Not logged yet — tap to open";
 
   return (
@@ -374,7 +375,7 @@ export function EntryForm({
               {saving ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : saved ? (
-                <>Saved ✓</>
+                <span className="inline-flex items-center gap-1.5"><Check size={13} /> Saved</span>
               ) : (
                 <>
                   <Save size={13} />
@@ -481,12 +482,11 @@ export function EntryForm({
                       className="flex items-center gap-2.5 group px-3 py-2.5 rounded-lg"
                       style={{ background: "var(--bg-2)", border: "1px solid var(--rule)" }}
                     >
-                      <span
-                        className="text-[13px] flex-shrink-0 font-semibold"
+                      <Check
+                        size={13}
+                        className="shrink-0"
                         style={{ color: "#16A34A" }}
-                      >
-                        ✓
-                      </span>
+                      />
                       <span className="flex-1 text-[14px] text-(--ink)">{a}</span>
                       <button
                         onClick={() => setAccomplished(accomplished.filter(x => x !== a))}
@@ -603,7 +603,9 @@ export function EntryForm({
                       }
                       title={ENERGY_LABELS[level]}
                     >
-                      <div className="text-[15px] mb-0.5">{"⚡".repeat(level)}</div>
+                      <div className="mb-1 flex items-center justify-center">
+                        <EnergyLevelIcons level={level} size={14} />
+                      </div>
                       <div className="font-mono text-[9px] tracking-[0.04em] hidden min-[480px]:block opacity-70">
                         {ENERGY_LABELS[level]}
                       </div>
@@ -710,7 +712,7 @@ export function EntryForm({
                   {savingTomorrow ? (
                     <Loader2 size={12} className="animate-spin" />
                   ) : carryOverDone ? (
-                    <>Carried over ✓</>
+                    <span className="inline-flex items-center gap-1"><Check size={12} /> Carried over</span>
                   ) : (
                     <>
                       <ArrowRight size={12} />
@@ -754,7 +756,7 @@ export function EntryForm({
             {saving ? (
               <Loader2 size={14} className="animate-spin" />
             ) : saved ? (
-              <>Saved ✓</>
+              <span className="inline-flex items-center gap-1.5"><Check size={14} /> Saved</span>
             ) : (
               <>
                 <Save size={13} />

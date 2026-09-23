@@ -20,7 +20,7 @@ export const STATUS_LABEL: Record<ApplicationStatus, string> = {
   toapply: "To Apply",
   applied: "Applied",
   interviewing: "Interviewing",
-  offer: "Offer 🎉",
+  offer: "Offer",
   rejected: "Rejected",
   ghosted: "Ghosted",
 };
@@ -36,8 +36,8 @@ export const STATUS_BADGE_VARIANT: Record<ApplicationStatus, "default" | "second
 };
 
 export const ROLE_LABEL: Record<JobRole, string> = {
-  flutter: "🐦 Flutter",
-  rust: "🦀 Rust",
+  flutter: "Flutter",
+  rust: "Rust",
 };
 
 export const DAILY_GOAL = 4;

@@ -33,6 +33,7 @@ import {
   ChevronLeft,
   BookmarkPlus,
   Share2,
+  Lightbulb,
 } from "lucide-react";
 
 const ACCENT = "var(--ch-accent)";
@@ -1518,14 +1519,14 @@ function renderConceptToCanvas(card: ConceptCard, book: ChBook): HTMLCanvasEleme
   ctx.fillStyle = CH_ACCENT;
   ctx.font = "bold 14px 'Courier New', monospace";
   ctx.textAlign = "left";
-  ctx.fillText("⚡  CHAPTERLY", PAD + 16, y + 21);
+  ctx.fillText("CHAPTERLY", PAD + 16, y + 21);
 
   y += 56;
 
   // Concept short label
   ctx.fillStyle = `${CH_ACCENT}99`;
   ctx.font = "13px 'Courier New', monospace";
-  ctx.fillText("💡 CONCEPT SHORT", PAD, y);
+  ctx.fillText("CONCEPT SHORT", PAD, y);
   y += 28;
 
   // Book title label
@@ -1623,8 +1624,8 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
   const [imgLoading, setImgLoading] = useState(false);
   const [sharing, setSharing] = useState(false);
 
-  const shareText = `💡 ${card.title}\n\n${stripMarkdown(card.concept)}\n\n"${stripMarkdown(card.insight)}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & grow with Chapterly 📖`;
-  const twitterText = encodeURIComponent(`💡 ${card.title}\n\n${stripMarkdown(card.concept)}\n\n— From "${book.title}"\n\nRead & grow with Chapterly 📖`);
+  const shareText = `${card.title}\n\n${stripMarkdown(card.concept)}\n\n"${stripMarkdown(card.insight)}"\n\n— From "${book.title}"${book.author ? ` by ${book.author}` : ""}\n\nRead & grow with Chapterly`;
+  const twitterText = encodeURIComponent(`${card.title}\n\n${stripMarkdown(card.concept)}\n\n— From "${book.title}"\n\nRead & grow with Chapterly`);
   const whatsappText = encodeURIComponent(shareText);
 
   const getBlob = (): Promise<Blob> =>
@@ -1716,14 +1717,16 @@ function ConceptShareModal({ card, book, onClose }: ConceptShareModalProps): Rea
                 className="rounded-2xl p-5 flex flex-col gap-2.5 relative overflow-hidden"
                 style={{ background: "#F4F7F8", borderTop: `3px solid ${CH_ACCENT}` }}
               >
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   <span
-                    className="font-mono text-[9px] tracking-[0.12em] uppercase px-2.5 py-0.75 rounded-full font-semibold"
+                    className="font-mono text-[9px] tracking-[0.12em] uppercase px-2.5 py-0.75 rounded-full font-semibold inline-flex items-center gap-1"
                     style={{ background: `${CH_ACCENT}18`, color: CH_ACCENT }}
                   >
-                    ⚡ CHAPTERLY
+                    <Zap size={10} /> CHAPTERLY
                   </span>
-                  <span className="font-mono text-[9px] text-muted-foreground">💡 Concept Short</span>
+                  <span className="font-mono text-[9px] text-muted-foreground inline-flex items-center gap-1">
+                    <Lightbulb size={10} /> Concept Short
+                  </span>
                 </div>
                 <h3 className="text-[16px] font-bold m-0 leading-[1.3]" style={{ color: "#1a2a30" }}>
                   {card.title}

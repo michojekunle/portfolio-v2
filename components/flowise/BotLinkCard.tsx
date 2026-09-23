@@ -97,8 +97,9 @@ function PlatformRow({ platform, link, onRefresh }: {
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="text-[13px] font-medium text-(--ink)">{meta.name}</div>
-          <div className="font-mono text-[10px] mt-0.5" style={{ color: isLinked ? ACCENT : "var(--ink-4)" }}>
-            {isLinked ? "● Connected" : "○ Not connected"}
+          <div className="font-mono text-[10px] mt-0.5 flex items-center gap-1.5" style={{ color: isLinked ? ACCENT : "var(--ink-4)" }}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isLinked ? "bg-emerald-500" : "border border-current"}`} />
+            {isLinked ? "Connected" : "Not connected"}
           </div>
         </div>
 

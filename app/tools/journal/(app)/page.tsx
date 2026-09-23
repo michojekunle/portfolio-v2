@@ -2,9 +2,10 @@ import Link from "next/link";
 import { getObjectivesWithMilestones, getRecentEntries } from "@/lib/journal/queries";
 import { VELA_ACCENT, VELA_ACCENT_SOFT, PRIORITY_CONFIG } from "@/lib/journal/types";
 import type { JoEntry } from "@/lib/journal/types";
-import { ArrowRight, Target } from "lucide-react";
+import { ArrowRight, Target, Compass, Flame } from "lucide-react";
 import { MonthHeatmap } from "@/components/journal/MonthHeatmap";
 import { DailyCTAs } from "@/components/journal/DailyCTAs";
+import { EnergyLevelIcons } from "@/components/journal/JournalIcons";
 
 function todayStr(): string {
   return new Date().toLocaleDateString("en-CA");
@@ -52,10 +53,10 @@ function EntryStreak({
         </span>
         {streakCount > 0 && (
           <span
-            className="font-mono text-[10px] tracking-widest"
+            className="font-mono text-[10px] tracking-widest inline-flex items-center gap-1"
             style={{ color: VELA_ACCENT }}
           >
-            🔥 {streakCount}-day streak
+            <Flame size={12} /> {streakCount}-day streak
           </span>
         )}
       </div>
@@ -333,9 +334,13 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
                       </span>
                     )}
                   </div>
-                  <div className="font-mono text-[10px] mt-0.5" style={{ color: "var(--ink-4)" }}>
-                    {entry.top_priorities.length}p · {entry.accomplished.length} done
-                    {entry.energy_level && ` · ${"⚡".repeat(entry.energy_level)}`}
+                  <div className="font-mono text-[10px] mt-0.5 flex items-center gap-1.5" style={{ color: "var(--ink-4)" }}>
+                    <span>{entry.top_priorities.length}p · {entry.accomplished.length} done</span>
+                    {entry.energy_level && (
+                      <span className="inline-flex items-center gap-1">
+                        · <EnergyLevelIcons level={entry.energy_level} size={10} />
+                      </span>
+                    )}
                   </div>
                 </div>
                 <ArrowRight size={13} style={{ color: "var(--ink-4)", flexShrink: 0 }} />
@@ -349,10 +354,10 @@ export default async function JournalDashboard(): Promise<React.ReactElement> {
       {activeObjectives.length === 0 && entries.length === 0 && (
         <div className="text-center py-18">
           <div
-            className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center text-[28px]"
-            style={{ background: VELA_ACCENT_SOFT }}
+            className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center text-primary"
+            style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
           >
-            🧭
+            <Compass size={28} />
           </div>
           <div
             className="font-display text-[24px] font-normal tracking-[-0.01em] fvs-text mb-2"

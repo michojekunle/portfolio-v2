@@ -32,10 +32,18 @@ export function getSpotifyRedirectUri(): string | null {
   return `${siteUrl.replace(/\/+$/, "")}/api/spotify/callback`;
 }
 
+function withTimeout<T>(promise: Promise<T>, ms = 800): Promise<T> {
+  let timer: NodeJS.Timeout;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Timeout")), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 export async function getSpotifyAuth(): Promise<SpotifyAuthRecord | null> {
   if (!redis) return null;
   try {
-    return await redis.get<SpotifyAuthRecord>(REDIS_KEY);
+    return await withTimeout(redis.get<SpotifyAuthRecord>(REDIS_KEY));
   } catch (e) {
     console.error("[spotify] redis read error:", e);
     return null;
@@ -53,7 +61,11 @@ export async function setSpotifyAuth(refresh_token: string): Promise<void> {
 
 export async function clearSpotifyAuth(): Promise<void> {
   if (!redis) return;
-  await redis.del(REDIS_KEY);
+  try {
+    await withTimeout(redis.del(REDIS_KEY));
+  } catch (e) {
+    console.error("[spotify] redis del error:", e);
+  }
 }
 
 export interface SpotifyConnectionStatus {
@@ -173,14 +185,14 @@ async function withCache<T>(
 ): Promise<T> {
   if (!redis) return fetcher();
   try {
-    const cached = await redis.get<T>(key);
+    const cached = await withTimeout(redis.get<T>(key));
     if (cached !== null && cached !== undefined) return cached;
   } catch (e) {
     console.error(`[spotify] cache read error (${key}):`, e);
   }
   const fresh = await fetcher();
   try {
-    await redis.set(key, fresh, { ex: ttlSeconds });
+    await withTimeout(redis.set(key, fresh, { ex: ttlSeconds }));
   } catch (e) {
     console.error(`[spotify] cache write error (${key}):`, e);
   }

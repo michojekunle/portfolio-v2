@@ -5,8 +5,8 @@ import { MagneticWrapper } from "./magnetic-wrapper"
 import { ArrowRight } from "lucide-react"
 
 const PROJECT_COLORS: Record<string, string> = {
-  coinsafe: "#8b5cf6",
-  zamir: "#06b6d4",
+  coinsafe: "#D97706",
+  zamir: "#2563EB",
   createstacksapp: "#ec4899",
   "firstcode-forge": "#f59e0b",
 }
@@ -18,8 +18,7 @@ export function FilmReelSection(): React.ReactElement {
       id="all-work"
       aria-labelledby="reel-heading"
     >
-      <div className="max-w-(--maxw) mx-auto px-(--gutter) grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — ARCHIVE</div>
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) mb-20 max-[720px]:mb-12">
         <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-6">
           <h2 id="reel-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Everything I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>

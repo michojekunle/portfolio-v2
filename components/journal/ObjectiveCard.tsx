@@ -4,8 +4,7 @@ import { useState } from "react";
 import { CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp, Plus, Pencil, X, Check, Loader2 } from "lucide-react";
 import type { JoObjectiveWithMilestones, JoMilestone } from "@/lib/journal/types";
 import { PRIORITY_CONFIG, STATUS_CONFIG, OBJECTIVE_COLORS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
-
-const ICONS = ["🎯", "💡", "🚀", "📚", "💪", "🏆", "🌱", "✍️", "💰", "🎨", "🔬", "🤝"];
+import { ObjectiveIcon, OBJECTIVE_ICON_KEYS } from "./JournalIcons";
 
 interface Props {
   objective: JoObjectiveWithMilestones;
@@ -160,17 +159,18 @@ export function ObjectiveCard({
                   Icon
                 </label>
                 <div className="flex flex-wrap gap-1.5">
-                  {ICONS.map((ic) => (
+                  {OBJECTIVE_ICON_KEYS.map((ic) => (
                     <button
                       key={ic}
                       onClick={() => setEditIcon(ic)}
-                      className="w-7.5 h-7.5 text-[16px] rounded-md flex items-center justify-center border cursor-pointer transition-all"
+                      className="w-7.5 h-7.5 rounded-md flex items-center justify-center border cursor-pointer transition-all"
                       style={{
                         background: editIcon === ic ? VELA_ACCENT_SOFT : "var(--bg)",
                         borderColor: editIcon === ic ? VELA_ACCENT : "var(--rule)",
+                        color: editIcon === ic ? VELA_ACCENT : "var(--ink-2)",
                       }}
                     >
-                      {ic}
+                      <ObjectiveIcon icon={ic} size={15} />
                     </button>
                   ))}
                 </div>
@@ -280,7 +280,7 @@ export function ObjectiveCard({
               border: `1px solid ${objective.color}25`,
             }}
           >
-            {objective.icon}
+            <ObjectiveIcon icon={objective.icon} size={20} style={{ color: objective.color }} />
           </div>
 
           <div className="flex-1 min-w-0">

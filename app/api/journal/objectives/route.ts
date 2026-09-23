@@ -10,7 +10,7 @@ const CreateSchema = z.object({
   target_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   priority: z.enum(["high", "medium", "low"]).default("medium"),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#7C3AED"),
-  icon: z.string().max(8).default("🎯"),
+  icon: z.string().max(30).default("target"),
 });
 
 export async function GET(): Promise<NextResponse> {

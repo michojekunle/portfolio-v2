@@ -297,7 +297,7 @@ export default function CarouselLabPage(): React.ReactElement {
   const addSlide = (): void => {
     setSlides((prev) => [
       ...prev,
-      { title: "New Key Takeaway", content: "Describe this main concept or point in a short, scroll-stopping sentence.", emoji: "💡", layout: "default" },
+      { title: "New Key Takeaway", content: "Describe this main concept or point in a short, scroll-stopping sentence.", emoji: "", layout: "default" },
     ]);
     setActiveSlideIndex(slides.length);
   };

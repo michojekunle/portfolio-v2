@@ -58,26 +58,26 @@ export interface FwAccount {
 }
 
 export const SYSTEM_CATEGORIES = [
-  { id: "food_dining", name: "Food & Dining", icon: "🍽️", color: "#F97316" },
-  { id: "transport", name: "Transport", icon: "🚗", color: "#8B5CF6" },
-  { id: "airtime_data", name: "Airtime & Data", icon: "📱", color: "#06B6D4" },
-  { id: "utilities", name: "Utilities", icon: "💡", color: "#EAB308" },
-  { id: "rent_housing", name: "Rent & Housing", icon: "🏠", color: "#6366F1" },
-  { id: "clothing", name: "Clothing", icon: "👕", color: "#EC4899" },
-  { id: "health", name: "Health", icon: "❤️", color: "#EF4444" },
-  { id: "entertainment", name: "Entertainment", icon: "🎮", color: "#10B981" },
-  { id: "education", name: "Education", icon: "📚", color: "#3B82F6" },
-  { id: "savings", name: "Savings", icon: "💰", color: "#16A34A" },
-  { id: "salary", name: "Salary", icon: "💼", color: "#16A34A" },
-  { id: "business", name: "Business Income", icon: "📈", color: "#059669" },
-  { id: "transfer", name: "Transfer", icon: "↔️", color: "#6B7280" },
-  { id: "shopping", name: "Shopping", icon: "🛍️", color: "#F59E0B" },
-  { id: "travel", name: "Travel", icon: "✈️", color: "#0EA5E9" },
-  { id: "subscriptions", name: "Subscriptions", icon: "🔄", color: "#7C3AED" },
-  { id: "gifts", name: "Gifts & Donations", icon: "🎁", color: "#DB2777" },
-  { id: "investment_in", name: "Investment", icon: "📊", color: "#0D9488" },
-  { id: "family", name: "Family", icon: "👨‍👩‍👧", color: "#B45309" },
-  { id: "other", name: "Other", icon: "📌", color: "#6B7280" },
+  { id: "food_dining", name: "Food & Dining", icon: "utensils", color: "#F97316" },
+  { id: "transport", name: "Transport", icon: "car", color: "#8B5CF6" },
+  { id: "airtime_data", name: "Airtime & Data", icon: "smartphone", color: "#06B6D4" },
+  { id: "utilities", name: "Utilities", icon: "zap", color: "#EAB308" },
+  { id: "rent_housing", name: "Rent & Housing", icon: "home", color: "#6366F1" },
+  { id: "clothing", name: "Clothing", icon: "shirt", color: "#EC4899" },
+  { id: "health", name: "Health", icon: "heart", color: "#EF4444" },
+  { id: "entertainment", name: "Entertainment", icon: "gamepad", color: "#10B981" },
+  { id: "education", name: "Education", icon: "book", color: "#3B82F6" },
+  { id: "savings", name: "Savings", icon: "wallet", color: "#16A34A" },
+  { id: "salary", name: "Salary", icon: "briefcase", color: "#16A34A" },
+  { id: "business", name: "Business Income", icon: "trending-up", color: "#059669" },
+  { id: "transfer", name: "Transfer", icon: "transfer", color: "#6B7280" },
+  { id: "shopping", name: "Shopping", icon: "shopping", color: "#F59E0B" },
+  { id: "travel", name: "Travel", icon: "plane", color: "#0EA5E9" },
+  { id: "subscriptions", name: "Subscriptions", icon: "refresh", color: "#7C3AED" },
+  { id: "gifts", name: "Gifts & Donations", icon: "gift", color: "#DB2777" },
+  { id: "investment_in", name: "Investment", icon: "chart", color: "#0D9488" },
+  { id: "family", name: "Family", icon: "family", color: "#B45309" },
+  { id: "other", name: "Other", icon: "tag", color: "#6B7280" },
 ] as const;
 
 export type SystemCategoryId = (typeof SYSTEM_CATEGORIES)[number]["id"];
@@ -182,11 +182,11 @@ export const FINANCIAL_PERSONAS = [
 export type FinancialPersona = (typeof FINANCIAL_PERSONAS)[number];
 
 export const PERSONA_CONFIG: Record<FinancialPersona, { label: string; blurb: string; icon: string }> = {
-  saver: { label: "The Saver", blurb: "You'd rather stash it than spend it — we'll help you find the best home for it.", icon: "🐷" },
-  spender: { label: "The Spender", blurb: "Money flows freely — we'll help you keep enough guardrails to hit your goals.", icon: "💳" },
-  planner: { label: "The Planner", blurb: "You like a clear budget and a plan for every naira — we'll keep it structured.", icon: "🗂️" },
-  avoider: { label: "The Avoider", blurb: "Finances feel overwhelming — we'll keep things simple and low-pressure.", icon: "🙈" },
-  hustler: { label: "The Hustler", blurb: "Income is irregular and comes from multiple places — we'll help you smooth it out.", icon: "🚀" },
+  saver: { label: "The Saver", blurb: "You'd rather stash it than spend it — we'll help you find the best home for it.", icon: "piggy-bank" },
+  spender: { label: "The Spender", blurb: "Money flows freely — we'll help you keep enough guardrails to hit your goals.", icon: "credit-card" },
+  planner: { label: "The Planner", blurb: "You like a clear budget and a plan for every naira — we'll keep it structured.", icon: "calendar" },
+  avoider: { label: "The Avoider", blurb: "Finances feel overwhelming — we'll keep things simple and low-pressure.", icon: "shield" },
+  hustler: { label: "The Hustler", blurb: "Income is irregular and comes from multiple places — we'll help you smooth it out.", icon: "rocket" },
 };
 
 export interface FwProfile {

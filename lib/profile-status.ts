@@ -40,6 +40,14 @@ const DEFAULT_STATUS: ProfileStatusData = {
   currently_reading: "Zero to One by Peter Thiel",
 };
 
+function withTimeout<T>(promise: Promise<T>, ms = 800): Promise<T> {
+  let timer: NodeJS.Timeout;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Timeout")), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 export async function getProfileStatus(): Promise<ProfileStatusData> {
   let currentlyReading = DEFAULT_STATUS.currently_reading;
   try {

@@ -22,15 +22,6 @@ export function AboutClientContent() {
       {/* Hero */}
       <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-6"
-          >
-            02 — ABOUT · BACKGROUND
-          </motion.div>
-
           <h1 className="m-0 font-display font-light text-[clamp(36px,7vw,90px)] leading-[0.95] tracking-[-0.03em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-3 max-[720px]:gap-x-2.5 max-[720px]:gap-y-2">
             {titleWords.map((word, i) => (
               <motion.span
@@ -65,7 +56,7 @@ export function AboutClientContent() {
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16 border-b border-(--rule)">
         <motion.div
           {...fadeUp}
-          className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-[720px]:mb-7"
+          className="font-mono text-xs tracking-wider text-muted-foreground mb-10 max-[720px]:mb-7"
         >
           ORIGIN
         </motion.div>
@@ -75,7 +66,7 @@ export function AboutClientContent() {
               {...fadeUp}
               className="font-sans text-[24px] max-[720px]:text-[20px] leading-normal text-(--ink) font-normal"
             >
-              I came to software through a long detour. My background is in the sciences —
+              I came to software through a long detour. My background is in the sciences,
               the kind of education that teaches you to follow evidence, question assumptions,
               and be honest when an experiment fails. It turns out programming rewards exactly
               the same habits.{" "}
@@ -92,8 +83,8 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[18px] leading-[1.7] text-secondary-foreground"
             >
-              My first serious programming was Java. Then React. Then — around the time L2s started
-              actually shipping — Solidity. Four years of full-stack product work, the last two of
+              My first serious programming was Java. Then React. Then, around the time L2s started
+              actually shipping, Solidity. Four years of full-stack product work, the last two of
               them deep in web3, shipping on Rootstock, Starknet, and Stacks. Some of it
               I&apos;m proud of. Some of it taught me what I&apos;d never do again.
             </motion.p>
@@ -102,7 +93,7 @@ export function AboutClientContent() {
           <TiltCard intensity={10}>
             <div className="bg-(--paper) border border-(--rule) rounded-2xl p-8 transition-all duration-300 hover:border-(--v3-accent) hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] h-full flex flex-col gap-6">
               <div className="flex items-center justify-between">
-                <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground font-medium">Stack — current</h4>
+                <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium">Current Stack</h2>
                 <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--v3-accent)" }} aria-hidden="true" />
               </div>
 
@@ -116,7 +107,7 @@ export function AboutClientContent() {
                   <span className="text-[14px] text-muted-foreground font-mono">Next.js 16 · TypeScript · Tailwind</span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
-                  <span className="text-[17px] text-(--ink) font-medium">Web3 <span className="text-[11px] text-muted-foreground/70 font-mono">· background</span></span>
+                  <span className="text-[17px] text-(--ink) font-medium">Web3 <span className="text-xs text-muted-foreground/70 font-mono">· background</span></span>
                   <span className="text-[14px] text-muted-foreground font-mono">Solidity · Cairo · Clarity · Starknet · Rootstock</span>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -136,7 +127,7 @@ export function AboutClientContent() {
         <div className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16">
           <motion.div
             {...fadeUp}
-            className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-[720px]:mb-7 max-w-[68ch] mx-auto"
+            className="font-mono text-xs tracking-wider text-muted-foreground mb-10 max-[720px]:mb-7 max-w-[68ch] mx-auto"
           >
             NOW
           </motion.div>
@@ -148,7 +139,7 @@ export function AboutClientContent() {
             >
               Right now I&apos;m going lower down the stack than the frontend, and going deep
               on one thing before wide on many. My current obsession is{" "}
-              <b className="text-(--ink) font-medium">Rust systems programming</b> — public,
+              <b className="text-(--ink) font-medium">Rust systems programming</b>: public,
               daily reps for six months straight. It&apos;s teaching me to think in lifetimes
               and memory, and that the abstractions I&apos;d been trusting were never as solid
               as I assumed.
@@ -163,7 +154,7 @@ export function AboutClientContent() {
                 &ldquo;
               </span>
               <p className="relative font-sans text-[26px] max-[720px]:text-[21px] leading-[1.45] text-(--ink) font-normal italic pl-9 max-[720px]:pl-7">
-                Once these feel like second nature, the real destination is zkML — making
+                Once these feel like second nature, the real destination is zkML: making
                 zero-knowledge machine learning legible and shippable, not mythical.
               </p>
             </motion.div>
@@ -173,7 +164,7 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              I&apos;m not just an engineer for hire — I&apos;m building my own things. A growing
+              I&apos;m not just an engineer for hire; I&apos;m building my own things. A growing
               set of <b className="text-(--ink) font-medium">products and small businesses</b>,
               shipped as real tools with auth, databases, and paying-attention-to-the-details
               polish, not weekend demos. Building my own things teaches me the half of the craft
@@ -186,7 +177,7 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              I write essays as I go — not because I have answers, but because writing forces me
+              I write essays as I go, not because I have answers, but because writing forces me
               to stop pretending I understand things I don&apos;t. If you&apos;ve read one of my
               pieces and it helped, that&apos;s the loop closing for me.
             </motion.p>
@@ -198,7 +189,7 @@ export function AboutClientContent() {
             >
               That builder&apos;s itch reaches past software too.{" "}
               <b className="text-(--ink) font-medium">Agriculture and food systems</b>, <b className="text-(--ink) font-medium">waste management</b>, and{" "}
-              <b className="text-(--ink) font-medium">recycling infrastructure</b> — the same first-principles thinking I apply to
+              <b className="text-(--ink) font-medium">recycling infrastructure</b>: the same first-principles thinking I apply to
               protocol design shows up in how I think about resource loops in the physical world.
               The incentive structures are not that different, and I expect some of what I build
               next to live there.
@@ -210,7 +201,7 @@ export function AboutClientContent() {
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
               Off-screen: I play guitar badly, chess decently, and study Mandarin daily. I live in
-              Lagos. I&apos;m a Christian, which informs how I think about work — patience,
+              Lagos. I&apos;m a Christian, which informs how I think about work: patience,
               restraint, and the conviction that the small invisible parts matter as much as the
               visible ones.
             </motion.p>
@@ -222,14 +213,14 @@ export function AboutClientContent() {
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16 border-b border-(--rule)">
         <motion.div
           {...fadeUp}
-          className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10 max-[720px]:mb-7"
+          className="font-mono text-xs tracking-wider text-muted-foreground mb-10 max-[720px]:mb-7"
         >
           ELSEWHERE
         </motion.div>
         <div className="grid grid-cols-3 max-[900px]:grid-cols-1 gap-6">
           <TiltCard intensity={15} className="h-full">
             <div className="bg-(--paper) border border-(--rule) rounded-2xl p-6 transition-all duration-300 hover:border-(--v3-accent) hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] h-full flex flex-col gap-4">
-              <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground font-medium">Reading</h4>
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium">Reading</h2>
               <div className="flex flex-col gap-3.5 h-full justify-between">
                 <span className="text-[16px] text-(--ink) leading-normal">Crafting Interpreters <br/><span className="text-[13px] text-muted-foreground font-mono">Book</span></span>
                 <span className="text-[16px] text-(--ink) leading-normal">The Rust Book <br/><span className="text-[13px] text-muted-foreground font-mono">Book</span></span>
@@ -239,7 +230,7 @@ export function AboutClientContent() {
 
           <TiltCard intensity={15} className="h-full">
             <div className="bg-(--bg-2) border border-(--rule) rounded-2xl p-6 transition-all duration-300 hover:border-(--v3-accent) hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] h-full flex flex-col gap-4">
-              <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-(--v3-accent) font-medium">Curious</h4>
+              <h2 className="font-mono text-xs tracking-wider uppercase text-(--v3-accent) font-medium">Curious</h2>
               <div className="flex flex-col gap-2.5">
                 <span className="text-[16px] text-(--ink)">Agriculture</span>
                 <span className="text-[16px] text-(--ink)">Waste mgmt</span>
@@ -250,7 +241,7 @@ export function AboutClientContent() {
 
           <TiltCard intensity={10} className="h-full">
             <div className="bg-(--paper) border border-(--rule) rounded-2xl p-6 transition-all duration-300 hover:border-(--v3-accent) hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] h-full flex flex-col gap-4 justify-between">
-              <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground font-medium m-0">Elsewhere</h4>
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium m-0">Elsewhere</h2>
               <div className="flex flex-wrap gap-4.5">
                 <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="text-[16px] font-medium text-(--ink) hover:text-(--v3-accent) transition-colors underline decoration-(--rule) underline-offset-1">GitHub</a>
                 <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="text-[16px] font-medium text-(--ink) hover:text-(--v3-accent) transition-colors underline decoration-(--rule) underline-offset-1">Twitter</a>

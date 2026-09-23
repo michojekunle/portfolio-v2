@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Flame, Rocket, Lightbulb, ThumbsUp } from "lucide-react";
 
 interface Reaction {
   emoji: string;
@@ -13,7 +14,13 @@ interface BlogReactionsProps {
   postId: string;
 }
 
-const EMOJIS = ["❤️", "🔥", "🚀", "💡", "🙌"];
+const REACTIONS = [
+  { id: "heart", label: "Heart", icon: Heart, aliases: ["heart", "\u2764\ufe0f", "\u2764"] },
+  { id: "fire", label: "Fire", icon: Flame, aliases: ["fire", "\ud83d\udd25"] },
+  { id: "rocket", label: "Rocket", icon: Rocket, aliases: ["rocket", "\ud83d\ude80"] },
+  { id: "bulb", label: "Insight", icon: Lightbulb, aliases: ["bulb", "\ud83d\udca1"] },
+  { id: "cheers", label: "Cheers", icon: ThumbsUp, aliases: ["cheers", "clap", "\ud83d\ude4c"] },
+];
 
 export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElement {
   const [reactions, setReactions] = useState<Reaction[]>([]);
@@ -55,26 +62,28 @@ export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElemen
     return () => { void supabase.removeChannel(channel); };
   }, [postId, supabase]);
 
-  const handleReact = async (emoji: string): Promise<void> => {
-    if (userReacted.includes(emoji)) return;
+  const handleReact = async (id: string, aliases: string[]): Promise<void> => {
+    const alreadyReacted = userReacted.some((item) => aliases.includes(item));
+    if (alreadyReacted) return;
 
     // Optimistic UI update
     setReactions((prev) => {
-      const existing = prev.find((r) => r.emoji === emoji);
-      if (existing) return prev.map((r) => r.emoji === emoji ? { ...r, count: r.count + 1 } : r);
-      return [...prev, { emoji, count: 1 }];
+      const existing = prev.find((r) => aliases.includes(r.emoji));
+      if (existing) return prev.map((r) => aliases.includes(r.emoji) ? { ...r, count: r.count + 1 } : r);
+      return [...prev, { emoji: id, count: 1 }];
     });
 
-    const newUserReacted = [...userReacted, emoji];
+    const newUserReacted = [...userReacted, id];
     setUserReacted(newUserReacted);
     localStorage.setItem(`reactions_${postId}`, JSON.stringify(newUserReacted));
 
-    // Re-fetch current count from DB before writing to avoid stale-closure race
+    // Check DB for existing row using primary key post_id and any alias
     const { data: current } = await supabase
       .from("blog_reactions")
-      .select("count")
+      .select("emoji, count")
       .eq("post_id", postId)
-      .eq("emoji", emoji)
+      .in("emoji", aliases)
+      .limit(1)
       .maybeSingle();
 
     if (current) {
@@ -82,38 +91,44 @@ export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElemen
         .from("blog_reactions")
         .update({ count: (current.count as number) + 1 })
         .eq("post_id", postId)
-        .eq("emoji", emoji);
+        .eq("emoji", current.emoji);
     } else {
       await supabase
         .from("blog_reactions")
-        .insert([{ post_id: postId, emoji, count: 1 }]);
+        .insert([{ post_id: postId, emoji: id, count: 1 }]);
     }
   };
 
   return (
     <div className="v3-reactions">
       <div className="lbl">Reactions</div>
-      {EMOJIS.map((emoji) => {
-        const reaction = reactions.find((r) => r.emoji === emoji);
-        const hasReacted = userReacted.includes(emoji);
+      {REACTIONS.map((r) => {
+        const count = reactions
+          .filter((item) => r.aliases.includes(item.emoji))
+          .reduce((sum, item) => sum + (item.count || 0), 0);
+        const hasReacted = userReacted.some((item) => r.aliases.includes(item));
+        const Icon = r.icon;
+
         return (
           <button
-            key={emoji}
+            key={r.id}
             className={`v3-reaction-btn${hasReacted ? " reacted" : ""}`}
-            onClick={() => void handleReact(emoji)}
+            onClick={() => void handleReact(r.id, r.aliases)}
             disabled={hasReacted}
-            aria-label={`React with ${emoji}`}
+            aria-label={`React with ${r.label}`}
           >
-            <span className="emoji">{emoji}</span>
+            <span className="flex items-center justify-center">
+              <Icon size={15} />
+            </span>
             <AnimatePresence mode="wait">
               <motion.span
-                key={reaction?.count ?? 0}
+                key={count}
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.15 }}
               >
-                {reaction?.count ?? 0}
+                {count}
               </motion.span>
             </AnimatePresence>
           </button>
