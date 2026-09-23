@@ -20,7 +20,7 @@ export function ProgressBar({ value }: { value: number }): React.ReactElement {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="font-mono text-[10px] text-muted-foreground tracking-[0.06em]">
+      <span className="font-mono text-xs text-muted-foreground tracking-wider">
         {pct}%
       </span>
     </div>
@@ -43,7 +43,7 @@ export function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
           {note.content}
         </blockquote>
         {note.page_ref && (
-          <span className="inline-block font-mono text-[10px] text-muted-foreground tracking-[0.06em] uppercase relative z-10">
+          <span className="inline-block font-mono text-xs text-muted-foreground tracking-[0.06em] uppercase relative z-10">
             p. {note.page_ref}
           </span>
         )}
@@ -70,7 +70,7 @@ export function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
           {note.content}
         </p>
         {note.page_ref && (
-          <span className="inline-block mt-2 font-mono text-[10px] text-muted-foreground tracking-[0.06em]">
+          <span className="inline-block mt-2 font-mono text-xs text-muted-foreground tracking-[0.06em]">
             p. {note.page_ref}
           </span>
         )}
@@ -93,18 +93,18 @@ export function BookCard({ book }: { book: PublicBook }): React.ReactElement {
       {/* Meta row */}
       <div className="flex flex-wrap gap-12 max-[720px]:gap-6 mb-10">
         <div className="flex flex-col gap-2">
-          <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Author</div>
+          <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">Author</div>
           <div className="text-[15px] font-medium text-(--ink)">{book.author}</div>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Status</div>
+          <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">Status</div>
           <div className="text-[15px] font-medium text-(--ink)">
             {book.status === "reading" ? "Currently reading" : "Finished"}
           </div>
         </div>
         {book.status === "reading" && (
           <div className="flex flex-col gap-2">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Progress</div>
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">Progress</div>
             <ProgressBar value={book.progress} />
           </div>
         )}
@@ -204,10 +204,10 @@ export function BookTeaserCard({ book }: { book: PublicBook }): React.ReactEleme
             <BookCover title={book.title} coverUrl={book.cover_url} titleSize={11} />
           </div>
           <span
-            className="absolute top-3 right-3 font-mono text-[8px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full font-semibold"
+            className="absolute top-3 right-3 font-mono text-xs tracking-[0.12em] uppercase px-2 py-0.75 rounded-full font-semibold"
             style={
               book.status === "reading"
-                ? { background: "var(--v3-accent)", color: "#fff" }
+                ? { background: "var(--v3-accent)", color: "var(--bg)" }
                 : { background: "var(--bg)", color: "var(--ink-3)", border: "1px solid var(--rule)" }
             }
           >
@@ -220,7 +220,7 @@ export function BookTeaserCard({ book }: { book: PublicBook }): React.ReactEleme
             <h3 className="m-0 font-display text-[18px] font-normal leading-[1.25] tracking-[-0.01em] text-(--ink) fvs-text line-clamp-2">
               {book.title}
             </h3>
-            <div className="mt-0.75 font-mono text-[10px] tracking-[0.08em] uppercase text-muted-foreground">
+            <div className="mt-0.75 font-mono text-xs tracking-[0.08em] uppercase text-muted-foreground">
               {book.author}
             </div>
           </div>
@@ -233,7 +233,7 @@ export function BookTeaserCard({ book }: { book: PublicBook }): React.ReactEleme
             </p>
           )}
 
-          <div className="mt-auto pt-2 font-mono text-[9px] tracking-widest uppercase font-semibold text-(--v3-accent) opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="mt-auto pt-2 font-mono text-xs tracking-widest uppercase font-semibold text-(--v3-accent) opacity-0 group-hover:opacity-100 transition-opacity">
             Read notes →
           </div>
         </div>

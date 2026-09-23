@@ -79,31 +79,28 @@ export function AboutHeroWidget() {
   }, [])
 
   return (
-    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md flex flex-col gap-5">
-      {/* Background radial gradient decoration */}
-      <div className="absolute -bottom-8 -left-8 w-35 h-35 bg-gradient-to-tr from-(--v3-accent-soft) to-transparent rounded-full blur-10 opacity-50 pointer-events-none transition-all duration-500 group-hover:scale-125" />
-
-      {/* Grid of micro cards */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Card 1: Local time (Lagos) */}
-        <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule) flex flex-col gap-1.5 justify-between">
+    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] flex flex-col gap-5">
+      {/* Micro stats header */}
+      <div className="grid grid-cols-2 gap-4 pb-4 border-b border-(--rule)">
+        {/* Stat 1: Local time (Lagos) */}
+        <div className="flex flex-col gap-1 justify-between">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="w-3.5 h-3.5" />
-            <span className="font-mono text-[11px] uppercase tracking-wider">Lagos WAT</span>
+            <span className="font-mono text-xs uppercase tracking-wider">Lagos WAT</span>
           </div>
           <div className="font-mono text-[16px] font-semibold text-(--ink) tracking-wider">
             {lagosTime || "--:--:--"}
           </div>
         </div>
 
-        {/* Card 2: Status */}
-        <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule) flex flex-col gap-1.5 justify-between">
+        {/* Stat 2: Status */}
+        <div className="flex flex-col gap-1 justify-between">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <GraduationCap className="w-3.5 h-3.5" />
-            <span className="font-mono text-[11px] uppercase tracking-wider">Status</span>
+            <span className="font-mono text-xs uppercase tracking-wider">Status</span>
           </div>
-          <div className="font-mono text-[11px] font-semibold text-(--v3-accent) uppercase tracking-wider flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-(--v3-accent) animate-ping" />
+          <div className="font-mono text-xs font-semibold text-(--v3-accent) uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-(--v3-accent)" />
             {status?.status || "Available"}
           </div>
         </div>
@@ -113,12 +110,12 @@ export function AboutHeroWidget() {
       <div>
         <div className="flex items-center gap-1.5 mb-2.5">
           <BookOpen className="w-4 h-4 text-muted-foreground" />
-          <h4 className="m-0 font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">Active Focuses</h4>
+          <div className="m-0 font-mono text-xs tracking-wider text-muted-foreground uppercase font-medium">Active Focuses</div>
         </div>
         <div className="flex flex-col gap-2">
           <div>
-            <div className="flex justify-between text-[11px] mb-1 font-mono text-secondary-foreground">
-              <span>{status?.focus1_name || "Rust — DSA reps"}</span>
+            <div className="flex justify-between text-xs mb-1 font-mono text-secondary-foreground">
+              <span>{status?.focus1_name || "Rust: DSA reps"}</span>
               <span>{status?.focus1_pct ?? 40}%</span>
             </div>
             <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
@@ -126,7 +123,7 @@ export function AboutHeroWidget() {
             </div>
           </div>
           <div>
-            <div className="flex justify-between text-[11px] mb-1 font-mono text-secondary-foreground">
+            <div className="flex justify-between text-xs mb-1 font-mono text-secondary-foreground">
               <span>{status?.focus2_name || "Rust systems"}</span>
               <span>{status?.focus2_pct ?? 55}%</span>
             </div>
@@ -138,15 +135,12 @@ export function AboutHeroWidget() {
 
         {/* Horizon — where I'm heading next */}
         <div className="flex items-center gap-2 mt-3.5 pt-3.5 border-t border-(--rule)">
-          <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-muted-foreground">Next</span>
+          <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Next</span>
           <span className="w-1 h-1 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
-          <span className="font-mono text-[11px] font-medium text-(--v3-accent)">{status?.next_focus || "zkML"}</span>
-          <span className="font-mono text-[11px] text-muted-foreground ml-auto">the horizon</span>
+          <span className="font-mono text-xs font-medium text-(--v3-accent)">{status?.next_focus || "zkML"}</span>
+          <span className="font-mono text-xs text-muted-foreground ml-auto">the horizon</span>
         </div>
       </div>
-
-      {/* Divider */}
-      <div className="h-0.25 bg-(--rule) w-full" />
 
       {/* Section 3: Now Playing — real live Spotify, falls back to override text */}
       {(() => {
@@ -163,7 +157,7 @@ export function AboutHeroWidget() {
             href={liveTrack?.trackUrl ?? undefined}
             target={liveTrack?.trackUrl ? "_blank" : undefined}
             rel="noopener noreferrer"
-            className={`block p-3 rounded-xl border border-(--rule) bg-(--bg-2) relative overflow-hidden no-underline ${liveTrack?.trackUrl ? "transition-colors hover:border-(--v3-accent-soft)" : ""}`}
+            className={`block pt-3 border-t border-(--rule) relative overflow-hidden no-underline ${liveTrack?.trackUrl ? "transition-colors hover:text-(--v3-accent)" : ""}`}
           >
             <div className="flex items-center gap-3">
               {/* Album art (or animated bars fallback) */}
@@ -180,11 +174,11 @@ export function AboutHeroWidget() {
                 )}
               </div>
               <div className="flex-grow flex flex-col gap-0.5 overflow-hidden">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-(--v3-accent) font-semibold flex items-center gap-1">
+                <span className="font-mono text-xs uppercase tracking-wider text-(--v3-accent) font-semibold flex items-center gap-1">
                   <Play className="w-2.5 h-2.5 fill-current" /> {label}
                 </span>
-                <span className="text-[12px] font-semibold text-(--ink) line-clamp-1 leading-[1.3]">{title}</span>
-                <span className="text-[11px] text-muted-foreground line-clamp-1">{artist}</span>
+                <span className="text-[13px] font-semibold text-(--ink) line-clamp-1 leading-[1.3]">{title}</span>
+                <span className="text-xs text-muted-foreground line-clamp-1">{artist}</span>
               </div>
             </div>
 

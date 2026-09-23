@@ -19,7 +19,7 @@ const MARKS: { id: MarkId; label: string; blurb: string }[] = [
   },
 ];
 
-const fieldLabel = "block font-mono text-[10px] tracking-[0.14em] uppercase mb-2 text-muted-foreground";
+const fieldLabel = "block font-mono text-xs tracking-wider uppercase mb-2 text-muted-foreground";
 
 function MarkCard({ id, label, blurb }: { id: MarkId; label: string; blurb: string }): React.ReactElement {
   const [size, setSize] = useState<(typeof SIZES)[number]>(512);
@@ -86,20 +86,20 @@ function MarkCard({ id, label, blurb }: { id: MarkId; label: string; blurb: stri
         <button
           type="button"
           onClick={() => download("png")}
-          className="h-9.5 rounded-full font-mono text-[11px] uppercase tracking-widest font-medium border border-(--rule) bg-(--ink) text-(--bg) hover:opacity-90 transition-opacity"
+          className="h-9.5 rounded-full font-mono text-xs uppercase tracking-wider font-medium border border-(--rule) bg-(--ink) text-(--bg) hover:opacity-90 transition-opacity"
         >
           Download PNG
         </button>
         <button
           type="button"
           onClick={() => download("jpg")}
-          className="h-9.5 rounded-full font-mono text-[11px] uppercase tracking-widest font-medium border border-(--rule) bg-(--bg) text-(--ink) hover:border-muted-foreground transition-colors"
+          className="h-9.5 rounded-full font-mono text-xs uppercase tracking-wider font-medium border border-(--rule) bg-(--bg) text-(--ink) hover:border-muted-foreground transition-colors"
         >
           Download JPG
         </button>
       </div>
       {variant === "transparent" && (
-        <p className="text-[10px] text-muted-foreground -mt-2">JPG has no transparency — that download always uses the dark badge.</p>
+        <p className="text-xs text-muted-foreground -mt-2">JPG has no transparency — that download always uses the dark badge.</p>
       )}
     </div>
   );
@@ -110,7 +110,6 @@ export default function BrandKitPage(): React.ReactElement {
     <main id="main-content" tabIndex={-1} className="outline-none min-h-screen">
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-16 space-y-10">
         <div className="max-w-[60ch]">
-          <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-(--v3-accent) mb-3">Brand Kit</div>
           <h1 className="font-display text-[clamp(32px,5vw,44px)] leading-tight text-(--ink) mb-3">Logo downloads.</h1>
           <p className="text-[15px] text-secondary-foreground leading-relaxed">
             Both marks, straight from the same source used across the site, favicon, and OG cards — so nothing here can drift

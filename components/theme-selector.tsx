@@ -52,7 +52,7 @@ const THEMES: Record<string, ThemeEntry> = {
   noir: {
     name: "Noir",
     light:  { "--bg": "#f0eee9", "--bg-2": "#e6e3dc", "--paper": "#f7f5f0", "--ink": "#0a0a0a", "--ink-2": "#3a3a38", "--ink-3": "#7a7a76", "--ink-4": "#b0aea8", "--rule": "#cecbc2", "--rule-2": "#dcd9d0", "--accent": "#0a0a0a", "--accent-2": "#3a3a38", "--accent-soft": "#cecbc2" },
-    dark:   { "--bg": "#080808", "--bg-2": "#0e0e0e", "--paper": "#121212", "--ink": "#ededed", "--ink-2": "#bdbdbd", "--ink-3": "#7d7d7d", "--ink-4": "#3a3a3a", "--rule": "#1f1f1f", "--rule-2": "#161616", "--accent": "#ededed", "--accent-2": "#bdbdbd", "--accent-soft": "#1f1f1f" },
+    dark:   { "--bg": "#080808", "--bg-2": "#0e0e0e", "--paper": "#121212", "--ink": "#ededed", "--ink-2": "#bdbdbd", "--ink-3": "#8e8e8e", "--ink-4": "#3a3a3a", "--rule": "#1f1f1f", "--rule-2": "#161616", "--accent": "#ededed", "--accent-2": "#bdbdbd", "--accent-soft": "#1f1f1f" },
   },
 }
 

@@ -39,21 +39,18 @@ export function BlogHeroWidget() {
   const trendingTags = stats?.trendingTags || []
 
   return (
-    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden group shadow-[0_12px_40px_-12px_rgba(0,0,0,0.05)] backdrop-blur-md flex flex-col gap-5">
-      {/* Decorative gradient flare */}
-      <div className="absolute top-0 right-0 w-30 h-30 bg-gradient-to-br from-(--v3-accent-soft) to-transparent rounded-full blur-10 opacity-60 pointer-events-none transition-all duration-500 group-hover:scale-125" />
-
+    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden flex flex-col gap-5">
       {/* Section 1: Trending Topics */}
       <div>
         <div className="flex items-center gap-2 mb-3">
           <TrendingUp className="w-4 h-4 text-(--v3-accent)" />
-          <h4 className="m-0 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">Trending Topics</h4>
+          <div className="font-mono text-xs tracking-wider text-muted-foreground uppercase">Trending Topics</div>
         </div>
         <div className="flex flex-wrap gap-2">
           {trendingTags.map((tag) => (
             <span
               key={tag.name}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-(--rule) bg-(--bg-2) font-mono text-[10px] text-secondary-foreground transition-all duration-200 hover:border-muted-foreground hover:text-(--ink) cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-(--rule) bg-(--bg-2) font-mono text-xs text-secondary-foreground transition-all duration-200 hover:border-muted-foreground hover:text-(--ink) cursor-pointer"
             >
               #{tag.name.toLowerCase()}
               <span className="font-sans opacity-60">({tag.count})</span>
@@ -68,29 +65,29 @@ export function BlogHeroWidget() {
       {/* Section 2: In the Pipeline */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-(--v3-accent) animate-pulse" />
-          <h4 className="m-0 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">Writing pipeline</h4>
+          <Sparkles className="w-4 h-4 text-(--v3-accent)" />
+          <div className="font-mono text-xs tracking-wider text-muted-foreground uppercase">Writing pipeline</div>
         </div>
-        <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule)">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Next Essay Draft</span>
-            <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-(--v3-accent) font-semibold">80% ready</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Next Essay Draft</span>
+            <span className="font-mono text-xs px-2 py-0.5 rounded bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-(--v3-accent) font-semibold">80% ready</span>
           </div>
-          <h5 className="m-0 font-display text-[13px] text-(--ink) font-semibold mb-2">
+          <div className="font-display text-[14px] text-(--ink) font-semibold">
             {stats?.pipelineTitle || "Gathering thoughts..."}
-          </h5>
-          <p className="m-0 text-[11px] leading-[1.4] text-muted-foreground">
+          </div>
+          <p className="m-0 text-xs leading-relaxed text-muted-foreground">
             {stats?.pipelineExcerpt || "Outlining the next deep dive."}
           </p>
         </div>
       </div>
 
       {/* Section 3: Current Reading Recommendation */}
-      <div className="flex items-center gap-2.5 p-3 rounded-xl border border-(--rule) bg-(--paper)">
+      <div className="flex items-center gap-3 pt-3 border-t border-(--rule)">
         <BookOpen className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <div className="flex flex-col gap-0.5">
-          <span className="font-mono text-[8px] uppercase tracking-wider text-muted-foreground">Currently Reading</span>
-          <span className="text-[12px] font-medium text-(--ink) line-clamp-1 leading-[1.3]">
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Currently Reading</span>
+          <span className="text-[13px] font-medium text-(--ink) line-clamp-1 leading-[1.3]">
             {status?.currently_reading || "Zero to One by Peter Thiel"}
           </span>
         </div>

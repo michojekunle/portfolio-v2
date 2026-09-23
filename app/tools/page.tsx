@@ -32,8 +32,8 @@ const TOOLS = [
       "Draft, structure, and schedule long-form X threads. Hook optimiser, engagement analytics, and a distraction-free writing canvas.",
     status: "live" as const,
     href: "/tools/thread-studio",
-    accent: "#6366F1",
-    accentSoft: "rgba(99,102,241,0.12)",
+    accent: "#818CF8",
+    accentSoft: "rgba(129,140,248,0.12)",
     icon: Share2,
     stats: ["Thread builder", "Hook analyser", "Scheduling"],
     cta: "Engineer my next thread",
@@ -60,8 +60,8 @@ const TOOLS = [
       "A personal reading OS. Upload PDFs, EPUBs, DOCX and more. AI reading companion, voice chat about your books, streaks, goals, highlights — and a direct bridge to BookBreaks.",
     status: "live" as const,
     href: "/tools/chapterly",
-    accent: "#4F6D7A",
-    accentSoft: "rgba(79,109,122,0.12)",
+    accent: "#7E9AA8",
+    accentSoft: "rgba(126,154,168,0.12)",
     icon: BookMarked,
     stats: ["10+ formats", "AI voice chat", "Streaks & goals"],
     bridge: "bookbreaks",
@@ -85,7 +85,6 @@ export default function CreatorSuitePage(): React.ReactElement {
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
           <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-12 items-end">
             <div>
-              <div className="v3-eyebrow mb-7">CREATOR SUITE · TOOLS</div>
               <h1
                 className="m-0 font-display font-normal leading-[0.88] tracking-[-0.04em] text-balance fvs-display"
                 style={{
@@ -114,12 +113,11 @@ export default function CreatorSuitePage(): React.ReactElement {
                 viral threads, design carousel slides — and read anything with
                 an AI that remembers your highlights.
               </p>
-              <div className="mt-8 flex items-center gap-4 flex-wrap">
+              <div className="mt-8 flex items-center gap-3 flex-wrap">
                 <MagneticWrapper>
                   <Link
                     href="/tools/bookbreaks"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-(--bg) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                    style={{ background: "var(--v3-accent)" }}
+                    className="inline-flex items-center gap-2 py-3 px-6 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                   >
                     Launch BookBreaks{" "}
                     <span className="text-[14px]" aria-hidden="true">
@@ -127,56 +125,25 @@ export default function CreatorSuitePage(): React.ReactElement {
                     </span>
                   </Link>
                 </MagneticWrapper>
-                <MagneticWrapper>
-                  <Link
-                    href="/tools/journal"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                    style={{ background: "rgba(124,58,237,0.12)", color: "#7C3AED", border: "1px solid rgba(124,58,237,0.25)" }}
-                  >
-                    Try Vela{" "}
-                    <span className="text-[14px]" aria-hidden="true">→</span>
-                  </Link>
-                </MagneticWrapper>
-                <MagneticWrapper>
-                  <Link
-                    href="/tools/chapterly"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                    style={{ background: "rgba(79,109,122,0.12)", color: "#4F6D7A", border: "1px solid rgba(79,109,122,0.25)" }}
-                  >
-                    Try Chapterly{" "}
-                    <span className="text-[14px]" aria-hidden="true">→</span>
-                  </Link>
-                </MagneticWrapper>
-                <MagneticWrapper>
-                  <Link
-                    href="/tools/flowise"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                    style={{ background: "rgba(22,163,74,0.12)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.25)" }}
-                  >
-                    Try Flowise{" "}
-                    <span className="text-[14px]" aria-hidden="true">→</span>
-                  </Link>
-                </MagneticWrapper>
-                <MagneticWrapper>
-                  <Link
-                    href="/tools/thread-studio"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                    style={{ background: "rgba(99,102,241,0.12)", color: "#6366F1", border: "1px solid rgba(99,102,241,0.25)" }}
-                  >
-                    Try Thread Studio{" "}
-                    <span className="text-[14px]" aria-hidden="true">→</span>
-                  </Link>
-                </MagneticWrapper>
-                <MagneticWrapper>
-                  <Link
-                    href="/tools/carousel-lab"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                    style={{ background: "rgba(255,107,53,0.12)", color: "#FF6B35", border: "1px solid rgba(255,107,53,0.25)" }}
-                  >
-                    Try Carousel Lab{" "}
-                    <span className="text-[14px]" aria-hidden="true">→</span>
-                  </Link>
-                </MagneticWrapper>
+                {[
+                  { name: "Try Vela", href: "/tools/journal" },
+                  { name: "Try Chapterly", href: "/tools/chapterly" },
+                  { name: "Try Flowise", href: "/tools/flowise" },
+                  { name: "Try Thread Studio", href: "/tools/thread-studio" },
+                  { name: "Try Carousel Lab", href: "/tools/carousel-lab" },
+                ].map((item) => (
+                  <MagneticWrapper key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex items-center gap-2 py-3 px-5 rounded-full font-mono text-xs uppercase tracking-wider font-semibold no-underline transition-all duration-200 border border-(--rule) bg-(--bg-2) text-(--ink) hover:border-muted-foreground hover:bg-(--paper) hover:scale-[1.02]"
+                    >
+                      {item.name}{" "}
+                      <span className="text-[14px]" aria-hidden="true">
+                        →
+                      </span>
+                    </Link>
+                  </MagneticWrapper>
+                ))}
               </div>
             </div>
           </div>
@@ -226,13 +193,7 @@ export default function CreatorSuitePage(): React.ReactElement {
                 body: "All tools have a free tier that covers real daily use. No bait-and-switch. Upgrade only when you need more.",
               },
             ].map((p) => (
-              <div key={p.num}>
-                <div
-                  className="font-mono text-[10px] tracking-[0.18em] uppercase mb-4"
-                  style={{ color: "var(--ink-4)" }}
-                >
-                  {p.num}
-                </div>
+              <div key={p.head}>
                 <h3
                   className="font-display font-normal text-[28px] leading-[1.1] tracking-[-0.02em] mb-3 fvs-text m-0"
                   style={{ color: "var(--ink)" }}
@@ -305,7 +266,7 @@ function ToolCard({
           {tool.name}
         </h2>
         <div
-          className="font-mono text-[12px] tracking-[0.08em] uppercase mb-5"
+          className="font-mono text-xs tracking-wider mb-5"
           style={{ color: tool.accent }}
         >
           {tool.tagline}
@@ -324,7 +285,7 @@ function ToolCard({
           {tool.stats.map((s) => (
             <span
               key={s}
-              className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full"
+              className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
               style={{
                 background: "var(--bg-2)",
                 color: "var(--ink-3)",
@@ -341,7 +302,7 @@ function ToolCard({
           {isLive ? (
             <Link
               href={tool.href}
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] font-semibold no-underline transition-all duration-200 group/link"
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider font-semibold no-underline transition-all duration-200 group/link"
               style={{ color: tool.accent }}
             >
               {tool.cta}
@@ -354,7 +315,7 @@ function ToolCard({
             </Link>
           ) : (
             <span
-              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]"
+              className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider"
               style={{ color: "var(--ink-4)" }}
             >
               <span
@@ -368,7 +329,7 @@ function ToolCard({
           {"bridge" in tool && tool.bridge === "bookbreaks" && (
             <Link
               href="/tools/bookbreaks"
-              className="font-mono text-[9px] tracking-[0.12em] uppercase no-underline transition-colors px-2 py-0.75 rounded-full"
+              className="font-mono text-xs tracking-wider uppercase no-underline transition-colors px-2 py-0.75 rounded-full"
               style={{
                 color: "#C85A2C",
                 background: "rgba(200,90,44,0.1)",
@@ -385,8 +346,8 @@ function ToolCard({
 }
 
 function VelaCard(): React.ReactElement {
-  const accent = "#7C3AED";
-  const accentSoft = "rgba(124,58,237,0.10)";
+  const accent = "#D97706";
+  const accentSoft = "rgba(217,119,6,0.10)";
 
   return (
     <div
@@ -410,8 +371,7 @@ function VelaCard(): React.ReactElement {
               </div>
               <StatusBadge status="live" />
               <span
-                className="font-mono text-[9px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full"
-                style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
+                className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
               >
                 Daily driver
               </span>
@@ -424,7 +384,7 @@ function VelaCard(): React.ReactElement {
               Vela
             </h2>
             <div
-              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-5"
+              className="font-mono text-xs tracking-wider mb-5"
               style={{ color: accent }}
             >
               Set your course. Log your progress.
@@ -450,10 +410,10 @@ function VelaCard(): React.ReactElement {
               ].map((s) => (
                 <span
                   key={s}
-                  className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full"
+                  className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
                   style={{
                     background: "var(--bg-2)",
-                    color: "var(--ink-3)",
+                    color: "var(--ink-2)",
                     border: "1px solid var(--rule)",
                   }}
                 >
@@ -466,8 +426,7 @@ function VelaCard(): React.ReactElement {
           <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
             <Link
               href="/tools/journal"
-              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
-              style={{ background: accent }}
+              className="inline-flex items-center justify-center gap-2 py-3 px-7 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
             >
               Set my first objective
               <span
@@ -482,7 +441,7 @@ function VelaCard(): React.ReactElement {
               style={{ background: accentSoft }}
             >
               <div
-                className="font-mono text-[9px] tracking-widest uppercase mb-0.5"
+                className="font-mono text-xs tracking-wider uppercase mb-0.5"
                 style={{ color: accent }}
               >
                 Free tier includes
@@ -530,8 +489,7 @@ function FlowiseCard(): React.ReactElement {
               </div>
               <StatusBadge status="live" />
               <span
-                className="font-mono text-[9px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full"
-                style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
+                className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
               >
                 Nigeria-first
               </span>
@@ -544,7 +502,7 @@ function FlowiseCard(): React.ReactElement {
               Flowise
             </h2>
             <div
-              className="font-mono text-[12px] tracking-[0.08em] uppercase mb-5"
+              className="font-mono text-xs tracking-wider mb-5"
               style={{ color: accent }}
             >
               Your money, mapped.
@@ -565,7 +523,7 @@ function FlowiseCard(): React.ReactElement {
               {["Multi-account", "AI categorization", "Budget & goals", "NGN-first", "CSV import"].map((s) => (
                 <span
                   key={s}
-                  className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full"
+                  className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
                   style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
                 >
                   {s}
@@ -578,8 +536,7 @@ function FlowiseCard(): React.ReactElement {
           <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
             <Link
               href="/tools/flowise"
-              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-white no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
-              style={{ background: accent }}
+              className="inline-flex items-center justify-center gap-2 py-3 px-7 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
             >
               Take control of my money
               <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75" aria-hidden="true">
@@ -590,7 +547,7 @@ function FlowiseCard(): React.ReactElement {
               className="px-4 py-3 rounded-[10px] text-center"
               style={{ background: accentSoft }}
             >
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-0.5" style={{ color: accent }}>
+              <div className="font-mono text-xs tracking-wider uppercase mb-0.5" style={{ color: accent }}>
                 Free tier includes
               </div>
               <div className="text-[12px] text-secondary-foreground leading-normal">
@@ -612,16 +569,10 @@ function StatusBadge({
   if (status === "live") {
     return (
       <span
-        className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.14em] uppercase px-2.5 py-1 rounded-full font-semibold"
-        style={{
-          background: "rgba(45,80,22,0.15)",
-          color: "#2D5016",
-          border: "1px solid rgba(45,80,22,0.3)",
-        }}
+        className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
       >
         <span
-          className="w-1.25 h-1.25 rounded-full"
-          style={{ background: "#2D5016" }}
+          className="w-1.5 h-1.5 rounded-full bg-emerald-600"
           aria-hidden="true"
         />
         Live
@@ -631,12 +582,7 @@ function StatusBadge({
 
   return (
     <span
-      className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.14em] uppercase px-2.5 py-1 rounded-full font-semibold"
-      style={{
-        background: "var(--bg-2)",
-        color: "var(--ink-3)",
-        border: "1px solid var(--rule)",
-      }}
+      className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-3)"
     >
       Coming soon
     </span>

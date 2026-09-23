@@ -49,24 +49,24 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground mb-6 flex items-center gap-3"
+          className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-6 flex items-center gap-3"
         >
-          <Link href="/work" className="hover:text-(--ink) transition-colors flex items-center gap-1"><ArrowLeft className="w-3 h-3" /> Work</Link>
+          <Link href="/work" className="hover:text-(--ink) transition-colors flex items-center gap-1"><ArrowLeft className="w-3.5 h-3.5" /> Work</Link>
           <div className="w-1 h-1 bg-(--rule) rounded-full" />
           Project {p.idx}
         </motion.div>
         
         <div className="flex flex-wrap gap-12 max-[720px]:gap-6 mb-16">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="flex flex-col gap-2">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Role</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Role</div>
             <div className="text-[15px] font-medium text-(--ink)">{p.role}</div>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex flex-col gap-2">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Duration</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Duration</div>
             <div className="text-[15px] font-medium text-(--ink)">{p.duration}</div>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="flex flex-col gap-2">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Team</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Team</div>
             <div className="text-[15px] font-medium text-(--ink)">{p.team}</div>
           </motion.div>
         </div>
@@ -103,7 +103,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           </motion.div>
         ) : (
           <div className="w-full aspect-[16/9] bg-(--bg-2) flex items-center justify-center border border-(--rule) rounded-3xl">
-            <span className="font-mono text-[12px] text-muted-foreground uppercase tracking-[0.2em]">Media Asset Pending</span>
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Media Asset Pending</span>
           </div>
         )}
       </section>
@@ -113,7 +113,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
         {/* Sticky Sidebar */}
         <aside className="sticky top-30 flex flex-col gap-12 border-l border-(--rule) pl-6">
           <div>
-            <h5 className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-4">Stack</h5>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4">Stack</div>
             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
               {p.stack.map((s) => <li key={s} className="text-[14px] font-medium text-(--ink)">{s}</li>)}
             </ul>
@@ -121,7 +121,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           
           {p.live && (
             <div>
-              <h5 className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-4">Live</h5>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4">Live</div>
               <MagneticWrapper strength={10}>
                 <a href={`https://${p.live.replace(/^https?:\/\//, "")}`} target="_blank" rel="noopener noreferrer" className="inline-block text-[14px] font-medium text-(--v3-accent) hover:text-(--ink) transition-colors underline decoration-(--rule) underline-offset-1">
                   {p.live.replace(/^https?:\/\//, "")} <ArrowUpRight className="inline w-3 h-3 ml-1" />
@@ -131,7 +131,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           )}
           
           <div>
-            <h5 className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-4">Year</h5>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4">Year</div>
             <div className="text-[14px] font-medium text-(--ink)">{p.year}</div>
           </div>
         </aside>
@@ -208,7 +208,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
         <div className="flex max-[720px]:flex-col justify-between items-center py-20 max-[720px]:py-12 max-[720px]:gap-12">
           <MagneticWrapper strength={20}>
             <Link href="/work" className="group flex flex-col items-center gap-2">
-              <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1"><ArrowLeft className="w-3 h-3" /> All work</div>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1"><ArrowLeft className="w-3.5 h-3.5" /> All work</div>
               <div className="font-display text-[32px] text-(--ink)">Index</div>
             </Link>
           </MagneticWrapper>
@@ -216,7 +216,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           {nextProject && (
             <MagneticWrapper strength={20}>
               <Link href={`/work/${nextProject.slug}`} className="group flex flex-col items-center gap-2">
-                <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">Next project <ArrowRight className="w-3 h-3" /></div>
+                <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">Next project <ArrowRight className="w-3.5 h-3.5" /></div>
                 <div className="font-display text-[32px] text-(--ink)">{nextProject.name}</div>
               </Link>
             </MagneticWrapper>

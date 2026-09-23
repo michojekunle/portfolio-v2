@@ -245,7 +245,7 @@ body {
   --paper: #121212;
   --ink: #ededed;
   --ink-2: #bdbdbd;
-  --ink-3: #7d7d7d;
+  --ink-3: #8e8e8e;
   --ink-4: #3a3a3a;
   --rule: #1f1f1f;
   --rule-2: #161616;
@@ -861,7 +861,7 @@ h1, h2, h3, h4, h5 {
 
 .v3-work-filters .lbl {
   font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 10px; letter-spacing: 0.18em;
+  font-size: 12px; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--ink-3); margin-right: 8px;
 }
 
@@ -889,7 +889,7 @@ h1, h2, h3, h4, h5 {
 .v3-work-row:hover { padding-left: 16px; background: var(--paper); }
 .v3-work-row:hover .v3-work-arrow { opacity: 1; transform: translateX(6px); color: var(--v3-accent); }
 
-.v3-work-row .idx { font-family: var(--font-jetbrains-mono), monospace; font-size: 11px; color: var(--ink-3); }
+.v3-work-row .idx { font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; color: var(--ink-3); }
 
 .v3-work-row .name {
   font-family: var(--display-font); font-variation-settings: "opsz" 144;
@@ -900,11 +900,11 @@ h1, h2, h3, h4, h5 {
 
 .v3-work-row .stack-mini { display: flex; gap: 6px; flex-wrap: wrap; }
 .v3-work-row .stack-mini span {
-  font-family: var(--font-jetbrains-mono), monospace; font-size: 10px;
+  font-family: var(--font-jetbrains-mono), monospace; font-size: 12px;
   padding: 3px 8px; border-radius: 4px; border: 1px solid var(--rule); color: var(--ink-3);
 }
 
-.v3-work-row .yr { text-align: right; font-family: var(--font-jetbrains-mono), monospace; font-size: 11px; color: var(--ink-3); }
+.v3-work-row .yr { text-align: right; font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; color: var(--ink-3); }
 .v3-work-row .yr b { color: var(--ink); display: block; font-weight: 500; }
 
 .v3-work-arrow { font-size: 22px; color: var(--v3-accent); opacity: 0; transition: all .25s; }
@@ -916,7 +916,7 @@ h1, h2, h3, h4, h5 {
 
 /* ── Case study ───────────────────────────────────────────────────────────── */
 
-.v3-case-hero { padding: 80px 0 0; }
+.v3-case-hero { padding-top: 80px; }
 
 .v3-case-hero .meta {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
@@ -926,7 +926,7 @@ h1, h2, h3, h4, h5 {
 
 .v3-case-hero .meta > div .k {
   font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
+  font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
 }
 
 .v3-case-hero .meta > div .v { font-size: 15px; color: var(--ink); font-weight: 500; }
@@ -1388,7 +1388,7 @@ h1, h2, h3, h4, h5 {
 
 .v3-changelog .entry .body ul { list-style: none; padding: 0; margin: 12px 0 0; }
 
-.v3-changelog .entry .body ul li { padding: 8px 0 8px 24px; position: relative; font-size: 15px; color: var(--ink-2); line-height: 1.6; }
+.v3-changelog .entry .body ul li { padding: 8px 0 8px 24px; position: relative; font-size: 15px; color: var(--ink-2); line-height: 1.6; max-width: 58ch; }
 
 .v3-changelog .entry .body ul li::before { content: '+'; position: absolute; left: 0; top: 8px; color: var(--v3-accent); font-family: var(--font-jetbrains-mono), monospace; font-size: 14px; font-weight: 500; }
 
@@ -1404,9 +1404,9 @@ h1, h2, h3, h4, h5 {
 
 .v3-calendar-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--rule); }
 
-.v3-calendar-head h4 { font-family: var(--display-font); font-variation-settings: "opsz" 96; font-size: 24px; font-weight: 400; margin: 0; color: var(--ink); }
+.v3-calendar-head h2 { font-family: var(--display-font); font-variation-settings: "opsz" 96; font-size: 24px; font-weight: 400; margin: 0; color: var(--ink); }
 
-.v3-calendar-tz { font-family: var(--font-jetbrains-mono), monospace; font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; margin-left: 8px; }
+.v3-calendar-tz { font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em; margin-left: 8px; }
 
 .v3-calendar-nav { display: flex; gap: 6px; align-items: center; }
 .v3-calendar-nav button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--ink-2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
@@ -1419,7 +1419,7 @@ h1, h2, h3, h4, h5 {
 .v3-calendar-types button { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid var(--rule); background: transparent; font-family: var(--font-space-grotesk), sans-serif; cursor: pointer; text-align: left; transition: all .15s; }
 
 .v3-calendar-types button .dur { font-family: var(--display-font); font-size: 18px; font-weight: 500; color: var(--ink); }
-.v3-calendar-types button .lbl { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-top: 4px; }
+.v3-calendar-types button .lbl { font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-top: 4px; }
 /* !important: Tailwind v4 buckets this plain CSS into @layer utilities, where
    its extra class beats specificity expectations against the base rule above —
    without it, the active/selected/hover states silently fail to repaint. */
@@ -1428,19 +1428,18 @@ h1, h2, h3, h4, h5 {
 
 .v3-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 16px; }
 
-.v3-calendar-grid .dn { font-family: var(--font-jetbrains-mono), monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); text-align: center; padding: 8px 0; }
+.v3-calendar-grid .dn { font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); text-align: center; padding: 8px 0; }
 
 .v3-calendar-grid .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--ink-2); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; transition: all .15s; position: relative; }
 
 .v3-calendar-grid .day:hover:not(.unavail):not(.past):not(.empty):not(.selected) { background: var(--bg-2) !important; }
 .v3-calendar-grid .day.empty { cursor: default; }
 .v3-calendar-grid .day.empty:hover { background: transparent; }
-.v3-calendar-grid .day.past { color: var(--ink-4) !important; cursor: not-allowed; opacity: 0.4 !important; }
+.v3-calendar-grid .day.past { color: var(--ink-3) !important; cursor: not-allowed; }
 .v3-calendar-grid .day.unavail {
-  color: var(--ink-4) !important;
+  color: var(--ink-3) !important;
   cursor: not-allowed;
-  opacity: 0.25 !important;
-  background: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--rule) 4px, var(--rule) 5px) !important;
+  background: var(--bg-2) !important;
 }
 .v3-calendar-grid .day.today { color: var(--v3-accent) !important; font-weight: 600; }
 .v3-calendar-grid .day.today::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--v3-accent); border-radius: 50%; }
@@ -1448,7 +1447,7 @@ h1, h2, h3, h4, h5 {
 .v3-calendar-grid .day.has-slots { font-weight: 600; color: var(--ink) !important; }
 
 .v3-calendar-slots { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
-.v3-calendar-slots .lbl { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+.v3-calendar-slots .lbl { font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
 .v3-calendar-slots .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
 .v3-slot { padding: 10px 12px; border-radius: 6px; border: 1px solid var(--rule); background: transparent; font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; color: var(--ink); cursor: pointer; transition: all .15s; text-align: center; }
@@ -1464,19 +1463,19 @@ h1, h2, h3, h4, h5 {
 
 .v3-info-rows .row { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid var(--rule-2); font-size: 14px; }
 .v3-info-rows .row:first-child { border-top: none; }
-.v3-info-rows .row .k { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.v3-info-rows .row .k { font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
 .v3-info-rows .row .v { color: var(--ink); }
 
 .v3-socials-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
 .v3-social-chip { 
   padding: 10px 20px; border: 1px solid var(--rule); border-radius: 999px; 
-  font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.15em;
+  font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
   color: var(--ink-2); transition: all .3s cubic-bezier(.2,.8,.2,1); 
   display: inline-flex; align-items: center; gap: 6px; text-decoration: none; 
   background: transparent;
 }
-.v3-social-chip .arr { transition: transform 0.3s cubic-bezier(.2,.8,.2,1); font-size: 11px; color: var(--ink-4); }
+.v3-social-chip .arr { transition: transform 0.3s cubic-bezier(.2,.8,.2,1); font-size: 12px; color: var(--ink-3); }
 .v3-social-chip:hover { color: var(--v3-accent); border-color: var(--v3-accent); background: color-mix(in_oklab, var(--v3-accent) 5%, transparent); }
 .v3-social-chip:hover .arr { transform: translate(1px, -1px); color: var(--v3-accent); }
 
@@ -1727,7 +1726,7 @@ h1, h2, h3, h4, h5 {
 /* Case study meta: 3-col → 1-col on mobile */
 @media (max-width: 720px) {
   .v3-case-hero .meta { grid-template-columns: 1fr; gap: 16px; }
-  .v3-case-hero { padding: 48px 0 0; }
+  .v3-case-hero { padding-top: 48px; }
   .v3-case-hero h1 { margin-bottom: 20px; }
   .v3-case-hero .lede { margin-bottom: 32px; }
 }
