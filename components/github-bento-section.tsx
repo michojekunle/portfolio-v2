@@ -116,14 +116,13 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
       id="open-source"
       aria-labelledby="bento-heading"
     >
-      <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">04 — OPEN SOURCE</div>
+      <div className="mb-20 max-[720px]:mb-12">
         <div>
           <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Other notable <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
           </h2>
-          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-            Open source projects on GitHub — tools, experiments, and things I built
+          <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+            Open source projects on GitHub including tools, experiments, and libraries built
             to scratch my own itch.
           </div>
         </div>

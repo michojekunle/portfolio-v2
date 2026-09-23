@@ -43,9 +43,6 @@ export function ContactCTA(): React.ReactElement {
 
           {/* Left: CTA */}
           <div className="v3-cta-left">
-            <div className="v3-eyebrow" style={{ marginBottom: 24 }}>
-              <span className="dot" aria-hidden="true" /> Open to work
-            </div>
             <h2>
               Let&apos;s build <em>something.</em>
             </h2>

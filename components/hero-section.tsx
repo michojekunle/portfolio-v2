@@ -16,8 +16,6 @@ const STACK = [
 export function HeroSection(): React.ReactElement {
   return (
     <section className="pt-5 pb-20 max-[720px]:pt-16 max-[720px]:pb-12 max-[480px]:pt-10 max-[480px]:pb-8 relative overflow-hidden max-w-(--maxw) mx-auto px-(--gutter)" aria-label="Introduction">
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(-55deg,transparent,transparent_2px,color-mix(in_oklab,var(--v3-accent)_5%,transparent)_2px,color-mix(in_oklab,var(--v3-accent)_5%,transparent)_5px)] opacity-50 z-0 pointer-events-none" aria-hidden="true" />
-
       {/* Status dashboard meta row */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
@@ -29,8 +27,8 @@ export function HeroSection(): React.ReactElement {
           <b className="text-(--ink) font-medium">Michael Ojekunle</b><br />
           Software Engineer &amp; Builder · Lagos, NG
         </div>
-        <div className="leading-[1.7] text-[12px] text-center max-[720px]:text-left text-(--v3-accent) max-[480px]:text-[10px]">
-          <span className="inline-block w-1.75 h-1.75 rounded-full bg-(--v3-accent) mr-2 align-middle animate-[v3-pulse_2.4s_infinite_ease-in-out]" aria-hidden="true" />
+        <div className="leading-[1.7] text-[12px] text-center max-[720px]:text-left text-(--ink) max-[480px]:text-[10px] flex items-center justify-center max-[720px]:justify-start">
+          <span className="inline-block w-1.75 h-1.75 rounded-full bg-emerald-500 mr-2 shrink-0" aria-hidden="true" />
           Available for select work
         </div>
         <div className="leading-[1.7] text-[12px] text-right max-[720px]:text-left text-muted-foreground max-[480px]:text-[10px]">
@@ -48,7 +46,7 @@ export function HeroSection(): React.ReactElement {
       <div className="relative z-1 grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
           <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-tight text-(--ink) m-0 max-w-[24ch] text-pretty">
-            I build software end to end. Four years full-stack — now going deep on{" "}
+            I build software end to end. Four years full-stack, now going deep on{" "}
             <em>Rust systems</em>, building products of my own.
           </p>
 
@@ -77,9 +75,9 @@ export function HeroSection(): React.ReactElement {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}>
           <p className="text-[17px] leading-[1.7] text-secondary-foreground m-0">
-            Four years building full-stack products — two of them deep in web3, shipping on{" "}
+            Four years building full-stack products, with two of them deep in web3, shipping on{" "}
             <b className="text-(--ink) font-medium">Rootstock</b>, <b className="text-(--ink) font-medium">Starknet</b>, and <b className="text-(--ink) font-medium">Stacks</b>.
-            Now I&apos;m doubling down on systems with <b className="text-(--ink) font-medium">Rust</b>, going deep before wide, and building products of my own — heading toward zkML.
+            Now I&apos;m doubling down on systems with <b className="text-(--ink) font-medium">Rust</b>, going deep before wide, and building products of my own, heading toward zkML.
           </p>
 
           <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">

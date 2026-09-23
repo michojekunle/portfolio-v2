@@ -10,7 +10,7 @@ import { TiltCard } from "./tilt-card"
 import { ArrowRight } from "lucide-react"
 
 const PROJECT_COLORS: Record<string, string> = {
-  coinsafe: "#8b5cf6",
+  coinsafe: "#D97706",
   zamir: "#06b6d4",
   createstacksapp: "#ec4899",
 }
@@ -39,16 +39,15 @@ export function ProjectsSection(): React.ReactElement {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12"
+        className="mb-20 max-[720px]:mb-12"
       >
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">02 — FEATURED</div>
         <div>
           <h2 id="projects-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Masterpieces, I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
-          <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-            Three I&apos;d most want to talk about. Full case studies inside — process,
-            wrong turns, what shipped.
+          <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+            Three I&apos;d most want to talk about. Full case studies inside with process,
+            wrong turns, and what shipped.
           </div>
         </div>
       </motion.div>

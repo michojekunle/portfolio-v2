@@ -22,14 +22,14 @@ export function Footer(): React.ReactElement {
 
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
         <p className="font-sans font-normal text-[20px] text-secondary-foreground max-w-[32ch] mb-20">
-          Engineer, writer &amp; builder. Going deep on Rust systems today, toward zkML tomorrow — from Lagos.
+          Engineer, writer &amp; builder. Going deep on Rust systems today, toward zkML tomorrow, based in Lagos.
         </p>
 
         <div className="grid grid-cols-4 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1 gap-8 pt-10 border-t border-(--rule)">
           <div className="flex flex-col">
-            <h5 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Work
-            </h5>
+            </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
@@ -74,9 +74,9 @@ export function Footer(): React.ReactElement {
             </ul>
           </div>
           <div className="flex flex-col">
-            <h5 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Writing
-            </h5>
+            </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
@@ -121,9 +121,9 @@ export function Footer(): React.ReactElement {
             </ul>
           </div>
           <div className="flex flex-col">
-            <h5 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Site
-            </h5>
+            </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
@@ -178,9 +178,9 @@ export function Footer(): React.ReactElement {
             </ul>
           </div>
           <div className="flex flex-col">
-            <h5 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Elsewhere
-            </h5>
+            </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
               <li>
                 <MagneticWrapper strength={10} className="inline-block">

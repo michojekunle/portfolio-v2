@@ -50,7 +50,7 @@ function statusClass(status: string | null | undefined): string {
     "in progress": `${base} bg-[color-mix(in_oklab,var(--v3-accent-soft)_80%,transparent)] text-(--v3-accent)`,
     "shipped": `${base} bg-[color-mix(in_oklab,#16a34a_20%,var(--bg))] text-[#16a34a] border border-[color-mix(in_oklab,#16a34a_40%,transparent)] dark:text-[#4ade80]`,
     "paused": `${base} bg-(--bg-2) text-muted-foreground`,
-    "ideating": `${base} bg-[color-mix(in_oklab,#9333ea_20%,var(--bg))] text-[#9333ea] border border-[color-mix(in_oklab,#9333ea_40%,transparent)] dark:text-[#c084fc]`,
+    "ideating": `${base} bg-[color-mix(in_oklab,#2563EB_15%,var(--bg))] text-[#2563EB] border border-[color-mix(in_oklab,#2563EB_35%,transparent)] dark:text-[#60a5fa]`,
   }
   return map[s] ?? `${base} bg-(--bg-2) text-muted-foreground`
 }
@@ -85,17 +85,13 @@ export async function NowSection(): Promise<React.ReactElement> {
   return (
     <section className="relative py-30 max-[720px]:py-18 bg-(--bg-2) border-y border-(--rule)" id="now" aria-labelledby="now-heading">
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-        <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
-          <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) animate-pulse" />
-            05 — NOW
-          </div>
+        <div className="mb-20 max-[720px]:mb-12">
           <div>
             <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
               Currently <em className="not-italic italic text-(--v3-accent) fvs-soft">working on.</em>
             </h2>
-            <div className="col-start-2 max-[720px]:col-start-1 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-              A live snapshot — Spotify updates in real time, everything else the moment it changes.
+            <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+              A live snapshot: Spotify updates in real time, everything else the moment it changes.
             </div>
           </div>
         </div>

@@ -140,11 +140,11 @@ export function SpotifyListeningPanel({ initialNowPlaying, initialTopTracks, ini
         )}
 
         <div className="relative flex flex-col h-full">
-          <h4 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground m-0 mb-6 font-medium flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${nowPlaying.isPlaying ? "bg-(--v3-accent) animate-pulse" : "bg-muted-foreground/40"}`} />
+          <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground m-0 mb-6 font-medium flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${nowPlaying.isPlaying ? "bg-(--v3-accent)" : "bg-muted-foreground/40"}`} />
             <span className="flex-1">{headerLabel}</span>
             <span className="text-muted-foreground/50 normal-case font-normal">synced {syncedSecondsAgo}s ago</span>
-          </h4>
+          </h3>
 
           {displayTrack ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 py-2">

@@ -303,10 +303,7 @@ h1, h2, h3, h4, h5 {
   background: var(--v3-accent);
   margin-right: 8px;
   vertical-align: middle;
-  animation: v3-pulse 2.4s infinite ease-in-out;
 }
-
-@keyframes v3-pulse { 50% { opacity: 0.35; } }
 
 /* ── Containers ───────────────────────────────────────────────────────────── */
 
@@ -557,12 +554,6 @@ h1, h2, h3, h4, h5 {
 
 .v3-hero-bg-pattern {
   position: absolute; inset: 0;
-  background-image: repeating-linear-gradient(
-    -55deg,
-    transparent, transparent 2px,
-    color-mix(in oklab, var(--v3-accent) 5%, transparent) 2px,
-    color-mix(in oklab, var(--v3-accent) 5%, transparent) 5px
-  );
   opacity: 0.5; z-index: 0; pointer-events: none;
 }
 
@@ -680,7 +671,7 @@ h1, h2, h3, h4, h5 {
   transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s;
 }
 
-.v3-featured[data-project="coinsafe"] .v3-featured-img::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #8b5cf6; z-index: 10; }
+.v3-featured[data-project="coinsafe"] .v3-featured-img::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #D97706; z-index: 10; }
 .v3-featured[data-project="zamir"] .v3-featured-img::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #06b6d4; z-index: 10; }
 .v3-featured[data-project="createstacksapp"] .v3-featured-img::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #ec4899; z-index: 10; }
 .v3-featured[data-project="firstcode-forge"] .v3-featured-img::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #f59e0b; z-index: 10; }
@@ -2034,11 +2025,11 @@ h1, h2, h3, h4, h5 {
 .v3-status-paused { background: var(--bg-2); color: var(--ink-3); }
 
 .v3-status-ideating {
-  background: color-mix(in oklab, #a855f7 10%, var(--bg));
-  color: #9333ea;
+  background: color-mix(in oklab, #2563eb 10%, var(--bg));
+  color: #2563eb;
 }
 
-.dark .v3-status-ideating { color: #c084fc; }
+.dark .v3-status-ideating { color: #60a5fa; }
 
 .v3-now-col li .notes {
   display: block; font-size: 12px; color: var(--ink-3); line-height: 1.5;

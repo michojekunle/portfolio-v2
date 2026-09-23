@@ -9,7 +9,7 @@ const TOOLS = [
   { name: "BookBreaks",    tagline: "Books into content",        accent: "#C85A2C", icon: BookOpen,   status: "live", href: "/tools/bookbreaks"    },
   { name: "Chapterly",    tagline: "Read + remember",            accent: "#4F6D7A", icon: BookMarked, status: "live", href: "/tools/chapterly"     },
   { name: "Flowise",      tagline: "Money mapped",               accent: "#16A34A", icon: Wallet,     status: "live", href: "/tools/flowise"       },
-  { name: "Vela",         tagline: "Set your course daily",      accent: "#7C3AED", icon: Compass,    status: "live", href: "/tools/journal"       },
+  { name: "Vela",         tagline: "Set your course daily",      accent: "#0D9488", icon: Compass,    status: "live", href: "/tools/journal"       },
   { name: "Thread Studio", tagline: "Viral threads",             accent: "#6366F1", icon: Share2,     status: "live", href: "/tools/thread-studio" },
   { name: "Carousel Lab",  tagline: "Scroll-stopping slides",    accent: "#FF6B35", icon: LayoutGrid, status: "live", href: "/tools/carousel-lab"  },
 ] as const
@@ -25,11 +25,8 @@ export function CreatorSuiteSection(): React.ReactElement {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12"
+        className="mb-20 max-[720px]:mb-12"
       >
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">
-          03 — TOOLS
-        </div>
         <div>
           <h2
             id="creator-suite-heading"
@@ -39,8 +36,8 @@ export function CreatorSuiteSection(): React.ReactElement {
             <em className="not-italic italic text-(--v3-accent) fvs-soft">built</em>{" "}
             and ship.
           </h2>
-          <p className="mt-4.5 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground m-0 mt-4">
-            Six live tools for creators learning in public — read more, build faster, share
+          <p className="mt-4 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground m-0">
+            Six live tools for creators learning in public to read more, build faster, share
             consistently, track every naira, and log every win. All production-grade, all actually useful.
           </p>
         </div>
@@ -98,7 +95,7 @@ export function CreatorSuiteSection(): React.ReactElement {
       >
         <p className="m-0 text-[15px] text-muted-foreground max-w-[52ch]">
           Each tool is a real product with auth, database, AI integrations, and production
-          error handling — not a demo. Open source on request.
+          error handling; not a demo. Open source on request.
         </p>
         <MagneticWrapper>
           <Link
