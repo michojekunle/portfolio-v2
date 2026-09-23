@@ -4,12 +4,11 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Check, Loader2 } from "lucide-react";
 
-export type DisciplineTheme = "amber" | "cyan" | "emerald" | "violet";
+export type DisciplineTheme = "terracotta" | "steel" | "sage" | "indigo";
 
 interface DisciplineCardProps {
-  stepNumber: number;
-  totalSteps: number;
-  title: string;
+  trackNumber: number;
+  trackName: string;
   category: string;
   theme: DisciplineTheme;
   icon: React.ReactNode;
@@ -25,44 +24,38 @@ const THEME_STYLES: Record<
     border: string;
     borderActive: string;
     badgeBg: string;
-    glow: string;
     toggleActiveBg: string;
   }
 > = {
-  amber: {
-    border: "border-amber-500/30 dark:border-amber-500/20",
-    borderActive: "border-amber-500/80 dark:border-amber-500/60 shadow-[0_0_24px_rgba(245,158,11,0.12)]",
-    badgeBg: "bg-amber-500/15 dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 border-amber-500/40 dark:border-amber-500/30",
-    glow: "bg-amber-500/10 dark:bg-amber-500/10",
-    toggleActiveBg: "bg-amber-600 dark:bg-amber-500 text-white hover:bg-amber-700 dark:hover:bg-amber-600",
+  terracotta: {
+    border: "border-border/80 hover:border-amber-600/40",
+    borderActive: "border-amber-600/70 dark:border-amber-500/60 bg-amber-500/[0.03]",
+    badgeBg: "bg-amber-500/10 text-amber-900 dark:text-amber-300 border-amber-500/30",
+    toggleActiveBg: "bg-amber-600 dark:bg-amber-500 text-white hover:bg-amber-700",
   },
-  cyan: {
-    border: "border-sky-500/30 dark:border-sky-500/20",
-    borderActive: "border-sky-500/80 dark:border-sky-500/60 shadow-[0_0_24px_rgba(14,165,233,0.12)]",
-    badgeBg: "bg-sky-500/15 dark:bg-sky-500/10 text-sky-900 dark:text-sky-300 border-sky-500/40 dark:border-sky-500/30",
-    glow: "bg-sky-500/10 dark:bg-sky-500/10",
-    toggleActiveBg: "bg-sky-600 dark:bg-sky-500 text-white hover:bg-sky-700 dark:hover:bg-sky-600",
+  steel: {
+    border: "border-border/80 hover:border-sky-600/40",
+    borderActive: "border-sky-600/70 dark:border-sky-500/60 bg-sky-500/[0.03]",
+    badgeBg: "bg-sky-500/10 text-sky-900 dark:text-sky-300 border-sky-500/30",
+    toggleActiveBg: "bg-sky-600 dark:bg-sky-500 text-white hover:bg-sky-700",
   },
-  emerald: {
-    border: "border-emerald-500/30 dark:border-emerald-500/20",
-    borderActive: "border-emerald-500/80 dark:border-emerald-500/60 shadow-[0_0_24px_rgba(16,185,129,0.12)]",
-    badgeBg: "bg-emerald-500/15 dark:bg-emerald-500/10 text-emerald-900 dark:text-emerald-300 border-emerald-500/40 dark:border-emerald-500/30",
-    glow: "bg-emerald-500/10 dark:bg-emerald-500/10",
-    toggleActiveBg: "bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700 dark:hover:bg-emerald-600",
+  sage: {
+    border: "border-border/80 hover:border-emerald-600/40",
+    borderActive: "border-emerald-600/70 dark:border-emerald-500/60 bg-emerald-500/[0.03]",
+    badgeBg: "bg-emerald-500/10 text-emerald-900 dark:text-emerald-300 border-emerald-500/30",
+    toggleActiveBg: "bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700",
   },
-  violet: {
-    border: "border-purple-500/30 dark:border-purple-500/20",
-    borderActive: "border-purple-500/80 dark:border-purple-500/60 shadow-[0_0_24px_rgba(168,85,247,0.12)]",
-    badgeBg: "bg-purple-500/15 dark:bg-purple-500/10 text-purple-900 dark:text-purple-300 border-purple-500/40 dark:border-purple-500/30",
-    glow: "bg-purple-500/10 dark:bg-purple-500/10",
-    toggleActiveBg: "bg-purple-600 dark:bg-purple-500 text-white hover:bg-purple-700 dark:hover:bg-purple-600",
+  indigo: {
+    border: "border-border/80 hover:border-indigo-600/40",
+    borderActive: "border-indigo-600/70 dark:border-indigo-500/60 bg-indigo-500/[0.03]",
+    badgeBg: "bg-indigo-500/10 text-indigo-900 dark:text-indigo-300 border-indigo-500/30",
+    toggleActiveBg: "bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-indigo-700",
   },
 };
 
 export function DisciplineCard({
-  stepNumber,
-  totalSteps,
-  title,
+  trackNumber,
+  trackName,
   category,
   theme,
   icon,
@@ -86,57 +79,46 @@ export function DisciplineCard({
 
   return (
     <div
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-card/80 dark:bg-card/40 backdrop-blur-2xl p-4 sm:p-6 transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
-        completed ? styles.borderActive : `${styles.border} hover:border-border/80 hover:bg-card/90 dark:hover:bg-card/50`
+      className={`flex flex-col justify-between rounded-2xl border bg-card/80 dark:bg-card/40 backdrop-blur-xl p-5 sm:p-6 transition-colors shadow-2xs ${
+        completed ? styles.borderActive : styles.border
       }`}
     >
-      {/* Background radial atmosphere */}
-      <div
-        className={`pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full blur-3xl transition-opacity duration-500 ${
-          completed ? "opacity-100" : "opacity-30 group-hover:opacity-70"
-        } ${styles.glow}`}
-      />
-
-      <div className="relative space-y-3">
-        {/* Header row: Discipline step label & tactile category tag */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
+      <div className="space-y-3.5">
+        {/* Header row: In-flow icon with track name and category badge */}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/80 dark:bg-background/60 border border-border/60 dark:border-border/40 shadow-2xs">
-              {icon}
-            </span>
-            <span className="font-mono text-[10px] sm:text-[11px] tracking-wider uppercase text-muted-foreground font-semibold">
-              Step 0{stepNumber} of 0{totalSteps}
+            <span className="text-muted-foreground">{icon}</span>
+            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Track {trackNumber}
             </span>
           </div>
 
-          <Badge variant="outline" className={`text-[10px] font-mono tracking-wide py-0.5 px-2 font-semibold ${styles.badgeBg}`}>
+          <Badge variant="outline" className={`text-xs font-mono tracking-wide py-0.5 px-2.5 font-medium ${styles.badgeBg}`}>
             {category}
           </Badge>
         </div>
 
         {/* Title */}
-        <h3 className="font-display text-base sm:text-lg font-bold tracking-tight text-foreground text-balance">
-          {title}
+        <h3 className="font-sans font-bold text-base sm:text-lg tracking-tight text-foreground text-balance">
+          {trackName}
         </h3>
 
-        {/* Task description */}
-        <p className="text-xs sm:text-[13px] text-foreground/85 leading-relaxed font-sans select-text">
+        {/* Task description with generous line height */}
+        <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed font-sans select-text">
           {description}
         </p>
       </div>
 
       {/* Footer tactile action row */}
-      <div className="relative mt-5 pt-4 border-t border-border/40 dark:border-white/5 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono">
+      <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs font-mono">
           <span
             className={`h-2 w-2 rounded-full ${
-              completed
-                ? "bg-emerald-600 dark:bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-                : "bg-muted-foreground/40"
+              completed ? "bg-emerald-600 dark:bg-emerald-500" : "bg-muted-foreground/30"
             }`}
           />
           <span className={completed ? "text-foreground font-medium" : "text-muted-foreground"}>
-            {completed ? "Completed & Verified" : "Pending Action"}
+            {completed ? "Completed" : "Incomplete"}
           </span>
         </div>
 
@@ -144,10 +126,10 @@ export function DisciplineCard({
           type="button"
           disabled={disabled || loading}
           onClick={handleToggle}
-          className={`h-8 px-3 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition-all duration-200 cursor-pointer disabled:cursor-not-allowed shadow-2xs ${
+          className={`h-8 px-3.5 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed ${
             completed
               ? styles.toggleActiveBg
-              : "bg-background hover:bg-muted/50 border border-border/80 text-foreground hover:border-foreground/30"
+              : "bg-background hover:bg-muted/50 border border-border/80 text-foreground"
           }`}
         >
           {loading ? (

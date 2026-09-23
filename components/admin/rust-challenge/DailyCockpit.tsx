@@ -13,10 +13,9 @@ import {
   Palette,
   Network,
   Loader2,
-  Sparkles,
 } from "lucide-react";
 import type { RustChallengeDay, UpdateFn } from "./types";
-import { countDaySteps, PHASE_LABEL } from "./types";
+import { countDaySteps } from "./types";
 import { DisciplineCard } from "./DisciplineCard";
 import { ProofOfWorkTerminal } from "./ProofOfWorkTerminal";
 
@@ -79,14 +78,14 @@ export function DailyCockpit({
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Day Command Navigation Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl border border-border/60 bg-card/80 dark:bg-card/40 backdrop-blur-xl shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-xl shadow-xs">
         <div className="flex items-center gap-2">
           <Button
             size="sm"
             variant="outline"
             onClick={onPrev}
             disabled={!hasPrev}
-            className="h-8 px-2.5 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer disabled:cursor-not-allowed"
+            className="h-8 px-3 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             <span className="font-mono text-xs font-medium">Prev</span>
@@ -97,7 +96,7 @@ export function DailyCockpit({
             variant="outline"
             onClick={onNext}
             disabled={!hasNext}
-            className="h-8 px-2.5 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer disabled:cursor-not-allowed"
+            className="h-8 px-3 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer disabled:cursor-not-allowed"
           >
             <span className="font-mono text-xs font-medium">Next</span>
             <ChevronRight className="h-4 w-4 ml-1" />
@@ -105,16 +104,16 @@ export function DailyCockpit({
         </div>
 
         {/* Center Title & Context */}
-        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
           <Badge
             variant="outline"
-            className="font-mono text-[11px] px-2.5 py-0.5 border-orange-500/40 text-orange-700 dark:text-orange-400 bg-orange-500/10 font-semibold"
+            className="font-mono text-xs px-2.5 py-0.5 border-amber-600/40 text-amber-800 dark:text-amber-400 bg-amber-500/10 font-semibold"
           >
             Day {day.day_number} of {totalDays}
           </Badge>
 
           <span className="font-mono text-xs text-muted-foreground font-medium">
-            Phase 0{day.phase} · Week 0{day.week_number}
+            Phase {day.phase} · Week {day.week_number}
           </span>
 
           <span className="text-muted-foreground/60 hidden sm:inline">|</span>
@@ -128,69 +127,65 @@ export function DailyCockpit({
         <div className="flex items-center justify-between sm:justify-end gap-2">
           <Badge
             variant={day.completed ? "default" : "outline"}
-            className={`font-mono text-[11px] px-2.5 py-0.5 font-semibold transition-colors ${
+            className={`font-mono text-xs px-3 py-1 font-semibold transition-colors ${
               day.completed
-                ? "bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700 dark:hover:bg-emerald-600"
+                ? "bg-emerald-600 dark:bg-emerald-500 text-white"
                 : "border-border/80 text-muted-foreground"
             }`}
           >
-            {day.completed ? "Day Verified ✓" : `${stepStats.completed}/${stepStats.total} Steps Done`}
+            {day.completed ? "Verified Complete" : `${stepStats.completed}/${stepStats.total} Tasks Finished`}
           </Badge>
         </div>
       </div>
 
       {/* The 4-Quadrant Discipline Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-        {/* Discipline 1: Systems Rust & ZK Core */}
+        {/* Track 1: Systems Rust & ZK Core */}
         <DisciplineCard
-          stepNumber={1}
-          totalSteps={stepStats.total}
-          title="Systems & ZK Primitives"
-          category="Rust Core"
-          theme="amber"
-          icon={<Cpu className="h-4 w-4 text-amber-600 dark:text-amber-500" />}
+          trackNumber={1}
+          trackName="Systems & ZK Primitives"
+          category="Rust Systems"
+          theme="terracotta"
+          icon={<Cpu className="h-4 w-4" />}
           description={day.daily_task}
           completed={Boolean(day.rust_completed || day.completed)}
           onToggle={() => handleStepToggle("rust_completed", Boolean(day.rust_completed))}
         />
 
-        {/* Discipline 2: DSA Daily Rep */}
+        {/* Track 2: DSA Daily Rep */}
         <DisciplineCard
-          stepNumber={2}
-          totalSteps={stepStats.total}
-          title="DSA Daily Rep"
+          trackNumber={2}
+          trackName="DSA Daily Rep"
           category="Algorithms"
-          theme="cyan"
-          icon={<Brain className="h-4 w-4 text-sky-600 dark:text-sky-400" />}
+          theme="steel"
+          icon={<Brain className="h-4 w-4" />}
           description={day.dsa_rep}
           completed={Boolean(day.dsa_completed || day.completed)}
           onToggle={() => handleStepToggle("dsa_completed", Boolean(day.dsa_completed))}
         />
 
-        {/* Discipline 3: Frontend Mastery */}
+        {/* Track 3: Frontend Mastery */}
         {day.frontend_task && (
           <DisciplineCard
-            stepNumber={3}
-            totalSteps={stepStats.total}
-            title="Frontend Mastery"
+            trackNumber={3}
+            trackName="Frontend Mastery"
             category="Web Runtime"
-            theme="emerald"
-            icon={<Palette className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />}
+            theme="sage"
+            icon={<Palette className="h-4 w-4" />}
             description={day.frontend_task}
             completed={Boolean(day.frontend_completed || day.completed)}
             onToggle={() => handleStepToggle("frontend_completed", Boolean(day.frontend_completed))}
           />
         )}
 
-        {/* Discipline 4: Staff System Design */}
+        {/* Track 4: Staff System Design */}
         {day.system_design_task && (
           <DisciplineCard
-            stepNumber={4}
-            totalSteps={stepStats.total}
-            title="Staff System Design"
+            trackNumber={4}
+            trackName="Staff System Design"
             category="Architecture"
-            theme="violet"
-            icon={<Network className="h-4 w-4 text-purple-600 dark:text-purple-400" />}
+            theme="indigo"
+            icon={<Network className="h-4 w-4" />}
             description={day.system_design_task}
             completed={Boolean(day.system_design_completed || day.completed)}
             onToggle={() => handleStepToggle("system_design_completed", Boolean(day.system_design_completed))}
@@ -199,16 +194,16 @@ export function DailyCockpit({
       </div>
 
       {/* Macro Day Action Button */}
-      <div className="p-0.5">
+      <div>
         <Button
           onClick={handleToggleFullDay}
           disabled={macroSaving}
           variant={day.completed ? "outline" : "default"}
-          className={`w-full h-12 text-xs sm:text-sm font-semibold rounded-xl font-mono tracking-wide transition-all shadow-md cursor-pointer ${
+          className={`w-full h-12 text-xs sm:text-sm font-semibold rounded-xl font-mono tracking-wide transition-colors cursor-pointer ${
             day.completed
-              ? "border-emerald-500/50 text-emerald-800 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20"
+              ? "border-emerald-600/50 text-emerald-800 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20"
               : allStepsDone
-                ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,0.25)]"
+                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
                 : "bg-foreground text-background hover:bg-foreground/90"
           }`}
         >
@@ -216,16 +211,14 @@ export function DailyCockpit({
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
           ) : day.completed ? (
             <Check className="h-4 w-4 mr-2" />
-          ) : allStepsDone ? (
-            <Sparkles className="h-4 w-4 mr-2" />
           ) : (
             <CheckCircle2 className="h-4 w-4 mr-2" />
           )}
           {day.completed
-            ? `Day ${day.day_number} fully mastered · Tap to reopen`
+            ? `Day ${day.day_number} complete — Click to reopen`
             : allStepsDone
-              ? `All steps complete! Verify Day ${day.day_number}`
-              : `Fast-Forward: Mark All Steps Done for Day ${day.day_number}`}
+              ? `All tasks complete — Mark Day ${day.day_number} done`
+              : `Mark All Tasks Complete for Day ${day.day_number}`}
         </Button>
       </div>
 

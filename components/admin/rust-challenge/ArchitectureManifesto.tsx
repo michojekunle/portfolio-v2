@@ -25,7 +25,7 @@ interface ArchitectureManifestoProps {
 
 const TIERS = [
   {
-    n: "01",
+    tierNumber: 1,
     title: "Systems Fundamentals — Non-Negotiable Floor",
     items: [
       "Ownership & borrow-checker edge cases",
@@ -37,8 +37,8 @@ const TIERS = [
     ],
   },
   {
-    n: "02",
-    title: "Backend/Infra — What Makes You Hirable Immediately",
+    tierNumber: 2,
+    title: "Backend & Infra — Immediate Employability",
     items: [
       "Tokio (deep, not surface)",
       "gRPC + tonic",
@@ -49,8 +49,8 @@ const TIERS = [
     ],
   },
   {
-    n: "03",
-    title: "ZK Depth — Deepen What You Already Own",
+    tierNumber: 3,
+    title: "ZK Depth — Cryptographic Foundations",
     items: [
       "Sumcheck & GKR Protocols",
       "KZG & Multilinear Commitments",
@@ -60,7 +60,7 @@ const TIERS = [
     ],
   },
   {
-    n: "04",
+    tierNumber: 4,
     title: "zkML — The Synthesis & The Moat",
     items: [
       "Quantization & Fixed-Point Arithmetic",
@@ -92,11 +92,11 @@ const MENTAL_MODELS = [
 ];
 
 const TARGETS = [
-  { name: "EZKL", type: "zkML · Rust · Direct Target", note: "Study first, then PR", badge: "border-purple-500/40 text-purple-800 dark:text-purple-300 bg-purple-500/10" },
-  { name: "SP1 / Risc0", type: "zkVM · Rust", note: "You've already touched SP1", badge: "border-sky-500/40 text-sky-800 dark:text-sky-300 bg-sky-500/10" },
-  { name: "arkworks", type: "ZK Primitives · Rust", note: "Directly under your GKR/KZG work", badge: "border-emerald-500/40 text-emerald-800 dark:text-emerald-300 bg-emerald-500/10" },
-  { name: "OnlyDust", type: "Paid OSS Bounties", note: "Rust/crypto-native, get paid to contribute", badge: "border-amber-500/40 text-amber-800 dark:text-amber-300 bg-amber-500/10" },
-  { name: "Superteam", type: "Bounties & Grants", note: "Solana-adjacent, bridges your Web3 background", badge: "border-amber-500/40 text-amber-800 dark:text-amber-300 bg-amber-500/10" },
+  { name: "EZKL", type: "zkML · Rust · Direct Target", note: "Study first, then PR", badge: "border-indigo-500/30 text-indigo-900 dark:text-indigo-300 bg-indigo-500/10" },
+  { name: "SP1 / Risc0", type: "zkVM · Rust", note: "You've already touched SP1", badge: "border-sky-500/30 text-sky-900 dark:text-sky-300 bg-sky-500/10" },
+  { name: "arkworks", type: "ZK Primitives · Rust", note: "Directly under your GKR/KZG work", badge: "border-emerald-500/30 text-emerald-900 dark:text-emerald-300 bg-emerald-500/10" },
+  { name: "OnlyDust", type: "Paid OSS Bounties", note: "Rust/crypto-native, get paid to contribute", badge: "border-amber-500/30 text-amber-900 dark:text-amber-300 bg-amber-500/10" },
+  { name: "Superteam", type: "Bounties & Grants", note: "Solana-adjacent, bridges your Web3 background", badge: "border-amber-500/30 text-amber-900 dark:text-amber-300 bg-amber-500/10" },
 ];
 
 const BOOK_GROUPS = [
@@ -144,7 +144,7 @@ export function ArchitectureManifesto({
         body: JSON.stringify(changes),
       });
       if (!res.ok) throw new Error("Save failed");
-      toast.success("Manifesto updated successfully");
+      toast.success("Saved");
     } catch {
       toast.error("Failed to save manifesto");
     }
@@ -186,21 +186,14 @@ export function ArchitectureManifesto({
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {/* Vision & Why I Started Hero Monograph */}
-      <div className="relative overflow-hidden rounded-2xl border border-orange-500/30 dark:border-orange-500/20 bg-card/85 dark:bg-card/40 backdrop-blur-2xl p-5 sm:p-8 space-y-6 shadow-2xs">
-        <span
-          aria-hidden
-          className="pointer-events-none select-none absolute -top-8 -right-4 text-[12rem] font-serif leading-none text-orange-950/[0.04] dark:text-orange-100/[0.04]"
-        >
-          &rdquo;
-        </span>
-
-        <div className="relative flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Purpose & North Star */}
+      <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex items-center justify-between border-b border-border/60 pb-3">
           <div className="flex items-center gap-2">
             <Compass className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-            <h2 className="font-mono text-xs uppercase tracking-wider text-orange-700 dark:text-orange-400 font-semibold">
-              The Purpose & The North Star
+            <h2 className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+              The North Star & Purpose
             </h2>
           </div>
 
@@ -209,7 +202,7 @@ export function ArchitectureManifesto({
               size="sm"
               variant="outline"
               onClick={() => setEditingWhy(true)}
-              className="h-7 text-xs font-mono px-2.5 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer"
+              className="h-8 text-xs font-mono px-3 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer"
             >
               Edit Manifesto
             </Button>
@@ -221,7 +214,7 @@ export function ArchitectureManifesto({
             <Textarea
               value={whyStarted}
               onChange={(e) => setWhyStarted(e.target.value)}
-              className="font-sans text-base min-h-[140px] bg-background dark:bg-black/50 border-border/70 dark:border-white/10 rounded-xl leading-relaxed text-foreground"
+              className="font-sans text-sm sm:text-base min-h-[140px] bg-background border-border/80 rounded-xl leading-relaxed text-foreground"
               placeholder="Articulate why you are undertaking this 188-day engineering sprint..."
             />
             <div className="flex items-center gap-2">
@@ -229,9 +222,9 @@ export function ArchitectureManifesto({
                 size="sm"
                 onClick={handleSaveWhy}
                 disabled={savingWhy}
-                className="h-8 px-3 text-xs font-mono font-medium bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-600 text-white rounded-lg cursor-pointer"
+                className="h-8 px-3 text-xs font-mono font-medium bg-foreground text-background hover:bg-foreground/90 rounded-lg cursor-pointer"
               >
-                {savingWhy ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : <Check className="h-3 w-3 mr-1.5" />}
+                {savingWhy ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Check className="h-3.5 w-3.5 mr-1.5" />}
                 Save
               </Button>
               <Button
@@ -245,22 +238,21 @@ export function ArchitectureManifesto({
             </div>
           </div>
         ) : (
-          <p className="font-display text-lg sm:text-2xl font-medium leading-relaxed text-foreground text-balance">
-            {whyStarted || "Not set yet — articulate your core driver here."}
+          <p className="font-sans font-medium text-lg sm:text-xl leading-relaxed text-foreground text-balance">
+            {whyStarted || "Not set yet — articulate your core purpose here."}
           </p>
         )}
 
-        {/* Dynamic Quotes Gallery */}
+        {/* Quotes List */}
         {quotes.length > 0 && (
-          <div className="border-t border-border/40 dark:border-white/5 pt-5 space-y-4">
+          <div className="border-t border-border/60 pt-5 space-y-3">
             {quotes.map((q, i) => (
-              <div key={i} className="flex items-start justify-between gap-4 group">
-                <div className="flex items-start gap-2.5">
-                  <span className="text-2xl leading-none font-serif text-orange-500/70 -mt-1">&ldquo;</span>
-                  <div>
-                    <p className="text-sm italic text-foreground/90 font-serif leading-relaxed">{q.quote}</p>
-                    <p className="text-xs font-mono text-muted-foreground mt-0.5 font-medium">— {q.author}</p>
-                  </div>
+              <div key={i} className="flex items-start justify-between gap-4 group p-2 rounded-lg hover:bg-muted/30">
+                <div className="space-y-0.5">
+                  <p className="text-sm italic text-foreground/90 font-sans leading-relaxed">
+                    &ldquo;{q.quote}&rdquo;
+                  </p>
+                  <p className="text-xs font-mono text-muted-foreground">— {q.author}</p>
                 </div>
                 <button
                   type="button"
@@ -281,13 +273,13 @@ export function ArchitectureManifesto({
             value={newQuote}
             onChange={(e) => setNewQuote(e.target.value)}
             placeholder="Add an inspirational quote..."
-            className="text-xs bg-background dark:bg-black/30 border-border/70 dark:border-white/10 rounded-lg h-8 text-foreground"
+            className="text-xs bg-background border-border/80 rounded-lg h-8 text-foreground"
           />
           <Input
             value={newAuthor}
             onChange={(e) => setNewAuthor(e.target.value)}
             placeholder="Author"
-            className="text-xs bg-background dark:bg-black/30 border-border/70 dark:border-white/10 rounded-lg h-8 sm:w-44 text-foreground"
+            className="text-xs bg-background border-border/80 rounded-lg h-8 sm:w-44 text-foreground"
           />
           <Button
             size="sm"
@@ -295,13 +287,13 @@ export function ArchitectureManifesto({
             disabled={savingQuotes || !newQuote.trim()}
             className="h-8 text-xs font-mono px-3 rounded-lg bg-foreground/10 hover:bg-foreground/20 text-foreground cursor-pointer shrink-0"
           >
-            {savingQuotes ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3 mr-1" />}
+            {savingQuotes ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5 mr-1" />}
             Add
           </Button>
         </div>
       </div>
 
-      {/* The 4 Tiers of Engineering Mastery */}
+      {/* The 4 Tiers of Mastery */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-orange-600 dark:text-orange-400" />
@@ -313,22 +305,24 @@ export function ArchitectureManifesto({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {TIERS.map((tier) => (
             <div
-              key={tier.n}
-              className="rounded-2xl border border-border/60 dark:border-border/40 bg-card/75 dark:bg-card/30 backdrop-blur-xl p-4 sm:p-5 space-y-3 shadow-2xs"
+              key={tier.tierNumber}
+              className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-xl p-5 space-y-3 shadow-xs"
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-orange-600 dark:text-orange-400">Tier {tier.n}</span>
-                <Badge variant="outline" className="font-mono text-[10px] font-medium">
+                <span className="font-mono text-xs font-bold text-foreground">
+                  Tier {tier.tierNumber}
+                </span>
+                <Badge variant="outline" className="font-mono text-xs font-medium">
                   {tier.items.length} Primitives
                 </Badge>
               </div>
 
-              <h4 className="font-display text-base font-bold text-foreground">{tier.title}</h4>
+              <h4 className="font-sans font-bold text-base text-foreground">{tier.title}</h4>
 
-              <ul className="space-y-1.5 text-xs text-foreground/80 font-sans">
+              <ul className="space-y-1.5 text-xs sm:text-sm text-foreground/80 font-sans">
                 {tier.items.map((item, idx) => (
                   <li key={idx} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-orange-500/70" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -338,7 +332,7 @@ export function ArchitectureManifesto({
         </div>
       </div>
 
-      {/* Mental Models & Strategy Grid */}
+      {/* Mental Models */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Brain className="h-4 w-4 text-sky-600 dark:text-sky-400" />
@@ -351,12 +345,12 @@ export function ArchitectureManifesto({
           {MENTAL_MODELS.map((mm, idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-border/60 dark:border-border/40 bg-card/75 dark:bg-card/30 backdrop-blur-xl p-4 sm:p-5 space-y-2 shadow-2xs"
+              className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-xl p-5 space-y-2 shadow-xs"
             >
-              <h4 className="font-mono text-xs font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wide">
+              <h4 className="font-mono text-xs font-bold text-foreground uppercase tracking-wide">
                 {mm.name}
               </h4>
-              <p className="text-xs sm:text-[13px] text-foreground/85 leading-relaxed font-sans">
+              <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed font-sans">
                 {mm.text}
               </p>
             </div>
@@ -377,12 +371,12 @@ export function ArchitectureManifesto({
           {TARGETS.map((t, idx) => (
             <div
               key={idx}
-              className="rounded-xl border border-border/60 dark:border-border/40 bg-card/75 dark:bg-card/30 backdrop-blur-xl p-4 space-y-2 shadow-2xs"
+              className="rounded-xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-xl p-4 space-y-2 shadow-xs"
             >
               <div className="flex items-center justify-between">
-                <span className="font-display font-bold text-sm text-foreground">{t.name}</span>
-                <Badge variant="outline" className={`font-mono text-[9px] px-1.5 py-0 font-semibold ${t.badge}`}>
-                  Active Target
+                <span className="font-sans font-bold text-sm text-foreground">{t.name}</span>
+                <Badge variant="outline" className={`font-mono text-xs px-2 py-0.5 font-medium ${t.badge}`}>
+                  Target
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground font-mono">{t.type}</p>
@@ -395,9 +389,9 @@ export function ArchitectureManifesto({
       {/* Recommended Reading Moat */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+          <BookOpen className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
           <h3 className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-            The Moat: Canonical Architecture & Theory Texts
+            Canonical Architecture & Theory Texts
           </h3>
         </div>
 
@@ -405,16 +399,16 @@ export function ArchitectureManifesto({
           {BOOK_GROUPS.map((group, idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-border/60 dark:border-border/40 bg-card/75 dark:bg-card/30 backdrop-blur-xl p-4 sm:p-5 space-y-3 shadow-2xs"
+              className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-xl p-5 space-y-3 shadow-xs"
             >
-              <h4 className="font-mono text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase tracking-wide">
+              <h4 className="font-mono text-xs font-semibold text-foreground uppercase tracking-wide">
                 {group.title}
               </h4>
               <ul className="space-y-2 text-xs font-sans">
                 {group.books.map((b, bIdx) => (
                   <li key={bIdx} className="space-y-0.5">
                     <p className="font-medium text-foreground">{b.name}</p>
-                    <p className="text-[11px] font-mono text-muted-foreground">{b.author}</p>
+                    <p className="text-xs font-mono text-muted-foreground">{b.author}</p>
                   </li>
                 ))}
               </ul>
