@@ -77,19 +77,19 @@ export function DailyCockpit({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sm:space-y-8">
       {/* Day Command Navigation Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl border border-border/60 bg-card/80 dark:bg-card/40 backdrop-blur-xl shadow-2xs">
         <div className="flex items-center gap-2">
           <Button
             size="sm"
             variant="outline"
             onClick={onPrev}
             disabled={!hasPrev}
-            className="h-8 px-2.5 rounded-lg border-border/60 hover:bg-background/80 cursor-pointer disabled:cursor-not-allowed"
+            className="h-8 px-2.5 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            <span className="font-mono text-xs">Prev</span>
+            <span className="font-mono text-xs font-medium">Prev</span>
           </Button>
 
           <Button
@@ -97,41 +97,41 @@ export function DailyCockpit({
             variant="outline"
             onClick={onNext}
             disabled={!hasNext}
-            className="h-8 px-2.5 rounded-lg border-border/60 hover:bg-background/80 cursor-pointer disabled:cursor-not-allowed"
+            className="h-8 px-2.5 rounded-lg border-border/80 hover:bg-muted/50 cursor-pointer disabled:cursor-not-allowed"
           >
-            <span className="font-mono text-xs">Next</span>
+            <span className="font-mono text-xs font-medium">Next</span>
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
 
         {/* Center Title & Context */}
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
           <Badge
             variant="outline"
-            className="font-mono text-[11px] px-2.5 py-0.5 border-orange-500/40 text-orange-600 dark:text-orange-400 bg-orange-500/10"
+            className="font-mono text-[11px] px-2.5 py-0.5 border-orange-500/40 text-orange-700 dark:text-orange-400 bg-orange-500/10 font-semibold"
           >
             Day {day.day_number} of {totalDays}
           </Badge>
 
-          <span className="font-mono text-xs text-muted-foreground">
-            Phase {day.phase} · Week {day.week_number}
+          <span className="font-mono text-xs text-muted-foreground font-medium">
+            Phase 0{day.phase} · Week 0{day.week_number}
           </span>
 
           <span className="text-muted-foreground/60 hidden sm:inline">|</span>
 
-          <span className="text-xs font-medium text-foreground/90 truncate max-w-[280px]">
+          <span className="text-xs font-semibold text-foreground/90 truncate max-w-[280px]">
             {day.week_focus}
           </span>
         </div>
 
         {/* Right Status Capsule */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between sm:justify-end gap-2">
           <Badge
             variant={day.completed ? "default" : "outline"}
-            className={`font-mono text-[11px] px-2.5 py-0.5 transition-colors ${
+            className={`font-mono text-[11px] px-2.5 py-0.5 font-semibold transition-colors ${
               day.completed
-                ? "bg-emerald-500 text-white hover:bg-emerald-600"
-                : "border-border/60 text-muted-foreground"
+                ? "bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700 dark:hover:bg-emerald-600"
+                : "border-border/80 text-muted-foreground"
             }`}
           >
             {day.completed ? "Day Verified ✓" : `${stepStats.completed}/${stepStats.total} Steps Done`}
@@ -140,7 +140,7 @@ export function DailyCockpit({
       </div>
 
       {/* The 4-Quadrant Discipline Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {/* Discipline 1: Systems Rust & ZK Core */}
         <DisciplineCard
           stepNumber={1}
@@ -148,7 +148,7 @@ export function DailyCockpit({
           title="Systems & ZK Primitives"
           category="Rust Core"
           theme="amber"
-          icon={<Cpu className="h-4 w-4 text-amber-500" />}
+          icon={<Cpu className="h-4 w-4 text-amber-600 dark:text-amber-500" />}
           description={day.daily_task}
           completed={Boolean(day.rust_completed || day.completed)}
           onToggle={() => handleStepToggle("rust_completed", Boolean(day.rust_completed))}
@@ -161,7 +161,7 @@ export function DailyCockpit({
           title="DSA Daily Rep"
           category="Algorithms"
           theme="cyan"
-          icon={<Brain className="h-4 w-4 text-sky-400" />}
+          icon={<Brain className="h-4 w-4 text-sky-600 dark:text-sky-400" />}
           description={day.dsa_rep}
           completed={Boolean(day.dsa_completed || day.completed)}
           onToggle={() => handleStepToggle("dsa_completed", Boolean(day.dsa_completed))}
@@ -175,7 +175,7 @@ export function DailyCockpit({
             title="Frontend Mastery"
             category="Web Runtime"
             theme="emerald"
-            icon={<Palette className="h-4 w-4 text-emerald-400" />}
+            icon={<Palette className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />}
             description={day.frontend_task}
             completed={Boolean(day.frontend_completed || day.completed)}
             onToggle={() => handleStepToggle("frontend_completed", Boolean(day.frontend_completed))}
@@ -190,7 +190,7 @@ export function DailyCockpit({
             title="Staff System Design"
             category="Architecture"
             theme="violet"
-            icon={<Network className="h-4 w-4 text-purple-400" />}
+            icon={<Network className="h-4 w-4 text-purple-600 dark:text-purple-400" />}
             description={day.system_design_task}
             completed={Boolean(day.system_design_completed || day.completed)}
             onToggle={() => handleStepToggle("system_design_completed", Boolean(day.system_design_completed))}
@@ -199,14 +199,14 @@ export function DailyCockpit({
       </div>
 
       {/* Macro Day Action Button */}
-      <div className="p-1">
+      <div className="p-0.5">
         <Button
           onClick={handleToggleFullDay}
           disabled={macroSaving}
           variant={day.completed ? "outline" : "default"}
-          className={`w-full h-12 text-sm font-semibold rounded-xl font-mono tracking-wide transition-all shadow-md cursor-pointer ${
+          className={`w-full h-12 text-xs sm:text-sm font-semibold rounded-xl font-mono tracking-wide transition-all shadow-md cursor-pointer ${
             day.completed
-              ? "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+              ? "border-emerald-500/50 text-emerald-800 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20"
               : allStepsDone
                 ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,0.25)]"
                 : "bg-foreground text-background hover:bg-foreground/90"

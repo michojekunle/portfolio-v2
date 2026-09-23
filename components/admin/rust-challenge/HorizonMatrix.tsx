@@ -65,56 +65,71 @@ export function HorizonMatrix({
   }, [filteredDays]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sm:space-y-8">
       {/* Matrix Controls & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-          <Button
-            size="sm"
-            variant={filter === "all" ? "default" : "outline"}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl border border-border/60 bg-card/80 dark:bg-card/40 backdrop-blur-xl shadow-2xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <button
+            type="button"
             onClick={() => setFilter("all")}
-            className="h-7 text-xs font-mono px-3 rounded-lg cursor-pointer"
+            className={`h-7 px-3 rounded-lg text-xs font-mono font-medium cursor-pointer transition-colors whitespace-nowrap ${
+              filter === "all"
+                ? "bg-foreground text-background shadow-xs font-semibold"
+                : "border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
           >
             All (188)
-          </Button>
-          <Button
-            size="sm"
-            variant={filter === "incomplete" ? "default" : "outline"}
+          </button>
+          <button
+            type="button"
             onClick={() => setFilter("incomplete")}
-            className="h-7 text-xs font-mono px-3 rounded-lg cursor-pointer"
+            className={`h-7 px-3 rounded-lg text-xs font-mono font-medium cursor-pointer transition-colors whitespace-nowrap ${
+              filter === "incomplete"
+                ? "bg-foreground text-background shadow-xs font-semibold"
+                : "border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
           >
             Incomplete
-          </Button>
-          <Button
-            size="sm"
-            variant={filter === "active" ? "default" : "outline"}
+          </button>
+          <button
+            type="button"
             onClick={() => setFilter("active")}
-            className="h-7 text-xs font-mono px-3 rounded-lg cursor-pointer"
+            className={`h-7 px-3 rounded-lg text-xs font-mono font-medium cursor-pointer transition-colors whitespace-nowrap ${
+              filter === "active"
+                ? "bg-foreground text-background shadow-xs font-semibold"
+                : "border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
           >
             Active In Progress
-          </Button>
-          <Button
-            size="sm"
-            variant={filter === "completed" ? "default" : "outline"}
+          </button>
+          <button
+            type="button"
             onClick={() => setFilter("completed")}
-            className="h-7 text-xs font-mono px-3 rounded-lg cursor-pointer"
+            className={`h-7 px-3 rounded-lg text-xs font-mono font-medium cursor-pointer transition-colors whitespace-nowrap ${
+              filter === "completed"
+                ? "bg-foreground text-background shadow-xs font-semibold"
+                : "border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
           >
             Completed
-          </Button>
+          </button>
         </div>
 
         {/* Phase Quick Filters */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
           {[1, 2, 3, 4].map((p) => (
-            <Button
+            <button
               key={p}
-              size="sm"
-              variant={filter === `phase${p}` ? "secondary" : "ghost"}
+              type="button"
               onClick={() => setFilter(`phase${p}` as FilterOption)}
-              className="h-7 text-[11px] font-mono px-2 rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
+              className={`h-7 px-2.5 rounded-lg text-[11px] font-mono font-medium cursor-pointer transition-colors whitespace-nowrap ${
+                filter === `phase${p}`
+                  ? "bg-foreground/15 dark:bg-white/15 text-foreground font-semibold"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+              }`}
             >
-              Phase {p}
-            </Button>
+              Phase 0{p}
+            </button>
           ))}
         </div>
       </div>
@@ -124,14 +139,14 @@ export function HorizonMatrix({
         {groupedStructure.map(({ phase, weeks }) => (
           <div key={phase} className="space-y-4">
             {/* Phase Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-2">
+            <div className="flex items-center justify-between border-b border-border/40 dark:border-white/5 pb-2.5">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-orange-500" />
                 <h3 className="font-display font-bold text-sm tracking-tight text-foreground uppercase">
                   Phase 0{phase} — {PHASE_LABEL[phase] || "Mastery Track"}
                 </h3>
               </div>
-              <span className="font-mono text-xs text-muted-foreground">
+              <span className="font-mono text-xs text-muted-foreground font-medium">
                 {weeks.reduce((acc, [, wDays]) => acc + wDays.length, 0)} Days
               </span>
             </div>
@@ -141,13 +156,13 @@ export function HorizonMatrix({
               {weeks.map(([weekNum, weekDays]) => (
                 <div
                   key={weekNum}
-                  className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-xl p-4 space-y-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                  className="rounded-2xl border border-border/60 dark:border-border/40 bg-card/75 dark:bg-card/30 backdrop-blur-xl p-3.5 sm:p-4 space-y-3 shadow-2xs"
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-mono font-semibold text-foreground/90">
                       Week 0{weekNum} — {weekDays[0].week_focus}
                     </span>
-                    <Badge variant="outline" className="font-mono text-[10px] text-muted-foreground">
+                    <Badge variant="outline" className="font-mono text-[10px] text-muted-foreground font-medium">
                       {weekDays.filter((d) => d.completed).length}/{weekDays.length} Done
                     </Badge>
                   </div>
@@ -156,7 +171,6 @@ export function HorizonMatrix({
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
                     {weekDays.map((d) => {
                       const isSelected = d.day_number === selectedDayNumber;
-                      const stats = countDaySteps(d);
                       const active = isDayActive(d);
 
                       return (
@@ -164,12 +178,12 @@ export function HorizonMatrix({
                           key={d.day_number}
                           className={`relative rounded-xl border p-3 flex flex-col justify-between gap-2.5 transition-all duration-200 ${
                             isSelected
-                              ? "border-orange-500/70 bg-orange-500/10 shadow-[0_0_20px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/40"
+                              ? "border-orange-500 bg-orange-500/10 shadow-[0_0_20px_rgba(249,115,22,0.12)] ring-1 ring-orange-500/40"
                               : d.completed
-                                ? "border-emerald-500/30 bg-emerald-500/5 hover:border-emerald-500/50"
+                                ? "border-emerald-500/40 bg-emerald-500/10 hover:border-emerald-500/60"
                                 : active
-                                  ? "border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50"
-                                  : "border-border/40 bg-background/40 hover:border-border/70 hover:bg-background/60"
+                                  ? "border-amber-500/40 bg-amber-500/10 hover:border-amber-500/60"
+                                  : "border-border/80 bg-background/90 hover:border-border hover:bg-background"
                           }`}
                         >
                           <div className="flex items-center justify-between gap-1">
@@ -182,20 +196,20 @@ export function HorizonMatrix({
                               <span
                                 title="Systems Rust"
                                 className={`h-1.5 w-1.5 rounded-full ${
-                                  d.rust_completed || d.completed ? "bg-amber-400" : "bg-white/20"
+                                  d.rust_completed || d.completed ? "bg-amber-500" : "bg-foreground/15 dark:bg-white/20"
                                 }`}
                               />
                               <span
                                 title="DSA"
                                 className={`h-1.5 w-1.5 rounded-full ${
-                                  d.dsa_completed || d.completed ? "bg-sky-400" : "bg-white/20"
+                                  d.dsa_completed || d.completed ? "bg-sky-500" : "bg-foreground/15 dark:bg-white/20"
                                 }`}
                               />
                               {d.frontend_task && (
                                 <span
                                   title="Frontend"
                                   className={`h-1.5 w-1.5 rounded-full ${
-                                    d.frontend_completed || d.completed ? "bg-emerald-400" : "bg-white/20"
+                                    d.frontend_completed || d.completed ? "bg-emerald-500" : "bg-foreground/15 dark:bg-white/20"
                                   }`}
                                 />
                               )}
@@ -203,7 +217,7 @@ export function HorizonMatrix({
                                 <span
                                   title="System Design"
                                   className={`h-1.5 w-1.5 rounded-full ${
-                                    d.system_design_completed || d.completed ? "bg-purple-400" : "bg-white/20"
+                                    d.system_design_completed || d.completed ? "bg-purple-500" : "bg-foreground/15 dark:bg-white/20"
                                   }`}
                                 />
                               )}
@@ -214,11 +228,11 @@ export function HorizonMatrix({
                             {d.daily_task}
                           </p>
 
-                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/30">
+                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/30 dark:border-white/5">
                             <button
                               type="button"
                               onClick={() => onSelectDay(d.day_number)}
-                              className="font-mono text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-0.5 cursor-pointer"
+                              className="font-mono text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-0.5 cursor-pointer font-medium"
                             >
                               <span>Inspect</span>
                               <ChevronRight className="h-3 w-3" />
@@ -227,10 +241,10 @@ export function HorizonMatrix({
                             <button
                               type="button"
                               onClick={() => void onUpdate(d.day_number, { completed: !d.completed })}
-                              className={`h-6 px-2 rounded-md font-mono text-[10px] flex items-center gap-1 cursor-pointer transition-colors ${
+                              className={`h-6 px-2 rounded-md font-mono text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-colors ${
                                 d.completed
-                                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                                  : "bg-muted/40 hover:bg-muted text-muted-foreground border border-border/40"
+                                  ? "bg-emerald-600/20 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40"
+                                  : "bg-muted/50 hover:bg-muted text-muted-foreground border border-border/70"
                               }`}
                             >
                               {d.completed ? (
