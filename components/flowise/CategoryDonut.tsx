@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formatCurrency } from "@/lib/flowise/calculator";
 import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
+import { FlowiseIcon } from "./FlowiseIcon";
 
 interface CategorySlice {
   id: string;
@@ -78,9 +79,11 @@ const [hovered, setHovered] = useState<string | null>(null);
           <circle cx={cx} cy={cy} r={innerR - 2} fill="var(--bg)" />
           {activeSlice ? (
             <>
-              <text x={cx} y={cy - 6} textAnchor="middle" style={{ fontSize: 18, fill: "var(--ink)", fontFamily: "sans-serif" }}>{activeSlice.icon}</text>
-              <text x={cx} y={cy + 10} textAnchor="middle" style={{ fontSize: 9, fill: "var(--ink)", fontFamily: "monospace", fontWeight: 600 }}>
+              <text x={cx} y={cy - 2} textAnchor="middle" style={{ fontSize: 13, fill: "var(--ink)", fontFamily: "monospace", fontWeight: 700 }}>
                 {Math.round(activeSlice.pct * 100)}%
+              </text>
+              <text x={cx} y={cy + 10} textAnchor="middle" style={{ fontSize: 8, fill: "var(--ink-3)", fontFamily: "monospace" }}>
+                {activeSlice.name.slice(0, 10)}
               </text>
             </>
           ) : (
@@ -107,7 +110,10 @@ const [hovered, setHovered] = useState<string | null>(null);
             style={{ opacity: hovered && hovered !== s.id ? 0.4 : 1, transition: "opacity 0.15s" }}
           >
             <div className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} />
-            <span className="text-[11px] text-muted-foreground mr-auto truncate">{s.icon} {s.name}</span>
+            <span className="text-[11px] text-muted-foreground mr-auto truncate flex items-center gap-1.5">
+              <FlowiseIcon icon={s.icon} size={12} style={{ color: s.color }} />
+              {s.name}
+            </span>
             <span className="font-mono text-[10px] font-semibold text-(--ink) shrink-0">{(hidden ? "****" : formatCurrency(s.amount, "NGN", true))}</span>
             <span className="font-mono text-[9px] text-(--ink-4) w-7.5 text-right shrink-0">{Math.round(s.pct * 100)}%</span>
           </div>

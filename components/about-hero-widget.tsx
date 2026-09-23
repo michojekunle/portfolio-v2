@@ -170,7 +170,7 @@ export function AboutHeroWidget() {
               <div className="w-10 h-10 rounded-lg bg-(--rule) flex items-center justify-center relative overflow-hidden flex-shrink-0">
                 {liveTrack?.albumImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={liveTrack.albumImage} alt="" className="w-full h-full object-cover" />
+                  <img src={liveTrack.albumImage} alt={liveTrack.name ? `${liveTrack.name} by ${liveTrack.artist} album cover` : "Album cover"} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex gap-0.75 items-end h-4">
                     <div className="w-0.75 bg-(--v3-accent) rounded-full" style={{ height: "40%", animation: animate ? "music-bar 0.8s ease-in-out infinite" : "none" }} />

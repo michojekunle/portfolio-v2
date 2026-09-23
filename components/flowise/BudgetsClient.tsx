@@ -5,7 +5,8 @@ import { formatCurrency } from "@/lib/flowise/calculator";
 import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { SYSTEM_CATEGORIES } from "@/lib/flowise/types";
 import type { FwCategory } from "@/lib/flowise/types";
-import { Plus, X, Check, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+import { Plus, X, Check, ChevronLeft, ChevronRight, Pencil, BarChart2 } from "lucide-react";
+import { FlowiseIcon } from "./FlowiseIcon";
 
 const ACCENT = "#16A34A";
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -142,7 +143,9 @@ const [month, setMonth] = useState(initialMonth);
         <div className="text-center py-15 text-muted-foreground font-mono text-[12px]">Loading…</div>
       ) : budgets.length === 0 ? (
         <div className="rounded-xl py-15 text-center" style={{ border: "1px dashed var(--rule)" }}>
-          <div className="text-[36px] mb-3">📊</div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3 text-emerald-600 dark:text-emerald-400">
+            <BarChart2 size={24} />
+          </div>
           <div className="text-[15px] font-medium text-(--ink) mb-1.5">No budgets for {MONTHS[mon - 1]}</div>
           <div className="text-[13px] text-muted-foreground mb-5 max-w-[36ch] mx-auto">Set spending limits per category to stay in control of your money.</div>
           <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
@@ -159,7 +162,7 @@ const [month, setMonth] = useState(initialMonth);
             return (
               <BudgetBar
                 key={budget.category_id}
-                catIcon={cat?.icon ?? "📌"}
+                catIcon={cat?.icon ?? "tag"}
                 catName={cat?.name ?? budget.category_id}
                 catColor={cat?.color ?? "#6B7280"}
                 amount={budget.amount}
@@ -213,7 +216,9 @@ function BudgetBar({ catIcon, catName, catColor, amount, spent, pct, over, onEdi
     <div className="rounded-xl px-5 py-4 group" style={{ border: "1px solid var(--rule)", background: "var(--bg)" }}>
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2.5">
-          <span className="text-[18px]">{catIcon}</span>
+          <span className="w-8 h-8 rounded-lg flex items-center justify-center bg-muted/40" style={{ color: catColor }}>
+            <FlowiseIcon icon={catIcon} size={16} />
+          </span>
           <div>
             <div className="text-[14px] font-medium text-(--ink)">{catName}</div>
             <div className="font-mono text-[10px] text-(--ink-4)">

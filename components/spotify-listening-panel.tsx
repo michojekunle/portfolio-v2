@@ -232,6 +232,7 @@ export function SpotifyListeningPanel({ initialNowPlaying, initialTopTracks, ini
             <select
               value={range}
               onChange={(e) => setRange(e.target.value as SpotifyTimeRange)}
+              aria-label="Filter top tracks by timeframe"
               className="font-mono text-[10px] uppercase tracking-[0.08em] bg-transparent border border-(--rule) rounded-md px-2 py-1 text-muted-foreground focus:outline-none"
             >
               {(Object.keys(RANGE_LABEL) as SpotifyTimeRange[]).map((r) => (
@@ -250,7 +251,7 @@ export function SpotifyListeningPanel({ initialNowPlaying, initialTopTracks, ini
                 <span className="font-mono text-[10px] text-muted-foreground/60 w-4 shrink-0 text-right">{i + 1}</span>
                 {track.albumImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={track.albumImage} alt="" className="w-9 h-9 rounded object-cover shrink-0" />
+                  <img src={track.albumImage} alt={track.name ? `${track.name} by ${track.artist} album cover` : "Album cover"} loading="lazy" decoding="async" className="w-9 h-9 rounded object-cover shrink-0" />
                 ) : (
                   <div className="w-9 h-9 rounded bg-(--bg-2) border border-(--rule) shrink-0" />
                 )}

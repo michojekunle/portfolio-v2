@@ -5,6 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/journal/db";
 import { ChevronDown, ChevronRight, Calendar, X } from "lucide-react";
 import { ENERGY_LABELS, VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
+import { EnergyLevelIcons } from "./JournalIcons";
 import { createClient } from "@/lib/supabase/client";
 
 const DAYS_BACK = 7;
@@ -163,8 +164,9 @@ export function CanvasClient() {
                         </div>
                       )}
                       {entry!.energy_level && (
-                        <div className="font-mono text-[10px]" style={{ color: "var(--ink-3)" }}>
-                          {"⚡".repeat(entry!.energy_level)} {ENERGY_LABELS[entry!.energy_level]}
+                        <div className="font-mono text-[10px] flex items-center gap-1.5" style={{ color: "var(--ink-3)" }}>
+                          <EnergyLevelIcons level={entry!.energy_level} size={11} />
+                          <span>{ENERGY_LABELS[entry!.energy_level]}</span>
                         </div>
                       )}
                     </div>

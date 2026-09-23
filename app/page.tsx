@@ -13,25 +13,23 @@ export default function Home(): React.ReactElement {
 
       <AboutPreviewSection />
 
-      <div className="h-1 bg-[linear-gradient(90deg,transparent_0%,var(--v3-accent-soft)_20%,var(--v3-accent)_50%,var(--v3-accent-soft)_80%,transparent_100%)] opacity-60" aria-hidden="true" />
+      <div className="h-px bg-(--rule)" aria-hidden="true" />
 
       <ProjectsSection />
 
-      <div className="h-px bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
+      <div className="h-px bg-(--rule)" aria-hidden="true" />
 
       <CreatorSuiteSection />
 
-      <div className="h-1 bg-[linear-gradient(90deg,transparent_0%,var(--v3-accent-soft)_20%,var(--v3-accent)_50%,var(--v3-accent-soft)_80%,transparent_100%)] opacity-60" aria-hidden="true" />
-
-      <div className="h-px bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
+      <div className="h-px bg-(--rule)" aria-hidden="true" />
 
       <GitHubBentoSection />
 
-      <div className="h-px bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
+      <div className="h-px bg-(--rule)" aria-hidden="true" />
 
       <NowSection />
 
-      <div className="h-px bg-[linear-gradient(90deg,transparent_0%,var(--rule)_20%,var(--v3-accent)_50%,var(--rule)_80%,transparent_100%)]" aria-hidden="true" />
+      <div className="h-px bg-(--rule)" aria-hidden="true" />
 
       <BlogSection />
     </main>

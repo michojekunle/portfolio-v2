@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
-import { Home, Target, BookOpen, LogOut, Menu, X, Compass, CalendarDays } from "lucide-react";
+import { Home, Target, BookOpen, LogOut, Menu, X, Compass, CalendarDays, Flame } from "lucide-react";
 import { VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 
 const NAV_LINKS = [
@@ -117,7 +117,7 @@ function SidebarContent({
             className="px-3 py-2.5 rounded-[10px] flex items-center gap-2.5"
             style={{ background: VELA_ACCENT_SOFT }}
           >
-            <span className="text-[20px] leading-none select-none" aria-hidden="true">🔥</span>
+            <Flame className="w-5 h-5 shrink-0" style={{ color: VELA_ACCENT }} />
             <div>
               <div
                 className="font-display text-[20px] font-normal tracking-[-0.02em] fvs-text leading-none"
@@ -218,10 +218,10 @@ export function JournalSidebarNav({ userEmail, streakCount = 0 }: Props): React.
           </span>
           {streakCount > 0 && (
             <span
-              className="font-mono text-[9px] tracking-[0.08em] uppercase px-1.75 py-0.5 rounded-full ml-1"
+              className="font-mono text-[9px] tracking-[0.08em] uppercase px-1.75 py-0.5 rounded-full ml-1 inline-flex items-center gap-1"
               style={{ background: VELA_ACCENT_SOFT, color: VELA_ACCENT }}
             >
-              🔥 {streakCount}
+              <Flame size={10} /> {streakCount}
             </span>
           )}
         </div>

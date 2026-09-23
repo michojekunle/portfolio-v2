@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Chart, type ChartConfiguration } from "chart.js/auto";
-import { Clock, Send, CheckCircle2, Circle, Search, ArrowRight, LayoutDashboard, Plus, Briefcase, MessagesSquare } from "lucide-react";
+import { Clock, Send, CheckCircle2, Circle, Search, ArrowRight, LayoutDashboard, Plus, Briefcase, MessagesSquare, Cpu, Smartphone } from "lucide-react";
 import { GlassCard } from "@/components/admin/ui/glass-card";
 import { DAILY_GOAL, type JobApplication } from "./constants";
 
@@ -138,7 +138,7 @@ export function OverviewPanel({ apps }: { apps: JobApplication[] }): React.React
         <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
           <div className="flex items-center justify-between mb-4">
             <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
-              <span className="text-sm">🐦</span>
+              <Smartphone className="h-4 w-4 text-foreground/70" />
             </div>
           </div>
           <div>
@@ -150,7 +150,7 @@ export function OverviewPanel({ apps }: { apps: JobApplication[] }): React.React
         <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
           <div className="flex items-center justify-between mb-4">
             <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
-              <span className="text-sm">🦀</span>
+              <Cpu className="h-4 w-4 text-foreground/70" />
             </div>
           </div>
           <div>
@@ -162,7 +162,7 @@ export function OverviewPanel({ apps }: { apps: JobApplication[] }): React.React
         <GlassCard className="p-5 sm:p-6 flex flex-col justify-between" hoverEffect={false}>
           <div className="flex items-center justify-between mb-4">
             <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-border/40 flex items-center justify-center">
-              <span className="text-sm">💼</span>
+              <Briefcase className="h-4 w-4 text-foreground/70" />
             </div>
           </div>
           <div>
@@ -252,7 +252,7 @@ export function OverviewPanel({ apps }: { apps: JobApplication[] }): React.React
           <div className="text-right">
             <p className="text-[13px] font-semibold text-foreground/90">{stats.goalDone} / {DAILY_GOAL} applications</p>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              {stats.goalDone >= DAILY_GOAL ? "🎉 Goal smashed!" : `${DAILY_GOAL - stats.goalDone} more to target`}
+              {stats.goalDone >= DAILY_GOAL ? "Goal achieved!" : `${DAILY_GOAL - stats.goalDone} more to target`}
             </p>
           </div>
         </div>

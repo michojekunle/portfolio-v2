@@ -19,7 +19,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 7,
     duration_days: 7,
     difficulty: "easy",
-    icon: "🔥",
+    icon: "flame",
     reward_badge: "streak_7",
   },
   {
@@ -30,7 +30,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 1,
     duration_days: 7,
     difficulty: "easy",
-    icon: "📖",
+    icon: "book-open",
     reward_badge: "completionist_1",
   },
   {
@@ -41,7 +41,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 25,
     duration_days: 30,
     difficulty: "medium",
-    icon: "✏️",
+    icon: "pen-tool",
     reward_badge: "highlight_hero",
   },
   {
@@ -52,7 +52,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 500,
     duration_days: 30,
     difficulty: "medium",
-    icon: "⏱️",
+    icon: "timer",
   },
   {
     id: "thirty-day-streak",
@@ -62,7 +62,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 30,
     duration_days: 30,
     difficulty: "hard",
-    icon: "💎",
+    icon: "gem",
     reward_badge: "streak_30",
   },
   {
@@ -73,7 +73,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 5,
     duration_days: 30,
     difficulty: "hard",
-    icon: "🏆",
+    icon: "trophy",
     reward_badge: "completionist_10",
   },
   {
@@ -84,7 +84,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 2000,
     duration_days: 90,
     difficulty: "hard",
-    icon: "🌊",
+    icon: "waves",
   },
   {
     id: "speed-week",
@@ -94,7 +94,7 @@ export const PREBUILT_CHALLENGES: PrebuiltChallenge[] = [
     target: 500,
     duration_days: 7,
     difficulty: "hard",
-    icon: "⚡",
+    icon: "zap",
     reward_badge: "speed_demon",
   },
 ];

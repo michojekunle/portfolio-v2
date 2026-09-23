@@ -10,19 +10,33 @@ import {
   Sparkles,
   Loader2,
   Check,
+  Briefcase,
+  Laptop,
+  Store,
+  GraduationCap,
+  Shuffle,
+  PiggyBank,
+  CreditCard,
+  Search,
+  TrendingUp,
+  Calendar,
+  Shield,
+  Rocket,
+  type LucideIcon,
 } from "lucide-react";
 import { PERSONA_QUIZ } from "@/lib/flowise/persona";
 import { SYSTEM_CATEGORIES, CURRENCY_SYMBOLS, PERSONA_CONFIG } from "@/lib/flowise/types";
 import type { Currency, FinancialPersona, SuggestedBudget, SuggestedGoal } from "@/lib/flowise/types";
+import { FlowiseIcon } from "@/components/flowise/FlowiseIcon";
 
 const ACCENT = "#16A34A";
 
-const INCOME_TYPE_OPTIONS = [
-  { id: "salary", label: "Salaried employee", icon: "💼" },
-  { id: "freelance", label: "Freelancer / contractor", icon: "🧑‍💻" },
-  { id: "business", label: "Business owner", icon: "🏪" },
-  { id: "student", label: "Student / allowance", icon: "🎓" },
-  { id: "mixed", label: "A mix of the above", icon: "🔀" },
+const INCOME_TYPE_OPTIONS: { id: string; label: string; icon: LucideIcon }[] = [
+  { id: "salary", label: "Salaried employee", icon: Briefcase },
+  { id: "freelance", label: "Freelancer / contractor", icon: Laptop },
+  { id: "business", label: "Business owner", icon: Store },
+  { id: "student", label: "Student / allowance", icon: GraduationCap },
+  { id: "mixed", label: "A mix of the above", icon: Shuffle },
 ];
 
 const INCOME_RANGE_OPTIONS = [
@@ -33,12 +47,20 @@ const INCOME_RANGE_OPTIONS = [
   { id: "over_1_5m", label: "Over ₦1,500,000/month" },
 ];
 
-const GOAL_OPTIONS = [
-  { id: "save", label: "Save more money", icon: "🐷" },
-  { id: "debt", label: "Pay off debt", icon: "💳" },
-  { id: "track", label: "Understand where my money goes", icon: "🔍" },
-  { id: "wealth", label: "Build long-term wealth", icon: "📈" },
+const GOAL_OPTIONS: { id: string; label: string; icon: LucideIcon }[] = [
+  { id: "save", label: "Save more money", icon: PiggyBank },
+  { id: "debt", label: "Pay off debt", icon: CreditCard },
+  { id: "track", label: "Understand where my money goes", icon: Search },
+  { id: "wealth", label: "Build long-term wealth", icon: TrendingUp },
 ];
+
+const PERSONA_ICONS: Record<FinancialPersona, LucideIcon> = {
+  saver: PiggyBank,
+  spender: CreditCard,
+  planner: Calendar,
+  avoider: Shield,
+  hustler: Rocket,
+};
 
 const CURRENCY = "NGN" as Currency;
 
@@ -46,7 +68,7 @@ const CURRENCY = "NGN" as Currency;
 const INPUT_STEP_COUNT = 3 + PERSONA_QUIZ.length;
 
 type SelectableCardsProps = {
-  options: { id: string; label: string; icon?: string }[];
+  options: { id: string; label: string; icon?: LucideIcon }[];
   selected: string | null;
   onSelect: (id: string) => void;
 };
@@ -56,6 +78,7 @@ function SelectableCards({ options, selected, onSelect }: SelectableCardsProps):
     <div className="space-y-2.5 pt-2">
       {options.map((opt) => {
         const isSelected = selected === opt.id;
+        const Icon = opt.icon;
         return (
           <button
             key={opt.id}
@@ -67,7 +90,7 @@ function SelectableCards({ options, selected, onSelect }: SelectableCardsProps):
                 : { borderColor: "var(--rule)" }
             }
           >
-            {opt.icon && <span className="text-[18px]">{opt.icon}</span>}
+            {Icon && <Icon size={18} className="shrink-0 text-muted-foreground" />}
             <span className="text-[13px] font-semibold">{opt.label}</span>
           </button>
         );
@@ -293,8 +316,15 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
           {step === INPUT_STEP_COUNT && results && (
             <motion.div key="results" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} transition={{ duration: 0.2 }} className="space-y-5">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[22px]">{PERSONA_CONFIG[results.persona].icon}</span>
+                <div className="flex items-center gap-2.5 mb-2">
+                  {(() => {
+                    const PersonaIcon = PERSONA_ICONS[results.persona] ?? Sparkles;
+                    return (
+                      <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                        <PersonaIcon size={20} />
+                      </div>
+                    );
+                  })()}
                   <h1 className="text-[24px] max-[480px]:text-[20px] font-normal tracking-[-0.02em] leading-[1.2] m-0">
                     You're {PERSONA_CONFIG[results.persona].label}
                   </h1>
@@ -318,7 +348,8 @@ export default function FlowiseOnboardingPage(): React.ReactElement {
                         style={isSelected ? { borderColor: ACCENT, background: ACCENT + "10" } : { borderColor: "var(--rule)" }}
                       >
                         <span className="flex items-center gap-2 text-[13px] font-medium">
-                          <span>{cat?.icon}</span> {cat?.name ?? b.category_id}
+                          <FlowiseIcon icon={cat?.icon} size={15} style={{ color: cat?.color }} />
+                          {cat?.name ?? b.category_id}
                         </span>
                         <span className="flex items-center gap-2">
                           <span className="font-mono text-[11px] text-muted-foreground">

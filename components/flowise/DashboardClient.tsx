@@ -7,7 +7,8 @@ import { formatCurrency } from "@/lib/flowise/calculator";
 import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { TransactionForm } from "./TransactionForm";
 import { ReceiptScanner } from "./ReceiptScanner";
-import { TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, ChevronRight, Camera } from "lucide-react";
+import { TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, ChevronRight, Camera, Wallet } from "lucide-react";
+import { FlowiseIcon } from "./FlowiseIcon";
 import Link from "next/link";
 
 const ACCENT = "#16A34A";
@@ -352,10 +353,10 @@ function TransactionRow({
       style={{ borderBottom: last ? undefined : "1px solid var(--rule)" }}
     >
       <div
-        className="w-9 h-9 rounded-lg flex items-center justify-center text-[16px] shrink-0"
-        style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)" }}
+        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+        style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)", color: cat?.color ?? (isIncome ? "#16A34A" : "var(--ink)") }}
       >
-        {cat?.icon ?? (isIncome ? "💰" : "💸")}
+        <FlowiseIcon icon={cat?.icon ?? (isIncome ? "wallet" : "cash")} size={16} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-[14px] font-medium text-(--ink) truncate">{tx.description}</div>
@@ -371,8 +372,8 @@ function TransactionRow({
           {isIncome ? "+" : "−"}{hidden ? "****" : formatCurrency(Math.abs(tx.amount), tx.account?.currency ?? "NGN")}
         </div>
         {tx.account && (
-          <div className="font-mono text-[9px] text-(--ink-4) mt-0.25">
-            {tx.account.icon} {tx.account.name}
+          <div className="font-mono text-[9px] text-(--ink-4) mt-0.25 inline-flex items-center gap-1 justify-end">
+            <FlowiseIcon icon={tx.account.icon} size={10} /> {tx.account.name}
           </div>
         )}
       </div>
@@ -433,7 +434,9 @@ function EmptyState({
       className="rounded-xl px-6 py-10 text-center"
       style={{ border: "1px dashed var(--rule)" }}
     >
-      <div className="text-[32px] mb-3">💸</div>
+      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3 text-emerald-600 dark:text-emerald-400">
+        <Wallet size={24} />
+      </div>
       <div className="text-[15px] font-medium text-(--ink) mb-1.5">{title}</div>
       <div className="text-[13px] text-muted-foreground mb-5 max-w-[30ch] mx-auto leading-normal">{body}</div>
       {onAction ? (

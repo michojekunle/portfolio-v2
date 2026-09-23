@@ -9,8 +9,7 @@ import {
   VELA_ACCENT,
   VELA_ACCENT_SOFT,
 } from "@/lib/journal/types";
-
-const ICONS = ["🎯", "💡", "🚀", "📚", "💪", "🏆", "🌱", "✍️", "💰", "🎨", "🔬", "🤝"];
+import { ObjectiveIcon, OBJECTIVE_ICON_KEYS } from "@/components/journal/JournalIcons";
 
 export default function ObjectivesPage(): React.ReactElement {
   const [objectives, setObjectives] = useState<JoObjectiveWithMilestones[]>([]);
@@ -25,7 +24,7 @@ export default function ObjectivesPage(): React.ReactElement {
   const [targetDate, setTargetDate] = useState("");
   const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
   const [color, setColor] = useState<string>(OBJECTIVE_COLORS[0]);
-  const [icon, setIcon] = useState("🎯");
+  const [icon, setIcon] = useState("target");
 
   const loadObjectives = useCallback(async (): Promise<void> => {
     setFetchError(null);
@@ -76,7 +75,7 @@ export default function ObjectivesPage(): React.ReactElement {
       setTargetDate("");
       setPriority("medium");
       setColor(OBJECTIVE_COLORS[0]);
-      setIcon("🎯");
+      setIcon("target");
       setShowForm(false);
     } catch (err) {
       console.error("[objectives] create error:", err);
@@ -206,17 +205,18 @@ export default function ObjectivesPage(): React.ReactElement {
                 Icon
               </label>
               <div className="flex flex-wrap gap-1.5">
-                {ICONS.map((ic) => (
+                {OBJECTIVE_ICON_KEYS.map((ic) => (
                   <button
                     key={ic}
                     onClick={() => setIcon(ic)}
-                    className="w-8 h-8 text-[18px] rounded-md flex items-center justify-center border cursor-pointer transition-all"
+                    className="w-8 h-8 rounded-md flex items-center justify-center border cursor-pointer transition-all"
                     style={{
                       background: icon === ic ? VELA_ACCENT_SOFT : "var(--bg)",
                       borderColor: icon === ic ? VELA_ACCENT : "var(--rule)",
+                      color: icon === ic ? VELA_ACCENT : "var(--ink-2)",
                     }}
                   >
-                    {ic}
+                    <ObjectiveIcon icon={ic} size={16} />
                   </button>
                 ))}
               </div>

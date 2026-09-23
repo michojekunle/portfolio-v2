@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { CommandPaletteTrigger } from "@/components/command-palette";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { MoMark } from "@/lib/brand-mark";
 
@@ -149,12 +149,12 @@ export function Navbar(): React.ReactNode {
 
           <MagneticWrapper strength={15}>
             <button
-              className="w-9.5 h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] sm:w-9.5 sm:h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
               onClick={() => setTheme(isDark ? "light" : "dark")}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               suppressHydrationWarning
             >
-              {mounted ? (isDark ? "☾" : "☀") : "☀"}
+              {mounted ? (isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />) : <Sun className="w-4 h-4" />}
             </button>
           </MagneticWrapper>
 
@@ -171,7 +171,7 @@ export function Navbar(): React.ReactNode {
 
           <button
             ref={triggerRef}
-            className="hidden max-[820px]:flex items-center justify-center w-9.5 h-9.5 rounded-lg border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer transition-all duration-150 hover:border-muted-foreground hover:text-(--ink)"
+            className="hidden max-[820px]:flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-lg border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer transition-all duration-150 hover:border-muted-foreground hover:text-(--ink)"
             onClick={() => setIsOpen((v) => !v)}
             aria-expanded={isOpen}
             aria-controls="v3-mobile-menu"

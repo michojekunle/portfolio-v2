@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getRecentEntries } from "@/lib/journal/queries";
 import { VELA_ACCENT, VELA_ACCENT_SOFT } from "@/lib/journal/types";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { EnergyLevelIcons } from "@/components/journal/JournalIcons";
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-GB", {
@@ -57,10 +58,10 @@ export default async function HistoryPage(): Promise<React.ReactElement> {
       {entries.length === 0 ? (
         <div className="text-center py-20">
           <div
-            className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center text-[28px]"
+            className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center"
             style={{ background: VELA_ACCENT_SOFT }}
           >
-            📖
+            <BookOpen size={28} style={{ color: VELA_ACCENT }} />
           </div>
           <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text mb-2 text-(--ink)">
             No entries yet
@@ -128,7 +129,11 @@ export default async function HistoryPage(): Promise<React.ReactElement> {
                           {entry.accomplished.length > 0
                             ? `${entry.accomplished.length} done`
                             : "Nothing logged"}
-                          {entry.energy_level ? ` · ${"⚡".repeat(entry.energy_level)}` : ""}
+                          {entry.energy_level ? (
+                            <span className="inline-flex items-center gap-1 ml-1.5 align-middle">
+                              · <EnergyLevelIcons level={entry.energy_level} size={11} />
+                            </span>
+                          ) : null}
                         </div>
                       </div>
                       <ArrowRight size={14} style={{ color: "var(--ink-3)", flexShrink: 0 }} />

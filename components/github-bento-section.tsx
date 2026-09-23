@@ -1,7 +1,7 @@
 import { CASE_STUDIES } from "@/lib/case-studies"
 import { MagneticWrapper } from "./magnetic-wrapper"
 import { TiltCard } from "./tilt-card"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Star } from "lucide-react"
 
 interface PinnedRepo {
   name: string
@@ -117,7 +117,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
       aria-labelledby="bento-heading"
     >
       <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
-        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">03 — OSS</div>
+        <div className="font-mono text-[11px] tracking-[0.18em] text-secondary-foreground pt-4.5">04 — OPEN SOURCE</div>
         <div>
           <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Other notable <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
@@ -145,8 +145,8 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
               >
                 <div className="flex justify-between items-start mb-3">
                   <div className="font-display font-normal text-[24px] text-(--ink) leading-[1.1] fvs-text">{repo.name}</div>
-                  <span className="font-mono text-[11px] text-muted-foreground border border-(--rule) px-1.5 py-0.5 rounded" aria-label={`${repo.stars} stars`}>
-                    ★ {repo.stars}
+                  <span className="inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground border border-(--rule) px-1.5 py-0.5 rounded" aria-label={`${repo.stars} stars`}>
+                    <Star size={10} className="fill-amber-400 text-amber-400" /> {repo.stars}
                   </span>
                 </div>
 

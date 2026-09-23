@@ -5,10 +5,11 @@ import { formatCurrency } from "@/lib/flowise/calculator";
 import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import type { FwGoal } from "@/lib/flowise/types";
 import { FREE_GOAL_LIMIT } from "@/lib/flowise/types";
-import { Plus, X, Check, Trash2 } from "lucide-react";
+import { Plus, X, Check, Trash2, Target } from "lucide-react";
+import { FlowiseIcon } from "./FlowiseIcon";
 
 const ACCENT = "#16A34A";
-const GOAL_ICONS = ["🎯","🏠","💻","✈️","🎓","🚗","💍","🏋️","📱","🌍","💰","🏦"];
+const GOAL_ICONS = ["target", "home", "laptop", "plane", "grad", "car", "ring", "dumbbell", "phone", "world", "wallet", "bank"];
 const GOAL_COLORS = ["#16A34A","#3B82F6","#8B5CF6","#F97316","#EC4899","#0EA5E9","#F59E0B","#EF4444","#0D9488","#6366F1"];
 
 interface Props {
@@ -98,7 +99,9 @@ const [goals, setGoals] = useState(initialGoals);
       {/* Active goals */}
       {activeGoals.length === 0 ? (
         <div className="rounded-xl py-15 text-center" style={{ border: "1px dashed var(--rule)" }}>
-          <div className="text-[40px] mb-3">🎯</div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3 text-emerald-600 dark:text-emerald-400">
+            <Target size={24} />
+          </div>
           <div className="text-[15px] font-medium text-(--ink) mb-1.5">No savings goals yet</div>
           <div className="text-[13px] text-muted-foreground mb-5 max-w-[36ch] mx-auto">Emergency fund, new laptop, travel — name it, set a target, track progress.</div>
           <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
@@ -124,16 +127,18 @@ const [goals, setGoals] = useState(initialGoals);
       {/* Completed goals */}
       {completedGoals.length > 0 && (
         <div className="mt-12">
-          <h2 className="font-mono text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-4">Completed ✓</h2>
+          <h2 className="font-mono text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-4">Completed</h2>
           <div className="space-y-2">
             {completedGoals.map((goal) => (
               <div key={goal.id} className="flex items-center gap-3 rounded-[10px] px-4 py-3 opacity-60" style={{ border: "1px solid var(--rule)" }}>
-                <span className="text-[18px]">{goal.icon}</span>
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center bg-muted/50">
+                  <FlowiseIcon icon={goal.icon} size={16} />
+                </span>
                 <div className="flex-1 min-w-0">
                   <div className="text-[14px] font-medium text-(--ink)">{goal.name}</div>
                   <div className="font-mono text-[10px] text-muted-foreground">{(hidden ? "****" : formatCurrency(goal.target_amount, "NGN"))} saved</div>
                 </div>
-                <span className="font-mono text-[10px] text-[#16A34A]">✓ Done</span>
+                <span className="font-mono text-[10px] text-[#16A34A] inline-flex items-center gap-1"><Check size={11} /> Done</span>
                 <button onClick={() => handleDelete(goal.id)} className="w-6 h-6 flex items-center justify-center border-none bg-transparent cursor-pointer text-(--ink-4) hover:text-[#DC2626]">
                   <Trash2 size={12} />
                 </button>
@@ -192,8 +197,8 @@ function GoalCard({ goal, addingAmount, onAddAmount, onSaveProgress, onComplete,
     <div className="rounded-2xl px-6 py-5" style={{ border: "1px solid var(--rule)", background: "var(--bg-2)" }}>
       <div className="flex items-start justify-between mb-5">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[20px]" style={{ background: `${goal.color}15` }}>
-            {goal.icon}
+          <div className="w-10 h-10 rounded-[10px] flex items-center justify-center" style={{ background: `${goal.color}15`, color: goal.color }}>
+            <FlowiseIcon icon={goal.icon} size={20} />
           </div>
           <div>
             <div className="text-[15px] font-semibold text-(--ink)">{goal.name}</div>
@@ -344,7 +349,20 @@ function GoalFormModal({ onCreated, onClose }: { onCreated: (g: FwGoal) => void;
               <label className="block font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground mb-2">Icon</label>
               <div className="flex flex-wrap gap-1.5">
                 {GOAL_ICONS.map((ic) => (
-                  <button key={ic} type="button" onClick={() => setIcon(ic)} className="w-8 h-8 rounded-md text-[16px] border-none cursor-pointer flex items-center justify-center transition-all" style={{ background: icon === ic ? `${color}20` : "var(--bg-2)", outline: icon === ic ? `2px solid ${color}` : undefined, outlineOffset: "1px" }}>{ic}</button>
+                  <button
+                    key={ic}
+                    type="button"
+                    onClick={() => setIcon(ic)}
+                    className="w-8 h-8 rounded-md border-none cursor-pointer flex items-center justify-center transition-all"
+                    style={{
+                      background: icon === ic ? `${color}20` : "var(--bg-2)",
+                      color: icon === ic ? color : "var(--ink-3)",
+                      outline: icon === ic ? `2px solid ${color}` : undefined,
+                      outlineOffset: "1px",
+                    }}
+                  >
+                    <FlowiseIcon icon={ic} size={16} />
+                  </button>
                 ))}
               </div>
             </div>

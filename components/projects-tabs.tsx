@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Github, ExternalLink } from "lucide-react"
+import { Github, ExternalLink, Star } from "lucide-react"
 import Link from "next/link"
 import { MagneticWrapper } from "./magnetic-wrapper"
 
@@ -127,8 +127,8 @@ export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElemen
                       </Badge>
                     )}
                     {project.stars != null && project.stars > 0 && (
-                      <span className="text-xs text-muted-foreground flex items-center gap-0.5">
-                        ★ {project.stars}
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Star size={11} className="fill-amber-400 text-amber-400" /> {project.stars}
                       </span>
                     )}
                   </div>

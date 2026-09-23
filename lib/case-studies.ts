@@ -142,7 +142,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { n: "10", l: "Templates", d: "Covering Next.js, Vite, Clarity contracts (FT/NFT/custom), and test harnesses." },
       { n: "40+", l: "Week-1 installs", d: "Organic. No marketing. Submitted to the Stacks ecosystem directory." },
       { n: "100%", l: "CI coverage", d: "Every template passes its own tests on every commit." },
-      { n: "4.9★", l: "npm rating", d: "Among the few packages in the Stacks ecosystem with reviews." },
+      { n: "4.9/5", l: "npm rating", d: "Among the few packages in the Stacks ecosystem with reviews." },
     ],
     learned:
       "Developer tools are products, not utilities. The prompts, error messages, and README matter as much as the code. I spent 30% of the time on the CLI UX — copy, colors, success screens. That's the part people screenshot.",

@@ -1365,8 +1365,8 @@ function BookCard({ book, onEdit, onSummary }: { book: ChBookWithStats; onEdit: 
           {/* Mini stats */}
           <div className="flex items-center gap-2.5 mt-2 pt-2 border-t border-(--rule)">
             {book.highlight_count > 0 && (
-              <span className="font-mono text-[8px] text-muted-foreground">
-                {book.highlight_count} ✦
+              <span className="font-mono text-[8px] text-muted-foreground inline-flex items-center gap-0.5">
+                {book.highlight_count} <Sparkles size={9} />
               </span>
             )}
             {book.note_count > 0 && (

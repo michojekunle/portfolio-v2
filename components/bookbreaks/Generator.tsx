@@ -20,6 +20,7 @@ import {
   Save,
   RefreshCw,
   ExternalLink,
+  Check,
 } from "lucide-react";
 
 const CONTENT_TYPES: ContentType[] = [
@@ -447,7 +448,7 @@ export function BBGenerator({
                 />
                 <details className="mt-5">
                   <summary className="font-mono text-[10px] tracking-[0.12em] uppercase cursor-pointer text-muted-foreground hover:text-(--ink) transition-colors">
-                    View raw slide text ▾
+                    View raw slide text
                   </summary>
                   <pre className="whitespace-pre-wrap text-[12px] leading-[1.7] font-mono mt-3 p-4 rounded-lg text-(--ink) bg-(--bg) border border-(--rule) overflow-x-auto">
                     {generated}
@@ -489,8 +490,8 @@ export function BBGenerator({
                 <GenActionBtn
                   onClick={handleSave}
                   disabled={saving || saved}
-                  icon={<Save size={12} />}
-                  label={saved ? "✓ Saved" : saving ? "Saving…" : "Save to Hub"}
+                  icon={saved ? <Check size={12} /> : <Save size={12} />}
+                  label={saved ? "Saved" : saving ? "Saving…" : "Save to Hub"}
                   primary={!saved}
                 />
                 <GenActionBtn
@@ -518,8 +519,8 @@ export function BBGenerator({
               background: "var(--bg-2)",
             }}
           >
-            <div className="text-[40px] mb-4 text-(--v3-accent) opacity-50">
-              ✦
+            <div className="mb-4 text-(--v3-accent) opacity-50 flex items-center justify-center">
+              <Sparkles size={36} />
             </div>
             <p className="font-mono text-[12px] uppercase tracking-[0.12em] mb-2 text-muted-foreground">
               Ready to generate

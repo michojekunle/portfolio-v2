@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { AnimatedCounter } from "./animated-counter"
 import { MagneticWrapper } from "./magnetic-wrapper"
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Quote } from "lucide-react"
 
 // We define a loose interface that matches the Case Study returned from lib
 interface CaseStudyProps {
@@ -192,9 +192,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
             transition={{ duration: 0.8 }}
             className="my-20 p-16 max-[720px]:p-8 bg-(--ink) text-(--bg) rounded-3xl relative overflow-hidden"
           >
-            <div className="font-display text-[120px] leading-[0.5] text-(--bg-2) opacity-20 absolute top-10 left-6">
-              ❝
-            </div>
+            <Quote className="w-20 h-20 text-(--bg-2) opacity-10 absolute top-8 left-6" />
             <h2 className="font-display font-light text-[24px] text-muted-foreground mb-6 tracking-wider uppercase border-b border-(--bg-2)/20 pb-6 relative z-10">
               What I learned
             </h2>

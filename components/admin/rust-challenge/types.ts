@@ -62,7 +62,7 @@ export function computeStreak(days: RustChallengeDay[]): number {
 }
 
 export function generateDayTweet(day: RustChallengeDay, totalDays: number = 188): string {
-  const parts = [`Day ${day.day_number}/${totalDays} 🦀`];
+  const parts = [`Day ${day.day_number}/${totalDays}`];
   if (day.daily_task) parts.push(`• Systems: ${day.daily_task.split("*(Resource:")[0].trim()}`);
   if (day.frontend_task) parts.push(`• Frontend: ${day.frontend_task.split("*(Resource:")[0].trim()}`);
   if (day.system_design_task) parts.push(`• System Design: ${day.system_design_task.split("*(Resource:")[0].trim()}`);

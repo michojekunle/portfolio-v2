@@ -70,6 +70,7 @@ export function ProjectsSection(): React.ReactElement {
                 href={`/work/${p.slug}`}
                 className={`group grid grid-cols-[24px_1fr_auto_auto_24px] gap-4 items-center p-[24px_20px] rounded-xl border border-transparent no-underline transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] cursor-pointer bg-transparent text-(--ink) ${hoveredIdx === i ? "bg-(--bg-2) border-(--rule) opacity-100" : "opacity-40"}`}
                 onMouseEnter={() => setHoveredIdx(i)}
+                onFocus={() => setHoveredIdx(i)}
                 aria-label={`View case study: ${p.name}`}
               >
                 <span className="font-mono text-[10px] text-muted-foreground">{p.idx}</span>
@@ -92,7 +93,7 @@ export function ProjectsSection(): React.ReactElement {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
           className="sticky top-30 aspect-[4/3] rounded-2xl overflow-hidden bg-(--bg-2) border border-(--rule)" 
-          aria-hidden="true"
+          aria-label="Project visual preview"
         >
           {FEATURED_PROJECTS.map((p, i) => (
             <div key={p.slug} className={`absolute inset-0 transition-opacity duration-400 ease-in flex flex-col ${hoveredIdx === i ? "opacity-100 pointer-events-auto z-[2]" : "opacity-0 pointer-events-none"}`}>

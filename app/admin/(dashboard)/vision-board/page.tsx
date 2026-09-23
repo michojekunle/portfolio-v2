@@ -53,7 +53,7 @@ const defaultCards: CardData[] = [
     rotate: -4,
     title: "Basecamp",
     subtitle: "Geographical Strategy",
-    content: "📍 Lagos\nOnike/Alagomeji: High networking.\nGbagada: Quiet coding spot.",
+    content: "Lagos\nOnike/Alagomeji: High networking.\nGbagada: Quiet coding spot.",
     color: "#10b981",
     iconName: "Compass",
   },

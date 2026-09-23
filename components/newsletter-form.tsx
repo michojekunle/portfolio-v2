@@ -46,7 +46,7 @@ export function NewsletterForm(): React.ReactElement {
           error.code === "23505" ||
           error.message.toLowerCase().includes("duplicate")
         ) {
-          toast.success("You're already subscribed! 🎉");
+          toast.success("You're already subscribed!");
           setStatus('idle');
           setEmail("")
           return;
@@ -77,6 +77,7 @@ export function NewsletterForm(): React.ReactElement {
       <Input
         type="email"
         name="email"
+        aria-label="Your email address"
         placeholder="your@email.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}

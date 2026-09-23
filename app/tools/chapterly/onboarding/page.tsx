@@ -13,22 +13,30 @@ import {
   Sparkles,
   Loader2,
   Check,
+  Zap,
+  Coins,
+  Brain,
+  Briefcase,
+  BookOpen,
+  Rocket,
+  Wrench,
+  Lightbulb,
 } from "lucide-react";
 
 const ACCENT = "var(--ch-accent)";
 
-const INTEREST_OPTIONS = [
-  { id: "productivity", label: "Productivity & Habits", icon: "⚡" },
-  { id: "wealth", label: "Wealth & Finance", icon: "💰" },
-  { id: "psychology", label: "Psychology & Success", icon: "🧠" },
-  { id: "leadership", label: "Leadership & Careers", icon: "👔" },
+const INTEREST_OPTIONS: { id: string; label: string; icon: React.ReactElement }[] = [
+  { id: "productivity", label: "Productivity & Habits", icon: <Zap size={22} /> },
+  { id: "wealth", label: "Wealth & Finance", icon: <Coins size={22} /> },
+  { id: "psychology", label: "Psychology & Success", icon: <Brain size={22} /> },
+  { id: "leadership", label: "Leadership & Careers", icon: <Briefcase size={22} /> },
 ];
 
-const GOAL_OPTIONS = [
-  { id: "habit", label: "Build a solid reading habit", icon: "📚" },
-  { id: "career", label: "Accelerate my career/business", icon: "🚀" },
-  { id: "mind", label: "Broaden my perspective & mind", icon: "✨" },
-  { id: "skills", label: "Learn concrete practical skills", icon: "🛠️" },
+const GOAL_OPTIONS: { id: string; label: string; icon: React.ReactElement }[] = [
+  { id: "habit", label: "Build a solid reading habit", icon: <BookOpen size={18} /> },
+  { id: "career", label: "Accelerate my career/business", icon: <Rocket size={18} /> },
+  { id: "mind", label: "Broaden my perspective & mind", icon: <Sparkles size={18} /> },
+  { id: "skills", label: "Learn concrete practical skills", icon: <Wrench size={18} /> },
 ];
 
 const LEVEL_OPTIONS = [
@@ -161,7 +169,9 @@ export default function OnboardingQuizPage(): React.ReactElement {
                           : { borderColor: "var(--rule)" }
                       }
                     >
-                      <span className="text-[24px]">{opt.icon}</span>
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-(--bg-3) text-inherit mb-1">
+                        {opt.icon}
+                      </div>
                       <span className="font-mono text-[10px] tracking-wider uppercase font-semibold">
                         {opt.label}
                       </span>
@@ -204,7 +214,7 @@ export default function OnboardingQuizPage(): React.ReactElement {
                           : { borderColor: "var(--rule)" }
                       }
                     >
-                      <span className="text-[18px]">{opt.icon}</span>
+                      <span className="shrink-0 flex items-center justify-center text-inherit">{opt.icon}</span>
                       <span className="text-[13px] font-semibold">{opt.label}</span>
                     </button>
                   );
@@ -301,8 +311,9 @@ export default function OnboardingQuizPage(): React.ReactElement {
                     );
                   })}
                 </div>
-                <div className="text-center font-mono text-[11px] text-muted-foreground">
-                  💡 A {dailyMinutes}-minute daily reading habit accumulates to about {Math.round((dailyMinutes * 365) / 60)} hours of learning in a year!
+                <div className="flex items-center justify-center gap-1.5 font-mono text-[11px] text-muted-foreground text-center">
+                  <Lightbulb size={13} className="text-amber-500 shrink-0" />
+                  <span>A {dailyMinutes}-minute daily reading habit accumulates to about {Math.round((dailyMinutes * 365) / 60)} hours of learning in a year!</span>
                 </div>
               </div>
             </motion.div>
@@ -346,8 +357,9 @@ export default function OnboardingQuizPage(): React.ReactElement {
                     );
                   })}
                 </div>
-                <div className="text-center font-mono text-[11px] text-muted-foreground">
-                  📚 This is roughly {Math.round((annualBooks / 12) * 10) / 10} book summaries per month.
+                <div className="flex items-center justify-center gap-1.5 font-mono text-[11px] text-muted-foreground text-center">
+                  <BookOpen size={13} className="text-indigo-400 shrink-0" />
+                  <span>This is roughly {Math.round((annualBooks / 12) * 10) / 10} book summaries per month.</span>
                 </div>
               </div>
             </motion.div>

@@ -70,6 +70,12 @@ interface VocabEntry {
 
 type ThemeMode = "cowrywise" | "light" | "noir";
 
+function ChallengeTypeIcon({ type, size = 14 }: { type: string; size?: number }): React.ReactElement {
+  if (type === "speaking") return <Mic size={size} />;
+  if (type === "writing") return <PenTool size={size} />;
+  return <BookOpen size={size} />;
+}
+
 // ── Complete High-Contrast Theme System ───────────────────────────────────────
 const THEMES: Record<
   ThemeMode,
@@ -465,7 +471,7 @@ async function downloadUniversalMedia(mediaUrl: string, isVideo: boolean, defaul
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
       toast.dismiss();
-      toast.success("Downloaded Universal MP4 Video! 🎥");
+      toast.success("Downloaded Universal MP4 Video!");
       return;
     }
 
@@ -481,7 +487,7 @@ async function downloadUniversalMedia(mediaUrl: string, isVideo: boolean, defaul
       document.body.removeChild(a);
       URL.revokeObjectURL(wavUrl);
       toast.dismiss();
-      toast.success("Downloaded Universal WAV Audio! 🎧");
+      toast.success("Downloaded Universal WAV Audio!");
       return;
     } catch (convErr) {
       console.warn("WAV conversion fallback to original blob:", convErr);
@@ -495,7 +501,7 @@ async function downloadUniversalMedia(mediaUrl: string, isVideo: boolean, defaul
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
       toast.dismiss();
-      toast.success("Downloaded Universal MP3 Audio! 🎧");
+      toast.success("Downloaded Universal MP3 Audio!");
     }
   } catch (err) {
     console.error("Download error:", err);
@@ -614,7 +620,7 @@ function AuthModal({
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("Signed in successfully! 🇫🇷");
+        toast.success("Signed in successfully!");
         onClose();
       }
     } catch (err: unknown) {
@@ -765,7 +771,7 @@ function ReminderTimeSettings({
         "21:00": "9:00 PM",
         "22:00": "10:00 PM",
       };
-      toast.success(`⏰ Daily reminder scheduled for ${timeLabels[newTime] || newTime}`);
+      toast.success(`Daily reminder scheduled for ${timeLabels[newTime] || newTime}`);
     } catch {
       toast.error("Could not save custom reminder time.");
     } finally {
@@ -876,7 +882,7 @@ function VocabDetailModal({
       const data = (await res.json()) as { entry: VocabEntry };
       onSave(data.entry);
       setIsEditing(false);
-      toast.success("Flashcard updated! 📝");
+      toast.success("Flashcard updated!");
     } catch {
       toast.error("Failed to update flashcard. Try again.");
     } finally {
@@ -1102,7 +1108,7 @@ function StreakCountdown({ isCompleted, theme }: { isCompleted: boolean; theme: 
         }}
       >
         <Check className="w-3.5 h-3.5 shrink-0" />
-        <span>Streak safe for today! 🎉</span>
+        <span>Streak safe for today!</span>
       </div>
     );
   }
@@ -1117,7 +1123,7 @@ function StreakCountdown({ isCompleted, theme }: { isCompleted: boolean; theme: 
       }}
     >
       <Clock className="w-3.5 h-3.5 shrink-0" />
-      <span>{timeLeft} left to save your streak! 🔥</span>
+      <span>{timeLeft} left to save your streak!</span>
     </div>
   );
 }
@@ -1611,7 +1617,7 @@ function InteractiveTargetPassage({
                           }),
                         });
                         if (res.ok) {
-                          toast.success(`Saved "${clean}" to Vocab Vault! 🇫🇷`);
+                          toast.success(`Saved "${clean}" to Vocab Vault!`);
                         } else {
                           toast.info(`Please sign in to save "${clean}" to your Vocab Vault.`);
                         }
@@ -1628,16 +1634,17 @@ function InteractiveTargetPassage({
                   <button
                     type="button"
                     onClick={() => setSelectedWord(null)}
-                    className="p-1.5 rounded-xl text-xs font-bold hover:opacity-70 cursor-pointer"
+                    className="p-1.5 rounded-xl text-xs font-bold hover:opacity-70 cursor-pointer flex items-center justify-center"
                     style={{ color: theme.cardSubtext }}
+                    aria-label="Close"
                   >
-                    ✕
+                    <X size={14} />
                   </button>
                 </div>
               </div>
 
               <div className="text-xs font-medium italic flex items-start gap-1.5" style={{ color: theme.cardSubtext }}>
-                <span className="text-blue-500 font-bold shrink-0">💡 Note:</span>
+                <span className="text-blue-500 font-bold shrink-0">Note:</span>
                 <span className="leading-relaxed">{details.note}</span>
               </div>
             </motion.div>
@@ -2240,7 +2247,7 @@ function ChallengeTab({
       if (!res.ok) throw new Error("Submission failed");
       const data = (await res.json()) as { ok: boolean; usedFreeze?: boolean; streak: Streak };
       if (data.usedFreeze) {
-        toast.info("❄️ A Streak Freeze protected your streak!");
+        toast.info("A Streak Freeze protected your streak!");
       }
       onComplete(data.streak);
     } catch (err) {
@@ -2573,7 +2580,7 @@ function VocabTab({
       setEnglishMeaning("");
       setNotes("");
       setShowForm(false);
-      toast.success("Saved to Vocab Vault! 🇫🇷");
+      toast.success("Saved to Vocab Vault!");
     } catch {
       toast.error("Failed to save entry. Try again.");
     } finally {
@@ -2921,7 +2928,7 @@ function NotificationButton({
 
       setStatus("granted");
       onSubscribed();
-      toast.success("Daily Web Push active! Reminders sent at your scheduled time 🔔");
+      toast.success("Daily Web Push active! Reminders sent at your scheduled time.");
     } catch (err: unknown) {
       console.error("[french/webpush]", err);
       setStatus("idle");
@@ -3121,7 +3128,7 @@ export default function FrenchPage() {
         setTodayChallenges(data.challenges);
         setActiveChallenge(data.challenge);
         setGenerationCount(data.count);
-        toast.success(`✨ Fresh Prompt #${data.count} Generated!`);
+        toast.success(`Fresh Prompt #${data.count} Generated!`);
       } else if (data.error) {
         toast.info(data.error);
       }
@@ -3139,7 +3146,7 @@ export default function FrenchPage() {
     }
     setCompletedToday(true);
     setShowConfetti(true);
-    toast.success(`🔥 ${newStreak.current_streak} Day Streak Unlocked!`);
+    toast.success(`${newStreak.current_streak} Day Streak Unlocked!`);
     setTimeout(() => setShowConfetti(false), 3500);
   };
 
@@ -3423,20 +3430,22 @@ export default function FrenchPage() {
                       {todayChallenges.map((ch, idx) => {
                         const isActive = activeChallenge?.id === ch.id;
                         const isDone = completedIds.includes(ch.id);
-                        const typeEmoji = ch.type === "speaking" ? "🗣️" : ch.type === "writing" ? "✍️" : "📖";
                         return (
                           <button
                             key={ch.id}
                             type="button"
                             onClick={() => handleSelectDrill(ch)}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer shrink-0 border"
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 border"
                             style={{
                               backgroundColor: isActive ? theme.primaryBtnBg : theme.secondaryBtnBg,
                               color: isActive ? theme.primaryBtnText : theme.cardTitle,
                               borderColor: isActive ? theme.primaryBtnBg : theme.cardBorder,
                             }}
                           >
-                            <span>{typeEmoji} #{idx + 1}</span>
+                            <span className="flex items-center gap-1">
+                              <ChallengeTypeIcon type={ch.type} size={12} />
+                              <span>#{idx + 1}</span>
+                            </span>
                             {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500" />}
                           </button>
                         );
@@ -3508,7 +3517,6 @@ export default function FrenchPage() {
                           {todayChallenges.map((ch, idx) => {
                             const isActive = activeChallenge?.id === ch.id;
                             const isDone = completedIds.includes(ch.id);
-                            const typeEmoji = ch.type === "speaking" ? "🗣️" : ch.type === "writing" ? "✍️" : "📖";
                             const typeLabel = ch.type === "speaking" ? "Oral Practice" : ch.type === "writing" ? "Composition" : "Elocution";
                             return (
                               <button
@@ -3523,7 +3531,15 @@ export default function FrenchPage() {
                                 }}
                               >
                                 <div className="flex items-center gap-2.5 min-w-0">
-                                  <span className="text-base shrink-0">{typeEmoji}</span>
+                                  <div
+                                    className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                                    style={{
+                                      backgroundColor: isActive ? "rgba(255,255,255,0.2)" : theme.secondaryBtnBg,
+                                      color: isActive ? theme.primaryBtnText : theme.primaryBtnBg,
+                                    }}
+                                  >
+                                    <ChallengeTypeIcon type={ch.type} size={15} />
+                                  </div>
                                   <div className="min-w-0">
                                     <span className="text-xs font-bold block truncate">
                                       Drill #{idx + 1} • {typeLabel}

@@ -10,7 +10,7 @@ const CreateSchema = z.object({
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   linked_account_id: z.string().uuid().nullable().optional(),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#16A34A"),
-  icon: z.string().max(4).default("🎯"),
+  icon: z.string().max(30).default("target"),
 });
 
 const UpdateSchema = CreateSchema.partial().extend({

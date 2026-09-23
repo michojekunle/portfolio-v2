@@ -11,7 +11,7 @@ const CreateSchema = z.object({
   currency: z.enum(["NGN", "USD", "GBP", "EUR", "GHS", "KES"]).default("NGN"),
   starting_balance: z.number().default(0),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#6B7280"),
-  icon: z.string().max(4).default("🏦"),
+  icon: z.string().max(30).default("bank"),
 });
 
 const UpdateSchema = CreateSchema.partial().extend({

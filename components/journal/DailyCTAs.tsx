@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Target, BookOpen, Sunrise } from "lucide-react";
 import { VELA_ACCENT, VELA_ACCENT_SOFT, ENERGY_LABELS } from "@/lib/journal/types";
 import type { JoEntry } from "@/lib/journal/types";
+import { EnergyLevelIcons } from "./JournalIcons";
 
 interface Props {
   date: string;
@@ -141,8 +142,9 @@ export function DailyCTAs({ date, todayEntry, tomorrow, tomorrowEntry }: Props):
                         {accomplishedCount} accomplished
                       </div>
                       {energyLevel && (
-                        <div className="font-mono text-[11px] mt-0.75" style={{ color: "rgba(22,163,74,0.6)" }}>
-                          {"⚡".repeat(energyLevel)} {ENERGY_LABELS[energyLevel]}
+                        <div className="font-mono text-[11px] mt-0.75 flex items-center gap-1.5" style={{ color: "rgba(22,163,74,0.6)" }}>
+                          <EnergyLevelIcons level={energyLevel} size={11} />
+                          <span>{ENERGY_LABELS[energyLevel]}</span>
                         </div>
                       )}
                     </div>

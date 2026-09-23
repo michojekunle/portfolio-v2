@@ -14,7 +14,46 @@ import {
   Loader2,
   X,
   Zap,
+  PenTool,
+  Timer,
+  Gem,
+  Waves,
 } from "lucide-react";
+
+function ChallengeIcon({ icon, size = 20 }: { icon?: string; size?: number }) {
+  switch (icon) {
+    case "flame":
+    case "\uD83D\uDD25":
+      return <Flame size={size} />;
+    case "book-open":
+    case "book":
+    case "\uD83D\uDCD6":
+      return <BookOpen size={size} />;
+    case "pen-tool":
+    case "\u270F\uFE0F":
+    case "\u270F":
+      return <PenTool size={size} />;
+    case "timer":
+    case "\u23F1\uFE0F":
+    case "\u23F1":
+      return <Timer size={size} />;
+    case "gem":
+    case "\uD83D\uDC8E":
+      return <Gem size={size} />;
+    case "trophy":
+    case "\uD83C\uDFC6":
+      return <Trophy size={size} />;
+    case "waves":
+    case "wave":
+    case "\uD83C\uDF0A":
+      return <Waves size={size} />;
+    case "zap":
+    case "\u26A1":
+      return <Zap size={size} />;
+    default:
+      return <Trophy size={size} />;
+  }
+}
 import type { PrebuiltChallenge } from "@/lib/chapterly/challenges";
 import { PREBUILT_CHALLENGES, DIFFICULTY_STYLES } from "@/lib/chapterly/challenges";
 
@@ -229,7 +268,9 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
               >
                 <div className="flex items-start justify-between gap-2.5 mb-3.5">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-[22px]" aria-hidden="true">{ch.icon}</span>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-(--bg-3) text-(--ink) shrink-0">
+                      <ChallengeIcon icon={ch.icon} size={18} />
+                    </div>
                     <div>
                       <div className="font-semibold text-[14px] text-(--ink) leading-[1.2]">{ch.title}</div>
                       <div
@@ -319,8 +360,12 @@ export function ChallengesClient({ prebuilt, customChallenges, entries }: Props)
             return (
               <div key={entry.id} className="rounded-2xl border border-(--rule) bg-(--bg-2) p-5.5">
                 <div className="flex items-start justify-between gap-2.5 mb-3">
-                  <div>
-                    {"icon" in ch && <span className="text-[18px] mr-2" aria-hidden="true">{ch.icon}</span>}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {"icon" in ch && (
+                      <span className="text-(--ink) inline-flex items-center shrink-0">
+                        <ChallengeIcon icon={(ch as PrebuiltChallenge).icon} size={16} />
+                      </span>
+                    )}
                     <span className="font-semibold text-[14px] text-(--ink)">{ch.title}</span>
                     <span
                       className="font-mono text-[9px] tracking-widest uppercase ml-2.5 px-1.75 py-0.5 rounded-full inline-block"

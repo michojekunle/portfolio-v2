@@ -112,8 +112,8 @@ export function ApplicationFormDialog({ open, onOpenChange, prefill, onCreated }
               onChange={(e) => setForm((f) => ({ ...f, role: e.target.value as JobRole }))}
               className="w-full h-10 bg-background border border-input rounded-md px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <option value="flutter">🐦 Flutter Engineer</option>
-              <option value="rust">🦀 Rust Systems Engineer</option>
+              <option value="flutter">Flutter Engineer</option>
+              <option value="rust">Rust Systems Engineer</option>
             </select>
           </div>
           <div className="space-y-1.5 sm:col-span-2">

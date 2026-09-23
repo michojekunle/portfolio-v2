@@ -3,15 +3,15 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { MagneticWrapper } from "./magnetic-wrapper"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, BookOpen, BookMarked, Wallet, Compass, Share2, LayoutGrid } from "lucide-react"
 
 const TOOLS = [
-  { name: "BookBreaks",    tagline: "Books into content",        accent: "#C85A2C", icon: "📚", status: "live", href: "/tools/bookbreaks"    },
-  { name: "Chapterly",    tagline: "Read + remember",            accent: "#4F6D7A", icon: "📖", status: "live", href: "/tools/chapterly"     },
-  { name: "Flowise",      tagline: "Money mapped",               accent: "#16A34A", icon: "💸", status: "live", href: "/tools/flowise"       },
-  { name: "Vela",         tagline: "Set your course daily",      accent: "#7C3AED", icon: "🧭", status: "live", href: "/tools/journal"       },
-  { name: "Thread Studio", tagline: "Viral threads",             accent: "#6366F1", icon: "🐦", status: "live", href: "/tools/thread-studio" },
-  { name: "Carousel Lab",  tagline: "Scroll-stopping slides",    accent: "#FF6B35", icon: "📸", status: "live", href: "/tools/carousel-lab"  },
+  { name: "BookBreaks",    tagline: "Books into content",        accent: "#C85A2C", icon: BookOpen,   status: "live", href: "/tools/bookbreaks"    },
+  { name: "Chapterly",    tagline: "Read + remember",            accent: "#4F6D7A", icon: BookMarked, status: "live", href: "/tools/chapterly"     },
+  { name: "Flowise",      tagline: "Money mapped",               accent: "#16A34A", icon: Wallet,     status: "live", href: "/tools/flowise"       },
+  { name: "Vela",         tagline: "Set your course daily",      accent: "#7C3AED", icon: Compass,    status: "live", href: "/tools/journal"       },
+  { name: "Thread Studio", tagline: "Viral threads",             accent: "#6366F1", icon: Share2,     status: "live", href: "/tools/thread-studio" },
+  { name: "Carousel Lab",  tagline: "Scroll-stopping slides",    accent: "#FF6B35", icon: LayoutGrid, status: "live", href: "/tools/carousel-lab"  },
 ] as const
 
 export function CreatorSuiteSection(): React.ReactElement {
@@ -66,7 +66,7 @@ export function CreatorSuiteSection(): React.ReactElement {
               style={{ background: tool.accent + "18", border: `1px solid ${tool.accent}25` }}
               aria-hidden="true"
             >
-              {tool.icon}
+              <tool.icon className="w-5 h-5" style={{ color: tool.accent }} />
             </div>
             <div
               className="font-display font-normal text-[16px] leading-[1.15] tracking-[-0.01em] fvs-text mb-1 text-(--ink)"

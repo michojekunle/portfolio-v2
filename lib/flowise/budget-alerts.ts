@@ -50,10 +50,10 @@ export async function checkBudgetStatus(
   const fmtAmount = (val: number) => formatCurrency(val, currency);
 
   if (totalSpent > limit) {
-    return `\n\n🚨 *Budget exceeded!* You've spent *${fmtAmount(totalSpent)}* of your *${fmtAmount(limit)}* budget for this category. You're going out of hand! 😱`;
+    return `\n\n*Budget Exceeded:* You've spent *${fmtAmount(totalSpent)}* of your *${fmtAmount(limit)}* budget for this category.`;
   } else if (totalSpent >= limit * 0.85) {
-    return `\n\n⚠️ *Budget warning!* You've spent *${fmtAmount(totalSpent)}* of your *${fmtAmount(limit)}* budget (85%+ used). Watch it, you're getting close to the limit! ⚠️`;
+    return `\n\n*Budget Warning:* You've spent *${fmtAmount(totalSpent)}* of your *${fmtAmount(limit)}* budget (85%+ used).`;
   } else {
-    return `\n\n✅ *Status:* You're doing okay! Spent *${fmtAmount(totalSpent)}* of *${fmtAmount(limit)}* budget.`;
+    return `\n\n*Status:* You're on track! Spent *${fmtAmount(totalSpent)}* of *${fmtAmount(limit)}* budget.`;
   }
 }

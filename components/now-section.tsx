@@ -88,7 +88,7 @@ export async function NowSection(): Promise<React.ReactElement> {
         <div className="grid grid-cols-[120px_1fr] max-[720px]:grid-cols-1 gap-12 max-[720px]:gap-6 items-baseline mb-20 max-[720px]:mb-12">
           <div className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground pt-4.5 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) animate-pulse" />
-            04 — NOW
+            05 — NOW
           </div>
           <div>
             <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">

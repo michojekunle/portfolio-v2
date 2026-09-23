@@ -286,7 +286,7 @@ JSON Response Schema:
               deadline: deadline ?? null,
               is_completed: false,
               color: "#16A34A",
-              icon: "🎯",
+              icon: "target",
             });
 
           if (!goalErr) {

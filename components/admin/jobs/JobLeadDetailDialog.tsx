@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Circle } from "lucide-react";
+import { Banknote, Check, Circle } from "lucide-react";
 import type { JobLead } from "@/app/api/job-leads/route";
 import type { ApplicationPrefill } from "./ApplicationFormDialog";
 
@@ -47,14 +47,14 @@ export function JobLeadDetailDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary">{role === "rust" ? "🦀 Rust" : "🐦 Flutter"}</Badge>
+                <Badge variant="secondary">{role === "rust" ? "Rust" : "Flutter"}</Badge>
                 {lead.board && <span className="text-xs text-muted-foreground">{lead.board}</span>}
               </div>
               <DialogTitle className="text-xl">{lead.company}</DialogTitle>
               <p className="text-sm text-muted-foreground">{lead.title}</p>
               {lead.salary && (
-                <Badge variant="secondary" className="w-fit text-emerald-700 dark:text-emerald-400">
-                  💰 {lead.salary}
+                <Badge variant="secondary" className="w-fit text-emerald-700 dark:text-emerald-400 gap-1.5">
+                  <Banknote className="w-3.5 h-3.5" /> {lead.salary}
                 </Badge>
               )}
             </DialogHeader>
@@ -147,7 +147,13 @@ export function JobLeadDetailDialog({
                               onClick={() => void onToggleProgress("project", project.name)}
                               disabled={pending}
                             >
-                              {done ? "✓ Built" : "Mark built"}
+                              {done ? (
+                                <span className="inline-flex items-center gap-1">
+                                  <Check className="w-3.5 h-3.5" /> Built
+                                </span>
+                              ) : (
+                                "Mark built"
+                              )}
                             </Button>
                           </div>
                         </div>

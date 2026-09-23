@@ -59,15 +59,17 @@ export const PROOF_OF_WORK_PROJECTS: ProofOfWorkProject[] = [
   { id: "p10", role: "rust", num: 5, name: "ZK Prover CLI", desc: "CLI implementing Sumcheck + GKR for a small arithmetic circuit. Benchmarks vs. reference impl. Published crate.", skills: ["GKR", "Sumcheck", "ZK proofs", "cargo-bench", "crates.io"], difficulty: "Hard", weeks: 2 },
 ];
 
-export const JOB_BOARDS: { emoji: string; name: string; url: string; tag: "flutter" | "rust" | "both" }[] = [
-  { emoji: "💼", name: "LinkedIn Flutter", url: "https://www.linkedin.com/jobs/search/?keywords=Flutter+developer&f_WT=2", tag: "flutter" },
-  { emoji: "💼", name: "LinkedIn Rust", url: "https://www.linkedin.com/jobs/search/?keywords=Rust+engineer&f_WT=2", tag: "rust" },
-  { emoji: "🚀", name: "Wellfound Flutter", url: "https://wellfound.com/role/r/flutter-developer", tag: "flutter" },
-  { emoji: "🚀", name: "Wellfound Rust", url: "https://wellfound.com/role/r/rust-developer", tag: "rust" },
-  { emoji: "🦀", name: "RustJobs.dev", url: "https://rustjobs.dev/", tag: "rust" },
-  { emoji: "🌍", name: "WWRemotely Flutter", url: "https://weworkremotely.com/remote-jobs-flutter", tag: "flutter" },
-  { emoji: "⚡", name: "Arc.dev Flutter", url: "https://arc.dev/remote-jobs/flutter", tag: "flutter" },
-  { emoji: "⚡", name: "Arc.dev Rust", url: "https://arc.dev/remote-jobs/rust", tag: "rust" },
-  { emoji: "🌐", name: "Web3 Career", url: "https://web3.career/flutter+remote-jobs", tag: "both" },
-  { emoji: "🔐", name: "ZK Jobs Board", url: "https://jobsboard.zeroknowledge.fm/", tag: "rust" },
+export type JobBoardIconKey = "briefcase" | "rocket" | "code" | "globe" | "zap" | "shield";
+
+export const JOB_BOARDS: { iconKey: JobBoardIconKey; name: string; url: string; tag: "flutter" | "rust" | "both" }[] = [
+  { iconKey: "briefcase", name: "LinkedIn Flutter", url: "https://www.linkedin.com/jobs/search/?keywords=Flutter+developer&f_WT=2", tag: "flutter" },
+  { iconKey: "briefcase", name: "LinkedIn Rust", url: "https://www.linkedin.com/jobs/search/?keywords=Rust+engineer&f_WT=2", tag: "rust" },
+  { iconKey: "rocket", name: "Wellfound Flutter", url: "https://wellfound.com/role/r/flutter-developer", tag: "flutter" },
+  { iconKey: "rocket", name: "Wellfound Rust", url: "https://wellfound.com/role/r/rust-developer", tag: "rust" },
+  { iconKey: "code", name: "RustJobs.dev", url: "https://rustjobs.dev/", tag: "rust" },
+  { iconKey: "globe", name: "WWRemotely Flutter", url: "https://weworkremotely.com/remote-jobs-flutter", tag: "flutter" },
+  { iconKey: "zap", name: "Arc.dev Flutter", url: "https://arc.dev/remote-jobs/flutter", tag: "flutter" },
+  { iconKey: "zap", name: "Arc.dev Rust", url: "https://arc.dev/remote-jobs/rust", tag: "rust" },
+  { iconKey: "globe", name: "Web3 Career", url: "https://web3.career/flutter+remote-jobs", tag: "both" },
+  { iconKey: "shield", name: "ZK Jobs Board", url: "https://jobsboard.zeroknowledge.fm/", tag: "rust" },
 ];

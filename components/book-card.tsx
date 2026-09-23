@@ -5,7 +5,7 @@ import { type PublicBook, type BookNote } from "@/lib/supabase/reading";
 import { TiltCard } from "./tilt-card";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { BookCover } from "./book-cover";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Quote } from "lucide-react";
 
 export function ProgressBar({ value }: { value: number }): React.ReactElement {
   const pct = Math.min(100, Math.max(0, value));
@@ -38,9 +38,7 @@ export function NoteEntry({ note }: { note: BookNote }): React.ReactElement {
   if (isQuote) {
     return (
       <div className={wrapperClass}>
-        <span className="font-display text-[80px] leading-[0.5] text-(--v3-accent) opacity-20 absolute top-11 left-5">
-          ❝
-        </span>
+        <Quote className="w-10 h-10 text-(--v3-accent) opacity-20 absolute top-6 left-5" />
         <blockquote className="m-0 p-0 font-display text-[clamp(24px,3vw,38px)] font-light italic text-(--ink) leading-[1.4] fvs-text relative z-10">
           {note.content}
         </blockquote>

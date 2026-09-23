@@ -1,6 +1,7 @@
 import { MagneticWrapper } from "@/components/magnetic-wrapper";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BookOpen, Share2, LayoutGrid, BookMarked, Compass, Wallet } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Creator Suite — Michael Ojekunle",
@@ -19,7 +20,7 @@ const TOOLS = [
     href: "/tools/bookbreaks",
     accent: "#C85A2C",
     accentSoft: "rgba(200,90,44,0.12)",
-    icon: "📚",
+    icon: BookOpen,
     stats: ["4 books seeded", "5 content types", "Groq + Gemini AI"],
     cta: "Repurpose my first book",
   },
@@ -33,7 +34,7 @@ const TOOLS = [
     href: "/tools/thread-studio",
     accent: "#6366F1",
     accentSoft: "rgba(99,102,241,0.12)",
-    icon: "🐦",
+    icon: Share2,
     stats: ["Thread builder", "Hook analyser", "Scheduling"],
     cta: "Engineer my next thread",
   },
@@ -47,7 +48,7 @@ const TOOLS = [
     href: "/tools/carousel-lab",
     accent: "#FF6B35",
     accentSoft: "rgba(255,107,53,0.12)",
-    icon: "📸",
+    icon: LayoutGrid,
     stats: ["4 visual themes", "6-slide templates", "One-click export"],
     cta: "Design a scroll-stopper",
   },
@@ -61,7 +62,7 @@ const TOOLS = [
     href: "/tools/chapterly",
     accent: "#4F6D7A",
     accentSoft: "rgba(79,109,122,0.12)",
-    icon: "📖",
+    icon: BookMarked,
     stats: ["10+ formats", "AI voice chat", "Streaks & goals"],
     bridge: "bookbreaks",
     cta: "Start remembering more",
@@ -291,7 +292,7 @@ function ToolCard({
             }}
             aria-hidden="true"
           >
-            {tool.icon}
+            <tool.icon className="w-6 h-6" style={{ color: tool.accent }} />
           </div>
           <StatusBadge status={tool.status} />
         </div>
@@ -401,18 +402,18 @@ function VelaCard(): React.ReactElement {
           <div>
             <div className="flex items-center gap-4 mb-6 flex-wrap">
               <div
-                className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
+                className="w-13 h-13 rounded-lg flex items-center justify-center font-mono select-none"
                 style={{ background: accentSoft, border: `1px solid ${accent}22` }}
                 aria-hidden="true"
               >
-                🧭
+                <Compass className="w-6 h-6" style={{ color: accent }} />
               </div>
               <StatusBadge status="live" />
               <span
                 className="font-mono text-[9px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full"
                 style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
               >
-                ★ Daily driver
+                Daily driver
               </span>
             </div>
 
@@ -521,18 +522,18 @@ function FlowiseCard(): React.ReactElement {
             {/* Header */}
             <div className="flex items-center gap-4 mb-6 flex-wrap">
               <div
-                className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
+                className="w-13 h-13 rounded-lg flex items-center justify-center font-mono select-none"
                 style={{ background: accentSoft, border: `1px solid ${accent}22` }}
                 aria-hidden="true"
               >
-                💸
+                <Wallet className="w-6 h-6" style={{ color: accent }} />
               </div>
               <StatusBadge status="live" />
               <span
                 className="font-mono text-[9px] tracking-[0.12em] uppercase px-2 py-0.75 rounded-full"
                 style={{ color: accent, background: accentSoft, border: `1px solid ${accent}30` }}
               >
-                🇳🇬 Nigeria-first
+                Nigeria-first
               </span>
             </div>
 

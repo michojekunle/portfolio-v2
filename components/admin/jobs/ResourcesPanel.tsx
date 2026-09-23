@@ -4,12 +4,13 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Plus, Trash2 } from "lucide-react";
+import { Briefcase, Code2, Cpu, ExternalLink, Globe, Plus, Rocket, ShieldCheck, Smartphone, Trash2, Zap } from "lucide-react";
 import {
   JOB_BOARDS,
   PRIORITY_CONFIG,
   PROOF_OF_WORK_PROJECTS,
   SKILLS_GAP,
+  type JobBoardIconKey,
   type JobRole,
   type SkillGapItem,
   type ProofOfWorkProject,
@@ -17,6 +18,15 @@ import {
 import type { JobSkillGap, JobProjectToBuild } from "@/app/api/job-leads/route";
 import { SkillGapFormDialog } from "./SkillGapFormDialog";
 import { ProjectToBuildFormDialog } from "./ProjectToBuildFormDialog";
+
+const BOARD_ICON: Record<JobBoardIconKey, React.ComponentType<{ className?: string }>> = {
+  briefcase: Briefcase,
+  rocket: Rocket,
+  code: Code2,
+  globe: Globe,
+  zap: Zap,
+  shield: ShieldCheck,
+};
 
 const DIFFICULTY_VARIANT: Record<"Easy" | "Medium" | "Hard", "secondary" | "outline" | "destructive"> = {
   Easy: "secondary",
@@ -85,22 +95,27 @@ export function ResourcesPanel({
       <div>
         <h3 className="text-sm font-medium mb-4">Job Boards</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-          {JOB_BOARDS.map((b) => (
-            <a
-              key={b.name}
-              href={b.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl group flex flex-col items-center gap-2 p-5 text-center hover:bg-foreground/5 hover:border-border/80 hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ease-out relative cursor-pointer"
-            >
-              <ExternalLink className="h-3.5 w-3.5 absolute top-3 right-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="text-3xl mb-1">{b.emoji}</span>
-              <span className="text-[13px] font-semibold tracking-tight text-foreground/90 leading-tight">{b.name}</span>
-              <Badge variant="secondary" className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 bg-background/50 border border-border/40">
-                {b.tag === "flutter" ? "Flutter" : b.tag === "rust" ? "Rust" : "Both"}
-              </Badge>
-            </a>
-          ))}
+          {JOB_BOARDS.map((b) => {
+            const Icon = BOARD_ICON[b.iconKey] ?? Globe;
+            return (
+              <a
+                key={b.name}
+                href={b.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl group flex flex-col items-center gap-2 p-5 text-center hover:bg-foreground/5 hover:border-border/80 hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ease-out relative cursor-pointer"
+              >
+                <ExternalLink className="h-3.5 w-3.5 absolute top-3 right-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-xl bg-muted/60 border border-border/40 flex items-center justify-center mb-1 text-muted-foreground group-hover:text-foreground transition-colors">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span className="text-[13px] font-semibold tracking-tight text-foreground/90 leading-tight">{b.name}</span>
+                <Badge variant="secondary" className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0 bg-background/50 border border-border/40">
+                  {b.tag === "flutter" ? "Flutter" : b.tag === "rust" ? "Rust" : "Both"}
+                </Badge>
+              </a>
+            );
+          })}
         </div>
       </div>
 
@@ -115,7 +130,7 @@ export function ResourcesPanel({
             <div key={role} className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-5 pb-4 border-b border-border/40">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{role === "rust" ? "🦀" : "🐦"}</span>
+                  {role === "rust" ? <Cpu className="w-5 h-5 text-muted-foreground" /> : <Smartphone className="w-5 h-5 text-muted-foreground" />}
                   <h4 className="text-[14px] font-semibold tracking-tight text-foreground/90">{role === "rust" ? "Rust Systems" : "Flutter Mobile"}</h4>
                 </div>
                 <Button variant="outline" size="sm" className="h-8 text-xs font-medium bg-background/50" onClick={() => setSkillDialogRole(role)}>
@@ -167,8 +182,8 @@ export function ResourcesPanel({
             <div className="flex gap-1.5">
               {([
                 { value: "all" as const, label: `All (${allMergedProjects.length})` },
-                { value: "flutter" as const, label: "🐦 Flutter" },
-                { value: "rust" as const, label: "🦀 Rust" },
+                { value: "flutter" as const, label: "Flutter" },
+                { value: "rust" as const, label: "Rust" },
               ]).map((f) => (
                 <button
                   key={f.value}
@@ -201,7 +216,7 @@ export function ResourcesPanel({
               <div key={p.name} className="bg-card/40 backdrop-blur-xl border border-border/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] rounded-2xl p-5 hover:bg-foreground/5 hover:border-border/80 hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 ease-out relative group">
                 <div className="flex items-start gap-3 mb-2">
                   <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-semibold shrink-0 bg-background/50 border border-border/40">
-                    {p.role === "rust" ? "🦀 Rust" : "🐦 Flutter"}
+                    {p.role === "rust" ? "Rust" : "Flutter"}
                     {"num" in p ? ` #${p.num}` : ""}
                   </Badge>
                   <p className="text-[14px] font-semibold tracking-tight text-foreground/90 leading-snug flex-1">{p.name}</p>

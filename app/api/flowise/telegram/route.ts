@@ -118,7 +118,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (text.startsWith("/start")) {
     await tgSend(
       chatId,
-      "👋 *Flowise Receipt Bot*\n\nForward me bank alerts, receipts, or transfer screenshots and I'll log them to your Flowise account automatically.\n\nFirst, link your account:\n1. Open Flowise → Settings → Chat Bots\n2. Generate a Telegram link code\n3. Send me: `/link YOUR-CODE`"
+      "*Flowise Receipt Bot*\n\nForward me bank alerts, receipts, or transfer screenshots and I'll log them to your Flowise account automatically.\n\nFirst, link your account:\n1. Open Flowise → Settings → Chat Bots\n2. Generate a Telegram link code\n3. Send me: `/link YOUR-CODE`"
     );
     return NextResponse.json({ ok: true });
   }
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .maybeSingle();
 
     if (!link || (link.code_expires_at && new Date(link.code_expires_at) < new Date())) {
-      await tgSend(chatId, "❌ That code is invalid or expired. Generate a fresh one in Flowise → Settings.");
+      await tgSend(chatId, "That code is invalid or expired. Generate a fresh one in Flowise → Settings.");
       return NextResponse.json({ ok: true });
     }
 
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       console.error("[flowise/telegram] link update error:", error);
       await tgSend(chatId, "Something went wrong linking your account — please try again.");
     } else {
-      await tgSend(chatId, "✅ *Linked!* Send me any receipt, bank alert, or transfer screenshot and I'll log it for you.");
+      await tgSend(chatId, "*Linked!* Send me any receipt, bank alert, or transfer screenshot and I'll log it for you.");
     }
     return NextResponse.json({ ok: true });
   }
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .update({ chat_id: null, linked_at: null })
       .eq("platform", "telegram")
       .eq("chat_id", String(chatId));
-    await tgSend(chatId, "🔌 Unlinked. Generate a new code in Flowise → Settings to reconnect.");
+    await tgSend(chatId, "Unlinked. Generate a new code in Flowise → Settings to reconnect.");
     return NextResponse.json({ ok: true });
   }
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       : null;
 
   if (!fileId) {
-    await tgSend(chatId, "Send me a *photo or screenshot* of a receipt, bank alert, or transfer confirmation and I'll log it. 📸");
+    await tgSend(chatId, "Send me a *photo or screenshot* of a receipt, bank alert, or transfer confirmation and I'll log it.");
     return NextResponse.json({ ok: true });
   }
 
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const extracted = await extractReceipt(file.buffer, file.mime);
     if (!extracted || extracted.amount === null) {
-      await tgSend(chatId, "🤔 I couldn't read a transaction from that image. Try a clearer shot of the receipt or alert.");
+      await tgSend(chatId, "I couldn't read a transaction from that image. Try a clearer shot of the receipt or alert.");
       return NextResponse.json({ ok: true });
     }
 
@@ -280,7 +280,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const categoryName = extracted.category_id
       ? SYSTEM_CATEGORIES.find((c) => c.id === extracted.category_id)?.name ?? "Uncategorised"
       : "Uncategorised";
-    const kind = extracted.amount > 0 ? "💰 Income" : "💸 Expense";
+    const kind = extracted.amount > 0 ? "Income" : "Expense";
 
     let budgetAlert = "";
     if (extracted.category_id && extracted.amount < 0) {
@@ -299,7 +299,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     await tgSend(
       chatId,
-      `${kind} logged ✅\n\n*${fmtAmount(extracted.amount)}* — ${description}\n📁 ${categoryName}\n📅 ${date}\n🏦 ${account.name}${budgetAlert}\n\n_Wrong details? Edit it in Flowise → Transactions._`
+      `${kind} Logged\n\n*${fmtAmount(extracted.amount)}* — ${description}\nCategory: ${categoryName}\nDate: ${date}\nAccount: ${account.name}${budgetAlert}\n\n_Wrong details? Edit it in Flowise → Transactions._`
     );
   } catch (err) {
     console.error("[flowise/telegram] processing error:", err);

@@ -7,7 +7,8 @@ import { usePrivacy, Amount } from "@/components/flowise/PrivacyProvider";
 import { TransactionForm } from "./TransactionForm";
 import { CSVImportWizard } from "./CSVImportWizard";
 import { ReceiptScanner } from "./ReceiptScanner";
-import { Plus, Trash2, ChevronLeft, ChevronRight, Upload, Camera } from "lucide-react";
+import { Plus, Trash2, ChevronLeft, ChevronRight, Upload, Camera, ClipboardList, X } from "lucide-react";
+import { FlowiseIcon } from "./FlowiseIcon";
 
 const ACCENT = "#16A34A";
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -99,7 +100,7 @@ const [transactions, setTransactions] = useState(initialTransactions);
       {deleteError && (
         <div className="mb-4 px-3.5 py-2.5 rounded-[10px] bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] font-mono text-[11px] flex items-center justify-between">
           {deleteError}
-          <button onClick={() => setDeleteError(null)} className="ml-3 text-[#DC2626] bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100">✕</button>
+          <button onClick={() => setDeleteError(null)} className="ml-3 text-[#DC2626] bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100 flex items-center justify-center"><X size={12} /></button>
         </div>
       )}
       {/* Header */}
@@ -147,7 +148,9 @@ const [transactions, setTransactions] = useState(initialTransactions);
         <div className="text-center py-15 text-muted-foreground font-mono text-[12px]">Loading…</div>
       ) : transactions.length === 0 ? (
         <div className="rounded-xl py-15 text-center" style={{ border: "1px dashed var(--rule)" }}>
-          <div className="text-[32px] mb-3">📋</div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3 text-emerald-600 dark:text-emerald-400">
+            <ClipboardList size={24} />
+          </div>
           <div className="text-[15px] font-medium text-(--ink) mb-1.5">No transactions this month</div>
           <button onClick={() => setShowForm(true)} className="mt-4 inline-flex items-center gap-1.5 h-9 px-4 rounded-full font-mono text-[10px] uppercase tracking-[0.12em] font-semibold text-white border-none cursor-pointer" style={{ background: ACCENT }}>
             <Plus size={12} /> Add one
@@ -165,14 +168,18 @@ const [transactions, setTransactions] = useState(initialTransactions);
                 className="flex items-center gap-3.5 px-4 py-3.5 bg-(--bg) hover:bg-(--bg-2) transition-colors group"
                 style={{ borderBottom: i < transactions.length - 1 ? "1px solid var(--rule)" : undefined }}
               >
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center text-[16px] shrink-0" style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)" }}>
-                  {cat?.icon ?? (isIncome ? "💰" : "💸")}
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: cat?.color ? `${cat.color}18` : "var(--bg-2)", color: cat?.color ?? (isIncome ? "#16A34A" : "var(--ink)") }}>
+                  <FlowiseIcon icon={cat?.icon ?? (isIncome ? "wallet" : "cash")} size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[14px] font-medium text-(--ink) truncate">{tx.description}</div>
                   <div className="font-mono text-[10px] text-muted-foreground mt-0.25">
                     {cat?.name ?? "Uncategorized"} · {date.toLocaleDateString("en-NG", { month: "short", day: "numeric", timeZone: "UTC" })}
-                    {tx.account && ` · ${tx.account.icon} ${tx.account.name}`}
+                    {tx.account && (
+                      <span className="inline-flex items-center gap-1 ml-1">
+                        · <FlowiseIcon icon={tx.account.icon} size={11} /> {tx.account.name}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="shrink-0 text-right flex items-center gap-3">
