@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getBBSettings } from "@/lib/bookbreaks/queries";
-import { DEFAULT_MODEL_CHAIN } from "../chat/route";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { DEFAULT_MODEL_CHAIN } from "@/lib/chapterly/constants";
 import Groq from "groq-sdk";
 import { z } from "zod";
 

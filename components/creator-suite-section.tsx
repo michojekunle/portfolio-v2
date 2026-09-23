@@ -9,8 +9,8 @@ const TOOLS = [
   { name: "BookBreaks",    tagline: "Books into content",        accent: "#C85A2C", icon: BookOpen,   status: "live", href: "/tools/bookbreaks"    },
   { name: "Chapterly",    tagline: "Read + remember",            accent: "#4F6D7A", icon: BookMarked, status: "live", href: "/tools/chapterly"     },
   { name: "Flowise",      tagline: "Money mapped",               accent: "#16A34A", icon: Wallet,     status: "live", href: "/tools/flowise"       },
-  { name: "Vela",         tagline: "Set your course daily",      accent: "#0D9488", icon: Compass,    status: "live", href: "/tools/journal"       },
-  { name: "Thread Studio", tagline: "Viral threads",             accent: "#6366F1", icon: Share2,     status: "live", href: "/tools/thread-studio" },
+  { name: "Vela",         tagline: "Set your course daily",      accent: "#B45309", icon: Compass,    status: "live", href: "/tools/journal"       },
+  { name: "Thread Studio", tagline: "Viral threads",             accent: "#2563EB", icon: Share2,     status: "live", href: "/tools/thread-studio" },
   { name: "Carousel Lab",  tagline: "Scroll-stopping slides",    accent: "#FF6B35", icon: LayoutGrid, status: "live", href: "/tools/carousel-lab"  },
 ] as const
 
@@ -44,7 +44,7 @@ export function CreatorSuiteSection(): React.ReactElement {
       </motion.div>
 
       {/* Tool grid */}
-      <div className="grid grid-cols-6 max-[1100px]:grid-cols-3 max-[600px]:grid-cols-2 gap-0.25 border border-(--rule) rounded-sm overflow-hidden mb-16">
+      <div className="grid grid-cols-6 max-[1100px]:grid-cols-3 max-[600px]:grid-cols-2 border-y border-(--rule) mb-16">
         {TOOLS.map((tool, i) => (
           <motion.div
             key={tool.name}
@@ -58,11 +58,7 @@ export function CreatorSuiteSection(): React.ReactElement {
             href={tool.href}
             className="block p-[28px_20px] max-[720px]:p-[20px_16px] bg-(--bg) hover:bg-(--bg-2) transition-colors duration-200 no-underline"
           >
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-[18px] mb-4"
-              style={{ background: tool.accent + "18", border: `1px solid ${tool.accent}25` }}
-              aria-hidden="true"
-            >
+            <div className="w-6 h-6 mb-4 flex items-center justify-center" aria-hidden="true">
               <tool.icon className="w-5 h-5" style={{ color: tool.accent }} />
             </div>
             <div
@@ -70,14 +66,13 @@ export function CreatorSuiteSection(): React.ReactElement {
             >
               {tool.name}
             </div>
-            <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: tool.accent }}>
+            <div className="font-mono text-[12px] tracking-wider uppercase py-1.5 text-muted-foreground">
               {tool.tagline}
             </div>
             <span
-              className="absolute top-3 right-3 inline-flex items-center gap-1 font-mono text-[8px] tracking-widest uppercase px-1.5 py-0.5 rounded-full"
-              style={{ background: "rgba(22,163,74,0.1)", color: "#2D5016" }}
+              className="absolute top-4 right-4 inline-flex items-center gap-1.5 font-mono text-[12px] tracking-wider uppercase text-muted-foreground font-medium"
             >
-              <span className="w-1 h-1 rounded-full bg-[#2D5016]" aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-500" aria-hidden="true" />
               Live
             </span>
           </Link>
@@ -100,7 +95,7 @@ export function CreatorSuiteSection(): React.ReactElement {
         <MagneticWrapper>
           <Link
             href="/tools"
-            className="group inline-flex items-center gap-2.5 h-13 px-7 rounded-full font-mono text-[12px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-300 whitespace-nowrap border hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-(--ink) border-(--rule)"
+            className="group inline-flex items-center gap-2.5 py-3.5 px-7 rounded-full font-mono text-[12px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-300 whitespace-nowrap border hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-(--ink) border-(--rule)"
           >
             Explore Creator Suite
             <ArrowRight

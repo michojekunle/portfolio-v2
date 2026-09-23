@@ -89,7 +89,7 @@ export function AboutHeroWidget() {
         <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule) flex flex-col gap-1.5 justify-between">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="w-3.5 h-3.5" />
-            <span className="font-mono text-[9px] uppercase tracking-wider">Lagos WAT</span>
+            <span className="font-mono text-[11px] uppercase tracking-wider">Lagos WAT</span>
           </div>
           <div className="font-mono text-[16px] font-semibold text-(--ink) tracking-wider">
             {lagosTime || "--:--:--"}
@@ -100,7 +100,7 @@ export function AboutHeroWidget() {
         <div className="p-3 rounded-xl bg-(--bg-2) border border-(--rule) flex flex-col gap-1.5 justify-between">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <GraduationCap className="w-3.5 h-3.5" />
-            <span className="font-mono text-[9px] uppercase tracking-wider">Status</span>
+            <span className="font-mono text-[11px] uppercase tracking-wider">Status</span>
           </div>
           <div className="font-mono text-[11px] font-semibold text-(--v3-accent) uppercase tracking-wider flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-(--v3-accent) animate-ping" />
@@ -113,7 +113,7 @@ export function AboutHeroWidget() {
       <div>
         <div className="flex items-center gap-1.5 mb-2.5">
           <BookOpen className="w-4 h-4 text-muted-foreground" />
-          <h4 className="m-0 font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase">Active Focuses</h4>
+          <h4 className="m-0 font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">Active Focuses</h4>
         </div>
         <div className="flex flex-col gap-2">
           <div>
@@ -122,7 +122,7 @@ export function AboutHeroWidget() {
               <span>{status?.focus1_pct ?? 40}%</span>
             </div>
             <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
-              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus1_pct ?? 40}%` }} />
+              <div className="h-full bg-(--ink) rounded-full" style={{ width: `${status?.focus1_pct ?? 40}%` }} />
             </div>
           </div>
           <div>
@@ -131,17 +131,17 @@ export function AboutHeroWidget() {
               <span>{status?.focus2_pct ?? 55}%</span>
             </div>
             <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
-              <div className="h-full bg-(--ink) rounded-full transition-all duration-500" style={{ width: `${status?.focus2_pct ?? 55}%` }} />
+              <div className="h-full bg-(--ink) rounded-full" style={{ width: `${status?.focus2_pct ?? 55}%` }} />
             </div>
           </div>
         </div>
 
         {/* Horizon — where I'm heading next */}
         <div className="flex items-center gap-2 mt-3.5 pt-3.5 border-t border-(--rule)">
-          <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-muted-foreground">Next</span>
+          <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-muted-foreground">Next</span>
           <span className="w-1 h-1 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
           <span className="font-mono text-[11px] font-medium text-(--v3-accent)">{status?.next_focus || "zkML"}</span>
-          <span className="font-mono text-[10px] text-muted-foreground ml-auto">the horizon</span>
+          <span className="font-mono text-[11px] text-muted-foreground ml-auto">the horizon</span>
         </div>
       </div>
 
@@ -180,18 +180,18 @@ export function AboutHeroWidget() {
                 )}
               </div>
               <div className="flex-grow flex flex-col gap-0.5 overflow-hidden">
-                <span className="font-mono text-[8px] uppercase tracking-widest text-(--v3-accent) font-semibold flex items-center gap-1">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-(--v3-accent) font-semibold flex items-center gap-1">
                   <Play className="w-2.5 h-2.5 fill-current" /> {label}
                 </span>
                 <span className="text-[12px] font-semibold text-(--ink) line-clamp-1 leading-[1.3]">{title}</span>
-                <span className="text-[10px] text-muted-foreground line-clamp-1">{artist}</span>
+                <span className="text-[11px] text-muted-foreground line-clamp-1">{artist}</span>
               </div>
             </div>
 
             {/* Live progress bar */}
             {isPlaying && (
               <div className="h-0.75 bg-(--rule) rounded-full overflow-hidden mt-2.5">
-                <div className="h-full bg-(--v3-accent) rounded-full" style={{ width: `${progressPct}%`, transition: "width 1s linear" }} />
+                <div className="h-full bg-(--v3-accent) rounded-full" style={{ width: `${progressPct}%` }} />
               </div>
             )}
           </a>

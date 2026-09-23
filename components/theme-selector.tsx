@@ -164,7 +164,7 @@ export function ThemeSelector(): React.ReactElement {
 
       {/* Color themes */}
       <div className="flex flex-col gap-3">
-        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Color theme</div>
+        <div className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Color theme</div>
         <div className="v3-theme-selector">
           <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-3 gap-2">
             {Object.entries(THEMES).map(([key, t]) => {
@@ -178,11 +178,9 @@ export function ThemeSelector(): React.ReactElement {
                   aria-label={`Apply ${t.name} theme`}
                   aria-pressed={activeTheme === key}
                 >
-                  <span
-                    className="inline-block w-3 h-3 rounded-full shrink-0"
-                    style={{ background: palette["--accent"] }}
-                    aria-hidden="true"
-                  />
+                  <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" aria-hidden="true">
+                    <circle cx="6" cy="6" r="6" fill={palette["--accent"]} />
+                  </svg>
                   {t.name}
                 </button>
               )
@@ -193,7 +191,7 @@ export function ThemeSelector(): React.ReactElement {
       
       {/* Display font */}
       <div className="flex flex-col gap-3">
-        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Display font</div>
+        <div className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Display font</div>
         <div className="flex gap-2 flex-wrap">
           {Object.entries(FONTS).map(([key, f]) => (
             <button
@@ -211,7 +209,7 @@ export function ThemeSelector(): React.ReactElement {
 
       {/* Marginalia toggle */}
       <div className="flex flex-col gap-3">
-        <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Marginalia</div>
+        <div className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Marginalia</div>
         <div className="flex items-center justify-between gap-4">
           <button
             className={`group flex items-center gap-2.5 bg-transparent border-none cursor-pointer font-inherit text-[13px] p-0 transition-colors duration-150 hover:text-(--ink) ${showMarginalia ? "text-(--ink)" : "text-secondary-foreground"}`}

@@ -21,17 +21,17 @@ export function HeroSection(): React.ReactElement {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="relative z-1 grid grid-cols-[1fr_auto_1fr] max-[720px]:grid-cols-1 items-end max-[720px]:items-start gap-8 max-[720px]:gap-6 pb-8 mb-16 border-b border-(--rule) font-mono text-[11px] tracking-[0.18em] uppercase text-muted-foreground max-[480px]:text-[10px]" role="presentation"
+        className="relative z-1 grid grid-cols-[1fr_auto_1fr] max-[720px]:grid-cols-1 items-end max-[720px]:items-start gap-8 max-[720px]:gap-6 pb-8 mb-16 border-b border-(--rule) font-mono text-[12px] tracking-normal text-muted-foreground" role="presentation"
       >
-        <div className="leading-[1.7] text-[12px] text-muted-foreground max-[720px]:text-left max-[480px]:text-[10px]">
+        <div className="leading-[1.7] text-[12px] text-muted-foreground max-[720px]:text-left">
           <b className="text-(--ink) font-medium">Michael Ojekunle</b><br />
           Software Engineer &amp; Builder · Lagos, NG
         </div>
-        <div className="leading-[1.7] text-[12px] text-center max-[720px]:text-left text-(--ink) max-[480px]:text-[10px] flex items-center justify-center max-[720px]:justify-start">
+        <div className="leading-[1.7] text-[12px] text-center max-[720px]:text-left text-(--ink) flex items-center justify-center max-[720px]:justify-start">
           <span className="inline-block w-1.75 h-1.75 rounded-full bg-emerald-500 mr-2 shrink-0" aria-hidden="true" />
           Available for select work
         </div>
-        <div className="leading-[1.7] text-[12px] text-right max-[720px]:text-left text-muted-foreground max-[480px]:text-[10px]">
+        <div className="leading-[1.7] text-[12px] text-right max-[720px]:text-left text-muted-foreground">
           <b className="text-(--ink) font-medium">2026 · v3</b><br />
           EST. 2021 · 4+ years
         </div>
@@ -45,22 +45,22 @@ export function HeroSection(): React.ReactElement {
 
       <div className="relative z-1 grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
-          <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-tight text-(--ink) m-0 max-w-[24ch] text-pretty">
+          <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.35] text-(--ink) m-0 max-w-[24ch] text-pretty">
             I build software end to end. Four years full-stack, now going deep on{" "}
             <em>Rust systems</em>, building products of my own.
           </p>
 
           {/* Tech stack pills */}
-          <div className="flex flex-wrap gap-1.75 mt-6" role="list" aria-label="Primary technologies">
+          <div className="flex flex-wrap gap-2 mt-6" role="list" aria-label="Primary technologies">
             {STACK.map((s) => (
-              <span key={s.label} role="listitem" className={`font-mono text-[10px] tracking-widest px-3 py-1.25 rounded-[5px] border uppercase transition-colors duration-150 hover:border-(--v3-accent-soft) hover:text-(--v3-accent) ${s.primary ? "border-(--v3-accent-soft) text-(--v3-accent) bg-[color-mix(in_oklab,var(--v3-accent-soft)_35%,var(--paper))]" : "border-(--rule) bg-(--paper) text-muted-foreground"}`}>
+              <span key={s.label} role="listitem" className={`font-mono text-[12px] tracking-wider px-3 py-1.5 rounded-[5px] border uppercase transition-colors duration-150 hover:border-(--v3-accent-soft) hover:text-(--v3-accent) ${s.primary ? "border-(--v3-accent-soft) text-(--v3-accent) bg-[color-mix(in_oklab,var(--v3-accent-soft)_35%,var(--paper))]" : "border-(--rule) bg-(--paper) text-muted-foreground"}`}>
                 {s.label}
               </span>
             ))}
           </div>
 
           {/* Now → Next trajectory */}
-          <div className="flex items-center gap-3.5 mt-7 flex-wrap font-mono text-[10px] tracking-[0.14em] uppercase" aria-label="Current focus and where I'm heading">
+          <div className="flex items-center gap-3.5 mt-7 flex-wrap font-mono text-[12px] tracking-[0.14em] uppercase" aria-label="Current focus and where I'm heading">
             <div className="flex items-center gap-2">
               <span className="text-(--v3-accent) font-medium">Now</span>
               <span className="text-muted-foreground">Rust systems</span>
@@ -82,29 +82,29 @@ export function HeroSection(): React.ReactElement {
 
           <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">
             <MagneticWrapper strength={30}>
-              <Link href="/contact" className="group inline-flex items-center justify-center px-7 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-(--v3-accent) text-(--bg) hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-8px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
+              <Link href="/contact" className="group inline-flex items-center justify-center px-7 py-3.5 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-(--v3-accent) text-(--bg) hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-8px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
                 Book a call <ArrowUpRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2 w-4 h-4" aria-hidden="true" />
               </Link>
             </MagneticWrapper>
             <MagneticWrapper strength={20}>
-              <Link href="/work" className="group inline-flex items-center justify-center px-7 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+              <Link href="/work" className="group inline-flex items-center justify-center px-7 py-3.5 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
                 Portfolio <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2 w-4 h-4" aria-hidden="true" />
               </Link>
             </MagneticWrapper>
           </div>
 
           <div className="flex gap-0 mt-12 border border-(--rule) rounded-lg overflow-hidden" role="list" aria-label="Career highlights">
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
+            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
               <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">4+</span>
-              <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Years building</span>
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Years building</span>
             </div>
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
+            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
               <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">3</span>
-              <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Chains shipped</span>
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Chains shipped</span>
             </div>
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) bg-(--paper) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
+            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
               <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">12+</span>
-              <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Projects live</span>
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Projects live</span>
             </div>
           </div>
         </motion.div>

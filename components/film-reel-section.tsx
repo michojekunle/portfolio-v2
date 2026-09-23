@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react"
 
 const PROJECT_COLORS: Record<string, string> = {
   coinsafe: "#D97706",
-  zamir: "#06b6d4",
+  zamir: "#2563EB",
   createstacksapp: "#ec4899",
   "firstcode-forge": "#f59e0b",
 }

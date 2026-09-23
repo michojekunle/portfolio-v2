@@ -5,7 +5,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 import { getBBSettings } from "@/lib/bookbreaks/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { DEFAULT_MODEL_CHAIN } from "@/app/api/chapterly/chat/route";
+import { DEFAULT_MODEL_CHAIN } from "@/lib/chapterly/constants";
 
 const RequestSchema = z.object({
   book_id: z.string().uuid(),

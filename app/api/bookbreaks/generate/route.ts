@@ -9,7 +9,7 @@ import type { ContentType } from "@/lib/bookbreaks/types";
 import { SEED_CONTENT } from "@/lib/bookbreaks/seed-data";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-export const DEFAULT_MODEL_CHAIN = [
+const DEFAULT_MODEL_CHAIN = [
   "google:gemini-3.5-flash",
   "google:gemini-2.5-flash",
   "google:gemini-3.1-flash-lite",

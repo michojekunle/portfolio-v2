@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  sonner:
+    hash: f559bbbfd2da95e2397d74224d47a4045d1233a4d80b393bbe8c82a215f69e6d
+    path: patches/sonner.patch
+
 importers:
 
   .:
@@ -274,7 +279,7 @@ importers:
         version: 9.5.11(browserslist@4.25.0)(typescript@5.8.3)
       sonner:
         specifier: ^1.7.1
-        version: 1.7.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 1.7.4(patch_hash=f559bbbfd2da95e2397d74224d47a4045d1233a4d80b393bbe8c82a215f69e6d)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.6.0
@@ -7917,7 +7922,7 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  sonner@1.7.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  sonner@1.7.4(patch_hash=f559bbbfd2da95e2397d74224d47a4045d1233a4d80b393bbe8c82a215f69e6d)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)

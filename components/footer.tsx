@@ -10,7 +10,7 @@ export function Footer(): React.ReactElement {
   return (
     <footer className="bg-(--bg-2) border-t border-(--rule) pt-[100px] pb-8">
       <div className="max-w-(--maxw) mx-auto px-(--gutter) pb-15 flex flex-col min-[921px]:flex-row min-[921px]:justify-between gap-20 max-[920px]:gap-10 items-start border-b border-(--rule) mb-15">
-        <h2 className="font-normal text-[clamp(64px,14vw,280px)] leading-[0.82] tracking-[-0.05em] mb-14 text-(--ink) text-balance break-words min-[921px]:max-w-[60%]">
+        <h2 className="font-normal text-[clamp(44px,7.5vw,140px)] leading-[0.9] tracking-[-0.04em] mb-14 text-(--ink) whitespace-nowrap">
           Michael
           <br />
           <em>Ojekunle.</em>
@@ -27,7 +27,7 @@ export function Footer(): React.ReactElement {
 
         <div className="grid grid-cols-4 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1 gap-8 pt-10 border-t border-(--rule)">
           <div className="flex flex-col">
-            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Work
             </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
@@ -74,7 +74,7 @@ export function Footer(): React.ReactElement {
             </ul>
           </div>
           <div className="flex flex-col">
-            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Writing
             </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
@@ -121,7 +121,7 @@ export function Footer(): React.ReactElement {
             </ul>
           </div>
           <div className="flex flex-col">
-            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Site
             </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
@@ -178,7 +178,7 @@ export function Footer(): React.ReactElement {
             </ul>
           </div>
           <div className="flex flex-col">
-            <h3 className="font-mono text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground mb-4.5 font-medium">
               Elsewhere
             </h3>
             <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
@@ -234,7 +234,7 @@ export function Footer(): React.ReactElement {
           </div>
         </div>
 
-        <div className="flex justify-between items-center max-[480px]:flex-col max-[480px]:items-start mt-14 pt-7 border-t border-(--rule) font-mono text-[11px] text-muted-foreground flex-wrap gap-3 max-[480px]:gap-2">
+        <div className="flex justify-between items-center max-[480px]:flex-col max-[480px]:items-start mt-14 pt-7 border-t border-(--rule) font-mono text-[12px] text-muted-foreground flex-wrap gap-3 max-[480px]:gap-2">
           <div className="flex items-center gap-2">
             <span>© {year}</span>
             <AmdSignatureInline height={11} />

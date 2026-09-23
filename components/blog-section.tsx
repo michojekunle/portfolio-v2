@@ -55,7 +55,7 @@ export async function BlogSection(): Promise<React.ReactElement> {
 
       <div className="flex justify-center mt-20 pt-10 border-t border-(--rule) mb-20">
         <MagneticWrapper strength={20}>
-          <Link href="/blog" className="group inline-flex items-center justify-center px-8 h-13 rounded-full font-mono text-[11px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+          <Link href="/blog" className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
             Read all notes <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2.5 w-3 h-3" aria-hidden="true" />
           </Link>
         </MagneticWrapper>

@@ -11,7 +11,7 @@ import { z } from "zod";
 // Built once at module load — avoids rebuilding a Set on every ADD_TRANSACTION request
 const VALID_CATEGORY_IDS = new Set<string>(SYSTEM_CATEGORIES.map((c) => c.id));
 
-export const DEFAULT_MODEL_CHAIN = [
+const DEFAULT_MODEL_CHAIN = [
   "google:gemini-2.5-flash",
   "google:gemini-3.5-flash",
   "google:gemini-2.5-flash-lite",

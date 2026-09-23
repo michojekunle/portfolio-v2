@@ -304,11 +304,11 @@ export function CommandPaletteTrigger(): React.ReactElement {
           new KeyboardEvent("keydown", { key: "k", metaKey: true })
         )
       }
-      className="hidden md:flex items-center gap-3 text-[11px] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-(--v3-accent) transition-all duration-200 px-4.5 h-9.5 border border-(--rule) rounded-full bg-transparent hover:bg-(--bg-2) hover:border-(--v3-accent-soft) group"
+      className="hidden md:flex items-center gap-3 text-[12px] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-(--v3-accent) transition-all duration-200 px-4.5 py-2 border border-(--rule) rounded-full bg-transparent hover:bg-(--bg-2) hover:border-(--v3-accent-soft) group cursor-pointer"
       aria-label="Open command palette"
     >
       <span className="font-mono">Search</span>
-      <kbd className="text-[10px] bg-(--bg-2) px-1.5 py-0.5 rounded font-mono text-muted-foreground border border-(--rule) transition-colors group-hover:border-(--v3-accent-soft) group-hover:text-(--v3-accent)">
+      <kbd className="text-[12px] font-mono px-1.5 py-0.5 rounded text-muted-foreground/60 transition-colors group-hover:text-(--v3-accent)">
         ⌘K
       </kbd>
     </button>

@@ -37,6 +37,14 @@ const DEFAULT_STATUS: ProfileStatusData = {
   currently_reading: "Zero to One by Peter Thiel",
 };
 
+function withTimeout<T>(promise: Promise<T>, ms = 800): Promise<T> {
+  let timer: NodeJS.Timeout;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Timeout")), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 export async function getProfileStatus(): Promise<ProfileStatusData> {
   let currentlyReading = DEFAULT_STATUS.currently_reading;
   try {
@@ -60,7 +68,7 @@ export async function getProfileStatus(): Promise<ProfileStatusData> {
     return { ...DEFAULT_STATUS, currently_reading: currentlyReading };
   }
   try {
-    const data = await redis.get<Partial<ProfileStatusData>>("profile_status_data");
+    const data = await withTimeout(redis.get<Partial<ProfileStatusData>>("profile_status_data"));
     return { ...DEFAULT_STATUS, ...data, currently_reading: currentlyReading };
   } catch (e) {
     console.error("[redis] getProfileStatus error:", e);
@@ -72,7 +80,7 @@ export async function setProfileStatus(data: Partial<ProfileStatusData>): Promis
   if (!redis) return;
   try {
     const current = await getProfileStatus();
-    await redis.set("profile_status_data", JSON.stringify({ ...current, ...data }));
+    await withTimeout(redis.set("profile_status_data", JSON.stringify({ ...current, ...data })));
   } catch (e) {
     console.error("[redis] setProfileStatus error:", e);
   }
