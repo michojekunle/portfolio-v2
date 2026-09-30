@@ -83,7 +83,7 @@ export function Navbar(): React.ReactNode {
     (e: KeyboardEvent): void => {
       if (e.key === "Escape" && isOpen) setIsOpen(false);
     },
-    [isOpen],
+    [isOpen]
   );
 
   useEffect(() => {
@@ -122,9 +122,6 @@ export function Navbar(): React.ReactNode {
               <div className="transition-transform duration-300 group-hover:scale-105">
                 <MoMark dim={34} />
               </div>
-              <span className="max-[1024px]:hidden">
-                Michael Ojekunle<em>.</em>
-              </span>
             </Link>
           </MagneticWrapper>
         </div>
@@ -151,10 +148,20 @@ export function Navbar(): React.ReactNode {
             <button
               className="w-11 h-11 min-w-[44px] min-h-[44px] sm:w-9.5 sm:h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
               onClick={() => setTheme(isDark ? "light" : "dark")}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={
+                isDark ? "Switch to light mode" : "Switch to dark mode"
+              }
               suppressHydrationWarning
             >
-              {mounted ? (isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />) : <Sun className="w-4 h-4" />}
+              {mounted ? (
+                isDark ? (
+                  <Moon className="w-4 h-4" />
+                ) : (
+                  <Sun className="w-4 h-4" />
+                )
+              ) : (
+                <Sun className="w-4 h-4" />
+              )}
             </button>
           </MagneticWrapper>
 
@@ -165,7 +172,10 @@ export function Navbar(): React.ReactNode {
               aria-label="Book a call"
             >
               Book a call{" "}
-              <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-1 ml-1.5 w-4 h-4" aria-hidden="true" />
+              <ArrowRight
+                className="inline-block transition-transform duration-250 group-hover:translate-x-1 ml-1.5 w-4 h-4"
+                aria-hidden="true"
+              />
             </Link>
           </MagneticWrapper>
 
@@ -191,7 +201,9 @@ export function Navbar(): React.ReactNode {
       <div
         ref={menuRef}
         id="v3-mobile-menu"
-        className={`${isOpen ? "flex" : "hidden"} flex-col pt-4 px-(--gutter) pb-6 border-t border-(--rule) bg-(--bg) gap-0.5`}
+        className={`${
+          isOpen ? "flex" : "hidden"
+        } flex-col pt-4 px-(--gutter) pb-6 border-t border-(--rule) bg-(--bg) gap-0.5`}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
@@ -215,7 +227,10 @@ export function Navbar(): React.ReactNode {
             onClick={() => setIsOpen(false)}
           >
             Book a call{" "}
-            <ArrowRight className="inline-block transition-transform duration-250 group-hover:translate-x-1 w-4 h-4 ml-1" aria-hidden="true" />
+            <ArrowRight
+              className="inline-block transition-transform duration-250 group-hover:translate-x-1 w-4 h-4 ml-1"
+              aria-hidden="true"
+            />
           </Link>
         </div>
       </div>
