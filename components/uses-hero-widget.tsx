@@ -4,15 +4,12 @@ import { Terminal } from "lucide-react"
 
 export function UsesHeroWidget() {
   const specLines = [
-    { label: "os", value: '"macOS Sequoia 15.4"' },
-    { label: "host", value: '"MacBook Pro M3 Pro"' },
-    { label: "kernel", value: '"Darwin 24.3.0 arm64"' },
-    { label: "shell", value: '"zsh 5.9 (omz)"' },
-    { label: "terminal", value: '"Warp / Alacritty"' },
-    { label: "editor", value: '"VS Code (Vim mode) / Neovim"' },
-    { label: "font", value: '"Geist Mono / Fira Code"' },
-    { label: "cpu", value: '"Apple M3 Pro (12-core)"' },
-    { label: "memory", value: '"36 GB Unified Memory"' }
+    { label: "os", value: '"macOS 26.2"' },
+    { label: "host", value: '"MacBook Pro (M1 Pro)"' },
+    { label: "kernel", value: '"Darwin 25.2.0 arm64"' },
+    { label: "shell", value: '"zsh 5.9"' },
+    { label: "cpu", value: '"Apple M1 Pro"' },
+    { label: "memory", value: '"16 GB unified memory"' }
   ]
 
   return (

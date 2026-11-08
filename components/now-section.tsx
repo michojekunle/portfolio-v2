@@ -91,7 +91,7 @@ export async function NowSection(): Promise<React.ReactElement> {
               Currently <em className="not-italic italic text-(--v3-accent) fvs-soft">working on.</em>
             </h2>
             <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-              A live snapshot: Spotify updates in real time, everything else the moment it changes.
+              What I&apos;m building, learning and reading right now.
             </div>
           </div>
         </div>

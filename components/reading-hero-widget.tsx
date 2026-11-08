@@ -1,10 +1,10 @@
 "use client"
 
-import { Award, BookOpen, Calendar, CheckCircle2 } from "lucide-react"
+import { Award } from "lucide-react"
 import { useState, useEffect } from "react"
 
 export function ReadingHeroWidget() {
-  const [stats, setStats] = useState({ goal: 12, completed: 8, currentStreak: 18, percentage: 67 })
+  const [stats, setStats] = useState({ goal: 12, completed: 0, percentage: 0 })
   
   useEffect(() => {
     const fetchStats = async () => {
@@ -21,7 +21,7 @@ export function ReadingHeroWidget() {
     void fetchStats()
   }, [])
   
-  const { goal, completed, currentStreak, percentage } = stats
+  const { goal, completed, percentage } = stats
   
   // Calculate SVG stroke offset for a radius of 40
   const radius = 40
@@ -74,33 +74,13 @@ export function ReadingHeroWidget() {
             </div>
           </div>
           
-          <div className="flex gap-4">
-            <div>
-              <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Streak</div>
-              <div className="text-[13px] font-semibold text-(--ink) font-mono">{currentStreak} days</div>
-            </div>
-            <div>
-              <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Current Year</div>
-              <div className="text-[13px] font-semibold text-(--ink) font-mono">2026</div>
-            </div>
+          <div>
+            <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Current Year</div>
+            <div className="text-[13px] font-semibold text-(--ink) font-mono">{new Date().getFullYear()}</div>
           </div>
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="h-0.25 bg-(--rule) w-full" />
-
-      {/* Footer / Status details */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2 text-[12px] text-secondary-foreground">
-          <CheckCircle2 className="w-3.5 h-3.5 text-(--ink) flex-shrink-0" />
-          <span>Ahead of schedule: +2 books ahead of pace</span>
-        </div>
-        <div className="flex items-center gap-2 text-[12px] text-secondary-foreground">
-          <Calendar className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-          <span>Last read tracked 4 hours ago</span>
-        </div>
-      </div>
     </div>
   )
 }

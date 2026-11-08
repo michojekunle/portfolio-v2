@@ -44,7 +44,7 @@ export function BlogHeroClient() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-[18px] text-secondary-foreground max-w-[52ch] leading-[1.65] m-0"
         >
-          Deep dives on engineering, ZK, Rust, and the philosophy of building. Distilled insights from the front lines of technology and learning.
+          Essays on engineering, Rust, the craft of building, and what I&apos;m learning along the way.
         </motion.p>
       </div>
 

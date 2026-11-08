@@ -26,7 +26,7 @@ export async function BlogSection(): Promise<React.ReactElement> {
           </h2>
           <div 
           className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-            Short essays on engineering, ZK, and learning in public.
+            Short essays on engineering, Rust, and learning in public.
           </div>
         </div>
       </div>

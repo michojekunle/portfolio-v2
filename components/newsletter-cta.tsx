@@ -8,7 +8,7 @@ interface NewsletterCTAProps {
 
 export function NewsletterCTA({ 
   title = "Join the loop.", 
-  description = "Short essays on engineering, ZK, and learning in public. Delivered when they're ready.",
+  description = "Short essays on engineering, Rust and learning in public. Sent when they're ready.",
   compact = false
 }: NewsletterCTAProps): React.ReactElement {
   if (compact) {

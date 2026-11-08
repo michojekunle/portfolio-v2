@@ -72,6 +72,7 @@ async function fetchChangelog(): Promise<ChangelogEntry[]> {
     for (const repo of json.data.user.repositories.nodes) {
       const commits = repo.defaultBranchRef?.target?.history?.nodes ?? []
       for (const commit of commits) {
+        if (/^update action output$/i.test(commit.message.split("\n")[0].trim())) continue
         entries.push({ repo: repo.name, repoUrl: repo.url, message: commit.message.split("\n")[0], date: commit.committedDate, url: commit.url, sha: commit.abbreviatedOid })
       }
     }

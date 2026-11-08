@@ -7,7 +7,7 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: "Field Notes",
   description:
-    "Essays on engineering, ZK, Rust, faith, and learning things in public. Roughly one piece every three weeks.",
+    "Essays on engineering, Rust, faith, and learning things in public.",
 }
 
 import { BlogHeroClient } from "@/components/blog-hero-client"
@@ -45,8 +45,8 @@ export default async function BlogPage(): Promise<React.ReactElement> {
         </section>
 
         <NewsletterCTA 
-          title="Deep dives, delivered." 
-          description="Get my latest field notes and technical essays directly in your inbox. No noise, just high-signal thoughts."
+          title="New essays, by email."
+          description="New field notes in your inbox when they're published. No schedule, no noise."
         />
     </main>
   )

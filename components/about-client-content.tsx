@@ -201,7 +201,7 @@ export function AboutClientContent() {
               That builder&apos;s itch reaches past software too.{" "}
               <b className="text-(--ink) font-medium">Agriculture and food systems</b>, <b className="text-(--ink) font-medium">waste management</b>, and{" "}
               <b className="text-(--ink) font-medium">recycling infrastructure</b>: the same first-principles thinking I apply to
-              protocol design shows up in how I think about resource loops in the physical world.
+              systems design shows up in how I think about resource loops in the physical world.
               The incentive structures are not that different, and I expect some of what I build
               next to live there.
             </motion.p>
@@ -252,7 +252,7 @@ export function AboutClientContent() {
 
           <TiltCard intensity={10} className="h-full">
             <div className="bg-(--paper) border border-(--rule) rounded-2xl p-6 transition-all duration-300 hover:border-(--v3-accent) hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] h-full flex flex-col gap-4 justify-between">
-              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium m-0">Elsewhere</h2>
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium m-0">Find me</h2>
               <div className="flex flex-wrap gap-4.5">
                 <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer" className="text-[16px] font-medium text-(--ink) hover:text-(--v3-accent) transition-colors underline decoration-(--rule) underline-offset-1">GitHub</a>
                 <a href="https://x.com/devvmichael" target="_blank" rel="noopener noreferrer" className="text-[16px] font-medium text-(--ink) hover:text-(--v3-accent) transition-colors underline decoration-(--rule) underline-offset-1">Twitter</a>

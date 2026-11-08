@@ -23,7 +23,7 @@ interface Post {
   cover_image?: string | null;
 }
 
-const CATEGORIES = ["All", "Technical", "Web3", "Reflection", "ZKML", "First Principles", "Life & Learning"];
+const CATEGORIES = ["All", "Technical", "Web3", "Reflection", "First Principles", "Life & Learning"];
 
 export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.ReactElement {
   const [searchQuery, setSearchQuery] = useState("");

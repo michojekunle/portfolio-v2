@@ -38,7 +38,7 @@ export function CreatorSuiteSection(): React.ReactElement {
           </h2>
           <p className="mt-4 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground m-0">
             Six live tools for creators learning in public to read more, build faster, share
-            consistently, track every naira, and log every win. All production-grade, all actually useful.
+            consistently, track every naira, and log every win.
           </p>
         </div>
       </motion.div>
@@ -89,8 +89,7 @@ export function CreatorSuiteSection(): React.ReactElement {
         className="flex items-center justify-between gap-6 max-[720px]:flex-col max-[720px]:items-start"
       >
         <p className="m-0 text-[15px] text-muted-foreground max-w-[52ch]">
-          Each tool is a real product with auth, database, AI integrations, and production
-          error handling; not a demo. Open source on request.
+          Each tool has auth, a database and AI integrations behind it.
         </p>
         <MagneticWrapper>
           <Link

@@ -79,8 +79,8 @@ export function ContactPage(): React.ReactElement {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-[18px] text-secondary-foreground max-w-[52ch] leading-[1.65] m-0"
           >
-            Pick a slot below or send a note. Open to contract work, full-time roles in
-            protocol-adjacent teams, and conversations that aren&apos;t either.
+            Pick a slot below or send a note. Open to full-time roles, selective contract
+            work, and conversations that aren&apos;t either.
           </motion.p>
         </div>
 

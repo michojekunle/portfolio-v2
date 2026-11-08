@@ -79,7 +79,6 @@ export function HeroSection(): React.ReactElement {
             Four years building products across web, mobile and web3: founding-team engineer on{" "}
             <b className="text-(--ink) font-medium">CoinSafe</b>, now building{" "}
             <b className="text-(--ink) font-medium">Zamir</b>, a worship-music app live since March 2026.
-            Now I&apos;m going deep on <b className="text-(--ink) font-medium">Rust</b>, distributed systems and AI infrastructure, one project at a time.
           </p>
 
           <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">

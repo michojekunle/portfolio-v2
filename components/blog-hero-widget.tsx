@@ -71,7 +71,7 @@ export function BlogHeroWidget() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Next Essay Draft</span>
-            <span className="font-mono text-xs px-2 py-0.5 rounded bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-(--v3-accent) font-semibold">80% ready</span>
+            <span className="font-mono text-xs px-2 py-0.5 rounded bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)] text-(--v3-accent) font-semibold">In draft</span>
           </div>
           <div className="font-display text-[14px] text-(--ink) font-semibold">
             {stats?.pipelineTitle || "Gathering thoughts..."}

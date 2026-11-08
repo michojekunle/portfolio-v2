@@ -53,7 +53,7 @@ const categories: ToolCategory[] = [
   {
     title: "Hardware",
     items: [
-      { name: "MacBook Pro M3", description: "The workhorse. Runs hot under heavy compiles but never throttles when it matters." },
+      { name: "MacBook Pro (M1 Pro)", description: "The workhorse. 16 GB of unified memory, and enough for Rust builds and a full Next.js dev server." },
     ],
   },
 ]

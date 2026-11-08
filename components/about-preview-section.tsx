@@ -9,15 +9,15 @@ import { TextReveal } from "./text-reveal"
 const ROLES = [
   {
     title: "Software Engineer",
-    desc: "Four years full-stack, two deep in web3. Now going lower down the stack, doubling down on Rust systems programming."
+    desc: "Four years building products across web, mobile and web3. Now going lower down the stack, starting with Rust."
   },
   {
     title: "Builder",
-    desc: "Building a handful of my own products and businesses: shipping real tools, not demos, and learning what it takes to run them."
+    desc: "Building Zamir, plus a suite of tools I use myself. Shipping them end to end and learning what it takes to run them."
   },
   {
     title: "Writer",
-    desc: "Writing essays as I learn in public, distilling hard technical ideas into accessible, high-signal pieces."
+    desc: "Essays as I learn, mostly about engineering and building."
   }
 ]
 
@@ -33,8 +33,8 @@ export function AboutPreviewSection(): React.ReactElement {
       >
         <div>
           <h2 id="about-preview-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
-            <TextReveal delay={0.1}>Engineering with</TextReveal> <br className="max-[720px]:hidden" />
-            <TextReveal delay={0.3} className="italic text-(--v3-accent) fvs-soft">precision.</TextReveal>
+            <TextReveal delay={0.1}>From the interface</TextReveal> <br className="max-[720px]:hidden" />
+            <TextReveal delay={0.3} className="italic text-(--v3-accent) fvs-soft">down.</TextReveal>
           </h2>
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
@@ -43,7 +43,7 @@ export function AboutPreviewSection(): React.ReactElement {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
           >
-            I don&apos;t just build features; I architect systems and ship products. Rooted in understanding the metal while obsessing over the interface, and increasingly the business around it.
+            I build products end to end, and I&apos;m learning what sits underneath them: memory, protocols and the systems that keep them running.
           </motion.div>
         </div>
       </motion.div>

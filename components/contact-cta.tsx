@@ -47,8 +47,8 @@ export function ContactCTA(): React.ReactElement {
               Let&apos;s build <em>something.</em>
             </h2>
             <p>
-              Available for contract work, full-time roles in protocol-adjacent teams, and
-              conversations that are neither.
+              Open to full-time roles, selective contract work, and conversations that
+              are neither.
             </p>
             <div className="v3-cta-actions">
               <MagneticWrapper strength={20}>

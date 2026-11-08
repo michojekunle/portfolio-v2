@@ -6,9 +6,9 @@ import { useState, useEffect } from "react"
 export function ChangelogHeroWidget() {
   const [stats, setStats] = useState({
     branch: "main",
-    commitsThisWeek: 14,
-    activeRepos: 4,
-    activityData: [4, 8, 3, 5, 2, 7, 6]
+    commitsThisWeek: 0,
+    activeRepos: 0,
+    activityData: [0, 0, 0, 0, 0, 0, 0]
   })
 
   useEffect(() => {
@@ -60,10 +60,10 @@ export function ChangelogHeroWidget() {
         {/* Status */}
         <div className="p-3 rounded-lg bg-(--bg-2) flex flex-col gap-1">
           <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-            <Shield className="w-3.5 h-3.5 text-muted-foreground" /> Build Pipeline
+            <Shield className="w-3.5 h-3.5 text-muted-foreground" /> Active Repos
           </span>
           <span className="text-[13px] font-mono font-semibold text-(--ink) flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> passing
+            {activeRepos}
           </span>
         </div>
       </div>

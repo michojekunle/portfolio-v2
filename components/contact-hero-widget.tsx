@@ -43,7 +43,7 @@ export function ContactHeroWidget() {
       <div className="grid grid-cols-2 gap-4 pb-4 border-b border-(--rule)">
         <div>
           <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Response Time</div>
-          <div className="text-[14px] font-bold text-(--ink) mt-1">&lt; 12 hours</div>
+          <div className="text-[14px] font-bold text-(--ink) mt-1">Within 24 hours</div>
         </div>
         <div>
           <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Preferred channels</div>
@@ -58,8 +58,8 @@ export function ContactHeroWidget() {
           <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Let&apos;s talk about</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
-          <span className="px-2.5 py-1 rounded-full border border-(--rule) font-mono text-xs text-secondary-foreground">zk-circuits</span>
-          <span className="px-2.5 py-1 rounded-full border border-(--rule) font-mono text-xs text-secondary-foreground">evm security</span>
+          <span className="px-2.5 py-1 rounded-full border border-(--rule) font-mono text-xs text-secondary-foreground">rust &amp; systems</span>
+          <span className="px-2.5 py-1 rounded-full border border-(--rule) font-mono text-xs text-secondary-foreground">web3 integrations</span>
           <span className="px-2.5 py-1 rounded-full border border-(--rule) font-mono text-xs text-secondary-foreground">agriculture tech</span>
         </div>
       </div>
