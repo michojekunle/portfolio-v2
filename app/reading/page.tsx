@@ -20,12 +20,12 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
       {/* Hero */}
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">
+          <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-8 text-balance fvs-display">
             Curated <em className="not-italic italic text-(--v3-accent) fvs-soft">takeaways.</em>
           </h1>
-          <p className="text-[18px] text-secondary-foreground max-w-[52ch] leading-[1.65] m-0">
+          <p className="text-[clamp(17px,2vw,20px)] text-secondary-foreground max-w-[52ch] leading-[1.6] m-0">
             A dynamic archive of notes, quotes, and insights from the books I&apos;m currently exploring. Distilled for clarity and recall.
           </p>
         </div>
@@ -41,19 +41,19 @@ export default async function ReadingPage(): Promise<React.ReactElement> {
           <div className="max-w-(--maxw) mx-auto px-(--gutter) py-7 grid grid-cols-4 max-[600px]:grid-cols-2 gap-6">
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{books.length}</div>
-              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Books logged</div>
+              <div className="font-mono text-[11px] tracking-[0.06em] text-muted-foreground mt-1.5">Books logged</div>
             </div>
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{currentlyReading.length}</div>
-              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Currently reading</div>
+              <div className="font-mono text-[11px] tracking-[0.06em] text-muted-foreground mt-1.5">Currently reading</div>
             </div>
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{completed.length}</div>
-              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Finished</div>
+              <div className="font-mono text-[11px] tracking-[0.06em] text-muted-foreground mt-1.5">Finished</div>
             </div>
             <div>
               <div className="font-display text-[28px] font-normal text-(--ink) fvs-text leading-none">{totalNotes}</div>
-              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mt-1.5">Notes & quotes</div>
+              <div className="font-mono text-[11px] tracking-[0.06em] text-muted-foreground mt-1.5">Notes & quotes</div>
             </div>
           </div>
         </section>

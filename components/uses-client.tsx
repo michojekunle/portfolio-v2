@@ -65,9 +65,9 @@ export function UsesClient() {
 
   return (
     <>
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <h1 className="m-0 font-display font-light text-[clamp(48px,8vw,110px)] leading-[0.9] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 max-[720px]:gap-x-2.5">
+          <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 max-[720px]:gap-x-2.5">
             {titleWords.map((word, i) => {
               const isActually = word === "actually"
               return (
@@ -92,7 +92,7 @@ export function UsesClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-[18px] text-secondary-foreground max-w-[52ch] leading-[1.65] m-0"
+            className="text-[clamp(17px,2vw,20px)] text-secondary-foreground max-w-[52ch] leading-[1.6] m-0"
           >
             Updated when something meaningful changes. Affiliate-free — these are the tools that survived.
           </motion.p>

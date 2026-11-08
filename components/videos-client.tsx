@@ -99,11 +99,11 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
   return (
     <>
       {/* ── Hero: heading left, intro + recent videos right ── */}
-      <section className="pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div className="grid grid-cols-[1.05fr_0.95fr] max-[960px]:grid-cols-1 gap-14 max-[960px]:gap-10 items-start">
           {/* Left: heading + copy */}
           <div>
-            <h1 className="m-0 font-display font-light text-[clamp(40px,6vw,88px)] leading-[0.9] tracking-[-0.04em] text-(--ink) mb-7 text-balance fvs-display flex flex-wrap gap-x-3.5">
+            <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-7 text-balance fvs-display flex flex-wrap gap-x-3.5">
               {titleWords.map((word, i) => {
                 const isBuild = word === "build.";
                 return (
@@ -128,7 +128,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="font-sans font-normal text-[18px] text-secondary-foreground max-w-[42ch]"
+              className="font-sans font-normal text-[clamp(17px,2vw,20px)] text-secondary-foreground max-w-[42ch] leading-[1.6]"
             >
               Every platform where I share process over polish — the same
               projects you see here, shot as it happens.

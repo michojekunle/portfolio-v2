@@ -79,23 +79,17 @@ export default function CreatorSuitePage(): React.ReactElement {
     >
       {/* ── Hero ── */}
       <section
-        className="pt-40 pb-[100px] max-[720px]:pt-30 max-[720px]:pb-16 border-b"
-        style={{ borderColor: "var(--rule)" }}
+        className="pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 border-b border-(--rule)"
       >
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
           <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-12 items-end">
             <div>
               <h1
-                className="m-0 font-display font-normal leading-[0.88] tracking-[-0.04em] text-balance fvs-display"
-                style={{
-                  fontSize: "clamp(56px,10vw,116px)",
-                  color: "var(--ink)",
-                }}
+                className="m-0 font-display font-normal text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) text-balance fvs-display"
               >
                 Tools for{" "}
                 <em
-                  className="not-italic italic fvs-soft"
-                  style={{ color: "var(--v3-accent)" }}
+                  className="not-italic italic text-(--v3-accent) fvs-soft"
                 >
                   builders
                 </em>{" "}
@@ -105,8 +99,7 @@ export default function CreatorSuitePage(): React.ReactElement {
             </div>
             <div className="max-w-[44ch] max-[900px]:max-w-none">
               <p
-                className="text-[18px] leading-[1.65] m-0"
-                style={{ color: "var(--ink-2)" }}
+                className="text-[clamp(17px,2vw,20px)] leading-[1.6] m-0 text-secondary-foreground"
               >
                 Six production tools I built because I needed them. Turn books
                 into content, track every naira, journal your objectives, build
