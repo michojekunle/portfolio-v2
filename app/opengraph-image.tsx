@@ -9,7 +9,7 @@ export default function Image() {
   return renderOgCard({
     eyebrow: "Software Engineer & Builder",
     title: "Michael Ojekunle",
-    subtitle: "Founder of Zamir. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
+    subtitle: "Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure. Currently building Zamir.",
     cta: "Explore the work →",
   });
 }

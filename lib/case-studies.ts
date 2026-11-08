@@ -53,7 +53,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     tag: "Flagship",
     cat: "product",
     year: "2026",
-    desc: "Turns Bible verses into worship songs, in seven styles and ten languages. Live since March 2026. I run it as CEO and CTO with a team of four.",
+    desc: "Turns Bible verses into worship songs, in seven styles and ten languages. Live since March 2026. Built with a team of four.",
     lede: "Scripture, on repeat.",
     stack: [
       "Next.js",
@@ -61,7 +61,6 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Flutter",
       "Gemini",
       "Music-generation API",
-      "OPFS",
     ],
     role: "CEO & CTO · Product and engineering",
     duration: "Live since March 2026",
@@ -140,7 +139,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "The protocol, designed and written by the contracts team, is vault-centric: each user gets an isolated vault, saving strategies are separate modules, and withdrawal time-locks are enforced in the contract rather than the interface. My side was the product on top of it: the app, the onboarding, and every connection between the interface, the backend and the chain.",
     process: [
       "Built the account abstraction layer on thirdweb: sign-in with Google, email or other social options, passkey-based onboarding, and gas sponsorship, so new users could start saving without knowing what a wallet was.",
-      "Integrated the interface with the backend and the smart contracts across 11–20 dashboard screens: target and emergency safes, one-time and automated saving, assets and rewards, and a progressive web app experience.",
+      "Integrated the interface with the backend and the smart contracts across 50+ screens: target and emergency safes, one-time and automated saving, assets and rewards, and a progressive web app experience.",
       "Kept the interface honest about asynchronous reality. I listened to contract events and synced them into application state with optimistic updates, across more than ten transaction types, so a pending transaction never left the screen lying.",
       "Because I was the one integrating the contracts, I read them closely. I did informal contract reviews and reported bugs I found from the integration side. I did not write the contracts.",
     ],

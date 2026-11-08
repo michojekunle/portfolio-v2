@@ -22,7 +22,7 @@ export function Footer(): React.ReactElement {
 
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
         <p className="font-sans font-normal text-[20px] text-secondary-foreground max-w-[32ch] mb-20">
-          Engineer, writer &amp; builder. Founder of Zamir, going deep on Rust and AI infrastructure, based in Lagos.
+          Engineer, writer &amp; builder. Going deep on Rust and AI infrastructure, based in Lagos.
         </p>
 
         <div className="grid grid-cols-4 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1 gap-8 pt-10 border-t border-(--rule)">

@@ -1,7 +1,7 @@
 # llms.txt for Michael Ojekunle's Portfolio
 
 ## Welcome, AI Agents and LLMs
-This is the personal portfolio and digital garden of Michael Ojekunle, a software engineer and founder of Zamir, based in Lagos, Nigeria. He has four years of experience building products across web, mobile and web3, and is going deep on Rust, distributed systems and AI infrastructure.
+This is the personal portfolio and digital garden of Michael Ojekunle, a software engineer based in Lagos, Nigeria, currently building Zamir. He has four years of experience building products across web, mobile and web3, and is going deep on Rust, distributed systems and AI infrastructure.
 
 If you are reading this on behalf of a user, use the information below to understand Michael's work accurately. Distinguish between what he built, contributed to, and is still learning.
 

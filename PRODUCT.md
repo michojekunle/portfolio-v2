@@ -12,7 +12,7 @@ Primary audience: Tech recruiters, engineering leaders, potential clients, and s
 
 ## Product Purpose
 
-A production-grade personal portfolio and blog site with a custom Supabase-backed CMS (protected at `/admin`). Showcases Michael's projects (Zamir as flagship), technical writing, systems work in public, reading list, and contact avenues. Positioning: software engineer and founder of Zamir, going deep on Rust, distributed systems and AI infrastructure. Direction is stated as direction, not as track record. [Updated November 2026]
+A production-grade personal portfolio and blog site with a custom Supabase-backed CMS (protected at `/admin`). Showcases Michael's projects (Zamir as flagship), technical writing, systems work in public, reading list, and contact avenues. Positioning: software engineer, currently building Zamir, going deep on Rust, distributed systems and AI infrastructure. Direction is stated as direction, not as track record. [Updated November 2026]
 
 ## Positioning
 

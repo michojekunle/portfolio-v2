@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     template: "%s | Michael Ojekunle",
   },
   description:
-    "Software engineer and founder of Zamir, based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
+    "Software engineer based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure. Currently building Zamir.",
   keywords: [
     "Michael Ojekunle",
     "devvmichael",
@@ -84,13 +84,13 @@ export const metadata: Metadata = {
     siteName: "Michael Ojekunle",
     title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Founder of Zamir. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
+      "Software engineer. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Founder of Zamir. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
+      "Software engineer. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
     creator: "@devvmichael",
     site: "@devvmichael",
   },
@@ -132,7 +132,7 @@ const jsonLd = {
       },
       jobTitle: "Software Engineer & Builder",
       description:
-        "Software engineer and founder of Zamir, based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
+        "Software engineer based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure. Currently building Zamir.",
       sameAs: [
         "https://github.com/michojekunle",
         "https://x.com/devvmichael",

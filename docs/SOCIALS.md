@@ -3,17 +3,17 @@
 Rule for every profile: say what you built, say what you are building toward, and never present the direction as a track record. Update the numbers from the Zamir case study when they change.
 
 Core line:
-> Software engineer and founder of Zamir. Four years building products across web, mobile and web3. Going deep on Rust, distributed systems and AI infrastructure.
+> Software engineer, currently building Zamir. Four years building products across web, mobile and web3. Going deep on Rust, distributed systems and AI infrastructure.
 
 ---
 
 ## LinkedIn
 
 **Headline (220 characters max)**
-Software Engineer · Founder of Zamir · Rust, TypeScript, Web3 · Going deep on distributed systems and AI infrastructure
+Software Engineer · Building Zamir · Rust, TypeScript, Web3 · Going deep on distributed systems and AI infrastructure
 
 **About**
-I'm a software engineer and the CEO and CTO of Zamir, an app that turns Bible verses into worship songs in seven styles and ten languages. It has been live since March 2026 and has more than 4,600 plays so far.
+I'm a software engineer. Right now I'm building Zamir, an app that turns Bible verses into worship songs in seven styles and ten languages. It has been live since March 2026 and has more than 4,600 plays so far.
 
 Before that, I spent about 18 months on the founding team at CoinSafe, a savings protocol on Lisk and Base, where I owned the frontend and the wallet and contract integrations. I built the account abstraction onboarding on thirdweb (social login, passkeys, gas sponsorship), which brought in 200+ user wallets, and the event-driven state sync across 10+ transaction types.
 
@@ -59,7 +59,7 @@ I've spent four years building products across web, mobile and web3. Now I'm goi
 Portfolio: [michaelojekunle.dev](https://michaelojekunle.dev) · Writing: [CodeNThrive](https://codenthrive.hashnode.dev)
 ```
 
-**Bio (160 characters):** Founder of Zamir. Building in Rust, going deep on distributed systems and AI infrastructure.
+**Bio (160 characters):** Software engineer building Zamir. Going deep on Rust, distributed systems and AI infrastructure.
 
 **Pin these (6):** zk, rust-learn, create-stacks-app, r_mem_allocator, the portfolio repo, and the Zamir repo if it is public.
 
@@ -73,10 +73,10 @@ Portfolio: [michaelojekunle.dev](https://michaelojekunle.dev) · Writing: [CodeN
 
 ## X (@devvmichael)
 
-**Bio:** Founder @ Zamir. Software engineer. Rust, distributed systems, AI infra. Building in public from Lagos.
+**Bio:** Software engineer. Building Zamir. Rust, distributed systems, AI infra. Building in public from Lagos.
 
 **Pinned post**
-> I'm Michael. I build software for a living and I'm the founder of Zamir, which turns Bible verses into worship songs.
+> I'm Michael. I build software for a living and I'm building Zamir, which turns Bible verses into worship songs.
 >
 > 4 years of building across web, mobile and web3. Now going deep on Rust, distributed systems and AI infrastructure, in public, one milestone at a time.
 >
@@ -93,7 +93,7 @@ Portfolio: [michaelojekunle.dev](https://michaelojekunle.dev) · Writing: [CodeN
 ## Hashnode (CodeNThrive)
 
 **Bio**
-Software engineer and founder of Zamir. Writing about Rust, systems, web3 integrations and building products from Lagos.
+Software engineer building Zamir. Writing about Rust, systems, web3 integrations and building products from Lagos.
 
 **Series name and description**
 Systems in Rust: Notes on learning memory, concurrency and distributed systems by building them, with the mistakes left in.

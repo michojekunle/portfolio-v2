@@ -47,7 +47,7 @@ export function HeroSection(): React.ReactElement {
       <div className="relative z-1 grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
           <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.35] text-(--ink) m-0 max-w-[24ch] text-pretty">
-            I build software end to end. Founder of Zamir, going deep on{" "}
+            I build software end to end, going deep on{" "}
             <em>Rust systems</em> and AI infrastructure.
           </p>
 
@@ -77,7 +77,7 @@ export function HeroSection(): React.ReactElement {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}>
           <p className="text-[17px] leading-[1.7] text-secondary-foreground m-0">
             Four years building products across web, mobile and web3: founding-team engineer on{" "}
-            <b className="text-(--ink) font-medium">CoinSafe</b>, and CEO and CTO of{" "}
+            <b className="text-(--ink) font-medium">CoinSafe</b>, now building{" "}
             <b className="text-(--ink) font-medium">Zamir</b>, a worship-music app live since March 2026.
             Now I&apos;m going deep on <b className="text-(--ink) font-medium">Rust</b>, distributed systems and AI infrastructure, one project at a time.
           </p>

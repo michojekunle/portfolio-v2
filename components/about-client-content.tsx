@@ -39,6 +39,16 @@ export function AboutClientContent() {
               </motion.span>
             ))}
           </h1>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="m-0 max-w-[52ch] text-[clamp(17px,2vw,21px)] leading-[1.6] text-secondary-foreground"
+          >
+            Software engineer in Lagos. Four years building across web, mobile and web3: on
+            the founding team at CoinSafe, now building Zamir. Going deep on Rust, distributed
+            systems and AI infrastructure.
+          </motion.p>
         </div>
 
         <motion.div
@@ -139,7 +149,7 @@ export function AboutClientContent() {
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
               Two things take most of my time. The first is{" "}
-              <b className="text-(--ink) font-medium">Zamir</b>, which I run as CEO and CTO with
+              <b className="text-(--ink) font-medium">Zamir</b>, which I'm building with
               a team of four. The second is going lower down the stack than the frontend, one
               milestone at a time, starting with{" "}
               <b className="text-(--ink) font-medium">Rust systems programming</b>: a memory

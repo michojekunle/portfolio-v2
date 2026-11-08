@@ -27,7 +27,7 @@ export function Preloader(): React.ReactElement {
   }, [])
 
   const name = "MICHAEL OJEKUNLE.".split("")
-  const intro = "Software engineer. Founder of Zamir.".split("")
+  const intro = "Engineer. Writer. Builder.".split("")
 
   const containerVariants: Variants = {
     hidden: { opacity: 1 },
