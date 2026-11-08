@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" fill="none">
+  <rect width="1200" height="750" rx="16" fill="#090d0e"/>
+  
+  <!-- Subtle coordinate grid -->
+  <defs>
+    <pattern id="zkgrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#132326" stroke-width="0.8"/>
+    </pattern>
+    <linearGradient id="zkgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#090d0e" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="750" fill="url(#zkgrid)"/>
+  <rect width="1200" height="750" fill="url(#zkgrad)"/>
+
+  <!-- Header bar -->
+  <g transform="translate(60, 50)">
+    <rect width="1080" height="48" rx="8" fill="#0f191b" stroke="#1b3236" stroke-width="1"/>
+    <circle cx="24" cy="24" r="6" fill="#ef4444" opacity="0.8"/>
+    <circle cx="44" cy="24" r="6" fill="#f59e0b" opacity="0.8"/>
+    <circle cx="64" cy="24" r="6" fill="#10b981" opacity="0.8"/>
+    <text x="96" y="29" fill="#5eead4" font-family="JetBrains Mono, monospace" font-size="13" font-weight="500">zk-systems :: rust/criterion_benchmarks</text>
+    <text x="1040" y="29" text-anchor="end" fill="#71898d" font-family="JetBrains Mono, monospace" font-size="12">GKR · KZG · Sumcheck</text>
+  </g>
+
+  <!-- Interactive Proof Architecture Nodes -->
+  <!-- Layer 1: GKR Circuit -->
+  <g transform="translate(80, 140)">
+    <rect width="300" height="480" rx="12" fill="#0c1719" stroke="#1e3a3f" stroke-width="1.5"/>
+    <rect x="20" y="24" width="70" height="24" rx="4" fill="#134e4a"/>
+    <text x="32" y="40" fill="#5eead4" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">LAYER 01</text>
+    <text x="20" y="80" fill="#f0fdfa" font-family="Fraunces, serif" font-size="24" font-weight="400">GKR Protocol</text>
+    <text x="20" y="108" fill="#99b2b5" font-family="Inter, sans-serif" font-size="13" line-height="1.5">Layer-by-layer circuit verification</text>
+    
+    <!-- Circuit DAG visualization -->
+    <g transform="translate(30, 150)">
+      <circle cx="40" cy="40" r="14" fill="#134e4a" stroke="#2dd4bf" stroke-width="2"/>
+      <text x="40" y="44" text-anchor="middle" fill="#f0fdfa" font-family="JetBrains Mono" font-size="10">add</text>
+
+      <circle cx="120" cy="40" r="14" fill="#134e4a" stroke="#2dd4bf" stroke-width="2"/>
+      <text x="120" y="44" text-anchor="middle" fill="#f0fdfa" font-family="JetBrains Mono" font-size="10">mul</text>
+
+      <circle cx="200" cy="40" r="14" fill="#134e4a" stroke="#2dd4bf" stroke-width="2"/>
+      <text x="200" y="44" text-anchor="middle" fill="#f0fdfa" font-family="JetBrains Mono" font-size="10">add</text>
+
+      <path d="M 40 54 L 80 120 M 120 54 L 80 120 M 120 54 L 160 120 M 200 54 L 160 120" stroke="#1e3a3f" stroke-width="2"/>
+      
+      <circle cx="80" cy="120" r="16" fill="#0f766e" stroke="#5eead4" stroke-width="2"/>
+      <text x="80" y="124" text-anchor="middle" fill="#ffffff" font-family="JetBrains Mono" font-size="11">V₁</text>
+
+      <circle cx="160" cy="120" r="16" fill="#0f766e" stroke="#5eead4" stroke-width="2"/>
+      <text x="160" y="124" text-anchor="middle" fill="#ffffff" font-family="JetBrains Mono" font-size="11">V₂</text>
+
+      <path d="M 80 136 L 120 200 M 160 136 L 120 200" stroke="#2dd4bf" stroke-width="2"/>
+
+      <circle cx="120" cy="200" r="18" fill="#14b8a6" stroke="#ccfbf1" stroke-width="2.5"/>
+      <text x="120" y="205" text-anchor="middle" fill="#042f2e" font-family="JetBrains Mono" font-size="12" font-weight="700">V₀</text>
+    </g>
+
+    <rect x="20" y="400" width="260" height="56" rx="8" fill="#081012" stroke="#162e33"/>
+    <text x="36" y="424" fill="#5eead4" font-family="JetBrains Mono" font-size="11">O(d · log |C|) verifier</text>
+    <text x="36" y="442" fill="#71898d" font-family="JetBrains Mono" font-size="11">Logarithmic rounds</text>
+  </g>
+
+  <!-- Flow connector 1 -->
+  <path d="M 380 380 L 450 380" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="450,380 442,375 442,385" fill="#2dd4bf"/>
+
+  <!-- Layer 2: Sumcheck Protocol -->
+  <g transform="translate(450, 140)">
+    <rect width="300" height="480" rx="12" fill="#0c1719" stroke="#1e3a3f" stroke-width="1.5"/>
+    <rect x="20" y="24" width="70" height="24" rx="4" fill="#134e4a"/>
+    <text x="32" y="40" fill="#5eead4" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">LAYER 02</text>
+    <text x="20" y="80" fill="#f0fdfa" font-family="Fraunces, serif" font-size="24" font-weight="400">Sumcheck Core</text>
+    <text x="20" y="108" fill="#99b2b5" font-family="Inter, sans-serif" font-size="13">Hypercube sum reduction</text>
+
+    <!-- Formula & Hypercube visual -->
+    <g transform="translate(20, 150)">
+      <rect width="260" height="90" rx="8" fill="#071012" stroke="#1a353a"/>
+      <text x="20" y="38" fill="#5eead4" font-family="JetBrains Mono" font-size="13">∑ f(b) = H</text>
+      <text x="20" y="58" fill="#71898d" font-family="JetBrains Mono" font-size="11">b ∈ {0,1}ⁿ</text>
+      <text x="20" y="74" fill="#a7f3d0" font-family="JetBrains Mono" font-size="11">→ univariate poly check</text>
+
+      <!-- Step round indicators -->
+      <g transform="translate(10, 115)">
+        <rect width="240" height="28" rx="6" fill="#0f2124"/>
+        <text x="16" y="19" fill="#f0fdfa" font-family="JetBrains Mono" font-size="11">Round i: gᵢ(X) = ∑ f(r₁..X)</text>
+      </g>
+      <g transform="translate(10, 155)">
+        <rect width="240" height="28" rx="6" fill="#0f2124"/>
+        <text x="16" y="19" fill="#f0fdfa" font-family="JetBrains Mono" font-size="11">Check: gᵢ(0) + gᵢ(1) == cᵢ₋₁</text>
+      </g>
+      <g transform="translate(10, 195)">
+        <rect width="240" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="1"/>
+        <text x="16" y="19" fill="#ffffff" font-family="JetBrains Mono" font-size="11" font-weight="600">Verifies in O(n) rounds</text>
+      </g>
+    </g>
+
+    <rect x="20" y="400" width="260" height="56" rx="8" fill="#081012" stroke="#162e33"/>
+    <text x="36" y="424" fill="#5eead4" font-family="JetBrains Mono" font-size="11">Multilinear evaluations</text>
+    <text x="36" y="442" fill="#71898d" font-family="JetBrains Mono" font-size="11">Fiat-Shamir challenge stream</text>
+  </g>
+
+  <!-- Flow connector 2 -->
+  <path d="M 750 380 L 820 380" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="820,380 812,375 812,385" fill="#2dd4bf"/>
+
+  <!-- Layer 3: KZG Commitments -->
+  <g transform="translate(820, 140)">
+    <rect width="300" height="480" rx="12" fill="#0c1719" stroke="#1e3a3f" stroke-width="1.5"/>
+    <rect x="20" y="24" width="70" height="24" rx="4" fill="#134e4a"/>
+    <text x="32" y="40" fill="#5eead4" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">LAYER 03</text>
+    <text x="20" y="80" fill="#f0fdfa" font-family="Fraunces, serif" font-size="24" font-weight="400">KZG Commit</text>
+    <text x="20" y="108" fill="#99b2b5" font-family="Inter, sans-serif" font-size="13">Succinct polynomial proofs</text>
+
+    <!-- Curve & Pairing graphic -->
+    <g transform="translate(20, 150)">
+      <rect width="260" height="110" rx="8" fill="#071012" stroke="#1a353a"/>
+      <text x="18" y="32" fill="#5eead4" font-family="JetBrains Mono" font-size="12">C = [f(τ)]₁ = ∑ cᵢ [τⁱ]₁</text>
+      <text x="18" y="58" fill="#71898d" font-family="JetBrains Mono" font-size="11">Proof: π = [q(τ)]₁</text>
+      <text x="18" y="84" fill="#a7f3d0" font-family="JetBrains Mono" font-size="11">e(C - [v]₁, [1]₂) = e(π, [τ - z]₂)</text>
+
+      <rect x="10" y="130" width="240" height="50" rx="6" fill="#0f2124"/>
+      <text x="24" y="152" fill="#f0fdfa" font-family="JetBrains Mono" font-size="11">MSB trusted setup fixed</text>
+      <text x="24" y="168" fill="#2dd4bf" font-family="JetBrains Mono" font-size="11">Constant 48-byte proof</text>
+    </g>
+
+    <rect x="20" y="400" width="260" height="56" rx="8" fill="#081012" stroke="#162e33"/>
+    <text x="36" y="424" fill="#5eead4" font-family="JetBrains Mono" font-size="11">BN254 curve arithmetic</text>
+    <text x="36" y="442" fill="#71898d" font-family="JetBrains Mono" font-size="11">Criterion bench validated</text>
+  </g>
+
+  <!-- Bottom status pill -->
+  <g transform="translate(60, 660)">
+    <rect width="1080" height="50" rx="25" fill="#0b1618" stroke="#1a353a"/>
+    <circle cx="32" cy="25" r="4" fill="#2dd4bf"/>
+    <text x="48" y="30" fill="#ccfbf1" font-family="JetBrains Mono" font-size="12" font-weight="500">Zero-Knowledge Proof Implementations in Rust</text>
+    <text x="1050" y="30" text-anchor="end" fill="#5eead4" font-family="JetBrains Mono" font-size="12">github.com/michojekunle/zk</text>
+  </g>
+</svg>

@@ -26,7 +26,8 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
-            value: "camera=(self), microphone=(self), geolocation=(), interest-cohort=()",
+            value:
+              "camera=(self), microphone=(self), geolocation=(), interest-cohort=()",
           },
           {
             key: "Content-Security-Policy",
@@ -80,7 +81,10 @@ const nextConfig = {
       {
         source: "/(opengraph-image|twitter-image|icon|apple-icon)(.*)",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
+          },
         ],
       },
     ];
@@ -91,6 +95,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "*.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "*.zamir.app",
       },
     ],
     formats: ["image/avif", "image/webp"],

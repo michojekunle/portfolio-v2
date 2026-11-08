@@ -31,6 +31,8 @@ export interface CaseStudy {
   duration: string;
   team: string;
   image?: string;
+  logo?: string;
+  logoBg?: string;
   gallery?: GalleryItem[];
   imagePosition?: string;
   liveLabel?: string;
@@ -54,6 +56,8 @@ export interface FeaturedProject {
   role: string;
   duration: string;
   image?: string;
+  logo?: string;
+  logoBg?: string;
   imagePosition?: string;
 }
 
@@ -78,6 +82,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     duration: "Live since March 2026",
     team: "4 people · 1 founding engineer",
     image: "/work/zamir/01-marketing-hero-desktop.webp",
+    logo: "https://home.zamir.app/zamir_icon.png",
+    logoBg: "#052e16",
     imagePosition: "20% 50%",
     gallery: [
       { src: "/work/zamir/02-marketing-find-a-verse-desktop.webp", alt: "Zamir website: finding a verse by feeling", kind: "desktop", w: 1800, h: 1125 },
@@ -155,7 +161,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Founding team · Frontend & blockchain integrations engineer",
     duration: "~18 months · 2024–2025",
     team: "4–6 people",
-    image: "/work/coinsafe/dash.webp",
+    image: "/work/coinsafe/landing2.webp",
+    logo: "/work/coinsafe/logo.svg",
+    logoBg: "#451a03",
     gallery: [
       { src: "/work/coinsafe/vault.webp", alt: "CoinSafe vault with savings targets and locked balances", kind: "desktop", w: 1800, h: 1026 },
       { src: "/work/coinsafe/landing2.webp", alt: "CoinSafe landing page: save and earn", kind: "desktop", w: 1800, h: 1026 },
@@ -207,6 +215,18 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Author · Solo",
     duration: "Ongoing",
     team: "Just me",
+    image: "/work/zk/circuit.svg",
+    logo: "/work/zk/logo.svg",
+    logoBg: "#042f2e",
+    gallery: [
+      {
+        src: "/work/zk/circuit.svg",
+        alt: "ZK Proof System pipeline: GKR layered circuit reduction, Sumcheck protocol, and KZG polynomial commitment verification",
+        kind: "desktop",
+        w: 1600,
+        h: 1000,
+      },
+    ],
     live: "github.com/michojekunle/zk",
     liveLabel: "Source",
     problem:
@@ -262,6 +282,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Independent full-stack developer",
     duration: "~3 months · requirements to production",
     team: "Solo",
+    logo: "/work/rhng/logo.webp",
+    logoBg: "#0f172a",
     live: "rh-ng.com",
     problem:
       "Roberts House Nigeria is an engineering partner for Nigeria's energy transition: cryogenic engineering, CNG, LNG and LPG supply, a training academy and energy consultancy. It needed a production website that explains four service lines to industrial buyers, takes enquiries, lets the team manage content themselves, and is found in search.",
@@ -353,6 +375,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     duration: "Jan–Mar 2026 · 40+ releases",
     team: "Solo",
     image: "/work/createstacksapp/landing.webp",
+    logo: "/work/createstacksapp/logo.svg",
+    logoBg: "#1e1b4b",
     gallery: [
       { src: "/work/createstacksapp/docs.webp", alt: "create-stacks-app documentation site", kind: "desktop", w: 1800, h: 1085 },
     ],
@@ -391,7 +415,7 @@ export const CASE_STUDIES: CaseStudy[] = [
 ];
 
 export const FEATURED_PROJECTS: FeaturedProject[] = CASE_STUDIES.slice(0, 3).map(
-  ({ slug, idx, name, tag, year, desc, stack, role, duration, image, imagePosition }) => ({
+  ({ slug, idx, name, tag, year, desc, stack, role, duration, image, logo, logoBg, imagePosition }) => ({
     slug,
     idx,
     name,
@@ -402,6 +426,8 @@ export const FEATURED_PROJECTS: FeaturedProject[] = CASE_STUDIES.slice(0, 3).map
     role,
     duration,
     image,
+    logo,
+    logoBg,
     imagePosition,
   })
 );
