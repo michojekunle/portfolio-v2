@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { TiltCard } from "./tilt-card"
 import { MagneticWrapper } from "./magnetic-wrapper"
 
@@ -14,15 +14,43 @@ const fadeUp = {
   viewport: { once: true, margin: "-100px" },
 }
 
-export function AboutClientContent() {
+export interface CurrentReadItem {
+  id: string
+  title: string
+  author: string
+  progress?: number
+  cover_url?: string | null
+  status?: string
+}
+
+export function AboutClientContent({
+  currentReads = [],
+}: {
+  currentReads?: CurrentReadItem[]
+}) {
+  const fallbackReads: CurrentReadItem[] = [
+    {
+      id: "151fa785-0f7c-4225-87fc-8c54b378985f",
+      title: "The Intelligent Investor",
+      author: "Benjamin Graham",
+      progress: 35,
+    },
+    {
+      id: "fcee4f69-a616-4cad-ad06-ea6ce2327a3e",
+      title: "The Book Of Elon",
+      author: "Eric Jorgenson",
+      progress: 9,
+    },
+  ]
+  const activeReads = currentReads.length > 0 ? currentReads : fallbackReads
   const titleWords = "Curiosity is the constant.".split(" ")
 
   return (
     <div className="overflow-x-hidden">
       {/* Hero */}
-      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
         <div>
-          <h1 className="m-0 font-display font-light text-[clamp(36px,7vw,90px)] leading-[0.95] tracking-[-0.03em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-3 max-[720px]:gap-x-2.5 max-[720px]:gap-y-2">
+          <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 gap-y-3 max-[720px]:gap-x-2.5 max-[720px]:gap-y-2">
             {titleWords.map((word, i) => (
               <motion.span
                 key={i}
@@ -43,7 +71,7 @@ export function AboutClientContent() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="m-0 max-w-[52ch] text-[clamp(17px,2vw,21px)] leading-[1.6] text-secondary-foreground"
+            className="m-0 max-w-[52ch] text-[clamp(17px,2vw,20px)] leading-[1.6] text-secondary-foreground"
           >
             Software engineer in Lagos. Four years building across web, mobile and web3: on
             the founding team at CoinSafe, now building Zamir. Going deep on Rust, distributed
@@ -66,9 +94,9 @@ export function AboutClientContent() {
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-24 max-[720px]:py-16 border-b border-(--rule)">
         <motion.div
           {...fadeUp}
-          className="font-mono text-xs tracking-wider text-muted-foreground mb-10 max-[720px]:mb-7"
+          className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground mb-10 max-[720px]:mb-7 font-medium"
         >
-          ORIGIN
+          Origin &amp; background
         </motion.div>
         <div className="grid grid-cols-1 min-[900px]:grid-cols-[1.15fr_1fr] gap-16 max-[900px]:gap-10 items-start">
           <div className="flex flex-col gap-7">
@@ -231,10 +259,35 @@ export function AboutClientContent() {
         <div className="grid grid-cols-3 max-[900px]:grid-cols-1 gap-6">
           <TiltCard intensity={15} className="h-full">
             <div className="bg-(--paper) border border-(--rule) rounded-2xl p-6 transition-all duration-300 hover:border-(--v3-accent) hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] h-full flex flex-col gap-4">
-              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium">Reading</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground font-medium m-0">Reading</h2>
+                <Link
+                  href="/reading"
+                  className="font-mono text-[11px] tracking-wider uppercase text-(--v3-accent) hover:underline flex items-center gap-1 no-underline font-medium"
+                >
+                  All <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </div>
               <div className="flex flex-col gap-3.5 h-full justify-between">
-                <span className="text-[16px] text-(--ink) leading-normal">Crafting Interpreters <br/><span className="text-[13px] text-muted-foreground font-mono">Book</span></span>
-                <span className="text-[16px] text-(--ink) leading-normal">The Rust Book <br/><span className="text-[13px] text-muted-foreground font-mono">Book</span></span>
+                {activeReads.slice(0, 2).map((book) => (
+                  <Link
+                    key={book.id}
+                    href={`/reading/${book.id}`}
+                    className="group/book block no-underline transition-colors"
+                  >
+                    <span className="text-[16px] text-(--ink) group-hover/book:text-(--v3-accent) transition-colors leading-normal block font-medium line-clamp-1">
+                      {book.title}
+                    </span>
+                    <span className="text-[13px] text-muted-foreground font-mono flex items-center gap-1.5 mt-0.5">
+                      <span>{book.author}</span>
+                      {typeof book.progress === "number" && book.progress > 0 && (
+                        <span className="text-[11px] text-(--v3-accent) font-semibold">
+                          · {book.progress}%
+                        </span>
+                      )}
+                    </span>
+                  </Link>
+                ))}
               </div>
             </div>
           </TiltCard>
