@@ -76,9 +76,11 @@ export function BlogHeroWidget() {
           <div className="font-display text-[14px] text-(--ink) font-semibold">
             {stats?.pipelineTitle || "Gathering thoughts..."}
           </div>
-          <p className="m-0 text-xs leading-relaxed text-muted-foreground">
-            {stats?.pipelineExcerpt || "Outlining the next deep dive."}
-          </p>
+          {stats?.pipelineExcerpt && stats.pipelineExcerpt.trim() !== stats.pipelineTitle?.trim() && (
+            <p className="m-0 text-xs leading-relaxed text-muted-foreground">
+              {stats.pipelineExcerpt}
+            </p>
+          )}
         </div>
       </div>
 

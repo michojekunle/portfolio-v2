@@ -18,6 +18,7 @@ interface CaseStudyProps {
   lede: string
   image?: string
   gallery?: { src: string; alt: string; kind: "desktop" | "phone"; w: number; h: number }[]
+  liveLabel?: string
   stack: string[]
   live?: string
   year: string | number
@@ -106,7 +107,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
       {/* Body */}
       <section className="v3-section v3-container grid grid-cols-[280px_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-12 items-start pb-30">
         {/* Sticky Sidebar */}
-        <aside className="sticky top-30 flex flex-col gap-12 border-l border-(--rule) pl-6">
+        <aside className="sticky top-30 max-[920px]:static flex flex-col gap-12 border-l border-(--rule) pl-6">
           <div>
             <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4">Stack</div>
             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
@@ -116,7 +117,7 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           
           {p.live && (
             <div>
-              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4">Live</div>
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-4">{p.liveLabel ?? "Live"}</div>
               <MagneticWrapper strength={10}>
                 <a href={`https://${p.live.replace(/^https?:\/\//, "")}`} target="_blank" rel="noopener noreferrer" className="inline-block text-[14px] font-medium text-(--v3-accent) hover:text-(--ink) transition-colors underline decoration-(--rule) underline-offset-1">
                   {p.live.replace(/^https?:\/\//, "")} <ArrowUpRight className="inline w-3 h-3 ml-1" />
@@ -170,8 +171,8 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
               </h2>
               {p.gallery.some((g) => g.kind === "desktop") && (
                 <div className="grid grid-cols-2 max-[720px]:grid-cols-1 gap-6 items-start">
-                  {p.gallery.filter((g) => g.kind === "desktop").map((g) => (
-                    <figure key={g.src} className="m-0 flex flex-col gap-3">
+                  {p.gallery.filter((g) => g.kind === "desktop").map((g, gi, arr) => (
+                    <figure key={g.src} className={`m-0 flex flex-col gap-3${arr.length % 2 === 1 && gi === 0 ? " col-span-2 max-[720px]:col-span-1" : ""}`}>
                       <div className="overflow-hidden rounded-2xl border border-(--rule) bg-(--bg-2)">
                         <Image src={g.src} alt={g.alt} width={g.w} height={g.h} className="w-full h-auto block" sizes="(max-width: 920px) 100vw, 45vw" />
                       </div>

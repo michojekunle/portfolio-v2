@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BookOpen, Share2, LayoutGrid, BookMarked, Compass, Wallet } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Creator Suite — Michael Ojekunle",
+  title: "Creator Suite",
   description:
     "Six live tools built for creators who read, ship, and share: BookBreaks turns books into content, Chapterly is a reading OS with AI voice chat, Flowise tracks your money, Vela is a life journal for objectives and daily logs, Thread Studio engineers viral X threads, and Carousel Lab builds scroll-stopping slides.",
 };

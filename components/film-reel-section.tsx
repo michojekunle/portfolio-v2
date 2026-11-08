@@ -56,6 +56,7 @@ export function FilmReelSection(): React.ReactElement {
                     fill
                     className="object-cover"
                     sizes="340px"
+                    style={{ objectPosition: p.imagePosition }}
                   />
                 ) : (
                   <div

@@ -108,6 +108,7 @@ export function ProjectsSection(): React.ReactElement {
                         fill
                         className={`object-cover transition-transform duration-[6000ms] ease-out ${hoveredIdx === i ? "scale-[1.05]" : "scale-100"}`}
                         sizes="360px"
+                        style={{ objectPosition: p.imagePosition }}
                         priority={i === 0}
                       />
                     </motion.div>

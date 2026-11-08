@@ -32,6 +32,8 @@ export interface CaseStudy {
   team: string;
   image?: string;
   gallery?: GalleryItem[];
+  imagePosition?: string;
+  liveLabel?: string;
   live?: string;
   problem: string;
   approach: string;
@@ -52,6 +54,7 @@ export interface FeaturedProject {
   role: string;
   duration: string;
   image?: string;
+  imagePosition?: string;
 }
 
 export const CASE_STUDIES: CaseStudy[] = [
@@ -75,6 +78,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     duration: "Live since March 2026",
     team: "4 people · 1 founding engineer",
     image: "/work/zamir/01-marketing-hero-desktop.webp",
+    imagePosition: "20% 50%",
     gallery: [
       { src: "/work/zamir/02-marketing-find-a-verse-desktop.webp", alt: "Zamir website: finding a verse by feeling", kind: "desktop", w: 1800, h: 1125 },
       { src: "/work/zamir/03-marketing-altar-desktop.webp", alt: "Zamir website: the Altar daily habit", kind: "desktop", w: 1800, h: 1125 },
@@ -204,6 +208,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     duration: "Ongoing",
     team: "Just me",
     live: "github.com/michojekunle/zk",
+    liveLabel: "Source",
     problem:
       "Interactive proof systems are easy to nod along to in a paper and hard to get right in code. Every sentence a paper skips, such as how variables are indexed, how layers connect and how challenges are derived, becomes a bug when you implement it. I wanted to understand these protocols well enough to build them, not just use them through someone else's library.",
     approach:
@@ -352,6 +357,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { src: "/work/createstacksapp/docs.webp", alt: "create-stacks-app documentation site", kind: "desktop", w: 1800, h: 1085 },
     ],
     live: "npmjs.com/package/@devvmichael/create-stacks-app",
+    liveLabel: "Package",
     problem:
       "Starting a Stacks project meant assembling the pieces by hand: contract scaffolding, frontend, wallet integration and tooling. There was no standard starting point, so each new developer repeated the same setup work.",
     approach:
@@ -385,7 +391,7 @@ export const CASE_STUDIES: CaseStudy[] = [
 ];
 
 export const FEATURED_PROJECTS: FeaturedProject[] = CASE_STUDIES.slice(0, 3).map(
-  ({ slug, idx, name, tag, year, desc, stack, role, duration, image }) => ({
+  ({ slug, idx, name, tag, year, desc, stack, role, duration, image, imagePosition }) => ({
     slug,
     idx,
     name,
@@ -396,6 +402,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = CASE_STUDIES.slice(0, 3).map
     role,
     duration,
     image,
+    imagePosition,
   })
 );
 

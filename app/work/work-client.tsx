@@ -81,7 +81,7 @@ export function WorkClient(): React.ReactElement {
               </div>
               <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-(--bg-2) border border-(--rule)">
                 {p.image ? (
-                  <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[3000ms] group-hover:scale-105" sizes="(max-width: 920px) 100vw, 40vw" />
+                  <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[3000ms] group-hover:scale-105" sizes="(max-width: 920px) 100vw, 40vw" style={{ objectPosition: p.imagePosition }} />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-8 max-[720px]:p-6">
                     <span className="font-display font-light text-[clamp(56px,7vw,96px)] leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">

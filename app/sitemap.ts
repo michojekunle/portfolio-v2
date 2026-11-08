@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
+import { CASE_STUDIES } from "@/lib/case-studies";
 
 const SITE = "https://michaelojekunle.dev";
 
@@ -23,6 +24,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(p.updated_at as string),
     changeFrequency: "weekly",
     priority: 0.8,
+  }));
+
+  const caseStudyEntries: MetadataRoute.Sitemap = CASE_STUDIES.map((cs) => ({
+    url: `${SITE}/work/${cs.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.7,
   }));
 
   return [
@@ -98,6 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    ...caseStudyEntries,
     ...postEntries,
   ];
 }

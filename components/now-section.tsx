@@ -107,7 +107,7 @@ export async function NowSection(): Promise<React.ReactElement> {
 
           {/* Building */}
           <div className="p-[36px_32px] border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground m-[0_0_28px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Building</h4>
+            <h4 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground m-[0_0_28px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Side Quests(for the fun of it)</h4>
             <ul className="list-none p-0 m-0">
               {building.length > 0 ? (
                 building.map((item, i) => (
