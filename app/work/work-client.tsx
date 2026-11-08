@@ -7,7 +7,7 @@ import { CASE_STUDIES } from "@/lib/case-studies"
 import { ArrowUpRight } from "lucide-react"
 import { getProjects, type Project } from "@/lib/projects"
 
-const CATS = ["all", "web3", "product", "oss"] as const
+const CATS = ["all", "product", "web3", "systems", "oss"] as const
 type Cat = (typeof CATS)[number]
 
 export function WorkClient(): React.ReactElement {

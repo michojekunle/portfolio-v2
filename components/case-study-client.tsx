@@ -96,15 +96,11 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
       </section>
 
       {/* Image with Parallax */}
-      <section ref={imageRef} className="v3-container mb-30 max-[720px]:mb-20 overflow-hidden rounded-3xl">
-        {p.image ? (
+      <section ref={imageRef} className={`v3-container overflow-hidden rounded-3xl ${p.image ? "mb-30 max-[720px]:mb-20" : "mb-10"}`}>
+        {p.image && (
           <motion.div style={{ scale: imageScale, y: imageY }} className="relative w-full aspect-[16/9] bg-(--bg-2) origin-center">
             <Image src={p.image} alt={p.name} fill className="object-cover object-top" sizes="(max-width: 1320px) 100vw, 1320px" priority />
           </motion.div>
-        ) : (
-          <div className="w-full aspect-[16/9] bg-(--bg-2) flex items-center justify-center border border-(--rule) rounded-3xl">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Media Asset Pending</span>
-          </div>
         )}
       </section>
 
