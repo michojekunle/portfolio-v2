@@ -27,7 +27,7 @@ const categories: ToolCategory[] = [
     title: "Languages & Frameworks",
     items: [
       { name: "TypeScript + Next.js", description: "My default stack for building type-safe, server-first web apps that scale." },
-      { name: "Solidity", description: "The language of on-chain logic. For EVM-compatible contracts — Rootstock, mainnet." },
+      { name: "Solidity", description: "The language of on-chain logic. For EVM-compatible contracts. I read and integrate it more than I write it." },
       { name: "Cairo", description: "Computation that can be proven. Exploring STARKs and scaling Ethereum via Starknet." },
       { name: "Rust", description: "Systems programming from first principles. CLI tools, performance-critical code, anything close to the metal." },
       { name: "Clarity", description: "Decidable, non-Turing-complete contract language for the Stacks blockchain." },

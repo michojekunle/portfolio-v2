@@ -32,7 +32,7 @@ const DEFAULT_STATUS: ProfileStatusData = {
   focus1_pct: 40,
   focus2_name: "Rust — systems builds",
   focus2_pct: 55,
-  next_focus: "zkML",
+  next_focus: "Distributed systems",
   spotify_override_title: "Metanoia (feat. Lofi Chill)",
   spotify_override_artist: "Michael's Focus Mix",
   spotify_override_playlist: "Spotify Track",

@@ -10,7 +10,8 @@ const STACK = [
   { label: "Rust", primary: true },
   { label: "TypeScript", primary: true },
   { label: "Next.js", primary: false },
-  { label: "Solidity", primary: false },
+  { label: "Flutter", primary: false },
+  { label: "Web3", primary: false },
 ]
 
 export function HeroSection(): React.ReactElement {
@@ -29,7 +30,7 @@ export function HeroSection(): React.ReactElement {
         </div>
         <div className="leading-[1.7] text-[12px] text-center max-[720px]:text-left text-(--ink) flex items-center justify-center max-[720px]:justify-start">
           <span className="inline-block w-1.75 h-1.75 rounded-full bg-emerald-500 mr-2 shrink-0" aria-hidden="true" />
-          Available for select work
+          Open to roles · Building Zamir
         </div>
         <div className="leading-[1.7] text-[12px] text-right max-[720px]:text-left text-muted-foreground">
           <b className="text-(--ink) font-medium">2026 · v3</b><br />
@@ -46,8 +47,8 @@ export function HeroSection(): React.ReactElement {
       <div className="relative z-1 grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-20 pt-10 border-t border-(--rule) items-start">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
           <p className="font-normal text-[clamp(28px,3.4vw,40px)] leading-[1.35] text-(--ink) m-0 max-w-[24ch] text-pretty">
-            I build software end to end. Four years full-stack, now going deep on{" "}
-            <em>Rust systems</em>, building products of my own.
+            I build software end to end. Founder of Zamir, going deep on{" "}
+            <em>Rust systems</em> and AI infrastructure.
           </p>
 
           {/* Tech stack pills */}
@@ -63,21 +64,22 @@ export function HeroSection(): React.ReactElement {
           <div className="flex items-center gap-3.5 mt-7 flex-wrap font-mono text-[12px] tracking-[0.14em] uppercase" aria-label="Current focus and where I'm heading">
             <div className="flex items-center gap-2">
               <span className="text-(--v3-accent) font-medium">Now</span>
-              <span className="text-muted-foreground">Rust systems</span>
+              <span className="text-muted-foreground">Zamir · Rust</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" aria-hidden="true" />
             <div className="flex items-center gap-2">
               <span className="text-(--ink) font-medium">Next</span>
-              <span className="text-muted-foreground">zkML</span>
+              <span className="text-muted-foreground">Distributed systems</span>
             </div>
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}>
           <p className="text-[17px] leading-[1.7] text-secondary-foreground m-0">
-            Four years building full-stack products, with two of them deep in web3, shipping on{" "}
-            <b className="text-(--ink) font-medium">Rootstock</b>, <b className="text-(--ink) font-medium">Starknet</b>, and <b className="text-(--ink) font-medium">Stacks</b>.
-            Now I&apos;m doubling down on systems with <b className="text-(--ink) font-medium">Rust</b>, going deep before wide, and building products of my own, heading toward zkML.
+            Four years building products across web, mobile and web3: founding-team engineer on{" "}
+            <b className="text-(--ink) font-medium">CoinSafe</b>, and CEO and CTO of{" "}
+            <b className="text-(--ink) font-medium">Zamir</b>, a worship-music app live since March 2026.
+            Now I&apos;m going deep on <b className="text-(--ink) font-medium">Rust</b>, distributed systems and AI infrastructure, one project at a time.
           </p>
 
           <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">
@@ -99,12 +101,12 @@ export function HeroSection(): React.ReactElement {
               <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Years building</span>
             </div>
             <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
-              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">3</span>
-              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Chains shipped</span>
+              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">69</span>
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Zamir believers</span>
             </div>
             <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
-              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">12+</span>
-              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Projects live</span>
+              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">200+</span>
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">CoinSafe wallets</span>
             </div>
           </div>
         </motion.div>

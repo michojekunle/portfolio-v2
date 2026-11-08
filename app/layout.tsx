@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     template: "%s | Michael Ojekunle",
   },
   description:
-    "Software engineer and builder in Lagos, Nigeria. Four years building full-stack products — now going deep on Rust systems programming, and building products of my own. Heading toward zkML.",
+    "Software engineer and founder of Zamir, based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
   keywords: [
     "Michael Ojekunle",
     "devvmichael",
@@ -70,7 +70,10 @@ export const metadata: Metadata = {
     "Solidity",
     "StarkNet",
     "Lagos Nigeria",
-    "zkML",
+    "Zamir",
+    "Distributed Systems",
+    "AI Infrastructure",
+    "Cryptography",
   ],
   authors: [{ name: "Michael Ojekunle", url: "https://michaelojekunle.dev" }],
   creator: "Michael Ojekunle",
@@ -82,13 +85,13 @@ export const metadata: Metadata = {
     siteName: "Michael Ojekunle",
     title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Software engineer and builder. Full-stack foundation, now going deep on Rust systems programming — building products of my own, heading toward zkML.",
+      "Founder of Zamir. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Software engineer and builder. Full-stack foundation, now going deep on Rust systems programming — building products of my own, heading toward zkML.",
+      "Founder of Zamir. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
     creator: "@devvmichael",
     site: "@devvmichael",
   },
@@ -130,7 +133,7 @@ const jsonLd = {
       },
       jobTitle: "Software Engineer & Builder",
       description:
-        "Software engineer and builder in Lagos, Nigeria. Four years building full-stack products — now going deep on Rust systems programming, and building products of my own. Heading toward zkML.",
+        "Software engineer and founder of Zamir, based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
       sameAs: [
         "https://github.com/michojekunle",
         "https://x.com/devvmichael",
@@ -150,9 +153,10 @@ const jsonLd = {
         "React",
         "Next.js",
         "Web3",
-        "Solidity",
-        "StarkNet",
-        "Smart Contracts",
+        "Account Abstraction",
+        "Distributed Systems",
+        "AI Infrastructure",
+        "Cryptography",
       ],
     },
     {

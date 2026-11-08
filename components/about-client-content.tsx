@@ -84,8 +84,9 @@ export function AboutClientContent() {
               className="text-[18px] leading-[1.7] text-secondary-foreground"
             >
               My first serious programming was Java. Then React. Then, around the time L2s started
-              actually shipping, Solidity. Four years of full-stack product work, the last two of
-              them deep in web3, shipping on Rootstock, Starknet, and Stacks. Some of it
+              actually shipping, Solidity. Four years of product work since: frontend and
+              backend, a founding-team seat at CoinSafe building wallet onboarding on Lisk and Base,
+              client sites taken from requirements to production, and now Zamir. Some of it
               I&apos;m proud of. Some of it taught me what I&apos;d never do again.
             </motion.p>
           </div>
@@ -100,15 +101,15 @@ export function AboutClientContent() {
               <div className="flex flex-col gap-4.5">
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
                   <span className="text-[17px] text-(--ink) font-medium">Systems</span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Rust · Linux internals</span>
+                  <span className="text-[14px] text-muted-foreground font-mono">Rust · memory & allocators · OS fundamentals <span className="text-muted-foreground/70">(developing)</span></span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
                   <span className="text-[17px] text-(--ink) font-medium">Frontend</span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Next.js 16 · TypeScript · Tailwind</span>
+                  <span className="text-[14px] text-muted-foreground font-mono">Next.js · TypeScript · Tailwind · Flutter</span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-(--rule) pb-4.5">
-                  <span className="text-[17px] text-(--ink) font-medium">Web3 <span className="text-xs text-muted-foreground/70 font-mono">· background</span></span>
-                  <span className="text-[14px] text-muted-foreground font-mono">Solidity · Cairo · Clarity · Starknet · Rootstock</span>
+                  <span className="text-[17px] text-(--ink) font-medium">Web3 <span className="text-xs text-muted-foreground/70 font-mono">· integrations</span></span>
+                  <span className="text-[14px] text-muted-foreground font-mono">Account abstraction · thirdweb · Lisk · Base · Cairo</span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-[17px] text-(--ink) font-medium">Infra</span>
@@ -137,12 +138,14 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              Right now I&apos;m going lower down the stack than the frontend, and going deep
-              on one thing before wide on many. My current obsession is{" "}
-              <b className="text-(--ink) font-medium">Rust systems programming</b>: public,
-              daily reps for six months straight. It&apos;s teaching me to think in lifetimes
-              and memory, and that the abstractions I&apos;d been trusting were never as solid
-              as I assumed.
+              Two things take most of my time. The first is{" "}
+              <b className="text-(--ink) font-medium">Zamir</b>, which I run as CEO and CTO with
+              a team of four. The second is going lower down the stack than the frontend, one
+              milestone at a time, starting with{" "}
+              <b className="text-(--ink) font-medium">Rust systems programming</b>: a memory
+              allocator, an operating-system kernel, and cryptographic protocols implemented from
+              the papers. It&apos;s teaching me to think in lifetimes and memory, and that the
+              abstractions I&apos;d been trusting were never as solid as I assumed.
             </motion.p>
 
             <motion.div {...fadeUp} className="relative py-2 my-2">
@@ -154,8 +157,8 @@ export function AboutClientContent() {
                 &ldquo;
               </span>
               <p className="relative font-sans text-[26px] max-[720px]:text-[21px] leading-[1.45] text-(--ink) font-normal italic pl-9 max-[720px]:pl-7">
-                Once these feel like second nature, the real destination is zkML: making
-                zero-knowledge machine learning legible and shippable, not mythical.
+                The direction is distributed systems and AI infrastructure: the machinery that
+                keeps products reliable once real people depend on them.
               </p>
             </motion.div>
 
@@ -164,12 +167,10 @@ export function AboutClientContent() {
               transition={{ duration: 0.8 }}
               className="text-[19px] leading-[1.7] text-secondary-foreground"
             >
-              I&apos;m not just an engineer for hire; I&apos;m building my own things. A growing
-              set of <b className="text-(--ink) font-medium">products and small businesses</b>,
-              shipped as real tools with auth, databases, and paying-attention-to-the-details
-              polish, not weekend demos. Building my own things teaches me the half of the craft
-              that pure engineering doesn&apos;t: distribution, retention, and knowing what&apos;s
-              worth building at all.
+              I&apos;m open to roles, and I&apos;m also building my own things. Zamir turns scripture into
+              songs people replay, and running it end to end teaches me the half of the craft
+              that pure engineering doesn&apos;t: distribution, retention, unit costs, and knowing
+              what&apos;s worth building at all.
             </motion.p>
 
             <motion.p

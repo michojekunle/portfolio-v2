@@ -15,9 +15,9 @@ const SLOTS = ["09:00", "09:30", "10:00", "11:00", "14:00", "14:30", "15:30", "1
 const DAY_NAMES = ["Su", "M", "Tu", "W", "Th", "F", "Sa"]
 
 const FAQS = [
-  { q: "Are you open to full-time roles?", a: "Yes — specifically protocol-adjacent teams, infrastructure, or zkML research. DM or email first." },
+  { q: "Are you open to full-time roles?", a: "Yes — Rust backend, infrastructure and platform teams, or product-engineering roles with real ownership. DM or email first." },
   { q: "What timezone are you in?", a: "WAT (UTC+1). Lagos, Nigeria. I keep Lagos hours but can do early morning slots for overlap." },
-  { q: "Do you take freelance projects?", a: "Selectively. I'm most useful for web3 frontend, smart contract audits, and greenfield Next.js apps." },
+  { q: "Do you take freelance projects?", a: "Selectively. I'm most useful for greenfield Next.js apps, web3 frontend and wallet integrations, and AI-powered product features." },
   { q: "What's your response time?", a: "Usually within 24 hours on weekdays. Faster if it's interesting." },
 ]
 

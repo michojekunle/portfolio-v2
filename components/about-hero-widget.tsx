@@ -137,7 +137,7 @@ export function AboutHeroWidget() {
         <div className="flex items-center gap-2 mt-3.5 pt-3.5 border-t border-(--rule)">
           <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Next</span>
           <span className="w-1 h-1 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
-          <span className="font-mono text-xs font-medium text-(--v3-accent)">{status?.next_focus || "zkML"}</span>
+          <span className="font-mono text-xs font-medium text-(--v3-accent)">{status?.next_focus || "Distributed systems"}</span>
           <span className="font-mono text-xs text-muted-foreground ml-auto">the horizon</span>
         </div>
       </div>

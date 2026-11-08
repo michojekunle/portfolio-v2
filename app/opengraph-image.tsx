@@ -9,7 +9,7 @@ export default function Image() {
   return renderOgCard({
     eyebrow: "Software Engineer & Builder",
     title: "Michael Ojekunle",
-    subtitle: "Full-stack engineer going deep on Rust systems programming — building products of my own, heading toward zkML.",
+    subtitle: "Founder of Zamir. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
     cta: "Explore the work →",
   });
 }
