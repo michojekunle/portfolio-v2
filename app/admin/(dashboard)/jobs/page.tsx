@@ -1,0 +1,80 @@
+import { createClient } from "@/lib/supabase/server";
+import { JobsDashboard } from "@/components/admin/jobs/JobsDashboard";
+import type { JobApplication } from "@/components/admin/jobs/constants";
+import type { JobLead, JobSkillGap, JobProjectToBuild } from "@/app/api/job-leads/route";
+import { JOB_LEADS_PAGE_SIZE } from "@/lib/admin/job-leads-constants";
+import { PageHeader } from "@/components/admin/ui/page-header";
+
+// Leads/applications are written by an external cron POST and by admin
+// mutations independent of this render — without this, Next's fetch cache
+// can serve a stale (e.g. pre-first-lead empty) result here indefinitely.
+export const dynamic = "force-dynamic";
+
+export default async function JobsPage(): Promise<React.ReactElement> {
+  const supabase = await createClient();
+
+  // Leads fetched per-role (not one combined query sliced afterward) so a
+  // burst on one track can never crowd out the other's share of the limit —
+  // mirrors app/api/job-leads/route.ts's GET handler, including the
+  // fetch-limit+1-to-detect-more trick "Load more" needs.
+  const [
+    { data: applications },
+    { data: flutterLeads },
+    { data: rustLeads },
+    { data: learnedSkills },
+    { data: builtProjects },
+    { data: skillsGapData },
+    { data: projectsToBuildData },
+  ] = await Promise.all([
+    supabase.from("job_applications").select("*").order("date", { ascending: false }),
+    supabase.from("job_leads").select("*").eq("role", "flutter").order("created_at", { ascending: false }).limit(JOB_LEADS_PAGE_SIZE + 1),
+    supabase.from("job_leads").select("*").eq("role", "rust").order("created_at", { ascending: false }).limit(JOB_LEADS_PAGE_SIZE + 1),
+    supabase.from("job_skills_learned").select("skill"),
+    supabase.from("job_projects_built").select("project"),
+    supabase.from("job_skills_gap").select("*").order("created_at", { ascending: true }),
+    supabase.from("job_projects_to_build").select("*").order("created_at", { ascending: true }),
+  ]);
+
+  const flutterRows = (flutterLeads ?? []) as JobLead[];
+  const rustRows = (rustLeads ?? []) as JobLead[];
+  const flutter = flutterRows.slice(0, JOB_LEADS_PAGE_SIZE);
+  const rust = rustRows.slice(0, JOB_LEADS_PAGE_SIZE);
+  const initialLeads = {
+    updatedAt: [flutter[0]?.created_at, rust[0]?.created_at].filter(Boolean).sort().reverse()[0] ?? null,
+    flutter,
+    rust,
+    flutterHasMore: flutterRows.length > JOB_LEADS_PAGE_SIZE,
+    rustHasMore: rustRows.length > JOB_LEADS_PAGE_SIZE,
+  };
+  const initialProgress = {
+    skills: (learnedSkills ?? []).map((s) => s.skill as string),
+    projects: (builtProjects ?? []).map((p) => p.project as string),
+  };
+
+  const skillsGapRows = (skillsGapData ?? []) as JobSkillGap[];
+  const projectsToBuildRows = (projectsToBuildData ?? []) as JobProjectToBuild[];
+  const initialSkillsGap = {
+    flutter: skillsGapRows.filter((s) => s.role === "flutter"),
+    rust: skillsGapRows.filter((s) => s.role === "rust"),
+  };
+  const initialProjectsToBuild = {
+    flutter: projectsToBuildRows.filter((p) => p.role === "flutter"),
+    rust: projectsToBuildRows.filter((p) => p.role === "rust"),
+  };
+
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title="Job Search HQ"
+        description="Flutter & Rust application tracker, leads, and skills gap"
+      />
+      <JobsDashboard
+        initialApplications={(applications ?? []) as JobApplication[]}
+        initialLeads={initialLeads}
+        initialProgress={initialProgress}
+        initialSkillsGap={initialSkillsGap}
+        initialProjectsToBuild={initialProjectsToBuild}
+      />
+    </div>
+  );
+}

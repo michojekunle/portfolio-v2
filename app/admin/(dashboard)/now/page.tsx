@@ -1,0 +1,65 @@
+import { createClient } from "@/lib/supabase/server";
+import { BooksManager } from "./books-manager";
+import { LearningManager } from "./learning-manager";
+import { BuildingManager } from "./building-manager";
+import { StatusManager } from "./status-manager";
+import { SpotifyConnectionCard } from "./spotify-connection-card";
+import { getProfileStatus } from "@/lib/profile-status";
+import { PageHeader } from "@/components/admin/ui/page-header";
+
+interface Props {
+  searchParams: Promise<{ spotify_connected?: string; spotify_error?: string }>;
+}
+
+export default async function AdminNowPage({ searchParams }: Props): Promise<React.ReactElement> {
+  const { spotify_connected, spotify_error } = await searchParams;
+  const supabase = await createClient();
+
+  const [
+    { data: books },
+    { data: learning },
+    { data: building },
+    { data: bookNotes },
+    profileStatus,
+  ] = await Promise.all([
+    supabase.from("books").select("*").order("sort_order"),
+    supabase.from("learning_items").select("*").order("sort_order"),
+    supabase.from("building_projects").select("*").order("sort_order"),
+    supabase.from("book_notes").select("*").order("created_at"),
+    getProfileStatus(),
+  ]);
+
+  return (
+    <div className="space-y-12">
+      <PageHeader 
+        title="Now" 
+        description="Books, learning progress, and active projects" 
+      />
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Spotify</h2>
+        <SpotifyConnectionCard connectedNotice={spotify_connected} errorCode={spotify_error} />
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Availability & Focuses</h2>
+        <StatusManager initialStatus={profileStatus} />
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Books</h2>
+        <BooksManager initialBooks={books ?? []} initialNotes={bookNotes ?? []} />
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Learning</h2>
+        <LearningManager initialItems={learning ?? []} />
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium mb-4">Building</h2>
+        <BuildingManager initialProjects={building ?? []} />
+      </section>
+    </div>
+  );
+}

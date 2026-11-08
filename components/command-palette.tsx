@@ -26,6 +26,10 @@ import {
   Github,
   Twitter,
   Activity,
+  Youtube,
+  Instagram,
+  Video,
+  Library,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
@@ -42,13 +46,14 @@ export function CommandPalette(): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [books, setBooks] = useState<any[]>([]);
   const router = useRouter();
   const { setTheme, theme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
       const supabase = createClient();
-      
+
       const { data: blogData } = await supabase
         .from("blog_posts")
         .select("id, title, slug, category")
@@ -61,8 +66,15 @@ export function CommandPalette(): React.ReactElement {
         .eq("is_hidden", false)
         .order("sort_order", { ascending: true });
 
+      const { data: bookData } = await supabase
+        .from("books")
+        .select("id, title, author, status")
+        .in("status", ["reading", "completed"])
+        .order("sort_order", { ascending: true });
+
       if (blogData) setBlogs(blogData);
       if (projectData) setProjects(projectData);
+      if (bookData) setBooks(bookData);
     };
 
     fetchData();
@@ -157,6 +169,15 @@ export function CommandPalette(): React.ReactElement {
       keywords: b.category
     })),
 
+    // Dynamic Books (Reading Log)
+    ...books.map(b => ({
+      label: b.title,
+      icon: <Library className="h-4 w-4 text-primary/60" />,
+      action: () => navigate(`/reading/${b.id}`),
+      group: "Reading Log",
+      keywords: `${b.author} ${b.status === "reading" ? "currently reading" : "finished"}`
+    })),
+
     // Static Uses (Tools & Gear)
     ...[
       { name: "VS Code", desc: "Primary editor. Vim keybindings, minimal extensions." },
@@ -178,11 +199,30 @@ export function CommandPalette(): React.ReactElement {
       keywords: u.desc
     })),
 
+    // Creator Suite Tools
+    ...[
+      { name: "Explore Creator Suite", desc: "Explore the live tools and productivity apps.", href: "/tools" },
+      { name: "BookBreaks Summary Generator", desc: "AI summary generator that turns books into structured content.", href: "/tools/bookbreaks" },
+      { name: "Chapterly E-Reader", desc: "Speed reader, AI companion chats, and comprehension checks.", href: "/tools/chapterly" },
+      { name: "Flowise Finance OS", desc: "Budgeting, expense tracking, mobile money movement, and analytics.", href: "/tools/flowise" },
+      { name: "Vela Daily Log Journal", desc: "Daily reflection, bullet list planning, and mindfulness prompts.", href: "/tools/journal" },
+      { name: "Carousel Lab Creator", desc: "Design multi-page visual carousels for LinkedIn and Twitter.", href: "/tools/carousel-lab" },
+    ].map(t => ({
+      label: t.name,
+      icon: <Wrench className="h-4 w-4 text-primary/60" />,
+      action: () => navigate(t.href),
+      group: "Creator Suite Tools",
+      keywords: t.desc
+    })),
+
     // Pages
+    { label: "Tools", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/tools"), group: "Pages", keywords: "creator suite productivity apps" },
     { label: "Uses", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/uses"), group: "Pages", keywords: "tools setup hardware software" },
     { label: "Guestbook", icon: <MessageSquare className="h-4 w-4" />, action: () => navigate("/guestbook"), group: "Pages", keywords: "sign message" },
     { label: "Changelog", icon: <BookOpen className="h-4 w-4" />, action: () => navigate("/changelog"), group: "Pages", keywords: "activity updates commits" },
     { label: "RSS Feed", icon: <Rss className="h-4 w-4" />, action: () => navigate("/feed.xml"), group: "Pages" },
+    { label: "Videos", icon: <Video className="h-4 w-4" />, action: () => navigate("/videos"), group: "Pages", keywords: "youtube instagram tiktok x watch" },
+    { label: "Reading Log", icon: <Library className="h-4 w-4" />, action: () => navigate("/reading"), group: "Pages", keywords: "books notes quotes takeaways" },
 
     // Theme
     {
@@ -203,6 +243,8 @@ export function CommandPalette(): React.ReactElement {
     // Social
     { label: "GitHub", icon: <Github className="h-4 w-4" />, action: () => navigate("https://github.com/michojekunle"), group: "Social" },
     { label: "Twitter / X", icon: <Twitter className="h-4 w-4" />, action: () => navigate("https://x.com/devvmichael"), group: "Social" },
+    { label: "YouTube", icon: <Youtube className="h-4 w-4" />, action: () => navigate("https://www.youtube.com/@devvmichael"), group: "Social" },
+    { label: "Instagram", icon: <Instagram className="h-4 w-4" />, action: () => navigate("https://instagram.com/devvmichaell/"), group: "Social" },
   ];
 
   // Filter out current theme option
@@ -262,11 +304,11 @@ export function CommandPaletteTrigger(): React.ReactElement {
           new KeyboardEvent("keydown", { key: "k", metaKey: true })
         )
       }
-      className="hidden md:flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 border border-border rounded-md"
+      className="hidden md:flex items-center gap-3 text-[12px] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-(--v3-accent) transition-all duration-200 px-4.5 py-2 border border-(--rule) rounded-full bg-transparent hover:bg-(--bg-2) hover:border-(--v3-accent-soft) group cursor-pointer"
       aria-label="Open command palette"
     >
-      <span>Search</span>
-      <kbd className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-mono">
+      <span className="font-mono">Search</span>
+      <kbd className="text-[12px] font-mono px-1.5 py-0.5 rounded text-muted-foreground/60 transition-colors group-hover:text-(--v3-accent)">
         ⌘K
       </kbd>
     </button>

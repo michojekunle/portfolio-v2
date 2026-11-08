@@ -1,16 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, Heart } from "lucide-react";
 import type { Metadata } from "next";
 import { ViewCounter } from "@/components/view-counter";
 import { TableOfContents } from "@/components/table-of-contents";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { BlogReactions } from "@/components/blog-reactions";
 import { BlogComments } from "@/components/blog-comments";
-
+import { NewsletterCTA } from "@/components/newsletter-cta";
+import { BlogPostClient } from "@/components/blog-post-client";
+import { MagneticWrapper } from "@/components/magnetic-wrapper";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 export const revalidate = 60;
 
 const SITE = "https://michaelojekunle.dev";
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data: post } = await supabase
     .from("blog_posts")
-    .select("title, excerpt, category, published_at, updated_at")
+    .select("title, excerpt, category, published_at, updated_at, cover_image")
     .eq("slug", slug)
     .eq("published", true)
     .single();
@@ -61,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: post.updated_at ?? undefined,
       authors: ["https://michaelojekunle.dev"],
       tags: post.category ? [post.category] : undefined,
+      images: post.cover_image ? [{ url: post.cover_image }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -77,19 +79,31 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
 
   const { data: post } = await supabase
     .from("blog_posts")
-    .select(`
-      *,
-      reactions:blog_reactions(count),
-      comments:blog_comments(count)
-    `)
+    .select("*")
     .eq("slug", slug)
     .eq("published", true)
     .single();
 
   if (!post) notFound();
 
-  const reactionCount = (post.reactions as any)?.[0]?.count ?? 0;
-  const commentCount = (post.comments as any)?.[0]?.count ?? 0;
+  // Fetch prev and next posts based on published_at date
+  const { data: prevPost } = await supabase
+    .from("blog_posts")
+    .select("slug, title")
+    .eq("published", true)
+    .lt("published_at", post.published_at)
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const { data: nextPost } = await supabase
+    .from("blog_posts")
+    .select("slug, title")
+    .eq("published", true)
+    .gt("published_at", post.published_at)
+    .order("published_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
 
   const postUrl = `${SITE}/blog/${slug}`;
   const content = (post.content as string) ?? "";
@@ -97,97 +111,119 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
   // Article structured data
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.excerpt ?? undefined,
-    url: postUrl,
-    datePublished: post.published_at ?? undefined,
-    dateModified: post.updated_at ?? undefined,
-    author: {
-      "@type": "Person",
-      "@id": `${SITE}/#person`,
-      name: "Michael Ojekunle",
-      url: SITE,
-    },
-    publisher: {
-      "@type": "Person",
-      "@id": `${SITE}/#person`,
-      name: "Michael Ojekunle",
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
-    articleSection: post.category ?? undefined,
-    image: {
-      "@type": "ImageObject",
-      url: `${SITE}/blog/${slug}/opengraph-image`,
-      width: 1200,
-      height: 630,
-    },
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt ?? undefined,
+        url: postUrl,
+        datePublished: post.published_at ?? undefined,
+        dateModified: post.updated_at ?? undefined,
+        author: {
+          "@type": "Person",
+          "@id": `${SITE}/#person`,
+          name: "Michael Ojekunle",
+          url: SITE,
+        },
+        publisher: {
+          "@type": "Person",
+          "@id": `${SITE}/#person`,
+          name: "Michael Ojekunle",
+        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        articleSection: post.category ?? undefined,
+        image: post.cover_image ? {
+          "@type": "ImageObject",
+          url: post.cover_image,
+        } : {
+          "@type": "ImageObject",
+          url: `${SITE}/blog/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+          { "@type": "ListItem", position: 2, name: "Notes", item: `${SITE}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title },
+        ],
+      },
+    ],
   };
 
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto outline-none">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <>
+      <main id="main-content" tabIndex={-1} className="outline-none">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
 
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-10 no-underline"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-        All posts
-      </Link>
+        {/* Post hero with progress bar & animations */}
+        <BlogPostClient post={post} slug={slug} />
 
-      <article>
-        <header className="mb-10">
-          <div className="flex items-center gap-2 mb-3 flex-wrap">
-            {post.category && (
-              <Badge variant="secondary">
-                <span className="sr-only">Category: </span>
-                {post.category}
-              </Badge>
-            )}
-            {post.read_time && (
-              <span className="text-xs text-muted-foreground" aria-label={`${post.read_time} read`}>
-                {post.read_time}
-              </span>
-            )}
-            <span className="text-xs text-muted-foreground/40">·</span>
-            <ViewCounter slug={slug} increment />
-            <span className="text-xs text-muted-foreground/40">·</span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Heart className="h-3 w-3" />
-              <span>{reactionCount}</span>
+        {/* Post body */}
+        <div className="v3-container flex flex-col xl:flex-row gap-12 xl:gap-20 items-start relative pb-20">
+          <article className="v3-post-body flex-1 min-w-0 w-full xl:max-w-[800px]">
+            <MarkdownRenderer content={content} />
+          </article>
+          <TableOfContents content={content} />
+        </div>
+
+        {/* Reactions and comments */}
+        <section className="v3-container-narrow" style={{ paddingTop: 40, paddingBottom: 80 }}>
+          <BlogReactions postId={post.id} />
+          <BlogComments postId={post.id} />
+        </section>
+
+        {/* Newsletter CTA */}
+        <NewsletterCTA 
+          title="Liked this? Join the loop." 
+          description="Get more engineering field notes and technical deep dives delivered straight to your inbox."
+        />
+
+        {/* Prev/next nav */}
+        <section className="v3-container border-t border-(--rule)">
+          <div className="flex max-[720px]:flex-col justify-between items-center py-20 max-[720px]:py-12 gap-8 max-[720px]:gap-12">
+            
+            <div className="flex-1 flex justify-start">
+              {prevPost && (
+                <MagneticWrapper strength={20}>
+                  <Link href={`/blog/${prevPost.slug}`} className="group flex flex-col items-start gap-2">
+                    <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">
+                      <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Previous
+                    </div>
+                    <div className="font-display text-[24px] md:text-[32px] text-(--ink) text-balance leading-tight max-w-[280px]">{prevPost.title}</div>
+                  </Link>
+                </MagneticWrapper>
+              )}
             </div>
-            <span className="text-xs text-muted-foreground/40">·</span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MessageSquare className="h-3 w-3" />
-              <span>{commentCount}</span>
+
+            <MagneticWrapper strength={20}>
+              <Link href="/blog" className="group flex flex-col items-center gap-2">
+                <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">All notes</div>
+                <div className="font-display text-[32px] text-(--ink)">Index</div>
+              </Link>
+            </MagneticWrapper>
+            
+            <div className="flex-1 flex justify-end text-right">
+              {nextPost && (
+                <MagneticWrapper strength={20}>
+                  <Link href={`/blog/${nextPost.slug}`} className="group flex flex-col items-end gap-2">
+                    <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground group-hover:text-(--v3-accent) transition-colors flex items-center gap-1">
+                      Next <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                    <div className="font-display text-[24px] md:text-[32px] text-(--ink) text-balance leading-tight max-w-[280px]">{nextPost.title}</div>
+                  </Link>
+                </MagneticWrapper>
+              )}
             </div>
+
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight mb-3">{post.title}</h1>
-          {post.excerpt && (
-            <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
-          )}
-          {post.published_at && (
-            <time
-              dateTime={post.published_at}
-              className="block text-xs text-muted-foreground mt-3"
-            >
-              {format(new Date(post.published_at as string), "MMMM d, yyyy")}
-            </time>
-          )}
-        </header>
-
-        <TableOfContents content={content} />
-
-        <MarkdownRenderer content={content} />
-
-        <BlogReactions postId={post.id} />
-        
-        <BlogComments postId={post.id} />
-      </article>
-    </main>
+        </section>
+      </main>
+    </>
   );
 }

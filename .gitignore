@@ -42,3 +42,7 @@ next-env.d.ts
 sendgrid.env
 .npm-cache
 .claude
+.impeccable/critique
+.antigravitycli
+# original full-size screenshots (optimized .webp copies are committed)
+public/work/**/_orig/

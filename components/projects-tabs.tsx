@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Github, ExternalLink } from "lucide-react"
+import { Github, ExternalLink, Star } from "lucide-react"
 import Link from "next/link"
+import { MagneticWrapper } from "./magnetic-wrapper"
 
 interface Project {
   id: string
@@ -76,7 +77,7 @@ export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElemen
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid grid-cols-4 mb-8 overflow-x-auto scrollbar-none">
+      <TabsList className="grid grid-cols-4 mb-8 overflow-x-auto scrollbar-none" data-lenis-prevent="true">
         {TABS.map((tab) => (
           <TabsTrigger key={tab} value={tab} className="capitalize">
             {tab}
@@ -126,20 +127,22 @@ export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElemen
                       </Badge>
                     )}
                     {project.stars != null && project.stars > 0 && (
-                      <span className="text-xs text-muted-foreground flex items-center gap-0.5">
-                        ★ {project.stars}
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Star size={11} className="fill-amber-400 text-amber-400" /> {project.stars}
                       </span>
                     )}
                   </div>
 
                   <div className="flex gap-3">
                     {project.github_url ? (
-                      <Button variant="outline" size="sm" className="gap-2" asChild>
-                        <Link href={project.github_url} target="_blank" rel="noopener noreferrer">
-                          <Github className="h-4 w-4" />
-                          Code
-                        </Link>
-                      </Button>
+                      <MagneticWrapper strength={15}>
+                        <Button variant="outline" size="sm" className="gap-2" asChild>
+                          <Link href={project.github_url} target="_blank" rel="noopener noreferrer">
+                            <Github className="h-4 w-4" />
+                            Code
+                          </Link>
+                        </Button>
+                      </MagneticWrapper>
                     ) : (
                       <Button variant="outline" size="sm" className="gap-2" disabled>
                         <Github className="h-4 w-4" />
@@ -147,12 +150,14 @@ export function ProjectsTabs({ projects }: ProjectsTabsProps): React.ReactElemen
                       </Button>
                     )}
                     {project.demo_url ? (
-                      <Button size="sm" className="gap-2" asChild>
-                        <Link href={project.demo_url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4" />
-                          Live Demo
-                        </Link>
-                      </Button>
+                      <MagneticWrapper strength={15}>
+                        <Button size="sm" className="gap-2" asChild>
+                          <Link href={project.demo_url} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                            Live Demo
+                          </Link>
+                        </Button>
+                      </MagneticWrapper>
                     ) : (
                       <Button size="sm" className="gap-2" disabled>
                         <ExternalLink className="h-4 w-4" />

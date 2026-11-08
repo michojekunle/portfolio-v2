@@ -6,6 +6,7 @@ import {
   contactNotificationEmail,
   contactConfirmationEmail,
 } from "@/lib/email/templates";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 class ContactError extends Error {
   constructor(
@@ -68,13 +69,22 @@ function hasInjectionPattern(input: ContactInput): boolean {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anon";
+  const rl = await checkRateLimit(`contact:${ip}`, { limit: 3, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { success: false, message: "Too many messages. Please wait a minute before trying again.", error: "Rate limit exceeded" },
+      { status: 429 }
+    );
+  }
+
   try {
     let body: unknown;
     try {
       body = await request.json();
     } catch {
       return NextResponse.json(
-        { success: false, message: "Invalid request body" },
+        { success: false, message: "Invalid request body", error: "Invalid request body" },
         { status: 400 }
       );
     }
@@ -82,7 +92,7 @@ export async function POST(request: Request): Promise<Response> {
     const result = contactSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { success: false, errors: result.error.flatten().fieldErrors },
+        { success: false, errors: result.error.flatten().fieldErrors, error: "Validation failed" },
         { status: 400 }
       );
     }
@@ -92,7 +102,7 @@ export async function POST(request: Request): Promise<Response> {
     if (hasInjectionPattern(input)) {
       console.warn("[contact] Suspicious input pattern detected");
       return NextResponse.json(
-        { success: false, message: "Invalid input detected" },
+        { success: false, message: "Invalid input detected", error: "Invalid input detected" },
         { status: 400 }
       );
     }
@@ -170,13 +180,13 @@ export async function POST(request: Request): Promise<Response> {
     if (error instanceof ContactError) {
       console.error(`[contact] ${error.message}`);
       return NextResponse.json(
-        { success: false, message: error.userMessage },
+        { success: false, message: error.userMessage, error: error.userMessage },
         { status: error.statusCode }
       );
     }
     console.error("[contact] Unexpected error:", error);
     return NextResponse.json(
-      { success: false, message: "An unexpected error occurred" },
+      { success: false, message: "An unexpected error occurred", error: "An unexpected error occurred" },
       { status: 500 }
     );
   }

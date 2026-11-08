@@ -1,233 +1,132 @@
-import type { Metadata } from "next";
-import { Footer } from "@/components/footer";
-import Link from "next/link";
-import { ArrowLeft, GitCommit, ExternalLink } from "lucide-react";
-import { formatDistanceToNow, format } from "date-fns";
+import type { Metadata } from "next"
+import { ExternalLink } from "lucide-react"
+import { formatDistanceToNow, format } from "date-fns"
+import { ChangelogClient } from "@/components/changelog-client"
 
 export const metadata: Metadata = {
   title: "Changelog",
-  description:
-    "Recent development activity and commits across Michael Ojekunle's projects.",
-};
+  description: "Recent development activity and commits across Michael Ojekunle's projects.",
+}
 
-export const revalidate = 1800;
+export const revalidate = 1800
 
 interface CommitNode {
-  message: string;
-  committedDate: string;
-  url: string;
-  abbreviatedOid: string;
+  message: string
+  committedDate: string
+  url: string
+  abbreviatedOid: string
 }
 
 interface RepoNode {
-  name: string;
-  url: string;
+  name: string
+  url: string
   defaultBranchRef: {
     target: {
-      history: {
-        nodes: CommitNode[];
-      };
-    };
-  } | null;
+      history: { nodes: CommitNode[] }
+    }
+  } | null
 }
 
 interface GitHubResponse {
-  data: {
-    user: {
-      repositories: {
-        nodes: RepoNode[];
-      };
-    };
-  };
-  errors?: Array<{ message: string }>;
+  data: { user: { repositories: { nodes: RepoNode[] } } }
+  errors?: Array<{ message: string }>
 }
 
 interface ChangelogEntry {
-  repo: string;
-  repoUrl: string;
-  message: string;
-  date: string;
-  url: string;
-  sha: string;
+  repo: string
+  repoUrl: string
+  message: string
+  date: string
+  url: string
+  sha: string
 }
 
 async function fetchChangelog(): Promise<ChangelogEntry[]> {
-  const token = process.env.GITHUB_TOKEN;
-  const username = process.env.GITHUB_USERNAME ?? "michojekunle";
+  const token = process.env.GITHUB_TOKEN
+  const username = process.env.GITHUB_USERNAME ?? "michojekunle"
+  if (!token) return []
 
-  if (!token) return [];
-
-  const query = `
-    query {
-      user(login: "${username}") {
-        repositories(first: 10, orderBy: {field: PUSHED_AT, direction: DESC}, privacy: PUBLIC) {
-          nodes {
-            name
-            url
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 5) {
-                    nodes {
-                      message
-                      committedDate
-                      url
-                      abbreviatedOid
-                    }
-                  }
-                }
-              }
-            }
-          }
+  const query = `query ($login: String!) {
+    user(login: $login) {
+      repositories(first: 10, orderBy: {field: PUSHED_AT, direction: DESC}, privacy: PUBLIC) {
+        nodes {
+          name url
+          defaultBranchRef { target { ... on Commit { history(first: 5) { nodes { message committedDate url abbreviatedOid } } } } }
         }
       }
     }
-  `;
+  }`
 
   try {
     const res = await fetch("https://api.github.com/graphql", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query }),
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: { login: username } }),
       next: { revalidate: 1800 },
-    });
+    })
+    if (!res.ok) return []
+    const json = (await res.json()) as GitHubResponse
+    if (json.errors?.length) return []
 
-    if (!res.ok) return [];
-
-    const json = (await res.json()) as GitHubResponse;
-    if (json.errors?.length) return [];
-
-    const entries: ChangelogEntry[] = [];
+    const entries: ChangelogEntry[] = []
     for (const repo of json.data.user.repositories.nodes) {
-      const commits = repo.defaultBranchRef?.target?.history?.nodes ?? [];
+      const commits = repo.defaultBranchRef?.target?.history?.nodes ?? []
       for (const commit of commits) {
-        entries.push({
-          repo: repo.name,
-          repoUrl: repo.url,
-          message: commit.message.split("\n")[0],
-          date: commit.committedDate,
-          url: commit.url,
-          sha: commit.abbreviatedOid,
-        });
+        if (/^update action output$/i.test(commit.message.split("\n")[0].trim())) continue
+        entries.push({ repo: repo.name, repoUrl: repo.url, message: commit.message.split("\n")[0], date: commit.committedDate, url: commit.url, sha: commit.abbreviatedOid })
       }
     }
-
-    // Sort all by date descending
-    entries.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    return entries.slice(0, 50);
+    return entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 50)
   } catch {
-    return [];
+    return []
   }
 }
 
-function groupByDate(
-  entries: ChangelogEntry[]
-): Map<string, ChangelogEntry[]> {
-  const groups = new Map<string, ChangelogEntry[]>();
+function groupByDate(entries: ChangelogEntry[]): Map<string, ChangelogEntry[]> {
+  const groups = new Map<string, ChangelogEntry[]>()
   for (const entry of entries) {
-    const key = format(new Date(entry.date), "yyyy-MM-dd");
-    const group = groups.get(key) ?? [];
-    group.push(entry);
-    groups.set(key, group);
+    // Slice the UTC ISO string directly — avoids local-timezone date shift
+    const key = entry.date.slice(0, 10)
+    const group = groups.get(key) ?? []
+    group.push(entry)
+    groups.set(key, group)
   }
-  return groups;
+  return groups
 }
+
+import { ChangelogHeroWidget } from "@/components/changelog-hero-widget"
 
 export default async function ChangelogPage(): Promise<React.ReactElement> {
-  const entries = await fetchChangelog();
-  const grouped = groupByDate(entries);
+  const entries = await fetchChangelog()
+  const grouped = groupByDate(entries)
 
   return (
-    <>
-      <main className="min-h-screen pt-24 pb-20 px-6 max-w-2xl mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-10 no-underline"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-          Home
-        </Link>
-
-        <div className="mb-12">
-          <h1 className="text-3xl font-semibold tracking-tight mb-2">
-            Changelog
+    <main id="main-content" tabIndex={-1} className="outline-none">
+      {/* Hero */}
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+        <div>
+          <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-8 text-balance fvs-display">
+            Site <em className="not-italic italic text-(--v3-accent) fvs-soft">changelog.</em>
           </h1>
-          <p className="text-muted-foreground">
-            Recent development activity across my open-source projects.
+          <p className="text-[clamp(17px,2vw,20px)] text-secondary-foreground max-w-[52ch] leading-[1.6] m-0">
+            The portfolio is a product. Here&apos;s what&apos;s changed and when. Built in public.
           </p>
         </div>
 
-        {entries.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No activity to show. Check back later.
-          </p>
-        ) : (
-          <div className="space-y-10">
-            {[...grouped.entries()].map(([dateKey, dayEntries]) => (
-              <section key={dateKey}>
-                <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4 sticky top-20 bg-background/80 backdrop-blur-sm py-1 z-10">
-                  {format(new Date(dateKey), "EEEE, MMMM d, yyyy")}
-                </h2>
-                <div className="space-y-0 border-l border-border/60 pl-6 ml-1">
-                  {dayEntries.map((entry) => (
-                    <div
-                      key={entry.url}
-                      className="relative pb-5 last:pb-0"
-                    >
-                      {/* Timeline dot */}
-                      <div className="absolute -left-[29px] top-1 w-2 h-2 rounded-full bg-border" />
+        <div className="flex justify-start min-[900px]:justify-end w-full">
+          <ChangelogHeroWidget />
+        </div>
+      </section>
 
-                      <div className="flex items-start gap-2">
-                        <GitCommit className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm leading-relaxed">
-                            {entry.message}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground/60">
-                            <a
-                              href={entry.repoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="hover:text-foreground transition-colors font-medium"
-                            >
-                              {entry.repo}
-                            </a>
-                            <span>·</span>
-                            <a
-                              href={entry.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-mono hover:text-foreground transition-colors inline-flex items-center gap-1"
-                            >
-                              {entry.sha}
-                              <ExternalLink className="h-2.5 w-2.5" />
-                            </a>
-                            <span>·</span>
-                            <span>
-                              {formatDistanceToNow(new Date(entry.date), {
-                                addSuffix: true,
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
+        <section className="max-w-(--maxw) mx-auto px-(--gutter) py-30 max-[720px]:py-18">
+          {entries.length === 0 ? (
+            <p className="font-mono text-[13px] text-muted-foreground">
+              No activity to show — check back soon.
+            </p>
+          ) : (
+            <ChangelogClient grouped={[...grouped.entries()]} />
+          )}
+        </section>
       </main>
-      <div className="max-w-2xl mx-auto px-6">
-        <Footer />
-      </div>
-    </>
-  );
+  )
 }

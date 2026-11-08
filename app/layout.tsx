@@ -1,18 +1,35 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "highlight.js/styles/github-dark.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CommandPalette } from "@/components/command-palette";
-import { Navbar } from "@/components/navbar";
-import { Analytics } from "@vercel/analytics/next"
+import { PortfolioChrome } from "@/components/portfolio-chrome";
+import { SmoothScroll } from "@/components/smooth-scroll";
+import { NoiseOverlay } from "@/components/noise-overlay";
+import { Preloader } from "@/components/preloader";
+import { Analytics } from "@vercel/analytics/next";
 
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  // Preload the two weights used most — body (400) and headings (700).
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  weight: "variable",
+  axes: ["opsz", "SOFT", "WONK"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -32,26 +49,30 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://michaelojekunle.dev"),
   title: {
-    default: "Michael Ojekunle | Full-Stack & Web3 Developer",
+    default: "Michael Ojekunle | Software Engineer & Builder",
     template: "%s | Michael Ojekunle",
   },
   description:
-    "Full-stack and Web3 developer based in Lagos, Nigeria. Building production-grade apps with Next.js, TypeScript, Solidity, and Cairo.",
+    "Software engineer based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure. Currently building Zamir.",
   keywords: [
     "Michael Ojekunle",
     "devvmichael",
+    "Software Engineer",
+    "Builder",
+    "Rust",
+    "Systems Programming",
     "Full-Stack Developer",
-    "Web3 Developer",
-    "Solidity",
-    "Cairo",
-    "StarkNet",
     "Next.js",
     "TypeScript",
     "React",
-    "Rust",
+    "Rust Developer",
+    "Solidity",
+    "StarkNet",
     "Lagos Nigeria",
-    "Blockchain Developer",
-    "Smart Contracts",
+    "Zamir",
+    "Distributed Systems",
+    "AI Infrastructure",
+    "Cryptography",
   ],
   authors: [{ name: "Michael Ojekunle", url: "https://michaelojekunle.dev" }],
   creator: "Michael Ojekunle",
@@ -61,15 +82,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://michaelojekunle.dev",
     siteName: "Michael Ojekunle",
-    title: "Michael Ojekunle — Full-Stack & Web3 Developer",
+    title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Full-stack and Web3 developer building at the intersection of frontend elegance and blockchain innovation.",
+      "Software engineer. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Michael Ojekunle — Full-Stack & Web3 Developer",
+    title: "Michael Ojekunle — Software Engineer & Builder",
     description:
-      "Full-stack and Web3 developer building at the intersection of frontend elegance and blockchain innovation.",
+      "Software engineer. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure.",
     creator: "@devvmichael",
     site: "@devvmichael",
   },
@@ -109,9 +130,9 @@ const jsonLd = {
         width: 1200,
         height: 630,
       },
-      jobTitle: "Full-Stack & Web3 Developer",
+      jobTitle: "Software Engineer & Builder",
       description:
-        "Full-stack and Web3 developer based in Lagos, Nigeria. Building production-grade apps with Next.js, TypeScript, Solidity, and Cairo.",
+        "Software engineer based in Lagos, Nigeria. Four years building products across web, mobile and web3, now going deep on Rust, distributed systems and AI infrastructure. Currently building Zamir.",
       sameAs: [
         "https://github.com/michojekunle",
         "https://x.com/devvmichael",
@@ -123,18 +144,18 @@ const jsonLd = {
         addressCountry: "NG",
       },
       knowsAbout: [
-        "JavaScript",
+        "Software Engineering",
+        "Rust",
+        "Systems Programming",
         "TypeScript",
+        "JavaScript",
         "React",
         "Next.js",
-        "Solidity",
-        "Cairo",
-        "Rust",
         "Web3",
-        "Blockchain",
-        "Smart Contracts",
-        "DeFi",
-        "StarkNet",
+        "Account Abstraction",
+        "Distributed Systems",
+        "AI Infrastructure",
+        "Cryptography",
       ],
     },
     {
@@ -142,16 +163,9 @@ const jsonLd = {
       "@id": "https://michaelojekunle.dev/#website",
       url: "https://michaelojekunle.dev",
       name: "Michael Ojekunle",
-      description: "Portfolio and blog of Michael Ojekunle — Full-Stack & Web3 Developer",
+      description:
+        "Portfolio and blog of Michael Ojekunle — Software Engineer & Builder",
       author: { "@id": "https://michaelojekunle.dev/#person" },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: "https://michaelojekunle.dev/blog?q={search_term_string}",
-        },
-        "query-input": "required name=search_term_string",
-      },
     },
   ],
 };
@@ -166,9 +180,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+        {/* JSON-LD structured data — in <head> avoids React 19 script-in-body warning */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
-      <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
+      >
         {/* Skip navigation — visible on focus for keyboard/screen-reader users */}
         <a
           href="#main-content"
@@ -177,20 +198,18 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem={true}
         >
-          <Navbar />
-          {children}
-          <CommandPalette />
-          <Toaster />
+          <SmoothScroll>
+            <Preloader />
+            <NoiseOverlay />
+            <PortfolioChrome children={children} />
+            <CommandPalette />
+            <Toaster />
+          </SmoothScroll>
         </ThemeProvider>
         <Analytics />
       </body>

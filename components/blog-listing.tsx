@@ -3,10 +3,8 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Search, ExternalLink, Eye, Heart, MessageSquare, X, MousePointerClick } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search, ExternalLink, X, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 interface Post {
   id: string;
@@ -16,20 +14,22 @@ interface Post {
   category: string;
   read_time: string | null;
   published_at: string | null;
+  updated_at?: string | null;
   views: number;
   reactionCount: number;
   commentCount: number;
   external_url?: string;
   clicks?: number;
+  cover_image?: string | null;
 }
 
-const CATEGORIES = ["All", "Technical", "Web3", "Reflection", "ZKML", "First Principles", "Life & Learning"];
+const CATEGORIES = ["All", "Technical", "Web3", "Reflection", "First Principles", "Life & Learning"];
 
-export function BlogListing({ initialPosts }: { initialPosts: Post[] }) {
+export function BlogListing({ initialPosts }: { initialPosts: Post[] }): React.ReactElement {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const handleExternalClick = async (postId: string) => {
+  const handleExternalClick = async (postId: string): Promise<void> => {
     try {
       await fetch("/api/posts/clicks", {
         method: "POST",
@@ -43,87 +43,76 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }) {
 
   const filteredPosts = useMemo(() => {
     return initialPosts.filter((post) => {
-      const matchesSearch = 
+      const matchesSearch =
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-      
       const matchesCategory = activeCategory === "All" || post.category === activeCategory;
-
       return matchesSearch && matchesCategory;
     });
   }, [initialPosts, searchQuery, activeCategory]);
 
   return (
-    <div className="space-y-8">
-      {/* Search and Filter UI */}
-      <div className="space-y-4">
-        <div className="relative px-10">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search posts by title or excerpt..."
-            className="px-5"
+    <div className="max-w-(--maxw) mx-auto px-(--gutter) pb-30">
+      {/* Search + Filter */}
+      <div className="flex flex-col gap-6 mb-16">
+        <div className="relative w-full max-w-[480px]">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
+          <input
+            className="w-full bg-(--bg-2) border border-(--rule) rounded-full py-3 pl-11 pr-10 text-[15px] text-(--ink) placeholder:text-muted-foreground focus:outline-none focus:border-muted-foreground focus:bg-(--paper) transition-all duration-200"
+            placeholder="Search notes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
             <button
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-(--ink) p-1 cursor-pointer"
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label="Clear search"
             >
-              <X className="h-4 w-4" />
+              <X size={14} />
             </button>
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2.5">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
+              className={`px-4 py-2 rounded-full font-mono text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer ${activeCategory === cat ? "bg-(--ink) text-(--bg) border border-(--ink)" : "bg-transparent text-secondary-foreground border border-(--rule) hover:border-muted-foreground hover:text-(--ink)"}`}
               onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-md border transition-all",
-                activeCategory === cat
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
-              )}
             >
               {cat}
             </button>
           ))}
+          {(searchQuery || activeCategory !== "All") && (
+            <button
+              className="px-4 py-2 rounded-full font-mono text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer text-(--v3-accent) border border-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_10%,transparent)]"
+              onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
+            >
+              Clear ×
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Results Info */}
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">
-          Showing {filteredPosts.length} post{filteredPosts.length !== 1 ? "s" : ""}
-          {activeCategory !== "All" && ` in ${activeCategory}`}
-          {searchQuery && ` matching "${searchQuery}"`}
-        </p>
-        {(searchQuery || activeCategory !== "All") && (
-          <button
-            onClick={() => {
-              setSearchQuery("");
-              setActiveCategory("All");
-            }}
-            className="text-[10px] uppercase font-bold text-primary hover:underline underline-offset-4"
-          >
-            Clear Filters
-          </button>
-        )}
-      </div>
-
-      {/* Post List */}
+      {/* Post rows */}
       {!filteredPosts.length ? (
-        <div className="py-20 text-center border border-dashed rounded-lg border-muted-foreground/20">
-          <p className="text-sm text-muted-foreground">No posts found matching your criteria.</p>
+        <div className="py-20 text-center border-t border-(--rule)">
+          <p className="font-display italic text-[18px] text-muted-foreground">
+            No notes found{searchQuery ? ` matching "${searchQuery}"` : ""}{activeCategory !== "All" ? ` in ${activeCategory}` : ""}.
+          </p>
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className="border-t border-(--rule)">
           {filteredPosts.map((post) => {
             const isExternal = !!post.external_url;
             const href = isExternal ? post.external_url! : `/blog/${post.slug}`;
-            
+            const publishedDate = post.published_at ? new Date(post.published_at) : null;
+            const updatedDate = post.updated_at ? new Date(post.updated_at) : null;
+            const isUpdated = publishedDate && updatedDate && format(publishedDate, "yyyy-MM-dd") !== format(updatedDate, "yyyy-MM-dd");
+            const dateStr = publishedDate ? format(publishedDate, "MMM yyyy") : "";
+            const updatedStr = isUpdated ? ` (Upd: ${format(updatedDate!, "MMM yyyy")})` : "";
+
             return (
               <Link
                 key={post.id}
@@ -131,75 +120,41 @@ export function BlogListing({ initialPosts }: { initialPosts: Post[] }) {
                 target={isExternal ? "_blank" : undefined}
                 rel={isExternal ? "noopener noreferrer" : undefined}
                 onClick={isExternal ? () => handleExternalClick(post.id) : undefined}
-                className="group flex flex-col gap-2 py-6 hover:bg-muted/30 transition-all no-underline border-b border-border/40 last:border-0 p-3"
+                className="group flex flex-col sm:grid sm:grid-cols-[120px_1fr_100px_40px] items-start sm:items-center gap-3 sm:gap-6 py-8 border-b border-(--rule) no-underline transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--bg-2)_50%,transparent)]"
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge 
-                    variant="secondary" 
-                    className={cn(
-                      "text-[10px] uppercase tracking-wider h-5 font-bold transition-colors",
-                      "bg-muted/50 border-border/40 group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20",
-                      isExternal && "text-amber-500 bg-amber-500/10 border-amber-500/20"
-                    )}
-                  >
-                    {post.category}
-                  </Badge>
-                  {isExternal && (
-                    <span className="flex items-center gap-1 text-[10px] text-amber-500 font-bold uppercase tracking-wider">
-                      <ExternalLink className="h-2.5 w-2.5" />
-                      External
+                <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1 sm:mt-0 flex flex-col sm:block gap-1">
+                  <span>{dateStr}</span>
+                  {isUpdated && <span className="sm:ml-1 text-xs">{updatedStr}</span>}
+                </span>
+                
+                <div className="flex flex-col gap-1.5 flex-1">
+                  <div className="font-display text-[22px] leading-[1.35] text-(--ink) group-hover:text-(--v3-accent) transition-colors duration-200 fvs-text">
+                    {post.title}
+                    <span className="inline-flex items-center ml-3 font-mono text-xs uppercase tracking-wider px-2 py-0.75 rounded bg-(--bg-2) border border-(--rule) text-muted-foreground align-middle">
+                      {isExternal && <ExternalLink size={10} className="mr-1" />}
+                      {post.category}
                     </span>
-                  )}
-                  {post.read_time && (
-                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter opacity-70 group-hover:opacity-100 transition-opacity ml-auto">
-                      {post.read_time}
+                  </div>
+                  {post.excerpt && (
+                    <span className="text-[15px] text-secondary-foreground leading-normal max-w-[64ch]">
+                      {post.excerpt}
                     </span>
                   )}
                 </div>
                 
-                <div className="flex items-start justify-between gap-6">
-                  <div className="min-w-0 flex-1">
-                    <h2 className={cn(
-                      "text-lg font-semibold tracking-tight transition-colors mb-2 line-clamp-2",
-                      "group-hover:text-primary",
-                      isExternal && "group-hover:text-amber-500"
-                    )}>
-                      {post.title}
-                    </h2>
-                    {post.excerpt && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">
-                        {post.excerpt}
-                      </p>
-                    )}
+                {post.cover_image && (
+                  <div className="hidden sm:block relative w-[60px] h-[60px] rounded overflow-hidden shrink-0 border border-(--rule)">
+                    <Image src={post.cover_image} alt={post.title} fill className="object-cover" />
                   </div>
-                  <time className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest shrink-0 mt-1.5 opacity-60">
-                    {post.published_at ? format(new Date(post.published_at), "MMM d, yyyy") : ""}
-                  </time>
-                </div>
-
-                <div className="flex items-center gap-4 mt-1">
-                  {isExternal ? (
-                    <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-amber-500 transition-all duration-300">
-                      <MousePointerClick className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                      <span className="text-[11px] font-mono font-bold tracking-tight">{post.clicks || 0}</span>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-foreground transition-all duration-300">
-                        <Eye className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                        <span className="text-[11px] font-mono font-bold tracking-tight">{post.views || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-all duration-300">
-                        <Heart className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 transition-opacity group-hover:fill-primary/20" />
-                        <span className="text-[11px] font-mono font-bold tracking-tight">{post.reactionCount}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-all duration-300">
-                        <MessageSquare className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                        <span className="text-[11px] font-mono font-bold tracking-tight">{post.commentCount}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
+                )}
+                
+                <span className="hidden sm:block font-mono text-xs text-muted-foreground text-right w-[100px] shrink-0">
+                  {post.read_time ?? ""}
+                </span>
+                
+                <span className="hidden sm:flex justify-end text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-(--v3-accent) w-[40px] shrink-0" aria-hidden="true">
+                  <ArrowRight className="w-4 h-4" />
+                </span>
               </Link>
             );
           })}

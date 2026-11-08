@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  // This route uses the service-role key to bypass storage RLS, so it must
+  // gate on an authenticated session itself — there is no RLS backstop here.
+  const authClient = await createServerClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
+
+  const adminEmail = process.env.CONTACT_TO_EMAIL || "info@michaelojekunle.dev";
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (user.email !== adminEmail) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -9,6 +27,23 @@ export async function POST(req: NextRequest) {
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    // Limit size to 5MB to avoid server/memory crashes
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: "File size exceeds the 5MB limit" }, { status: 400 });
+    }
+
+    // Restrict to image MIME types
+    const allowedMimeTypes = ["image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml"];
+    if (!allowedMimeTypes.includes(file.type)) {
+      return NextResponse.json({ error: "Invalid file type. Only images are allowed." }, { status: 400 });
+    }
+
+    // Limit allowed target buckets
+    const allowedBuckets = ["projects", "blog", "videos"];
+    if (!allowedBuckets.includes(bucket)) {
+      return NextResponse.json({ error: "Invalid storage bucket target" }, { status: 400 });
     }
 
     // Bypass RLS using service role key
@@ -60,10 +95,10 @@ export async function POST(req: NextRequest) {
       .getPublicUrl(filePath);
 
     return NextResponse.json({ url: publicUrl });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Server upload error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to upload file to storage" },
+      { error: "Failed to upload file to storage" },
       { status: 500 }
     );
   }

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T00:46:55Z",
+  "title": "Design System: Portfolio v2",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Warm Paper Background",
+        "canonical": "#f0eee9"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Surface Container Paper",
+        "canonical": "#f7f5f0"
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Deep Ink",
+        "canonical": "#0a0a0a"
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#7a7a76"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule Divider",
+        "canonical": "#cecbc2"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Serif (Fraunces)",
+        "purpose": "Hero titles and main section headers with opsz 144."
+      },
+      "body": {
+        "displayName": "Body Sans (Inter)",
+        "purpose": "Readable long-form text and general UI."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow Mono (JetBrains Mono)",
+        "purpose": "Uppercase section tags, dates, and category labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "surface-elevation",
+        "value": "0 2px 8px rgba(0,0,0,0.04)",
+        "purpose": "Subtle floating depth for popovers and active dropdown menus."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default smooth easing for hover states and transitions."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button with deep ink fill and warm background text.",
+      "html": "<button class=\"ds-btn-primary\">READ MORE</button>",
+      "css": ".ds-btn-primary { background: #0a0a0a; color: #f0eee9; padding: 8px 16px; border-radius: 4px; font-family: monospace; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: background 0.2s ease; } .ds-btn-primary:hover { background: #3a3a38; }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "content-card",
+      "description": "Paper container with subtle 1px border and 24px padding.",
+      "html": "<div class=\"ds-content-card\"><h3 class=\"ds-card-title\">Project Title</h3><p class=\"ds-card-body\">Description of the project case study...</p></div>",
+      "css": ".ds-content-card { background: #f7f5f0; border: 1px solid #cecbc2; border-radius: 6px; padding: 24px; } .ds-card-title { font-family: Georgia, serif; font-size: 1.25rem; margin: 0 0 8px 0; color: #0a0a0a; } .ds-card-body { font-family: sans-serif; font-size: 0.95rem; color: #7a7a76; margin: 0; }"
+    },
+    {
+      "name": "Command Palette",
+      "kind": "custom",
+      "refersTo": "command-palette",
+      "description": "Cmd+K quick search palette modal with backdrop blur.",
+      "html": "<div class=\"ds-command-palette\"><input class=\"ds-command-input\" placeholder=\"Search posts, projects, or tools...\" /><div class=\"ds-command-item\"><span>/blog</span><kbd>↵</kbd></div></div>",
+      "css": ".ds-command-palette { background: #f7f5f0; border: 1px solid #cecbc2; border-radius: 6px; padding: 16px; width: 100%; max-width: 500px; } .ds-command-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #cecbc2; padding: 8px 0; font-family: monospace; color: #0a0a0a; font-size: 14px; outline: none; } .ds-command-item { display: flex; justify-content: space-between; padding: 8px 0; font-family: monospace; font-size: 13px; color: #7a7a76; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Editorial Sanctuary",
+    "overview": "The visual language of Portfolio v2 pairs tactile editorial warmth with sharp technical precision. Built for Michael Ojekunle's digital home, the interface rejects saturated tech visual clutter in favor of quiet paper surfaces, literary typography, and high-contrast typography hierarchy.",
+    "keyCharacteristics": [
+      "Editorial Warmth: Tactile paper tones (#f0eee9 light, #080808 dark) rather than harsh pure whites.",
+      "Expressive Serif Typography: Fraunces variable serif with italic emphasis and custom optical sizing.",
+      "Precision Eyebrows: JetBrains Mono uppercase eyebrows with wide letter-spacing (0.18em).",
+      "Subtle Rule Division: Clean border dividers (#cecbc2) defining visual containers."
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "The interface avoids bright accent floods. Ink and paper contrast carry 95% of the visual hierarchy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Italic Accent Rule",
+        "body": "Heading emphasis uses Fraunces italic with soft optical size settings to add editorial voice.",
+        "section": "typography"
+      },
+      {
+        "name": "The Border-Over-Shadow Rule",
+        "body": "Cards and containers rely on 1px crisp borders and background contrast rather than ambient drop shadows.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use Fraunces serif headings for hero sections and section titles.",
+      "Do use JetBrains Mono for uppercase eyebrows (11px, 0.18em tracking).",
+      "Do use crisp 1px borders (#cecbc2) to structure cards and containers."
+    ],
+    "donts": [
+      "Don't add bright gradient accents or loud neon color fills.",
+      "Don't use heavy drop shadows for elevated cards; rely on border division.",
+      "Don't mix non-monospace fonts in eyebrow labels or metadata tags."
+    ]
+  }
+}

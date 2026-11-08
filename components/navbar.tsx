@@ -1,192 +1,237 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { ModeToggle } from "@/components/mode-toggle"
-import { CommandPaletteTrigger } from "@/components/command-palette"
-import { Menu, X, Github, Twitter } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { CommandPaletteTrigger } from "@/components/command-palette";
+import { Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
+import { MagneticWrapper } from "./magnetic-wrapper";
+import { MoMark } from "@/lib/brand-mark";
 
-const navLinks = [
-  { name: "About", href: "/#about" },
-  { name: "Projects", href: "/#projects" },
-  { name: "Blog", href: "/blog" },
-  { name: "Now", href: "/#now" },
-  { name: "Contact", href: "/#contact" },
-]
+const navLinks: { name: string; href: string }[] = [
+  { name: "Work", href: "/work" },
+  { name: "About", href: "/about" },
+  { name: "Notes", href: "/blog" },
+];
 
 export function Navbar(): React.ReactNode {
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    const onScroll = (): void => setScrolled(window.scrollY > 10)
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    if (!isOpen) {
+      triggerRef.current?.focus();
+      return;
+    }
 
-  // Close on route change
-  useEffect(() => { setIsOpen(false) }, [pathname])
+    const menuElement = menuRef.current;
+    if (!menuElement) return;
 
-  // Close on Escape
-  const onKeyDown = useCallback((e: KeyboardEvent): void => {
-    if (e.key === "Escape" && isOpen) setIsOpen(false)
-  }, [isOpen])
+    const focusable = menuElement.querySelectorAll<HTMLElement>(
+      'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length > 0) {
+      focusable[0].focus();
+    }
+
+    const handleFocusTrap = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      const focusableElements = menuElement.querySelectorAll<HTMLElement>(
+        'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleFocusTrap);
+    return () => {
+      document.removeEventListener("keydown", handleFocusTrap);
+    };
+  }, [isOpen]);
+
   useEffect(() => {
-    document.addEventListener("keydown", onKeyDown)
-    return () => document.removeEventListener("keydown", onKeyDown)
-  }, [onKeyDown])
-
-  // Prevent body scroll while drawer is open
+    setMounted(true);
+  }, []);
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : ""
-    return () => { document.body.style.overflow = "" }
-  }, [isOpen])
+    setIsOpen(false);
+  }, [pathname]);
+
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent): void => {
+      if (e.key === "Escape" && isOpen) setIsOpen(false);
+    },
+    [isOpen]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onKeyDown]);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const isActive = (href: string): boolean =>
-    href.startsWith("/") ? pathname === href : false
+    pathname === href || (href !== "/" && pathname.startsWith(href));
 
-  if (pathname?.startsWith("/admin")) return null
+  if (pathname?.startsWith("/admin")) return null;
+  if (pathname?.startsWith("/tools/bookbreaks")) return null;
+
+  const isDark = resolvedTheme === "dark";
 
   return (
     <nav
+      className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-3.5 border-b border-(--rule)"
       aria-label="Main navigation"
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-border py-3"
-          : "py-6",
-      )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            aria-label="Michael Ojekunle — home"
-            className="text-xl font-semibold tracking-tight text-foreground"
-          >
-            Michael.dev
-          </Link>
-
-          {/* Desktop */}
-          <div className="hidden md:flex items-center space-x-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                aria-current={isActive(link.href) ? "page" : undefined}
-                className={cn(
-                  "text-sm transition-colors",
-                  isActive(link.href)
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
-
-            <div className="flex items-center space-x-3 ml-6">
-              <CommandPaletteTrigger />
-              <Link
-                href="https://github.com/michojekunle"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub profile (opens in new tab)"
-              >
-                <Button variant="ghost" size="icon" className="h-8 w-8" tabIndex={-1}>
-                  <Github className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link
-                href="https://x.com/devvmichael"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Twitter / X profile (opens in new tab)"
-              >
-                <Button variant="ghost" size="icon" className="h-8 w-8" tabIndex={-1}>
-                  <Twitter className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
-              <ModeToggle />
-            </div>
-          </div>
-
-          {/* Mobile toggle */}
-          <div className="md:hidden flex items-center gap-1">
-            <ModeToggle />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen((v) => !v)}
-              aria-expanded={isOpen}
-              aria-controls="mobile-menu"
-              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-              className="ml-1"
+      <div className="max-w-(--maxw) mx-auto px-(--gutter) py-4.5 flex justify-between items-center gap-8 min-[820px]:grid min-[820px]:grid-cols-[1fr_auto_1fr]">
+        <div className="flex justify-start">
+          <MagneticWrapper strength={10}>
+            <Link
+              href="/"
+              aria-label="Michael Ojekunle — home"
+              className="flex items-center gap-4 font-display italic text-[22px] font-normal cursor-pointer text-(--ink) no-underline fvs-soft group"
             >
-              {isOpen
-                ? <X className="h-5 w-5" aria-hidden="true" />
-                : <Menu className="h-5 w-5" aria-hidden="true" />
+              <div className="transition-transform duration-300 group-hover:scale-105">
+                <MoMark dim={34} />
+              </div>
+            </Link>
+          </MagneticWrapper>
+        </div>
+
+        {/* Center: Desktop Nav Links */}
+        <div className="flex gap-6 max-[820px]:hidden items-center justify-self-center">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              data-active={isActive(link.href)}
+              className={`group relative font-mono text-[12px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2`}
+            >
+              {link.name}
+              <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-(--v3-accent) scale-x-0 transition-transform duration-200 origin-left group-hover:scale-x-100 group-data-[active=true]:scale-x-100" />
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex gap-3 items-center justify-self-end">
+          <CommandPaletteTrigger />
+
+          <MagneticWrapper strength={15}>
+            <button
+              className="w-11 h-11 min-w-[44px] min-h-[44px] sm:w-9.5 sm:h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              aria-label={
+                isDark ? "Switch to light mode" : "Switch to dark mode"
               }
-            </Button>
-          </div>
+              suppressHydrationWarning
+            >
+              {mounted ? (
+                isDark ? (
+                  <Moon className="w-4 h-4" />
+                ) : (
+                  <Sun className="w-4 h-4" />
+                )
+              ) : (
+                <Sun className="w-4 h-4" />
+              )}
+            </button>
+          </MagneticWrapper>
+
+          <MagneticWrapper strength={20}>
+            <Link
+              href="/contact"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 py-2 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              aria-label="Book a call"
+            >
+              Book a call{" "}
+              <ArrowRight
+                className="inline-block transition-transform duration-250 group-hover:translate-x-1 ml-1.5 w-4 h-4"
+                aria-hidden="true"
+              />
+            </Link>
+          </MagneticWrapper>
+
+          <button
+            ref={triggerRef}
+            className="hidden max-[820px]:flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-lg border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer transition-all duration-150 hover:border-muted-foreground hover:text-(--ink)"
+            onClick={() => setIsOpen((v) => !v)}
+            aria-expanded={isOpen}
+            aria-controls="v3-mobile-menu"
+            aria-label={
+              isOpen ? "Close navigation menu" : "Open navigation menu"
+            }
+          >
+            {isOpen ? (
+              <X size={20} aria-hidden="true" />
+            ) : (
+              <Menu size={20} aria-hidden="true" />
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Mobile drawer */}
-      {isOpen && (
-        <div
-          id="mobile-menu"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-          className="md:hidden bg-background/95 backdrop-blur-md border-t border-border animate-fade-in"
-        >
-          <nav aria-label="Mobile navigation" className="px-4 pt-2 pb-4 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                aria-current={isActive(link.href) ? "page" : undefined}
-                className={cn(
-                  "block py-2 text-base transition-colors",
-                  isActive(link.href)
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <div className="flex items-center space-x-4 pt-4 border-t border-border/50 mt-2">
-              <Link
-                href="https://github.com/michojekunle"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub profile (opens in new tab)"
-              >
-                <Button variant="ghost" size="icon" tabIndex={-1}>
-                  <Github className="h-5 w-5" aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link
-                href="https://x.com/devvmichael"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Twitter / X profile (opens in new tab)"
-              >
-                <Button variant="ghost" size="icon" tabIndex={-1}>
-                  <Twitter className="h-5 w-5" aria-hidden="true" />
-                </Button>
-              </Link>
-            </div>
-          </nav>
+      <div
+        ref={menuRef}
+        id="v3-mobile-menu"
+        className={`${
+          isOpen ? "flex" : "hidden"
+        } flex-col pt-4 px-(--gutter) pb-6 border-t border-(--rule) bg-(--bg) gap-0.5`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+      >
+        {navLinks.map((link) => (
+          <Link
+            key={link.name}
+            href={link.href}
+            aria-current={isActive(link.href) ? "page" : undefined}
+            data-active={isActive(link.href)}
+            className="py-3 text-[16px] font-medium text-secondary-foreground no-underline border-b border-(--rule-2) transition-colors duration-150 hover:text-(--ink) data-[active=true]:text-(--ink)"
+            onClick={() => setIsOpen(false)}
+          >
+            {link.name}
+          </Link>
+        ))}
+        <div className="flex items-center gap-3 pt-4 mt-2">
+          <Link
+            href="/contact"
+            className="group inline-flex items-center gap-2.5 px-4 py-2.25 rounded-full font-sans text-[13px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-(--v3-accent) text-(--bg) hover:bg-(--v3-accent-2)"
+            onClick={() => setIsOpen(false)}
+          >
+            Book a call{" "}
+            <ArrowRight
+              className="inline-block transition-transform duration-250 group-hover:translate-x-1 w-4 h-4 ml-1"
+              aria-hidden="true"
+            />
+          </Link>
         </div>
-      )}
+      </div>
     </nav>
-  )
+  );
 }

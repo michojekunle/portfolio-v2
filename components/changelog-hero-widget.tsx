@@ -1,0 +1,104 @@
+"use client"
+
+import { GitCommit, GitBranch, Shield, Zap } from "lucide-react"
+import { useState, useEffect } from "react"
+
+export function ChangelogHeroWidget() {
+  const [stats, setStats] = useState({
+    branch: "main",
+    commitsThisWeek: 0,
+    activeRepos: 0,
+    activityData: [0, 0, 0, 0, 0, 0, 0]
+  })
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/github/stats")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.changelog) {
+            setStats({
+              branch: data.changelog.branch || "main",
+              commitsThisWeek: data.changelog.commitsThisWeek || 0,
+              activeRepos: data.changelog.activeRepos || 0,
+              activityData: data.changelog.activityData && data.changelog.activityData.length ? data.changelog.activityData : [0, 0, 0, 0, 0, 0, 0]
+            })
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to fetch changelog stats:", e)
+      }
+    }
+    void fetchStats()
+  }, [])
+
+  const { branch, commitsThisWeek, activeRepos, activityData } = stats
+  
+  const maxVal = Math.max(...activityData, 1)
+
+  return (
+    <div className="relative w-full max-w-[400px] max-[900px]:max-w-none rounded-[20px] border border-(--rule) bg-(--paper) p-6 overflow-hidden flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <GitCommit className="w-4 h-4 text-(--v3-accent)" />
+        <div className="font-mono text-xs tracking-wider text-muted-foreground uppercase">Git Activity</div>
+      </div>
+
+      {/* Grid of stats */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Active Branch */}
+        <div className="p-3 rounded-lg bg-(--bg-2) flex flex-col gap-1">
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <GitBranch className="w-3.5 h-3.5 text-muted-foreground" /> Active Branch
+          </span>
+          <span className="text-[13px] font-mono font-semibold text-(--ink)">
+            {branch}
+          </span>
+        </div>
+
+        {/* Status */}
+        <div className="p-3 rounded-lg bg-(--bg-2) flex flex-col gap-1">
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <Shield className="w-3.5 h-3.5 text-muted-foreground" /> Active Repos
+          </span>
+          <span className="text-[13px] font-mono font-semibold text-(--ink) flex items-center gap-1">
+            {activeRepos}
+          </span>
+        </div>
+      </div>
+
+      {/* Section 2: Commits Sparkline */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Weekly Commit Frequency</span>
+          <span className="font-mono text-xs font-semibold text-secondary-foreground">{commitsThisWeek} commits</span>
+        </div>
+        
+        {/* Sparkline chart bar grid */}
+        <div className="flex items-end justify-between h-12 px-2 py-1 rounded-lg bg-(--bg-2)">
+          {activityData.map((val, idx) => {
+            const pct = (val / maxVal) * 100
+            return (
+              <div key={idx} className="group/bar flex flex-col items-center gap-1 w-[8%] h-full justify-end">
+                <div 
+                  style={{ height: `${pct}%` }}
+                  className="w-full bg-muted-foreground group-hover/bar:bg-(--v3-accent) rounded-t-sm transition-all duration-300 min-h-1"
+                />
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="h-0.25 bg-(--rule) w-full" />
+
+      {/* Footer: Live syncing status */}
+      <div className="flex items-center gap-2 text-xs text-secondary-foreground">
+        <Zap className="w-3.5 h-3.5 text-(--v3-accent)" />
+        <span>Synced with GitHub GraphQL API v4</span>
+      </div>
+    </div>
+  )
+}

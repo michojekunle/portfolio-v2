@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { List } from "lucide-react";
+import { List, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TocItem {
   id: string;
@@ -99,65 +100,79 @@ export function TableOfContents({
   return (
     <>
       {/* Mobile toggle */}
-      <div className="xl:hidden mb-6">
+      {/* Mobile sticky drawer */}
+      <div className="xl:hidden fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setIsOpen((v) => !v)}
-          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="bg-(--ink) text-(--bg) p-3 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
+          aria-label="Table of Contents"
         >
-          <List className="h-3.5 w-3.5" />
-          Table of contents
+          {isOpen ? <X className="h-5 w-5" /> : <List className="h-5 w-5" />}
         </button>
-        {isOpen && (
-          <nav className="mt-3 pl-4 border-l border-border/60 space-y-1.5">
+        
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="absolute bottom-14 right-0 w-64 bg-(--paper) border border-(--rule) rounded-2xl shadow-2xl p-4 origin-bottom-right"
+            >
+              <h4 className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground mb-3 border-b border-(--rule) pb-2">Contents</h4>
+              <nav className="max-h-[50vh] overflow-y-auto overscroll-contain pr-2 flex flex-col gap-2" data-lenis-prevent="true">
+                {headings.map((h) => (
+                  <a
+                    key={h.id}
+                    href={`#${h.id}`}
+                    onClick={(e) => {
+                      setIsOpen(false);
+                      handleScroll(e, h.id);
+                    }}
+                    className={cn(
+                      "block text-[13px] transition-colors leading-snug",
+                      h.level === 3 && "pl-3",
+                      h.level === 4 && "pl-6",
+                      activeId === h.id
+                        ? "text-(--v3-accent) font-medium"
+                        : "text-secondary-foreground hover:text-(--ink)"
+                    )}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Desktop sticky sidebar */}
+      <aside className="hidden xl:block w-64 shrink-0 sticky top-32 self-start max-h-[calc(100vh-8rem)] overflow-y-auto" data-lenis-prevent="true">
+        <div>
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-4 flex items-center gap-1.5">
+            <List className="h-3 w-3" />
+            On this page
+          </p>
+          <nav className="space-y-1.5 border-l border-(--rule) pl-3.5">
             {headings.map((h) => (
               <a
                 key={h.id}
                 href={`#${h.id}`}
-                onClick={(e) => {
-                  setIsOpen(false);
-                  handleScroll(e, h.id);
-                }}
+                onClick={(e) => handleScroll(e, h.id)}
                 className={cn(
-                  "block text-xs transition-colors leading-relaxed",
+                  "block text-[13px] transition-colors leading-relaxed py-0.5",
                   h.level === 3 && "pl-3",
                   h.level === 4 && "pl-6",
                   activeId === h.id
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-(--ink) font-medium border-l-[2px] border-(--ink) -ml-[15px] pl-[13px]"
+                    : "text-secondary-foreground hover:text-(--ink)"
                 )}
               >
                 {h.text}
               </a>
             ))}
           </nav>
-        )}
-      </div>
-
-      {/* Desktop sticky sidebar */}
-      <aside className="hidden xl:block fixed right-[max(1rem,calc((100vw-42rem)/2-16rem))] top-32 w-56">
-        <p className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
-          <List className="h-3 w-3" />
-          On this page
-        </p>
-        <nav className="space-y-1 border-l border-border/60 pl-3">
-          {headings.map((h) => (
-            <a
-              key={h.id}
-              href={`#${h.id}`}
-              onClick={(e) => handleScroll(e, h.id)}
-              className={cn(
-                "block text-xs transition-colors leading-relaxed py-0.5",
-                h.level === 3 && "pl-3",
-                h.level === 4 && "pl-6",
-                activeId === h.id
-                  ? "text-foreground font-medium border-l-2 border-foreground -ml-[1px] pl-[11px]"
-                  : "text-muted-foreground/70 hover:text-foreground"
-              )}
-            >
-              {h.text}
-            </a>
-          ))}
-        </nav>
+        </div>
       </aside>
     </>
   );

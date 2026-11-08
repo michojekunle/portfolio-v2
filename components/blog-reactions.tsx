@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Flame, Rocket, Lightbulb, ThumbsUp } from "lucide-react";
 
 interface Reaction {
   emoji: string;
@@ -14,123 +14,124 @@ interface BlogReactionsProps {
   postId: string;
 }
 
-const EMOJIS = ["❤️", "🔥", "🚀", "💡", "🙌"];
+const REACTIONS = [
+  { id: "heart", label: "Heart", icon: Heart, aliases: ["heart", "\u2764\ufe0f", "\u2764"] },
+  { id: "fire", label: "Fire", icon: Flame, aliases: ["fire", "\ud83d\udd25"] },
+  { id: "rocket", label: "Rocket", icon: Rocket, aliases: ["rocket", "\ud83d\ude80"] },
+  { id: "bulb", label: "Insight", icon: Lightbulb, aliases: ["bulb", "\ud83d\udca1"] },
+  { id: "cheers", label: "Cheers", icon: ThumbsUp, aliases: ["cheers", "clap", "\ud83d\ude4c"] },
+];
 
-export function BlogReactions({ postId }: BlogReactionsProps) {
+export function BlogReactions({ postId }: BlogReactionsProps): React.ReactElement {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [userReacted, setUserReacted] = useState<string[]>([]);
-  const supabase = createClient();
+  // Stable client ref — never changes between renders, so it's safe as a useEffect dep
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
 
   useEffect(() => {
-    // Load existing reactions
-    const loadReactions = async () => {
+    const loadReactions = async (): Promise<void> => {
       const { data } = await supabase
         .from("blog_reactions")
         .select("emoji, count")
         .eq("post_id", postId);
-
-      if (data) {
-        setReactions(data);
-      }
+      if (data) setReactions(data);
     };
 
-    // Load user reactions from localStorage
     const saved = localStorage.getItem(`reactions_${postId}`);
     if (saved) {
-      setUserReacted(JSON.parse(saved));
+      try {
+        const parsed: unknown = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.every((v) => typeof v === "string")) {
+          setUserReacted(parsed);
+        }
+      } catch {
+        // Corrupted localStorage value — ignore and start fresh
+      }
     }
 
-    loadReactions();
+    void loadReactions();
 
-    // Subscribe to real-time updates
     const channel = supabase
       .channel(`reactions_${postId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "blog_reactions",
-          filter: `post_id=eq.${postId}`,
-        },
-        () => {
-          loadReactions();
-        }
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "blog_reactions", filter: `post_id=eq.${postId}` }, () => {
+        void loadReactions();
+      })
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { void supabase.removeChannel(channel); };
   }, [postId, supabase]);
 
-  const handleReact = async (emoji: string) => {
-    if (userReacted.includes(emoji)) return;
+  const handleReact = async (id: string, aliases: string[]): Promise<void> => {
+    const alreadyReacted = userReacted.some((item) => aliases.includes(item));
+    if (alreadyReacted) return;
 
-    // Optimistic UI
+    // Optimistic UI update
     setReactions((prev) => {
-      const existing = prev.find((r) => r.emoji === emoji);
-      if (existing) {
-        return prev.map((r) =>
-          r.emoji === emoji ? { ...r, count: r.count + 1 } : r
-        );
-      }
-      return [...prev, { emoji, count: 1 }];
+      const existing = prev.find((r) => aliases.includes(r.emoji));
+      if (existing) return prev.map((r) => aliases.includes(r.emoji) ? { ...r, count: r.count + 1 } : r);
+      return [...prev, { emoji: id, count: 1 }];
     });
 
-    const newUserReacted = [...userReacted, emoji];
+    const newUserReacted = [...userReacted, id];
     setUserReacted(newUserReacted);
     localStorage.setItem(`reactions_${postId}`, JSON.stringify(newUserReacted));
 
-    // Persist to DB
-    const existing = reactions.find((r) => r.emoji === emoji);
-    if (existing) {
+    // Check DB for existing row using primary key post_id and any alias
+    const { data: current } = await supabase
+      .from("blog_reactions")
+      .select("emoji, count")
+      .eq("post_id", postId)
+      .in("emoji", aliases)
+      .limit(1)
+      .maybeSingle();
+
+    if (current) {
       await supabase
         .from("blog_reactions")
-        .update({ count: existing.count + 1 })
+        .update({ count: (current.count as number) + 1 })
         .eq("post_id", postId)
-        .eq("emoji", emoji);
+        .eq("emoji", current.emoji);
     } else {
-      await supabase.from("blog_reactions").insert([
-        { post_id: postId, emoji, count: 1 },
-      ]);
+      await supabase
+        .from("blog_reactions")
+        .insert([{ post_id: postId, emoji: id, count: 1 }]);
     }
   };
 
   return (
-    <div className="flex flex-wrap gap-3 py-8 border-t border-b border-border/40 my-12">
-      <div className="w-full text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">
-        Reactions
-      </div>
-      {EMOJIS.map((emoji) => {
-        const reaction = reactions.find((r) => r.emoji === emoji);
-        const hasReacted = userReacted.includes(emoji);
+    <div className="v3-reactions">
+      <div className="lbl">Reactions</div>
+      {REACTIONS.map((r) => {
+        const count = reactions
+          .filter((item) => r.aliases.includes(item.emoji))
+          .reduce((sum, item) => sum + (item.count || 0), 0);
+        const hasReacted = userReacted.some((item) => r.aliases.includes(item));
+        const Icon = r.icon;
 
         return (
-          <Button
-            key={emoji}
-            variant="ghost"
-            size="sm"
-            onClick={() => handleReact(emoji)}
-            className={`
-              h-10 px-4 rounded-full border border-border/40 transition-all
-              ${hasReacted ? "bg-primary/10 border-primary/30 text-primary scale-105" : "hover:bg-muted/50"}
-            `}
+          <button
+            key={r.id}
+            className={`v3-reaction-btn${hasReacted ? " reacted" : ""}`}
+            onClick={() => void handleReact(r.id, r.aliases)}
             disabled={hasReacted}
+            aria-label={`React with ${r.label}`}
           >
-            <span className="text-lg mr-2">{emoji}</span>
+            <span className="flex items-center justify-center">
+              <Icon size={15} />
+            </span>
             <AnimatePresence mode="wait">
               <motion.span
-                key={reaction?.count ?? 0}
-                initial={{ opacity: 0, y: 5 }}
+                key={count}
+                initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-xs font-mono font-bold"
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
               >
-                {reaction?.count ?? 0}
+                {count}
               </motion.span>
             </AnimatePresence>
-          </Button>
+          </button>
         );
       })}
     </div>

@@ -1,0 +1,188 @@
+import { CASE_STUDIES } from "@/lib/case-studies"
+import { MagneticWrapper } from "./magnetic-wrapper"
+import { ArrowUpRight, Star } from "lucide-react"
+
+interface PinnedRepo {
+  name: string
+  description: string | null
+  url: string
+  stars: number
+  language: string | null
+  topics: string[]
+  homepage: string | null
+}
+
+interface GraphQLRepo {
+  name: string
+  description: string | null
+  url: string
+  stargazerCount: number
+  primaryLanguage: { name: string } | null
+  repositoryTopics: { nodes: Array<{ topic: { name: string } }> }
+  homepageUrl: string | null
+}
+
+interface GraphQLResponse {
+  data?: {
+    user?: {
+      pinnedItems?: {
+        nodes: GraphQLRepo[]
+      }
+    }
+  }
+  errors?: Array<{ message: string }>
+}
+
+const FEATURED_SLUGS = new Set(CASE_STUDIES.map((cs) => cs.slug))
+
+async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
+  const token = process.env.GITHUB_TOKEN
+  const username = process.env.GITHUB_USERNAME ?? "michojekunle"
+
+  if (!token) return []
+
+  const query = `
+    query {
+      user(login: "${username}") {
+        pinnedItems(first: 9, types: REPOSITORY) {
+          nodes {
+            ... on Repository {
+              name description url stargazerCount
+              primaryLanguage { name }
+              repositoryTopics(first: 8) { nodes { topic { name } } }
+              homepageUrl
+            }
+          }
+        }
+      }
+    }
+  `
+
+  try {
+    const res = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query }),
+      next: { revalidate: 3600 },
+    })
+
+    if (!res.ok) return []
+
+    const json = (await res.json()) as GraphQLResponse
+    if (!json.data?.user?.pinnedItems?.nodes) return []
+
+    return json.data.user.pinnedItems.nodes.map((r) => ({
+      name: r.name,
+      description: r.description,
+      url: r.url,
+      stars: r.stargazerCount,
+      language: r.primaryLanguage?.name ?? null,
+      topics: r.repositoryTopics.nodes.map((t) => t.topic.name),
+      homepage: r.homepageUrl,
+    }))
+  } catch {
+    return []
+  }
+}
+
+const LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript: "#3178c6",
+  JavaScript: "#f7df1e",
+  Solidity: "#aa6746",
+  Rust: "#ce4a1a",
+  Cairo: "#ff6b6b",
+  Python: "#3572a5",
+  Go: "#00add8",
+  Clarity: "#7b5ea7",
+}
+
+export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
+  const allRepos = await fetchPinnedRepos()
+
+  // Filter out repos that are already featured as case studies
+  const repos = allRepos.filter(
+    (r) => !FEATURED_SLUGS.has(r.name) && !FEATURED_SLUGS.has(r.name.replace(/-/g, "").toLowerCase())
+  )
+  if (repos.length === 0) return null
+
+  return (
+    <section
+      className="py-30 max-[720px]:py-18 relative max-w-(--maxw) mx-auto px-(--gutter)"
+      id="open-source"
+      aria-labelledby="bento-heading"
+    >
+      <div className="mb-20 max-[720px]:mb-12">
+        <div>
+          <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+            Other notable <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
+          </h2>
+          <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+            Open source projects on GitHub including tools, experiments, and libraries built
+            to scratch my own itch.
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-1 gap-4 mb-16">
+        {repos.slice(0, 6).map((repo, i) => {
+          const langColor = LANGUAGE_COLORS[repo.language ?? ""] ?? "var(--v3-accent)"
+          const isWide = i === 0 || i === 4
+
+          return (
+            <a
+              key={repo.name}
+              href={repo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group flex flex-col bg-(--paper) border border-(--rule) rounded-xl p-6 h-full no-underline text-inherit transition-all duration-200 relative overflow-hidden hover:border-(--v3-accent) hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.1)] ${isWide ? "col-span-2 max-[920px]:col-span-1" : ""}`}
+              aria-label={`${repo.name} on GitHub`}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div className="font-display font-normal text-[24px] text-(--ink) leading-[1.1] fvs-text">{repo.name}</div>
+                <span className="inline-flex items-center gap-1 font-mono text-[12px] text-muted-foreground" aria-label={`${repo.stars} stars`}>
+                  <Star size={12} className="fill-amber-500 text-amber-500" /> {repo.stars}
+                </span>
+              </div>
+
+              {repo.description && (
+                <p className="text-[14px] leading-[1.6] text-secondary-foreground m-6 flex-[1] line-clamp-3 overflow-hidden">{repo.description}</p>
+              )}
+
+              <div className="flex flex-wrap gap-2.5 items-center mt-auto">
+                {repo.language && (
+                  <span className="flex items-center gap-1.5 font-mono text-[12px] text-muted-foreground">
+                    <svg className="w-2 h-2 shrink-0" viewBox="0 0 8 8" aria-hidden="true">
+                      <circle cx="4" cy="4" r="4" fill={langColor} />
+                    </svg>
+                    {repo.language}
+                  </span>
+                )}
+                {repo.topics.slice(0, 2).map((t) => (
+                  <span key={t} className="font-mono text-[12px] text-muted-foreground/70">{t}</span>
+                ))}
+              </div>
+
+              <div className="absolute top-6 right-6 text-(--v3-accent) opacity-0 -translate-x-1 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true"><ArrowUpRight className="w-5 h-5" /></div>
+            </a>
+          )
+        })}
+      </div>
+
+      <div style={{ textAlign: "center", marginTop: 48 }}>
+        <MagneticWrapper strength={20}>
+          <a
+            href={`https://github.com/${process.env.GITHUB_USERNAME ?? "michojekunle"}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full font-sans text-[14px] font-medium tracking-[-0.005em] cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-200 no-underline hover:border-muted-foreground hover:bg-(--paper)"
+          >
+            All repos on GitHub <ArrowUpRight className="inline-block transition-transform duration-250 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 w-4 h-4" aria-hidden="true" />
+          </a>
+        </MagneticWrapper>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,17 @@
+import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+
+type AuthResult =
+  | { supabase: SupabaseClient; user: User; unauthorized: false }
+  | { supabase: null; user: null; unauthorized: true };
+
+export async function requireJournalAuth(): Promise<AuthResult> {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error("[journal/auth] getUser error:", error.message);
+    return { supabase: null, user: null, unauthorized: true };
+  }
+  if (!user) return { supabase: null, user: null, unauthorized: true };
+  return { supabase, user, unauthorized: false };
+}

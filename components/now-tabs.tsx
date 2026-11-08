@@ -160,7 +160,7 @@ function BookCard({ book, notes }: BookCardProps): React.ReactElement {
           <img
             src={book.cover_url}
             alt={`Cover of ${book.title}`}
-            className="w-12 h-[72px] rounded object-cover shrink-0 bg-muted"
+            className="w-12 h-18 rounded object-cover shrink-0 bg-muted"
           />
         )}
         <div className="flex-1 min-w-0 space-y-2">

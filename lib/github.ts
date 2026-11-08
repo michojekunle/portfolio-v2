@@ -110,10 +110,9 @@ export async function fetchReadmeImage(
   }
 
   try {
-    const res = await fetch(
-      `https://api.github.com/repos/${repo}/readme`,
-      { headers }
-    );
+    const res = await fetch(`https://api.github.com/repos/${repo}/readme`, {
+      headers,
+    });
     if (!res.ok) return null;
 
     const data = (await res.json()) as { content: string; encoding: string };
@@ -126,7 +125,9 @@ export async function fetchReadmeImage(
     if (mdMatch) return mdMatch[1];
 
     // Match HTML img: <img ... src="url" ...>
-    const htmlMatch = readme.match(/<img[^>]+src=["'](https?:\/\/[^\s"']+)["']/i);
+    const htmlMatch = readme.match(
+      /<img[^>]+src=["'](https?:\/\/[^\s"']+)["']/i
+    );
     if (htmlMatch) return htmlMatch[1];
 
     // Match raw image URLs on their own line (common for header banners)

@@ -1,0 +1,564 @@
+import { MagneticWrapper } from "@/components/magnetic-wrapper";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { BookOpen, Share2, LayoutGrid, BookMarked, Compass, Wallet } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Creator Suite",
+  description:
+    "Six live tools built for creators who read, ship, and share: BookBreaks turns books into content, Chapterly is a reading OS with AI voice chat, Flowise tracks your money, Vela is a life journal for objectives and daily logs, Thread Studio engineers viral X threads, and Carousel Lab builds scroll-stopping slides.",
+};
+
+const TOOLS = [
+  {
+    id: "bookbreaks",
+    name: "BookBreaks",
+    tagline: "Books → Content, instantly.",
+    description:
+      "Turn every book you read into blog articles, X threads, Instagram carousels, and TikTok scripts. AI-powered, multi-platform, built for creators learning in public.",
+    status: "live" as const,
+    href: "/tools/bookbreaks",
+    accent: "#C85A2C",
+    accentSoft: "rgba(200,90,44,0.12)",
+    icon: BookOpen,
+    stats: ["4 books seeded", "5 content types", "Groq + Gemini AI"],
+    cta: "Repurpose my first book",
+  },
+  {
+    id: "thread-studio",
+    name: "Thread Studio",
+    tagline: "Engineer viral threads.",
+    description:
+      "Draft, structure, and schedule long-form X threads. Hook optimiser, engagement analytics, and a distraction-free writing canvas.",
+    status: "live" as const,
+    href: "/tools/thread-studio",
+    accent: "#818CF8",
+    accentSoft: "rgba(129,140,248,0.12)",
+    icon: Share2,
+    stats: ["Thread builder", "Hook analyser", "Scheduling"],
+    cta: "Engineer my next thread",
+  },
+  {
+    id: "carousel-lab",
+    name: "Carousel Lab",
+    tagline: "Design scroll-stopping slides.",
+    description:
+      "Build Instagram and LinkedIn carousels with book-themed templates. Export as PNG or HTML, publish directly from the browser.",
+    status: "live" as const,
+    href: "/tools/carousel-lab",
+    accent: "#FF6B35",
+    accentSoft: "rgba(255,107,53,0.12)",
+    icon: LayoutGrid,
+    stats: ["4 visual themes", "6-slide templates", "One-click export"],
+    cta: "Design a scroll-stopper",
+  },
+  {
+    id: "chapterly",
+    name: "Chapterly",
+    tagline: "Read everything. Remember everything.",
+    description:
+      "A personal reading OS. Upload PDFs, EPUBs, DOCX and more. AI reading companion, voice chat about your books, streaks, goals, highlights — and a direct bridge to BookBreaks.",
+    status: "live" as const,
+    href: "/tools/chapterly",
+    accent: "#7E9AA8",
+    accentSoft: "rgba(126,154,168,0.12)",
+    icon: BookMarked,
+    stats: ["10+ formats", "AI voice chat", "Streaks & goals"],
+    bridge: "bookbreaks",
+    cta: "Start remembering more",
+  },
+] as const;
+
+export default function CreatorSuitePage(): React.ReactElement {
+  return (
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="outline-none min-h-screen"
+      style={{ background: "var(--bg)" }}
+    >
+      {/* ── Hero ── */}
+      <section
+        className="pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 border-b border-(--rule)"
+      >
+        <div className="max-w-(--maxw) mx-auto px-(--gutter)">
+          <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-12 items-end">
+            <div>
+              <h1
+                className="m-0 font-display font-normal text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) text-balance fvs-display"
+              >
+                Tools for{" "}
+                <em
+                  className="not-italic italic text-(--v3-accent) fvs-soft"
+                >
+                  builders
+                </em>{" "}
+                <br className="max-[900px]:hidden" />
+                who share.
+              </h1>
+            </div>
+            <div className="max-w-[44ch] max-[900px]:max-w-none">
+              <p
+                className="text-[clamp(17px,2vw,20px)] leading-[1.6] m-0 text-secondary-foreground"
+              >
+                Six production tools I built because I needed them. Turn books
+                into content, track every naira, journal your objectives, build
+                viral threads, design carousel slides — and read anything with
+                an AI that remembers your highlights.
+              </p>
+              <div className="mt-8 flex items-center gap-3 flex-wrap">
+                <MagneticWrapper>
+                  <Link
+                    href="/tools/bookbreaks"
+                    className="inline-flex items-center gap-2 py-3 px-6 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                  >
+                    Launch BookBreaks{" "}
+                    <span className="text-[14px]" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                </MagneticWrapper>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Tool grid: 2×2 + full-width Flowise ── */}
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-[100px] max-[720px]:py-16">
+        <div className="border border-(--rule) rounded-sm">
+          {/* Top 4 tools — 2 column */}
+          <div className="grid grid-cols-2 max-[900px]:grid-cols-1">
+            {TOOLS.map((tool, i) => (
+              <ToolCard key={tool.id} tool={tool} index={i} totalInGrid={TOOLS.length} />
+            ))}
+          </div>
+          {/* Vela — full-width featured row */}
+          <VelaCard />
+          {/* Flowise — full-width featured row */}
+          <FlowiseCard />
+        </div>
+      </section>
+
+      {/* ── Philosophy strip ── */}
+      <section
+        className="border-y py-20 max-[720px]:py-14"
+        style={{
+          borderColor: "var(--rule)",
+          background: "var(--bg-2)",
+        }}
+      >
+        <div className="max-w-(--maxw) mx-auto px-(--gutter)">
+          <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-12">
+            {[
+              {
+                num: "01",
+                head: "Built for actual use.",
+                body: "Every tool here has auth, a real database, AI integrations, and handles edge cases. Not demos — products.",
+              },
+              {
+                num: "02",
+                head: "Nigerian context, global reach.",
+                body: "Flowise supports OPay, Kuda, and GTBank natively. The other tools work for anyone, anywhere.",
+              },
+              {
+                num: "03",
+                head: "Free to start.",
+                body: "All tools have a free tier that covers real daily use. No bait-and-switch. Upgrade only when you need more.",
+              },
+            ].map((p) => (
+              <div key={p.head}>
+                <h3
+                  className="font-display font-normal text-[28px] leading-[1.1] tracking-[-0.02em] mb-3 fvs-text m-0"
+                  style={{ color: "var(--ink)" }}
+                >
+                  {p.head}
+                </h3>
+                <p
+                  className="text-[15px] leading-[1.6] m-0"
+                  style={{ color: "var(--ink-2)" }}
+                >
+                  {p.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function ToolCard({
+  tool,
+  index,
+  totalInGrid,
+}: {
+  tool: (typeof TOOLS)[number];
+  index: number;
+  totalInGrid: number;
+}): React.ReactElement {
+  const isLive = tool.status === "live";
+  const borderRight = index % 2 === 0;
+  const borderBottom = index < totalInGrid - 2 || (totalInGrid % 2 !== 0 && index < totalInGrid - 1);
+
+  return (
+    <div
+      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
+      style={{
+        borderRight: borderRight ? "1px solid var(--rule)" : undefined,
+        borderBottom: borderBottom ? "1px solid var(--rule)" : undefined,
+      }}
+    >
+      {/* Accent hover background */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none rounded-sm"
+        style={{ background: tool.accentSoft }}
+      />
+
+      <div className="relative z-10">
+        {/* Header row */}
+        <div className="flex items-start justify-between mb-8">
+          <div
+            className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
+            style={{
+              background: tool.accentSoft,
+              border: `1px solid ${tool.accent}22`,
+            }}
+            aria-hidden="true"
+          >
+            <tool.icon className="w-6 h-6" style={{ color: tool.accent }} />
+          </div>
+          <StatusBadge status={tool.status} />
+        </div>
+
+        {/* Name + tagline */}
+        <h2
+          className="font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.05] tracking-tight mb-2 fvs-text m-0"
+          style={{ color: "var(--ink)" }}
+        >
+          {tool.name}
+        </h2>
+        <div
+          className="font-mono text-xs tracking-wider mb-5"
+          style={{ color: tool.accent }}
+        >
+          {tool.tagline}
+        </div>
+
+        {/* Description */}
+        <p
+          className="text-[15px] leading-[1.65] mb-7 max-w-[44ch] m-0"
+          style={{ color: "var(--ink-2)" }}
+        >
+          {tool.description}
+        </p>
+
+        {/* Stats pills */}
+        <div className="flex flex-wrap gap-2 mb-9">
+          {tool.stats.map((s) => (
+            <span
+              key={s}
+              className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
+              style={{
+                background: "var(--bg-2)",
+                color: "var(--ink-3)",
+                border: "1px solid var(--rule)",
+              }}
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="flex items-center gap-4 flex-wrap">
+          {isLive ? (
+            <Link
+              href={tool.href}
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider font-semibold no-underline transition-all duration-200 group/link"
+              style={{ color: tool.accent }}
+            >
+              {tool.cta}
+              <span
+                className="inline-block transition-transform duration-200 group-hover/link:translate-x-1"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </Link>
+          ) : (
+            <span
+              className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider"
+              style={{ color: "var(--ink-4)" }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full inline-block"
+                style={{ background: "var(--ink-4)" }}
+                aria-hidden="true"
+              />
+              Notify me when ready
+            </span>
+          )}
+          {"bridge" in tool && tool.bridge === "bookbreaks" && (
+            <Link
+              href="/tools/bookbreaks"
+              className="font-mono text-xs tracking-wider uppercase no-underline transition-colors px-2 py-0.75 rounded-full"
+              style={{
+                color: "#C85A2C",
+                background: "rgba(200,90,44,0.1)",
+                border: "1px solid rgba(200,90,44,0.2)",
+              }}
+            >
+              pairs with BookBreaks →
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VelaCard(): React.ReactElement {
+  const accent = "#D97706";
+  const accentSoft = "rgba(217,119,6,0.10)";
+
+  return (
+    <div
+      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
+      style={{ borderTop: "1px solid var(--rule)" }}
+    >
+      <div
+        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: accentSoft }}
+      />
+      <div className="relative z-10">
+        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-10 items-start">
+          <div>
+            <div className="flex items-center gap-4 mb-6 flex-wrap">
+              <div
+                className="w-13 h-13 rounded-lg flex items-center justify-center font-mono select-none"
+                style={{ background: accentSoft, border: `1px solid ${accent}22` }}
+                aria-hidden="true"
+              >
+                <Compass className="w-6 h-6" style={{ color: accent }} />
+              </div>
+              <StatusBadge status="live" />
+              <span
+                className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
+              >
+                Daily driver
+              </span>
+            </div>
+
+            <h2
+              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
+              style={{ color: "var(--ink)" }}
+            >
+              Vela
+            </h2>
+            <div
+              className="font-mono text-xs tracking-wider mb-5"
+              style={{ color: accent }}
+            >
+              Set your course. Log your progress.
+            </div>
+
+            <p
+              className="text-[15px] leading-[1.65] mb-7 max-w-[56ch] m-0"
+              style={{ color: "var(--ink-2)" }}
+            >
+              A structured life journal for people who want to move with intention. Set clear
+              objectives with milestones, plan each day against them, log what you actually
+              accomplished, and track where your energy really goes — day by day.
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              {[
+                "Objectives + milestones",
+                "Daily structured logs",
+                "7-day streak",
+                "Energy tracking",
+                "Priority-first",
+                "Reflection prompts",
+              ].map((s) => (
+                <span
+                  key={s}
+                  className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
+                  style={{
+                    background: "var(--bg-2)",
+                    color: "var(--ink-2)",
+                    border: "1px solid var(--rule)",
+                  }}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
+            <Link
+              href="/tools/journal"
+              className="inline-flex items-center justify-center gap-2 py-3 px-7 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
+            >
+              Set my first objective
+              <span
+                className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </Link>
+            <div
+              className="px-4 py-3 rounded-[10px] text-center"
+              style={{ background: accentSoft }}
+            >
+              <div
+                className="font-mono text-xs tracking-wider uppercase mb-0.5"
+                style={{ color: accent }}
+              >
+                Free tier includes
+              </div>
+              <div
+                className="text-[12px] leading-normal"
+                style={{ color: "var(--ink-2)" }}
+              >
+                Unlimited logs · All objectives · Streaks
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlowiseCard(): React.ReactElement {
+  const accent = "#16A34A";
+  const accentSoft = "rgba(22,163,74,0.10)";
+
+  return (
+    <div
+      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
+      style={{ borderTop: "1px solid var(--rule)" }}
+    >
+      {/* Accent hover background */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: accentSoft }}
+      />
+
+      <div className="relative z-10">
+        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-10 items-start">
+          <div>
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-6 flex-wrap">
+              <div
+                className="w-13 h-13 rounded-lg flex items-center justify-center font-mono select-none"
+                style={{ background: accentSoft, border: `1px solid ${accent}22` }}
+                aria-hidden="true"
+              >
+                <Wallet className="w-6 h-6" style={{ color: accent }} />
+              </div>
+              <StatusBadge status="live" />
+              <span
+                className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
+              >
+                Nigeria-first
+              </span>
+            </div>
+
+            <h2
+              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
+              style={{ color: "var(--ink)" }}
+            >
+              Flowise
+            </h2>
+            <div
+              className="font-mono text-xs tracking-wider mb-5"
+              style={{ color: accent }}
+            >
+              Your money, mapped.
+            </div>
+
+            <p
+              className="text-[15px] leading-[1.65] mb-7 max-w-[56ch] m-0"
+              style={{ color: "var(--ink-2)" }}
+            >
+              A personal finance OS. Log transactions manually, import bank statements, scan
+              receipts with AI, set monthly budgets and savings goals — then get plain-language
+              insights into where your money actually goes. Built for Nigerian money flows:
+              OPay, Kuda, PalmPay, GTBank, and more.
+            </p>
+
+            {/* Stats pills */}
+            <div className="flex flex-wrap gap-2">
+              {["Multi-account", "AI categorization", "Budget & goals", "NGN-first", "CSV import"].map((s) => (
+                <span
+                  key={s}
+                  className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
+                  style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA block */}
+          <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
+            <Link
+              href="/tools/flowise"
+              className="inline-flex items-center justify-center gap-2 py-3 px-7 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
+            >
+              Take control of my money
+              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75" aria-hidden="true">
+                →
+              </span>
+            </Link>
+            <div
+              className="px-4 py-3 rounded-[10px] text-center"
+              style={{ background: accentSoft }}
+            >
+              <div className="font-mono text-xs tracking-wider uppercase mb-0.5" style={{ color: accent }}>
+                Free tier includes
+              </div>
+              <div className="text-[12px] text-secondary-foreground leading-normal">
+                3 accounts · 100 tx/month · 3 goals
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({
+  status,
+}: {
+  status: "live" | "soon";
+}): React.ReactElement {
+  if (status === "live") {
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
+      >
+        <span
+          className="w-1.5 h-1.5 rounded-full bg-emerald-600"
+          aria-hidden="true"
+        />
+        Live
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-3)"
+    >
+      Coming soon
+    </span>
+  );
+}

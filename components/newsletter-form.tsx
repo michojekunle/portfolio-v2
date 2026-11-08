@@ -46,7 +46,7 @@ export function NewsletterForm(): React.ReactElement {
           error.code === "23505" ||
           error.message.toLowerCase().includes("duplicate")
         ) {
-          toast.success("You're already subscribed! 🎉");
+          toast.success("You're already subscribed!");
           setStatus('idle');
           setEmail("")
           return;
@@ -56,15 +56,15 @@ export function NewsletterForm(): React.ReactElement {
       } else {
         setStatus("success");
         toast.success("You're subscribed! I'll send new posts your way.");
-        setEmail(""); // Clear input on success
+        setEmail("");
+        // Reset to idle after 4 s so the user can re-submit if needed
+        setTimeout(() => setStatus("idle"), 4000);
       }
     } catch (err: unknown) {
       setStatus("idle");
 
       if (err instanceof z.ZodError) {
-        // Show the first validation error
-        const errorMessage = (err as any).errors[0]?.message || "Invalid email";
-        toast.error(errorMessage);
+        toast.error(err.errors[0]?.message ?? "Invalid email");
       } else {
         console.error("[subscribe]", err);
         toast.error("Subscription failed. Please try again.");
@@ -73,26 +73,31 @@ export function NewsletterForm(): React.ReactElement {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 w-full max-w-sm">
+    <form onSubmit={handleSubmit} className="flex gap-2 w-full max-w-[400px]">
       <Input
         type="email"
         name="email"
+        aria-label="Your email address"
         placeholder="your@email.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
         disabled={status !== "idle"}
-        className="flex-1"
+        className="flex-1 bg-(--bg) border-(--rule) h-12 rounded-md focus:ring-0 focus:border-(--v3-accent) text-[14px]"
       />
-      <Button type="submit" disabled={status !== "idle"}>
+      <button 
+        type="submit" 
+        disabled={status !== "idle"}
+        className="py-3 px-6 bg-(--ink) text-(--bg) rounded-md font-mono text-[12px] uppercase tracking-[0.15em] font-medium transition-all duration-300 hover:bg-(--v3-accent) disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-30"
+      >
         {status === "loading" ? (
-          <Loader2 className="animate-spin" />
+          <Loader2 className="animate-spin w-4 h-4" />
         ) : status === "success" ? (
-          "Subscribed"
+          "Done"
         ) : (
           "Subscribe"
         )}
-      </Button>
+      </button>
     </form>
   );
 }

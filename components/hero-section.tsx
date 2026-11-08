@@ -1,97 +1,89 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Code } from "lucide-react"
+import Link from "next/link"
+import { motion } from "framer-motion"
+import { MagneticWrapper } from "./magnetic-wrapper"
+import { TextReveal } from "./text-reveal"
+import { ArrowRight, ArrowUpRight } from "lucide-react"
 
-export function HeroSection() {
-  const [displayText, setDisplayText] = useState("")
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [typingSpeed, setTypingSpeed] = useState(100)
+const STACK = [
+  { label: "Rust", primary: true },
+  { label: "TypeScript", primary: true },
+  { label: "Next.js", primary: false },
+  { label: "Flutter", primary: false },
+  { label: "Web3", primary: false },
+]
 
-  const phrases = [
-    "Frontend. Web3. Seeker of Truth.",
-    "Exploring ZKML & First Principles.",
-    "Building for the decentralized future.",
-    "Connecting faith and technology.",
-    "Rooted in divine purpose.",
-  ]
-
-  useEffect(() => {
-    const currentPhrase = phrases[currentPhraseIndex]
-
-    const timeout = setTimeout(
-      () => {
-        if (!isDeleting) {
-          setDisplayText(currentPhrase.substring(0, displayText.length + 1))
-
-          if (displayText.length === currentPhrase.length) {
-            setIsDeleting(true)
-            setTypingSpeed(1500)
-          }
-        } else {
-          setDisplayText(currentPhrase.substring(0, displayText.length - 1))
-
-          if (displayText.length === 0) {
-            setIsDeleting(false)
-            setCurrentPhraseIndex((currentPhraseIndex + 1) % phrases.length)
-            setTypingSpeed(100)
-          }
-        }
-      },
-      isDeleting ? typingSpeed / 2 : typingSpeed,
-    )
-
-    return () => clearTimeout(timeout)
-  }, [displayText, currentPhraseIndex, isDeleting, typingSpeed, phrases])
-
+export function HeroSection(): React.ReactElement {
   return (
-    <section className="min-h-[90vh] flex flex-col justify-center pt-20 pb-16">
-      <div className="max-w-4xl">
+    <section className="pt-24 sm:pt-28 lg:pt-36 pb-20 max-[720px]:pb-12 relative overflow-hidden max-w-(--maxw) mx-auto px-(--gutter)" aria-label="Introduction">
+      <h1 className="relative z-1 font-normal text-[clamp(58px,14.5vw,160px)] leading-[0.88] tracking-tighter text-(--ink) mb-16 max-[720px]:mb-8 text-balance">
+        <TextReveal delay={0.2} stagger={0.05} className="block">Engineer.</TextReveal>
+        <TextReveal delay={0.3} stagger={0.05} className="block italic fvs-soft">Writer.</TextReveal>
+        <TextReveal delay={0.4} stagger={0.05} className="block text-transparent [-webkit-text-stroke:2px_var(--ink)]">Builder.</TextReveal>
+      </h1>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-          Michael Ojekunle
-        </h1>
+      <div className="relative z-1 grid grid-cols-[1.2fr_1fr] max-[920px]:grid-cols-1 gap-20 max-[920px]:gap-10 mt-16 max-[720px]:mt-8 pt-10 max-[720px]:pt-6 border-t border-(--rule) items-start">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
+          <p className="font-normal text-[clamp(24px,3vw,38px)] leading-[1.35] text-(--ink) m-0 max-w-[24ch] text-pretty">
+            I build software end to end, going deep on{" "}
+            <em>Rust systems</em> and AI infrastructure.
+          </p>
 
-        <div className="h-16 md:h-24">
-          <h2 aria-hidden="true" className="text-2xl md:text-4xl font-medium text-muted-foreground mb-2">
-            {displayText}
-            <span className="inline-block w-0.5 h-6 md:h-8 bg-foreground animate-cursor-blink ml-1 align-middle" />
-          </h2>
-          {/* Static phrase announced by screen readers; visual typewriter is aria-hidden */}
-          <span className="sr-only">{phrases[currentPhraseIndex]}</span>
-        </div>
+          {/* Tech stack pills */}
+          <div className="flex flex-wrap gap-2 mt-6" role="list" aria-label="Primary technologies">
+            {STACK.map((s) => (
+              <span key={s.label} role="listitem" className={`font-mono text-[12px] px-3 py-1.5 rounded-[5px] border transition-colors duration-150 hover:border-(--v3-accent-soft) hover:text-(--v3-accent) ${s.primary ? "border-(--v3-accent-soft) text-(--v3-accent) bg-[color-mix(in_oklab,var(--v3-accent-soft)_35%,var(--paper))]" : "border-(--rule) bg-(--paper) text-muted-foreground"}`}>
+                {s.label}
+              </span>
+            ))}
+          </div>
 
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mt-6 mb-8 leading-relaxed">
-          A Frontend and Web3 Developer building practical, high-performance applications. With a foundation in Next.js, Solidity, Rust, and Cairo, my current focus is on Zero-Knowledge Machine Learning (ZKML), and understanding software architecture from first principles.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button size="lg" className="group" asChild>
-            <a href="#projects">
-              View Projects
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
-          </Button>
-          <Button size="lg" variant="outline" className="group" asChild>
-            <a href="https://github.com/michojekunle" target="_blank" rel="noopener noreferrer">
-              <Code className="mr-2 h-4 w-4" />
-              Explore Code
-            </a>
-          </Button>
-        </div>
-
-        <div className="mt-16 grid grid-cols-4 md:grid-cols-8 gap-3">
-          {["Next.js", "TypeScript", "Solidity", "Rust", "Cairo", "ZKML", "Flutter"].map((tech) => (
-            <div
-              key={tech}
-              className="border border-border rounded-md flex items-center justify-center py-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-            >
-              {tech}
+          {/* Now → Next trajectory */}
+          <div className="flex items-center gap-3.5 mt-7 flex-wrap font-mono text-[12px] tracking-[0.04em]" aria-label="Current focus and where I'm heading">
+            <div className="flex items-center gap-2">
+              <span className="text-(--v3-accent) font-medium">Now</span>
+              <span className="text-muted-foreground">Zamir · Rust</span>
             </div>
-          ))}
-        </div>
+            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" aria-hidden="true" />
+            <div className="flex items-center gap-2">
+              <span className="text-(--ink) font-medium">Next</span>
+              <span className="text-muted-foreground">Distributed systems</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}>
+          <p className="text-[17px] leading-[1.7] text-secondary-foreground m-0">
+            Four years building products across web, mobile and web3: founding-team engineer on{" "}
+            <b className="text-(--ink) font-medium">CoinSafe</b>, now building{" "}
+            <b className="text-(--ink) font-medium">Zamir</b>, a worship-music app live since March 2026.
+          </p>
+
+          <div className="flex gap-4 flex-wrap mt-8 max-[720px]:mb-10">
+            <MagneticWrapper strength={30}>
+              <Link href="/contact" className="group inline-flex items-center justify-center px-7 py-3.5 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-transparent transition-all duration-300 no-underline bg-(--v3-accent) text-(--bg) hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-8px_color-mix(in_oklab,var(--v3-accent)_60%,transparent)]">
+                Book a call <ArrowUpRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2 w-4 h-4" aria-hidden="true" />
+              </Link>
+            </MagneticWrapper>
+            <MagneticWrapper strength={20}>
+              <Link href="/work" className="group inline-flex items-center justify-center px-7 py-3.5 h-13 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+                Portfolio <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2 w-4 h-4" aria-hidden="true" />
+              </Link>
+            </MagneticWrapper>
+          </div>
+
+          <Link
+            href="/work/zamir"
+            className="group mt-12 flex items-baseline gap-3 flex-wrap text-[15px] leading-normal text-secondary-foreground no-underline hover:text-(--ink) transition-colors"
+          >
+            <span className="font-medium text-(--ink)">Latest:</span>
+            <span>Zamir has 69 believers and 4,699 plays since March 2026.</span>
+            <span className="inline-flex items-center gap-1 text-(--v3-accent) underline decoration-(--rule) underline-offset-4 group-hover:decoration-(--v3-accent)">
+              Read the case study <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </span>
+          </Link>
+        </motion.div>
       </div>
     </section>
   )

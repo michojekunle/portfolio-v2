@@ -1,3 +1,5 @@
+import withSerwistInit from "@serwist/next";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Strip the X-Powered-By header — no information leakage.
@@ -6,7 +8,8 @@ const nextConfig = {
   // Strict mode catches double-invocation bugs early.
   reactStrictMode: true,
 
-
+  // Suppress the turbopack/webpack mismatch warning when no turbopack config is needed.
+  turbopack: {},
 
   async headers() {
     return [
@@ -23,27 +26,48 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+            value:
+              "camera=(self), microphone=(self), geolocation=(), interest-cohort=()",
           },
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-              "style-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
+              "style-src 'self' 'unsafe-inline' https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
+              // media-src: blob: for local MediaRecorder audio/video previews; https: for Supabase storage media
+              `media-src 'self' blob: data: https: https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
               // next/font serves fonts from same origin after build-time download
-              "font-src 'self' data:",
-              // Only browser→API calls need to be listed here (server-side fetches are exempt)
+              "font-src 'self' data: https://assets.vercel.com https://vercel.live https://*.vercel.live",
+              // Only browser→API calls need to be listed here (server-side fetches are exempt).
+              // Instagram/TikTok's embed.js each fetch their own oEmbed endpoint client-side
+              // before they can render a video — without these, script-src/frame-src alone
+              // still leave the embed stuck on the placeholder blockquote.
               [
-                "connect-src 'self'",
+                "connect-src 'self' blob:",
                 "https://bible-api.com",
+                "https://*.instagram.com",
+                "https://*.tiktok.com",
+                "https://*.tiktokcdn.com",
+                "https://*.ttwstatic.com",
                 `https://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
                 // WebSocket for Supabase realtime (if ever enabled)
                 `wss://${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace("https://", "") ?? "*.supabase.co"}`,
+                // Web Push — allow subscribing to push notification endpoints
+                "https://fcm.googleapis.com",
+                "https://*.push.services.mozilla.com",
+                "https://*.notify.windows.com",
+                "https://*.apple.com",
+                // Vercel Live Preview / Toolbar
+                "https://vercel.live",
+                "https://*.vercel.live",
+                "wss://*.vercel.live",
               ].join(" "),
+              // Allow YouTube, Instagram, TikTok, and Vimeo embeds (plus blob: for epubjs)
+              "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://*.vimeo.com https://vercel.live https://*.vercel.live",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
@@ -52,24 +76,31 @@ const nextConfig = {
           },
         ],
       },
-      // Long-lived cache for immutable static assets (Next.js content-hashes these)
-      {
-        source: "/_next/static/(.*)",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-        ],
-      },
+
       // Cache OG images for 1 hour
       {
         source: "/(opengraph-image|twitter-image|icon|apple-icon)(.*)",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
+          },
         ],
       },
     ];
   },
 
   images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "*.zamir.app",
+      },
+    ],
     formats: ["image/avif", "image/webp"],
     // Reasonable device sizes for a portfolio site
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
@@ -77,4 +108,9 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withSerwist = withSerwistInit({
+  swSrc: "app/sw.ts",
+  swDest: "public/sw.js",
+});
+
+export default withSerwist(nextConfig);

@@ -1,0 +1,143 @@
+"use client"
+
+import { motion } from "framer-motion"
+import { TiltCard } from "./tilt-card"
+
+interface ToolItem {
+  name: string
+  description: string
+  url?: string
+}
+
+interface ToolCategory {
+  title: string
+  items: ToolItem[]
+}
+
+const categories: ToolCategory[] = [
+  {
+    title: "Editor & Terminal",
+    items: [
+      { name: "VS Code", description: "My primary environment. Vim keybindings, minimal extensions, focused on the home row." },
+      { name: "Claude Code", description: "Terminal-native AI assistant for deep engineering sessions. Like having a senior pair programmer in the CLI." },
+      { name: "Warp", description: "AI-augmented terminal. Makes complex commands discoverable without leaving the shell." },
+    ],
+  },
+  {
+    title: "Languages & Frameworks",
+    items: [
+      { name: "TypeScript + Next.js", description: "My default stack for building type-safe, server-first web apps that scale." },
+      { name: "Solidity", description: "The language of on-chain logic. For EVM-compatible contracts. I read and integrate it more than I write it." },
+      { name: "Cairo", description: "Computation that can be proven. Exploring STARKs and scaling Ethereum via Starknet." },
+      { name: "Rust", description: "Systems programming from first principles. CLI tools, performance-critical code, anything close to the metal." },
+      { name: "Clarity", description: "Decidable, non-Turing-complete contract language for the Stacks blockchain." },
+    ],
+  },
+  {
+    title: "Infrastructure & Services",
+    items: [
+      { name: "Vercel", description: "The floor for deploying Next.js apps. Zero-config, excellent DX, automatic previews." },
+      { name: "Supabase", description: "Postgres with an API, auth, storage, and realtime. Where I manage relational state." },
+      { name: "Resend", description: "Transactional and newsletter email. Clean API, custom domain support." },
+      { name: "GitHub + Actions", description: "Source control and CI/CD. Every repo has at least a lint + type-check pipeline." },
+    ],
+  },
+  {
+    title: "Design & Productivity",
+    items: [
+      { name: "Figma", description: "Where ideas take visual shape before they touch the DOM. Also useful for design system audits." },
+      { name: "Notion", description: "Personal knowledge base. Architectural notes, reading logs, project trackers." },
+      { name: "Arc Browser", description: "Spaces keep dev, research, and personal browsing separate. Reduces mental context-switching." },
+    ],
+  },
+  {
+    title: "Hardware",
+    items: [
+      { name: "MacBook Pro (M1 Pro)", description: "The workhorse. 16 GB of unified memory, and enough for Rust builds and a full Next.js dev server." },
+    ],
+  },
+]
+
+import { UsesHeroWidget } from "./uses-hero-widget"
+
+export function UsesClient() {
+  const titleWords = "What I actually use.".split(" ")
+
+  return (
+    <>
+      <section className="grid grid-cols-1 min-[900px]:grid-cols-[1.4fr_1fr] gap-12 items-center pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+        <div>
+          <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-8 text-balance fvs-display flex flex-wrap gap-x-4 max-[720px]:gap-x-2.5">
+            {titleWords.map((word, i) => {
+              const isActually = word === "actually"
+              return (
+                <motion.span
+                  key={i}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: i * 0.1
+                  }}
+                  className={isActually ? "italic text-(--v3-accent) fvs-soft" : ""}
+                >
+                  {word}
+                </motion.span>
+              )
+            })}
+          </h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-[clamp(17px,2vw,20px)] text-secondary-foreground max-w-[52ch] leading-[1.6] m-0"
+          >
+            Updated when something meaningful changes. Affiliate-free — these are the tools that survived.
+          </motion.p>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex justify-start min-[900px]:justify-end w-full"
+        >
+          <UsesHeroWidget />
+        </motion.div>
+      </section>
+
+      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-30 max-[720px]:py-18">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categories.map((cat) => (
+            <div 
+              key={cat.title} 
+              className="flex flex-col gap-6"
+            >
+              <h2 className="font-mono text-xs tracking-wider uppercase text-muted-foreground border-b border-(--rule) pt-4 pb-2 mb-1">
+                {cat.title}
+              </h2>
+              {cat.items.map((item) => (
+                <TiltCard key={item.name} className="p-6 bg-(--paper) border border-(--rule) rounded-xl h-full">
+                  <h3 className="font-display font-medium text-[20px] mb-3 text-(--ink)">
+                    {item.url ? (
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-(--v3-accent) transition-colors decoration-none">
+                        {item.name}
+                      </a>
+                    ) : (
+                      item.name
+                    )}
+                  </h3>
+                  <p className="text-[15px] leading-[1.6] text-secondary-foreground m-0">
+                    {item.description}
+                  </p>
+                </TiltCard>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+}

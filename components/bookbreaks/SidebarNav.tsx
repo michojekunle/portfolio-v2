@@ -1,0 +1,217 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect, useRef } from "react";
+
+import { Home, BookOpen, Sparkles, LayoutTemplate, Settings, LogOut, Menu, X } from "lucide-react";
+
+const NAV_LINKS = [
+  { href: "/tools/bookbreaks", label: "Dashboard", icon: <Home size={16} /> },
+  { href: "/tools/bookbreaks/books", label: "My Books", icon: <BookOpen size={16} /> },
+  { href: "/tools/bookbreaks/generate", label: "Generate", icon: <Sparkles size={16} /> },
+  { href: "/tools/bookbreaks/content", label: "Content Hub", icon: <LayoutTemplate size={16} /> },
+  { href: "/tools/bookbreaks/settings", label: "Settings", icon: <Settings size={16} /> },
+];
+
+interface SidebarContentProps {
+  pathname: string;
+  shortEmail: string;
+  signingOut: boolean;
+  onClose: () => void;
+  onSignOut: () => void;
+}
+
+function SidebarContent({ pathname, shortEmail, signingOut, onClose, onSignOut }: SidebarContentProps): React.ReactElement {
+  const isActive = (href: string): boolean => {
+    if (href === "/tools/bookbreaks") return pathname === href;
+    return pathname.startsWith(href);
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Brand */}
+      <div className="px-6 py-7 border-b border-(--rule)">
+        <Link
+          href="/tools"
+          className="block no-underline group mb-5"
+          onClick={onClose}
+        >
+          <span className="font-mono text-[9px] tracking-[0.16em] uppercase transition-colors text-muted-foreground">
+            ← Creator Suite
+          </span>
+        </Link>
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 bg-(--bg-2) text-(--v3-accent)">
+            <BookOpen size={18} />
+          </div>
+          <div>
+            <div className="font-display text-[16px] font-normal tracking-[-0.01em] fvs-text leading-[1.1] text-(--ink)">
+              BookBreaks
+            </div>
+            <div className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground">
+              AI Book Platform
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Nav links */}
+      <nav className="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
+        {NAV_LINKS.map((link) => {
+          const active = isActive(link.href);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={onClose}
+              className={`flex items-center gap-2.5 h-10 px-3 rounded-lg no-underline transition-all duration-150 text-[14px] ${
+                active
+                  ? "bg-(--bg-2) text-(--v3-accent) font-semibold"
+                  : "bg-transparent text-secondary-foreground hover:bg-(--bg-2) font-normal"
+              }`}
+            >
+              <span className="text-[14px] w-5 text-center select-none flex-shrink-0" aria-hidden="true">
+                {link.icon}
+              </span>
+              {link.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User footer */}
+      <div className="px-4 py-5 border-t border-(--rule)">
+        <div className="px-3 mb-3">
+          <div className="font-mono text-[10px] tracking-[0.08em] truncate text-muted-foreground">
+            {shortEmail}
+          </div>
+        </div>
+        <button
+          onClick={onSignOut}
+          disabled={signingOut}
+          className="flex items-center gap-2.5 h-9 px-3 rounded-lg w-full font-mono text-[10px] tracking-widest uppercase transition-all duration-150 disabled:opacity-50 cursor-pointer bg-transparent text-muted-foreground border-none hover:bg-(--bg-2) hover:text-(--v3-accent)"
+        >
+          {signingOut ? "Signing out…" : <><LogOut size={14} /> Sign out</>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface Props {
+  userEmail: string;
+}
+
+export function BBSidebarNav({ userEmail }: Props): React.ReactElement {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
+
+  const shortEmail = userEmail.length > 22 ? `${userEmail.slice(0, 22)}…` : userEmail;
+
+  const handleSignOut = async (): Promise<void> => {
+    setSigningOut(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/tools/bookbreaks/login");
+    router.refresh();
+  };
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [mobileOpen]);
+
+  // Focus trap: keep focus inside drawer when open
+  useEffect(() => {
+    if (!mobileOpen || !drawerRef.current) return;
+    const drawer = drawerRef.current;
+    const focusable = drawer.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+
+    const handleTab = (e: KeyboardEvent): void => {
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleTab);
+    return () => document.removeEventListener("keydown", handleTab);
+  }, [mobileOpen]);
+
+  const contentProps: SidebarContentProps = {
+    pathname,
+    shortEmail,
+    signingOut,
+    onClose: () => setMobileOpen(false),
+    onSignOut: () => void handleSignOut(),
+  };
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="fixed left-0 top-0 h-screen w-[260px] max-[1024px]:hidden z-50 bg-(--bg-2) border-r border-(--rule)">
+        <SidebarContent {...contentProps} />
+      </aside>
+
+      {/* Mobile topbar */}
+      <div className="hidden max-[1024px]:flex fixed top-0 left-0 right-0 h-15 items-center justify-between px-5 z-50 bg-(--bg-2) border-b border-(--rule)">
+        <div className="flex items-center gap-2 text-(--v3-accent)">
+          <BookOpen size={20} />
+          <span className="font-display text-[16px] fvs-text text-(--ink)">
+            BookBreaks
+          </span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="w-9 h-9 flex items-center justify-center rounded-md border-none bg-transparent cursor-pointer text-secondary-foreground hover:text-(--v3-accent)"
+          aria-label="Toggle navigation"
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+          <aside
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation"
+            className="fixed top-0 left-0 h-screen w-[280px] max-[360px]:w-full z-50 bg-(--bg-2) border-r border-(--rule) shadow-2xl"
+          >
+            <SidebarContent {...contentProps} />
+          </aside>
+        </>
+      )}
+    </>
+  );
+}
