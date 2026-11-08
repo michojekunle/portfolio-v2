@@ -26,13 +26,21 @@ export default async function CaseStudyPage({ params }: Props): Promise<React.Re
   const p = getCaseStudy(slug)
   if (!p) notFound()
 
-  const nextSlug = p.next
-  const nextProject = nextSlug ? getCaseStudy(nextSlug) : null
+  const currentIndex = CASE_STUDIES.findIndex((cs) => cs.slug === slug)
+  const prevProject =
+    currentIndex > 0
+      ? CASE_STUDIES[currentIndex - 1]
+      : CASE_STUDIES[CASE_STUDIES.length - 1]
+  const nextProject =
+    currentIndex < CASE_STUDIES.length - 1
+      ? CASE_STUDIES[currentIndex + 1]
+      : CASE_STUDIES[0]
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
       <CaseStudyClient 
         p={p} 
+        prevProject={prevProject ? { slug: prevProject.slug, name: prevProject.name } : null}
         nextProject={nextProject ? { slug: nextProject.slug, name: nextProject.name } : null} 
       />
     </main>

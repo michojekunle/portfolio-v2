@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 export default function WorkPage(): React.ReactElement {
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-        <section className="pt-40 pb-20 max-[720px]:pt-20 max-[720px]:pb-14 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
+        <section className="pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 max-w-(--maxw) mx-auto px-(--gutter) border-b border-(--rule)">
           <div className="grid grid-cols-[1.4fr_1fr] max-[900px]:grid-cols-1 gap-16 max-[720px]:gap-8 items-center">
             <div>
-              <h1 className="m-0 font-display font-normal text-[clamp(48px,8vw,100px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">
+              <h1 className="m-0 font-display font-light text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) mb-8 text-balance fvs-display">
                 The <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
               </h1>
-              <p className="text-[18px] text-secondary-foreground max-w-[48ch] leading-[1.65] m-0 italic font-display fvs-text">
+              <p className="text-[clamp(17px,2vw,20px)] text-secondary-foreground max-w-[48ch] leading-[1.6] m-0">
                 Products I've shipped, systems I'm learning, and the results I can back up.
               </p>
             </div>

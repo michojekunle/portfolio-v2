@@ -6,6 +6,7 @@ import Image from "next/image"
 import { CASE_STUDIES } from "@/lib/case-studies"
 import { ArrowUpRight } from "lucide-react"
 import { getProjects, type Project } from "@/lib/projects"
+import { ProjectLogo } from "@/components/project-logo"
 
 const CATS = ["all", "product", "web3", "systems", "oss"] as const
 type Cat = (typeof CATS)[number]
@@ -60,28 +61,39 @@ export function WorkClient(): React.ReactElement {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 gap-6">
           {filteredCaseStudies.map((p) => (
             <Link 
               key={p.slug} 
               href={`/work/${p.slug}`} 
-              className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-16 max-[920px]:gap-8 p-12 max-[720px]:p-8 rounded-3xl border border-(--rule) bg-(--paper) overflow-hidden transition-all duration-300 hover:border-(--v3-accent-soft) hover:shadow-[0_24px_64px_-12px_color-mix(in_oklab,var(--ink)_10%,transparent)]"
+              className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-12 max-[920px]:gap-6 p-10 max-[920px]:p-7 max-[480px]:p-5 rounded-2xl border border-(--rule) bg-(--paper) overflow-hidden transition-all duration-300 hover:border-(--v3-accent-soft) hover:shadow-[0_20px_48px_-12px_color-mix(in_oklab,var(--ink)_8%,transparent)]"
             >
               <div className="flex flex-col justify-center">
-                <div className="font-mono text-xs tracking-wider uppercase text-(--v3-accent) mb-4">{p.tag} · {p.year}</div>
-                <h3 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.05] mb-5">{p.name}</h3>
-                <p className="text-[18px] text-secondary-foreground leading-[1.6] m-0 max-w-[40ch] mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <ProjectLogo name={p.name} logo={p.logo} logoBg={p.logoBg} size={36} />
+                  <span className="font-mono text-[12px] tracking-[0.04em] text-(--v3-accent)">{p.tag} · {p.year}</span>
+                </div>
+                <h3 className="m-0 text-[clamp(26px,3.5vw,40px)] leading-[1.1] mb-3 text-(--ink)">{p.name}</h3>
+                <p className="text-[16px] text-secondary-foreground leading-[1.6] m-0 max-w-[46ch] mb-6">
                   {p.desc}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-auto">
                   {p.stack.slice(0, 4).map(s => (
-                    <span key={s} className="font-mono text-xs px-2.5 py-1 border border-(--rule) rounded-md text-muted-foreground uppercase">{s}</span>
+                    <span key={s} className="font-mono text-[11px] px-2.5 py-1 border border-(--rule) rounded-md text-muted-foreground">{s}</span>
                   ))}
                 </div>
               </div>
               <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-(--bg-2) border border-(--rule)">
                 {p.image ? (
-                  <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[3000ms] group-hover:scale-105" sizes="(max-width: 920px) 100vw, 40vw" style={{ objectPosition: p.imagePosition }} />
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    fill
+                    className="object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                    sizes="(max-width: 920px) 100vw, 40vw"
+                    style={{ objectPosition: p.imagePosition }}
+                    unoptimized={p.image.endsWith(".svg")}
+                  />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-8 max-[720px]:p-6">
                     <span className="font-display font-light text-[clamp(56px,7vw,96px)] leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">
@@ -105,7 +117,7 @@ export function WorkClient(): React.ReactElement {
         </div>
 
         {loading ? (
-          <div className="py-10 font-mono text-xs text-muted-foreground uppercase tracking-wider">Synchronizing archive...</div>
+          <div className="py-10 font-mono text-xs text-muted-foreground tracking-wider">Synchronizing archive...</div>
         ) : (
           <div className="v3-work-list">
             {filteredDbProjects.length === 0 && filteredCaseStudies.length === 0 && (
