@@ -7,7 +7,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CommandPalette } from "@/components/command-palette";
 import { PortfolioChrome } from "@/components/portfolio-chrome";
-import { CustomCursor } from "@/components/custom-cursor";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { NoiseOverlay } from "@/components/noise-overlay";
 import { Preloader } from "@/components/preloader";
@@ -207,7 +206,6 @@ export default function RootLayout({
           <SmoothScroll>
             <Preloader />
             <NoiseOverlay />
-            <CustomCursor />
             <PortfolioChrome children={children} />
             <CommandPalette />
             <Toaster />

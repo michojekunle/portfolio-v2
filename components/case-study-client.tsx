@@ -52,8 +52,6 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
           className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-6 flex items-center gap-3"
         >
           <Link href="/work" className="hover:text-(--ink) transition-colors flex items-center gap-1"><ArrowLeft className="w-3.5 h-3.5" /> Work</Link>
-          <div className="w-1 h-1 bg-(--rule) rounded-full" />
-          Project {p.idx}
         </motion.div>
         
         <div className="flex flex-wrap gap-12 max-[720px]:gap-6 mb-16">

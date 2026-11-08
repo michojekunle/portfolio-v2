@@ -125,25 +125,6 @@ export default function CreatorSuitePage(): React.ReactElement {
                     </span>
                   </Link>
                 </MagneticWrapper>
-                {[
-                  { name: "Try Vela", href: "/tools/journal" },
-                  { name: "Try Chapterly", href: "/tools/chapterly" },
-                  { name: "Try Flowise", href: "/tools/flowise" },
-                  { name: "Try Thread Studio", href: "/tools/thread-studio" },
-                  { name: "Try Carousel Lab", href: "/tools/carousel-lab" },
-                ].map((item) => (
-                  <MagneticWrapper key={item.name}>
-                    <Link
-                      href={item.href}
-                      className="inline-flex items-center gap-2 py-3 px-5 rounded-full font-mono text-xs uppercase tracking-wider font-semibold no-underline transition-all duration-200 border border-(--rule) bg-(--bg-2) text-(--ink) hover:border-muted-foreground hover:bg-(--paper) hover:scale-[1.02]"
-                    >
-                      {item.name}{" "}
-                      <span className="text-[14px]" aria-hidden="true">
-                        →
-                      </span>
-                    </Link>
-                  </MagneticWrapper>
-                ))}
               </div>
             </div>
           </div>

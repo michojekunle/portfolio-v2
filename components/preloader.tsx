@@ -9,7 +9,8 @@ export function Preloader(): React.ReactElement {
   useEffect(() => {
     try {
       const hasSeen = sessionStorage.getItem("hasSeenPreloader")
-      if (hasSeen) {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      if (hasSeen || reducedMotion) {
         setIsLoading(false)
         return
       }
@@ -20,20 +21,20 @@ export function Preloader(): React.ReactElement {
       try {
         sessionStorage.setItem("hasSeenPreloader", "true")
       } catch {}
-    }, 2000)
+    }, 1100)
 
     return () => clearTimeout(timer)
   }, [])
 
   const name = "MICHAEL OJEKUNLE.".split("")
-  const intro = "Architecting the decentralized web, pixel by pixel.".split("")
+  const intro = "Software engineer. Founder of Zamir.".split("")
 
   const containerVariants: Variants = {
     hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12, // Slowed down from 0.08
+        staggerChildren: 0.03,
       },
     },
   }
@@ -53,7 +54,7 @@ export function Preloader(): React.ReactElement {
         <motion.div
           key="preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] } }}
+          exit={{ opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-(--bg) px-(--gutter)"
           aria-hidden="true"
         >
@@ -82,7 +83,7 @@ export function Preloader(): React.ReactElement {
               className="font-mono text-[clamp(12px,1.5vw,16px)] uppercase tracking-[0.2em] text-secondary-foreground"
             >
               {/* Dummy span to delay the second line stagger naturally */}
-              <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 0, transition: { delay: 2.2 } } }} />
+              <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 0, transition: { delay: 0.4 } } }} />
               {intro.map((char, index) => (
                 <motion.span key={`intro-${index}`} variants={charVariants} className="inline-block">
                   {char === " " ? "\u00A0" : char}
@@ -96,7 +97,7 @@ export function Preloader(): React.ReactElement {
              <motion.div 
                initial={{ x: "-100%" }}
                animate={{ x: "0%" }}
-               transition={{ duration: 2.0, ease: "easeInOut" }}
+               transition={{ duration: 1.0, ease: "easeInOut" }}
                className="w-full h-full bg-(--ink)"
              />
           </div>

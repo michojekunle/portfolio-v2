@@ -95,20 +95,16 @@ export function HeroSection(): React.ReactElement {
             </MagneticWrapper>
           </div>
 
-          <div className="flex gap-0 mt-12 border border-(--rule) rounded-lg overflow-hidden" role="list" aria-label="Career highlights">
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
-              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">4+</span>
-              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Years building</span>
-            </div>
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
-              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">69</span>
-              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">Zamir believers</span>
-            </div>
-            <div className="flex-[1] flex flex-col p-[20px_24px] border-r border-(--rule) last:border-r-0 max-[720px]:pr-3.5 max-[720px]:mr-3.5" role="listitem">
-              <span className="font-display text-[40px] font-normal leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">200+</span>
-              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-muted-foreground mt-1.5">CoinSafe wallets</span>
-            </div>
-          </div>
+          <Link
+            href="/work/zamir"
+            className="group mt-12 flex items-baseline gap-3 flex-wrap text-[15px] leading-normal text-secondary-foreground no-underline hover:text-(--ink) transition-colors"
+          >
+            <span className="font-medium text-(--ink)">Latest:</span>
+            <span>Zamir has 69 believers and 4,699 plays since March 2026.</span>
+            <span className="inline-flex items-center gap-1 text-(--v3-accent) underline decoration-(--rule) underline-offset-4 group-hover:decoration-(--v3-accent)">
+              Read the case study <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </span>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -45,7 +45,7 @@ export function ProjectsSection(): React.ReactElement {
       >
         <div>
           <h2 id="projects-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
-            Masterpieces, I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
+            Selected work, <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
           <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
             Three I&apos;d most want to talk about. Full case studies inside with process,

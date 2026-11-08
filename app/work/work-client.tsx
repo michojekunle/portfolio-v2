@@ -49,7 +49,7 @@ export function WorkClient(): React.ReactElement {
       <div className="mb-30 max-[720px]:mb-20">
         <div className="mb-12">
           <h2 className="m-0 font-normal text-[clamp(44px,6vw,64px)] leading-[0.95] tracking-[-0.03em] text-(--ink)">
-            Selected <em>Masterpieces.</em>
+            Selected <em>work.</em>
           </h2>
         </div>
 
@@ -61,7 +61,7 @@ export function WorkClient(): React.ReactElement {
               className="group relative grid grid-cols-[1.5fr_1fr] max-[920px]:grid-cols-1 gap-16 max-[920px]:gap-8 p-12 max-[720px]:p-8 rounded-3xl border border-(--rule) bg-(--paper) overflow-hidden transition-all duration-300 hover:border-(--v3-accent-soft) hover:shadow-[0_24px_64px_-12px_color-mix(in_oklab,var(--ink)_10%,transparent)]"
             >
               <div className="flex flex-col justify-center">
-                <div className="font-mono text-xs tracking-wider uppercase text-(--v3-accent) mb-4">{p.idx} · {p.year}</div>
+                <div className="font-mono text-xs tracking-wider uppercase text-(--v3-accent) mb-4">{p.tag} · {p.year}</div>
                 <h3 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.05] mb-5">{p.name}</h3>
                 <p className="text-[18px] text-secondary-foreground leading-[1.6] m-0 max-w-[40ch] mb-8">
                   {p.desc}
