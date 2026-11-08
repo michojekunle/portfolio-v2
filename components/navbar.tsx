@@ -9,13 +9,10 @@ import { Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { MoMark } from "@/lib/brand-mark";
 
-const navLinks: { name: string; href: string; hideBelowWide?: boolean }[] = [
+const navLinks: { name: string; href: string }[] = [
   { name: "Work", href: "/work" },
-  { name: "Systems", href: "/systems", hideBelowWide: true },
-  { name: "Tools", href: "/tools" },
-  { name: "Notes", href: "/blog" },
-  { name: "Videos", href: "/videos" },
   { name: "About", href: "/about" },
+  { name: "Notes", href: "/blog" },
 ];
 
 export function Navbar(): React.ReactNode {
@@ -134,7 +131,7 @@ export function Navbar(): React.ReactNode {
               key={link.name}
               href={link.href}
               data-active={isActive(link.href)}
-              className={`group relative font-mono text-[12px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2${link.hideBelowWide ? " max-[960px]:hidden" : ""}`}
+              className={`group relative font-mono text-[12px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2`}
             >
               {link.name}
               <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-(--v3-accent) scale-x-0 transition-transform duration-200 origin-left group-hover:scale-x-100 group-data-[active=true]:scale-x-100" />

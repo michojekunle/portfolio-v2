@@ -35,7 +35,7 @@ interface BookItem {
 function UpdatedBadge({ date }: { date?: string | null }): React.ReactElement | null {
   if (!date) return null
   return (
-    <span className="font-mono text-[12px] tracking-[0.08em] uppercase text-muted-foreground/60 whitespace-nowrap">
+    <span className="font-mono text-[11px] text-muted-foreground/70 whitespace-nowrap">
       Updated {formatDistanceToNow(new Date(date))} ago
     </span>
   )
@@ -44,7 +44,7 @@ function UpdatedBadge({ date }: { date?: string | null }): React.ReactElement | 
 function statusClass(status: string | null | undefined): string {
   if (!status) return ""
   const s = status.toLowerCase().replace(/\s+/g, "-")
-  const base = "inline-flex items-center gap-1.5 font-mono text-[12px] tracking-[0.12em] uppercase px-2.5 py-1 rounded font-semibold align-middle ml-2"
+  const base = "inline-flex items-center gap-1.5 font-mono text-[11px] px-2 py-0.5 rounded font-medium align-middle ml-2"
   const map: Record<string, string> = {
     "in-progress": `${base} bg-[color-mix(in_oklab,var(--v3-accent-soft)_80%,transparent)] text-(--v3-accent)`,
     "in progress": `${base} bg-[color-mix(in_oklab,var(--v3-accent-soft)_80%,transparent)] text-(--v3-accent)`,
@@ -102,12 +102,12 @@ export async function NowSection(): Promise<React.ReactElement> {
           initialRecentlyPlayed={recentlyPlayed}
         />
 
-        <h3 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground mb-6 font-medium">The work</h3>
+        <h3 className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground mb-6 font-medium">The work</h3>
         <div className="grid grid-cols-3 max-[920px]:grid-cols-1 gap-0 border-y border-(--rule)">
 
           {/* Building */}
-          <div className="p-[36px_32px] border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground m-[0_0_28px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Side Quests(for the fun of it)</h4>
+          <div className="p-8 max-[720px]:p-5 border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
+            <h4 className="font-mono text-[12px] tracking-[0.06em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Side quests (for the fun of it)</h4>
             <ul className="list-none p-0 m-0">
               {building.length > 0 ? (
                 building.map((item, i) => (
@@ -154,8 +154,8 @@ export async function NowSection(): Promise<React.ReactElement> {
           </div>
 
           {/* Learning */}
-          <div className="p-[36px_32px] border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground m-[0_0_28px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Learning</h4>
+          <div className="p-8 max-[720px]:p-5 border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
+            <h4 className="font-mono text-[12px] tracking-[0.06em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Learning</h4>
             <ul className="list-none p-0 m-0">
               {learning.length > 0 ? (
                 learning.map((item, i) => (
@@ -191,8 +191,8 @@ export async function NowSection(): Promise<React.ReactElement> {
           </div>
 
           {/* Off-screen / reading */}
-          <div className="p-[36px_32px] border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground m-[0_0_28px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Off-screen</h4>
+          <div className="p-8 max-[720px]:p-5 border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
+            <h4 className="font-mono text-[12px] tracking-[0.06em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Off-screen</h4>
             <ul className="list-none p-0 m-0">
               {books.length > 0 ? (
                 <>
@@ -213,7 +213,7 @@ export async function NowSection(): Promise<React.ReactElement> {
                     </li>
                   ))}
                   <li className="pt-6">
-                    <Link href="/reading" className="font-mono text-[12px] uppercase tracking-[0.12em] text-(--v3-accent) hover:text-(--v3-accent-2) transition-colors no-underline font-semibold flex items-center gap-2 group/read">
+                    <Link href="/reading" className="font-mono text-[12px] tracking-[0.04em] text-(--v3-accent) hover:text-(--v3-accent-2) transition-colors no-underline font-semibold flex items-center gap-2 group/read">
                       Full reading log <ArrowRight className="inline-block transition-transform duration-200 group-hover/read:translate-x-1 w-3 h-3 ml-1" />
                     </Link>
                   </li>
@@ -231,7 +231,7 @@ export async function NowSection(): Promise<React.ReactElement> {
 
         <div className="flex justify-center mt-20 pt-10 border-t border-(--rule)">
           <MagneticWrapper strength={20}>
-            <Link href="/about" className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] uppercase tracking-[0.15em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+            <Link href="/about" className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] tracking-[0.04em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
               More about my journey <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2.5 w-4 h-4" aria-hidden="true" />
             </Link>
           </MagneticWrapper>

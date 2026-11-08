@@ -57,6 +57,7 @@ export function FilmReelSection(): React.ReactElement {
                     className="object-cover"
                     sizes="340px"
                     style={{ objectPosition: p.imagePosition }}
+                    unoptimized={p.image.endsWith(".svg")}
                   />
                 ) : (
                   <div
@@ -70,13 +71,7 @@ export function FilmReelSection(): React.ReactElement {
                     }}
                   >
                     <span
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "var(--ink-4)",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
+                      className="font-mono text-xs text-muted-foreground capitalize"
                     >
                       {p.cat}
                     </span>
@@ -86,9 +81,9 @@ export function FilmReelSection(): React.ReactElement {
               <div className="py-5 flex flex-col gap-2">
                 <div className="font-display font-normal text-[22px] text-(--ink) leading-[1.1] fvs-text">{p.name}</div>
                 <div className="text-[14px] text-secondary-foreground leading-normal line-clamp-2 overflow-hidden">{p.desc}</div>
-                <div className="flex gap-3 mt-1 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+                <div className="flex gap-3 mt-1 font-mono text-[11px] text-muted-foreground">
                   <span>{p.year}</span>
-                  <span>{p.cat.toUpperCase()}</span>
+                  <span className="capitalize">{p.cat}</span>
                 </div>
               </div>
             </Link>

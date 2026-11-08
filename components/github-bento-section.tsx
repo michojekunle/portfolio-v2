@@ -106,7 +106,6 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
   const repos = allRepos.filter(
     (r) => !FEATURED_SLUGS.has(r.name) && !FEATURED_SLUGS.has(r.name.replace(/-/g, "").toLowerCase())
   )
-
   if (repos.length === 0) return null
 
   return (

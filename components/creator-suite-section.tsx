@@ -44,7 +44,7 @@ export function CreatorSuiteSection(): React.ReactElement {
       </motion.div>
 
       {/* Tool grid */}
-      <div className="grid grid-cols-6 max-[1100px]:grid-cols-3 max-[600px]:grid-cols-2 border-y border-(--rule) mb-16">
+      <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[540px]:grid-cols-1 gap-4 mb-16">
         {TOOLS.map((tool, i) => (
           <motion.div
             key={tool.name}
@@ -52,30 +52,33 @@ export function CreatorSuiteSection(): React.ReactElement {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: i * 0.06 }}
-            className="group relative border-r border-(--rule) last:border-r-0"
           >
-          <Link
-            href={tool.href}
-            className="block p-[28px_20px] max-[720px]:p-[20px_16px] bg-(--bg) hover:bg-(--bg-2) transition-colors duration-200 no-underline"
-          >
-            <div className="w-6 h-6 mb-4 flex items-center justify-center" aria-hidden="true">
-              <tool.icon className="w-5 h-5" style={{ color: tool.accent }} />
-            </div>
-            <div
-              className="font-display font-normal text-[16px] leading-[1.15] tracking-[-0.01em] fvs-text mb-1 text-(--ink)"
+            <Link
+              href={tool.href}
+              className="group relative rounded-2xl border border-(--rule) bg-(--paper) hover:border-muted-foreground/60 hover:bg-(--bg-2)/60 transition-all duration-200 p-6 max-[480px]:p-5 no-underline flex flex-col justify-between h-full"
             >
-              {tool.name}
-            </div>
-            <div className="font-mono text-[12px] tracking-wider uppercase py-1.5 text-muted-foreground">
-              {tool.tagline}
-            </div>
-            <span
-              className="absolute top-4 right-4 inline-flex items-center gap-1.5 font-mono text-[12px] tracking-wider uppercase text-muted-foreground font-medium"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-500" aria-hidden="true" />
-              Live
-            </span>
-          </Link>
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-(--bg) border border-(--rule)" aria-hidden="true">
+                    <tool.icon className="w-4.5 h-4.5" style={{ color: tool.accent }} />
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                    live
+                  </span>
+                </div>
+                <div className="font-display font-medium text-[19px] leading-[1.2] text-(--ink) mb-1.5 group-hover:text-(--v3-accent) transition-colors">
+                  {tool.name}
+                </div>
+                <div className="text-[14px] leading-relaxed text-secondary-foreground font-sans">
+                  {tool.tagline}
+                </div>
+              </div>
+              <div className="mt-5 pt-3 border-t border-(--rule)/70 flex items-center justify-between font-mono text-xs text-muted-foreground">
+                <span>Launch tool</span>
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </div>
+            </Link>
           </motion.div>
         ))}
       </div>
@@ -94,7 +97,7 @@ export function CreatorSuiteSection(): React.ReactElement {
         <MagneticWrapper>
           <Link
             href="/tools"
-            className="group inline-flex items-center gap-2.5 py-3.5 px-7 rounded-full font-mono text-[12px] uppercase tracking-[0.12em] font-semibold no-underline transition-all duration-300 whitespace-nowrap border hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-(--ink) border-(--rule)"
+            className="group inline-flex items-center gap-2.5 py-3.5 px-7 rounded-full font-mono text-[12px] tracking-[0.04em] font-semibold no-underline transition-all duration-300 whitespace-nowrap border hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-(--ink) border-(--rule)"
           >
             Explore Creator Suite
             <ArrowRight

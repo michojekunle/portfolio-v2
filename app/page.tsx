@@ -1,7 +1,6 @@
 import { HeroSection } from "@/components/hero-section"
 import { AboutPreviewSection } from "@/components/about-preview-section"
 import { ProjectsSection } from "@/components/projects-section"
-import { CreatorSuiteSection } from "@/components/creator-suite-section"
 import { GitHubBentoSection } from "@/components/github-bento-section"
 import { NowSection } from "@/components/now-section"
 import { BlogSection } from "@/components/blog-section"
@@ -16,10 +15,6 @@ export default function Home(): React.ReactElement {
       <div className="h-px bg-(--rule)" aria-hidden="true" />
 
       <ProjectsSection />
-
-      <div className="h-px bg-(--rule)" aria-hidden="true" />
-
-      <CreatorSuiteSection />
 
       <div className="h-px bg-(--rule)" aria-hidden="true" />
 
