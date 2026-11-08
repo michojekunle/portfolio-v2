@@ -44,3 +44,5 @@ sendgrid.env
 .claude
 .impeccable/critique
 .antigravitycli
+# original full-size screenshots (optimized .webp copies are committed)
+public/work/**/_orig/

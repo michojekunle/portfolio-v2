@@ -17,6 +17,7 @@ interface CaseStudyProps {
   team: string
   lede: string
   image?: string
+  gallery?: { src: string; alt: string; kind: "desktop" | "phone"; w: number; h: number }[]
   stack: string[]
   live?: string
   year: string | number
@@ -161,6 +162,38 @@ export function CaseStudyClient({ p, nextProject }: { p: CaseStudyProps, nextPro
               ))}
             </div>
           </motion.div>
+
+          {p.gallery && p.gallery.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
+              <h2 className="font-display font-light text-[clamp(40px,5vw,64px)] leading-none text-(--ink) mb-10 tracking-[-0.03em] fvs-display">
+                The <em className="text-(--v3-accent) italic fvs-soft">screens.</em>
+              </h2>
+              {p.gallery.some((g) => g.kind === "desktop") && (
+                <div className="grid grid-cols-2 max-[720px]:grid-cols-1 gap-6 items-start">
+                  {p.gallery.filter((g) => g.kind === "desktop").map((g) => (
+                    <figure key={g.src} className="m-0 flex flex-col gap-3">
+                      <div className="overflow-hidden rounded-2xl border border-(--rule) bg-(--bg-2)">
+                        <Image src={g.src} alt={g.alt} width={g.w} height={g.h} className="w-full h-auto block" sizes="(max-width: 920px) 100vw, 45vw" />
+                      </div>
+                      <figcaption className="text-[14px] text-muted-foreground leading-normal">{g.alt}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              )}
+              {p.gallery.some((g) => g.kind === "phone") && (
+                <div className={`grid grid-cols-4 max-[920px]:grid-cols-2 gap-5 items-start ${p.gallery.some((g) => g.kind === "desktop") ? "mt-10" : ""}`}>
+                  {p.gallery.filter((g) => g.kind === "phone").map((g) => (
+                    <figure key={g.src} className="m-0 flex flex-col gap-3">
+                      <div className="overflow-hidden rounded-[22px] border border-(--rule) bg-(--bg-2)">
+                        <Image src={g.src} alt={g.alt} width={g.w} height={g.h} className="w-full h-auto block" sizes="(max-width: 920px) 50vw, 20vw" />
+                      </div>
+                      <figcaption className="text-[14px] text-muted-foreground leading-normal">{g.alt}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
 
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}>
             <h2 className="font-display font-light text-[clamp(40px,5vw,64px)] leading-none text-(--ink) mb-12 tracking-[-0.03em] fvs-display">

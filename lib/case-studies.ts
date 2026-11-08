@@ -9,6 +9,14 @@ export interface CaseStudyNowItem {
   m: string;
 }
 
+export interface GalleryItem {
+  src: string;
+  alt: string;
+  kind: "desktop" | "phone";
+  w: number;
+  h: number;
+}
+
 export interface CaseStudy {
   slug: string;
   idx: string;
@@ -23,6 +31,7 @@ export interface CaseStudy {
   duration: string;
   team: string;
   image?: string;
+  gallery?: GalleryItem[];
   live?: string;
   problem: string;
   approach: string;
@@ -65,6 +74,16 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "CEO & CTO · Product and engineering",
     duration: "Live since March 2026",
     team: "4 people · 1 founding engineer",
+    image: "/work/zamir/01-marketing-hero-desktop.webp",
+    gallery: [
+      { src: "/work/zamir/02-marketing-find-a-verse-desktop.webp", alt: "Zamir website: finding a verse by feeling", kind: "desktop", w: 1800, h: 1125 },
+      { src: "/work/zamir/03-marketing-altar-desktop.webp", alt: "Zamir website: the Altar daily habit", kind: "desktop", w: 1800, h: 1125 },
+      { src: "/work/zamir/04-marketing-languages-desktop.webp", alt: "Zamir website: songs in ten languages", kind: "desktop", w: 1800, h: 1125 },
+      { src: "/work/zamir/09-app-home-ios.webp", alt: "Zamir iOS app: home", kind: "phone", w: 700, h: 1522 },
+      { src: "/work/zamir/10-app-altar-ios.webp", alt: "Zamir iOS app: the Altar with a nine-day streak", kind: "phone", w: 700, h: 1522 },
+      { src: "/work/zamir/13-app-create-song-ios.webp", alt: "Zamir iOS app: creating a song", kind: "phone", w: 700, h: 1522 },
+      { src: "/work/zamir/11-app-library-ios.webp", alt: "Zamir iOS app: library", kind: "phone", w: 700, h: 1522 },
+    ],
     live: "zamir.app",
     problem:
       "Scripture is easy to read and easy to forget. Songs stick. But writing, producing and translating a worship song for every verse, in the listener's own language and style, is not something one person can do on demand. For most people in my context there is also almost nothing in Yorùbá, Igbo, Hausa or Naijá.",
@@ -116,7 +135,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     slug: "coinsafe",
     idx: "02",
     name: "CoinSafe",
-    tag: "Founding team",
+    tag: "Web3",
     cat: "web3",
     year: "2024–2025",
     desc: "A goal-based, time-locked savings protocol on Lisk and Base. I owned the frontend and the wallet and contract integrations, including account-abstracted onboarding.",
@@ -132,6 +151,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Founding team · Frontend & blockchain integrations engineer",
     duration: "~18 months · 2024–2025",
     team: "4–6 people",
+    image: "/work/coinsafe/dash.webp",
+    gallery: [
+      { src: "/work/coinsafe/vault.webp", alt: "CoinSafe vault with savings targets and locked balances", kind: "desktop", w: 1800, h: 1026 },
+      { src: "/work/coinsafe/landing2.webp", alt: "CoinSafe landing page: save and earn", kind: "desktop", w: 1800, h: 1026 },
+      { src: "/work/coinsafe/card1.webp", alt: "CoinSafe save flow: one-time save with target and duration", kind: "desktop", w: 1187, h: 1175 },
+      { src: "/work/coinsafe/card2.webp", alt: "CoinSafe scheduled savings panel", kind: "desktop", w: 708, h: 951 },
+    ],
     live: "coinsafe.network",
     problem:
       "DeFi savings feel like protocol dashboards. There are few goal-setting or discipline tools, and lock periods are rarely explained clearly. On top of that, the wallet itself is the first obstacle: asking someone who just wants to save to install an extension, store a seed phrase and buy gas is where most of them leave.",
@@ -207,16 +233,16 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     learned:
       "Implementation is the real test of understanding. The bugs were never in the maths I had memorised; they were in the details the paper leaves implicit. It is also an honest picture of where I am: this is a work in progress, not a production library, and I would rather show that than overstate it.",
-    next: "client-website",
+    next: "rhng",
   },
   {
-    slug: "client-website",
+    slug: "rhng",
     idx: "04",
-    name: "Client Website",
-    tag: "Client · Built solo",
+    name: "RHNG",
+    tag: "Built solo",
     cat: "product",
     year: "Client work",
-    desc: "A production website for a private client, taken from requirements to launch in about three months. Independent full-stack build.",
+    desc: "The website for Roberts House Nigeria, a Lagos energy-engineering company. Taken from requirements to production in about three months, independently.",
     lede: "One engineer, requirements to production, with the results to show for it.",
     stack: [
       "Next.js",
@@ -231,13 +257,14 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Independent full-stack developer",
     duration: "~3 months · requirements to production",
     team: "Solo",
+    live: "rh-ng.com",
     problem:
-      "The client needed a production website with content they could manage themselves and good search visibility, delivered by one person without a ready-made design handed over.",
+      "Roberts House Nigeria is an engineering partner for Nigeria's energy transition: cryogenic engineering, CNG, LNG and LPG supply, a training academy and energy consultancy. It needed a production website that explains four service lines to industrial buyers, takes enquiries, lets the team manage content themselves, and is found in search.",
     approach:
       "Own the whole lifecycle: requirements and planning, frontend, backend and API work, content management, email, deployment, SEO and performance. A headless CMS keeps content editable without a developer, and a Node API handles backend logic and email.",
     process: [
-      "Turned the client's goals into requirements and a plan before writing code.",
-      "Built the frontend in Next.js, React, TypeScript and Tailwind, with content modelled in Sanity so the client could edit it themselves.",
+      "Turned the company's goals into requirements and a plan before writing code.",
+      "Built the frontend in Next.js, React, TypeScript and Tailwind, with content modelled in Sanity so the team can edit it themselves.",
       "Wired the backend: a Node API, Supabase for stored data and Resend for email, deployed on Vercel.",
       "Treated search visibility and speed as features, and measured them with PageSpeed and Search Console rather than guessing.",
     ],
@@ -259,24 +286,25 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
     ],
     learned:
-      "Owning a project end to end means every decision has a cost you personally pay later. It taught me to choose boring, maintainable tools and to treat the client's ability to run the site without me as part of the deliverable. The client is private, so there is no repository or link here, and the figures are the ones I reported at the time.",
-    next: "platform-frontend",
+      "Owning a project end to end means every decision has a cost you personally pay later. It taught me to choose boring, maintainable tools and to treat the client's ability to run the site without me as part of the deliverable. The source is private client work, and the figures are the ones I reported at the time.",
+    next: "edifition",
   },
   {
-    slug: "platform-frontend",
+    slug: "edifition",
     idx: "05",
-    name: "Platform Frontend",
-    tag: "Client · Team",
+    name: "Edifition",
+    tag: "Frontend team",
     cat: "product",
     year: "Client work",
-    desc: "The frontend of a large private platform: 20+ pages, 30+ reusable components, Keycloak authentication and a measured performance improvement. Built with two other developers.",
+    desc: "Frontend engineering on a three-developer team at Edifition, a product development studio for startups: 20+ pages, 30+ reusable components, Keycloak authentication and a measured performance gain.",
     lede: "A large frontend, kept fast and consistent by a small team.",
     stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Keycloak"],
     role: "Frontend developer",
     duration: "Team engagement",
     team: "3 developers",
+    live: "edifition.com",
     problem:
-      "A growing platform needs a frontend that stays consistent as pages multiply, integrates with many backend services, and sits behind real authentication, without getting slow.",
+      "A growing product needs a frontend that stays consistent as pages multiply, integrates with many backend services, and sits behind real authentication, without getting slow.",
     approach:
       "A shared component library so pages are assembled rather than rewritten, a clear frontend architecture the three of us could extend in parallel, and Keycloak for authentication. Performance was tracked as a number, not a feeling.",
     process: [
@@ -303,7 +331,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
     ],
     learned:
-      "In a team of three, the component library is the architecture, and performance work pays off when you measure first and fix the biggest cost first. The platform is private, so there is no link, and the figures are those I reported.",
+      "In a team of three, the component library is the architecture, and performance work pays off when you measure first and fix the biggest cost first. The source is private, and the figures are those I reported.",
     next: "createstacksapp",
   },
   {
@@ -319,6 +347,10 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Author · maintainer",
     duration: "Jan–Mar 2026 · 40+ releases",
     team: "Solo",
+    image: "/work/createstacksapp/landing.webp",
+    gallery: [
+      { src: "/work/createstacksapp/docs.webp", alt: "create-stacks-app documentation site", kind: "desktop", w: 1800, h: 1085 },
+    ],
     live: "npmjs.com/package/@devvmichael/create-stacks-app",
     problem:
       "Starting a Stacks project meant assembling the pieces by hand: contract scaffolding, frontend, wallet integration and tooling. There was no standard starting point, so each new developer repeated the same setup work.",

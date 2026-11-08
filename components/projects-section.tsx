@@ -13,8 +13,8 @@ const PROJECT_COLORS: Record<string, string> = {
   zamir: "#2563EB",
   createstacksapp: "#ec4899",
   "zk-implementations": "#0d9488",
-  "client-website": "#64748b",
-  "platform-frontend": "#7c3aed",
+  rhng: "#64748b",
+  edifition: "#7c3aed",
 }
 
 export function ProjectsSection(): React.ReactElement {

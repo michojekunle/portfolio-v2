@@ -27,8 +27,15 @@ export function WorkClient(): React.ReactElement {
   const filteredCaseStudies =
     filter === "all" ? CASE_STUDIES : CASE_STUDIES.filter((p) => p.cat === filter)
 
+  // Archive rows that already have a full case study above are not repeated.
+  const caseStudyNames = new Set([
+    ...CASE_STUDIES.map((cs) => cs.name.toLowerCase()),
+    "zk",
+    "zamir",
+  ])
+  const archiveProjects = dbProjects.filter((p) => !caseStudyNames.has(p.title.toLowerCase()))
   const filteredDbProjects =
-    filter === "all" ? dbProjects : dbProjects.filter((p) => p.category === filter)
+    filter === "all" ? archiveProjects : archiveProjects.filter((p) => p.category === filter)
 
   return (
     <section className="v3-container pb-40 max-[720px]:pb-[100px]">
@@ -76,7 +83,12 @@ export function WorkClient(): React.ReactElement {
                 {p.image ? (
                   <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[3000ms] group-hover:scale-105" sizes="(max-width: 920px) 100vw, 40vw" />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted-foreground uppercase tracking-wider">Preview pending</div>
+                  <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-8 max-[720px]:p-6">
+                    <span className="font-display font-light text-[clamp(56px,7vw,96px)] leading-none tracking-[-0.03em] text-(--v3-accent) fvs-display">
+                      {p.outcomes[0]?.n}
+                    </span>
+                    <span className="text-[16px] text-secondary-foreground">{p.outcomes[0]?.l}</span>
+                  </div>
                 )}
               </div>
             </Link>
@@ -99,9 +111,9 @@ export function WorkClient(): React.ReactElement {
             {filteredDbProjects.length === 0 && filteredCaseStudies.length === 0 && (
               <div className="py-10 text-muted-foreground italic">No projects found in this category.</div>
             )}
-            {filteredDbProjects.map((p) => (
+            {filteredDbProjects.map((p, i) => (
               <div key={p.id} className="v3-work-row group">
-                <div className="idx">{p.sort_order.toString().padStart(2, '0')}</div>
+                <div className="idx">{String(i + 1).padStart(2, '0')}</div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3 mb-1">
                     <div className="name">{p.title}</div>

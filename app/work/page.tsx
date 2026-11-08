@@ -14,10 +14,10 @@ export default function WorkPage(): React.ReactElement {
           <div className="grid grid-cols-[1.4fr_1fr] max-[900px]:grid-cols-1 gap-16 max-[720px]:gap-8 items-center">
             <div>
               <h1 className="m-0 font-display font-normal text-[clamp(48px,8vw,100px)] leading-[0.95] tracking-[-0.04em] text-(--ink) mb-8 text-balance fvs-display">
-                Engineering <em className="not-italic italic text-(--v3-accent) fvs-soft">impact.</em>
+                The <em className="not-italic italic text-(--v3-accent) fvs-soft">work.</em>
               </h1>
               <p className="text-[18px] text-secondary-foreground max-w-[48ch] leading-[1.65] m-0 italic font-display fvs-text">
-                Each project here represents a specific challenge solved—from protocol-level complexity to high-fidelity interface design.
+                Products I've shipped, systems I'm learning, and the results I can back up.
               </p>
             </div>
             <div className="flex justify-end max-[900px]:justify-start">
