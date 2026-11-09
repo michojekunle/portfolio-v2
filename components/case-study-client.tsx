@@ -389,7 +389,7 @@ export function CaseStudyClient({
           {p.live && (
             <div className="p-4 rounded-xl border border-(--rule) bg-(--bg-2)/40">
               <div className="font-mono text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-2">
-                Live Deployment
+                {p.liveLabel ?? "Live Deployment"}
               </div>
               <a
                 href={`https://${p.live.replace(/^https?:\/\//, "")}`}
