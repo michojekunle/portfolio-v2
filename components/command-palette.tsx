@@ -30,6 +30,7 @@ import {
   Instagram,
   Video,
   Library,
+  Search,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
@@ -145,11 +146,14 @@ export function CommandPalette(): React.ReactElement {
   const actions: CommandAction[] = [
     // Navigation
     { label: "Home", icon: <Home className="h-4 w-4" />, action: () => navigate("/"), group: "Navigation" },
-    { label: "About", icon: <User className="h-4 w-4" />, action: () => navigate("#about"), group: "Navigation" },
-    { label: "Projects", icon: <FolderOpen className="h-4 w-4" />, action: () => navigate("#projects"), group: "Navigation" },
+    { label: "Work", icon: <FolderOpen className="h-4 w-4" />, action: () => navigate("/work"), group: "Navigation" },
+    { label: "Systems", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/systems"), group: "Navigation" },
+    { label: "Tools", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/tools"), group: "Navigation" },
+    { label: "About", icon: <User className="h-4 w-4" />, action: () => navigate("/about"), group: "Navigation" },
     { label: "Blog", icon: <FileText className="h-4 w-4" />, action: () => navigate("/blog"), group: "Navigation" },
     { label: "Now", icon: <Activity className="h-4 w-4" />, action: () => navigate("#now"), group: "Navigation" },
-    { label: "Contact", icon: <Mail className="h-4 w-4" />, action: () => navigate("#contact"), group: "Navigation" },
+    { label: "Contact", icon: <Mail className="h-4 w-4" />, action: () => navigate("/contact"), group: "Navigation" },
+    { label: "Resume / CV", icon: <FileText className="h-4 w-4" />, action: () => navigate("https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"), group: "Navigation" },
 
     // Dynamic Projects
     ...projects.map(p => ({
@@ -296,7 +300,11 @@ export function CommandPalette(): React.ReactElement {
   );
 }
 
-export function CommandPaletteTrigger(): React.ReactElement {
+export function CommandPaletteTrigger({
+  compact = true,
+}: {
+  compact?: boolean;
+}): React.ReactElement {
   return (
     <button
       onClick={() =>
@@ -304,13 +312,20 @@ export function CommandPaletteTrigger(): React.ReactElement {
           new KeyboardEvent("keydown", { key: "k", metaKey: true })
         )
       }
-      className="hidden md:flex items-center gap-3 text-[12px] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-(--v3-accent) transition-all duration-200 px-4.5 py-2 border border-(--rule) rounded-full bg-transparent hover:bg-(--bg-2) hover:border-(--v3-accent-soft) group cursor-pointer"
-      aria-label="Open command palette"
+      className={
+        compact
+          ? "w-9 h-9 min-w-[36px] min-h-[36px] rounded-full border border-(--rule) bg-transparent text-secondary-foreground hover:text-(--ink) hover:border-muted-foreground flex items-center justify-center transition-all duration-150 cursor-pointer"
+          : "hidden md:flex items-center gap-2 text-[12px] font-mono text-muted-foreground hover:text-(--ink) transition-all duration-200 px-3 py-1.5 border border-(--rule) rounded-full bg-transparent hover:border-muted-foreground group cursor-pointer"
+      }
+      aria-label="Search site (⌘K)"
+      title="Search (⌘K)"
     >
-      <span className="font-mono">Search</span>
-      <kbd className="text-[12px] font-mono px-1.5 py-0.5 rounded text-muted-foreground/60 transition-colors group-hover:text-(--v3-accent)">
-        ⌘K
-      </kbd>
+      <Search className="w-4 h-4" aria-hidden="true" />
+      {!compact && (
+        <kbd className="text-[10px] font-mono px-1 rounded text-muted-foreground/60 transition-colors group-hover:text-(--ink)">
+          ⌘K
+        </kbd>
+      )}
     </button>
   );
 }

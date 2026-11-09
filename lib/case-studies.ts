@@ -82,7 +82,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     duration: "Live since March 2026",
     team: "4 people · 1 founding engineer",
     image: "/work/zamir/01-marketing-hero-desktop.webp",
-    logo: "https://home.zamir.app/zamir_icon.png",
+    logo: "/work/zamir/logo.svg",
     logoBg: "#052e16",
     imagePosition: "20% 50%",
     gallery: [
@@ -107,9 +107,19 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     outcomes: [
       {
+        n: "40.7%",
+        l: "Repeat rate",
+        d: "1,914 of 4,699 plays are repeats — listeners build real daily scripture habits.",
+      },
+      {
+        n: "4.7k",
+        l: "Plays",
+        d: "4,699 plays across 10 languages and 7 musical styles.",
+      },
+      {
         n: "69",
         l: "Believers",
-        d: "People using Zamir, as of November 2026.",
+        d: "People using Zamir organically as of November 2026.",
       },
       {
         n: "105",
@@ -120,16 +130,6 @@ export const CASE_STUDIES: CaseStudy[] = [
         n: "~420",
         l: "Songs produced",
         d: "Estimated. Older generations are counted at two songs each.",
-      },
-      {
-        n: "233",
-        l: "Hearts",
-        d: "Hearts given to songs by listeners.",
-      },
-      {
-        n: "4.7k",
-        l: "Plays",
-        d: "4,699 plays, with 1,914 repeats. People come back to the same songs.",
       },
       {
         n: "290+",
@@ -266,9 +266,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: "RHNG",
     tag: "Built solo",
     cat: "product",
-    year: "Client work",
-    desc: "The website for Roberts House Nigeria, a Lagos energy-engineering company. Taken from requirements to production in about three months, independently.",
-    lede: "One engineer, requirements to production, with the results to show for it.",
+    year: "2024 · 3 months",
+    desc: "The digital platform for Roberts House Nigeria, an industrial energy engineering firm in Lagos helping factories transition from diesel generators to natural gas. Built solo from requirements to production in three months.",
+    lede: "One engineer, requirements to production, with real numbers to back it up.",
     stack: [
       "Next.js",
       "React",
@@ -282,69 +282,149 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Independent full-stack developer",
     duration: "~3 months · requirements to production",
     team: "Solo",
+    image: "/work/rhng/landing-on-laptop.png",
     logo: "/work/rhng/logo.webp",
     logoBg: "#0f172a",
+    gallery: [
+      { src: "/work/rhng/landing-on-laptop.png", alt: "RHNG homepage on laptop mockup", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/rhng/landing.png", alt: "RHNG landing page: Leading the Energy Revolution", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/rhng/engineering_page.png", alt: "RHNG Cryogenic Engineering and Pressure Systems", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/rhng/cng_page.png", alt: "RHNG CNG / LNG / LPG virtual pipeline supply", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/rhng/logisitics_page.png", alt: "RHNG Logistics and training academy", kind: "desktop", w: 1600, h: 1000 },
+    ],
     live: "rh-ng.com",
     problem:
-      "Roberts House Nigeria is an engineering partner for Nigeria's energy transition: cryogenic engineering, CNG, LNG and LPG supply, a training academy and energy consultancy. It needed a production website that explains four service lines to industrial buyers, takes enquiries, lets the team manage content themselves, and is found in search.",
+      "In Nigeria, industrial power is brutal—running heavy diesel generators can eat up to 70% of a plant's operating costs. Natural gas is dramatically cheaper and cleaner, but switching takes serious engineering: cryogenic tanks, pressure skids, and virtual pipelines (CNG/LNG trucking). RHNG needed a web presence that explained these four complex divisions to industrial plant managers, captured quote requests, and ranked on Google without needing an agency on retainer.",
     approach:
-      "Own the whole lifecycle: requirements and planning, frontend, backend and API work, content management, email, deployment, SEO and performance. A headless CMS keeps content editable without a developer, and a Node API handles backend logic and email.",
+      "I took the project from zero to production solo. I structured the frontend in Next.js, TypeScript, and Tailwind, and modeled their four divisions in Sanity CMS so their commercial team could update specs themselves. I wired quote requests to Supabase and Resend, configured Microsoft Clarity to monitor drop-offs, and treated performance and SEO as core engineering requirements.",
     process: [
-      "Turned the company's goals into requirements and a plan before writing code.",
-      "Built the frontend in Next.js, React, TypeScript and Tailwind, with content modelled in Sanity so the team can edit it themselves.",
-      "Wired the backend: a Node API, Supabase for stored data and Resend for email, deployed on Vercel.",
-      "Treated search visibility and speed as features, and measured them with PageSpeed and Search Console rather than guessing.",
+      "Mapped out the user flow for factory owners and plant engineers looking for industrial gas conversions.",
+      "Built the frontend across RHNG's four core divisions: Cryogenic Engineering, Virtual Pipeline Supply (CNG/LNG/LPG), Training Academy, and Consultancy.",
+      "Modeled structured content schemas in Sanity CMS so the team could edit service capabilities and case studies without touching Git.",
+      "Built endpoints with Supabase for quote storage, Resend for instant email notifications, and Microsoft Clarity for telemetry.",
+      "Tuned Core Web Vitals to hit a 100/100 PageSpeed score, helping the site earn 2.5k+ search impressions right after launch.",
     ],
     outcomes: [
       {
         n: "100",
         l: "PageSpeed score",
-        d: "Reported performance score at launch.",
+        d: "Perfect mobile and desktop performance score at launch.",
       },
       {
-        n: "2.5k",
+        n: "2.5k+",
         l: "Search impressions",
-        d: "Reported from Search Console after launch.",
+        d: "Organic visibility reported from Search Console.",
       },
       {
         n: "85+",
         l: "Search clicks",
-        d: "Reported organic clicks.",
+        d: "Direct organic clicks from prospective industrial clients.",
+      },
+      {
+        n: "4",
+        l: "Divisions",
+        d: "Engineering, Virtual Pipelines, Training Academy, and Advisory.",
       },
     ],
     learned:
-      "Owning a project end to end means every decision has a cost you personally pay later. It taught me to choose boring, maintainable tools and to treat the client's ability to run the site without me as part of the deliverable. The source is private client work, and the figures are the ones I reported at the time.",
+      "When you build a client platform solo, there is no one else to blame for a sloppy decision. It reinforced my preference for simple, rock-solid tools—Next.js, typed schemas in Sanity, and managed backends. If a client can operate their own platform without needing me to touch the codebase, I did my job.",
+    next: "triple-cure",
+  },
+  {
+    slug: "triple-cure",
+    idx: "05",
+    name: "Triple Cure Assembly",
+    tag: "Built solo",
+    cat: "product",
+    year: "2024 · ~2 months",
+    desc: "The digital home and community portal for Triple Cure Assembly, a foundation supporting students and youth across Ondo State with scholarships and ICT centers. Built solo in roughly eight weeks.",
+    lede: "From empty repo to live foundation portal in 60 days.",
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Sanity",
+      "Supabase",
+      "Resend",
+      "Vercel",
+    ],
+    role: "Independent full-stack developer",
+    duration: "~2 months · requirements to production",
+    team: "Solo",
+    image: "/work/triple-cure/tca-landing-on-laptop.png",
+    gallery: [
+      { src: "/work/triple-cure/tca-landing-on-laptop.png", alt: "Triple Cure Assembly on laptop mockup showing initiatives and ICT literacy programs", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/triple-cure/tca_landing_page.png", alt: "Triple Cure Assembly homepage: Where Potential Meets Purpose", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/triple-cure/tca_about_page.png", alt: "Triple Cure Assembly about page: A Vision Born From Service honoring Barrister Clement Oyedele Akintola Arikawe", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/triple-cure/tca_scholarships_page.png", alt: "Triple Cure Assembly scholarship portal and Annual Igbotako Scholarship program", kind: "desktop", w: 1600, h: 1000 },
+    ],
+    live: "triplecure.com",
+    problem:
+      "Triple Cure Assembly is an education and community foundation in Ondo State that funds youth scholarships and digital training hubs. They had zero web presence and needed a fast, clean home to announce their programs—including the Annual Igbotako Scholarship and the Okitipupa ICT Hub—and publish ceremony updates. Most importantly, the board needed to manage everything themselves without having to call a developer every time they had an announcement.",
+    approach:
+      "I built and shipped the entire platform solo in about two months, from an empty repo to production on Vercel. I set up Next.js with TypeScript and Tailwind, and structured Sanity CMS so non-technical staff can post updates, photos, and announcements directly. Form submissions are wired to Supabase and Resend. Note: the live scholarship intake form is currently turned off on the client's end, but the foundation portal, program criteria, ICT center partnership, and CMS publishing pipeline are fully operational in their hands.",
+    process: [
+      "Sat down with the foundation team to understand what they needed: a clean, reliable site they could update without breaking things.",
+      "Built the frontend with Next.js, React, TypeScript, and Tailwind, keeping page weights tiny and layouts crisp on mobile (crucial for users in Ondo State with variable network connections).",
+      "Structured the content schema in Sanity CMS for news, scholarship guidelines, and ICT hub programs so the board could publish recaps—like the 2026 award ceremony where 20 students received scholarships.",
+      "Hooked up Supabase and Resend for backend inquiries, added proper NGO structured data (JSON-LD) for search, and deployed to Vercel.",
+    ],
+    outcomes: [
+      {
+        n: "~8 weeks",
+        l: "Concept to live",
+        d: "Built independently on an accelerated turnaround.",
+      },
+      {
+        n: "100%",
+        l: "Self-administered",
+        d: "The board publishes stories and ceremony recaps without asking for engineering help.",
+      },
+      {
+        n: "20",
+        l: "Scholars supported",
+        d: "Students awarded merit scholarships at the 2026 ceremony alongside local community empowerment.",
+      },
+    ],
+    learned:
+      "Building for non-technical teams always reinforces the same lesson: if the CMS is too complicated or fragile, people stop updating the site the week after launch. Designing the editing experience in Sanity was just as important as writing the frontend. Giving them a system that runs without me was the real goal.",
     next: "edifition",
   },
   {
     slug: "edifition",
-    idx: "05",
+    idx: "06",
     name: "Edifition",
     tag: "Frontend team",
     cat: "product",
-    year: "Client work",
-    desc: "Frontend engineering on a three-developer team at Edifition, a product development studio for startups: 20+ pages, 30+ reusable components, Keycloak authentication and a measured performance gain.",
+    year: "2023–2024 · 9 months",
+    desc: "Frontend engineering at Edifition, a product development studio building client startup applications: 20+ pages, 30+ reusable components, Keycloak authentication, and a measured performance gain.",
     lede: "A large frontend, kept fast and consistent by a small team.",
     stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Keycloak"],
-    role: "Frontend developer",
-    duration: "Team engagement",
+    role: "Frontend Engineer · Software Studio",
+    duration: "Nov 2023 – Jul 2024 · 9 months",
     team: "3 developers",
+    image: "/work/peacefulnes.png",
+    gallery: [
+      { src: "/work/peacefulnes.png", alt: "Peacefulness platform built at Edifition: multilingual resources, internationalization, and partner portals", kind: "desktop", w: 1600, h: 1000 }
+    ],
     live: "edifition.com",
+    liveLabel: "Studio",
     problem:
-      "A growing product needs a frontend that stays consistent as pages multiply, integrates with many backend services, and sits behind real authentication, without getting slow.",
+      "A fast-growing product studio needs frontends that stay consistent as client projects multiply, integrate with diverse backend microservices, and sit behind real authentication, without getting slow.",
     approach:
       "A shared component library so pages are assembled rather than rewritten, a clear frontend architecture the three of us could extend in parallel, and Keycloak for authentication. Performance was tracked as a number, not a feeling.",
     process: [
-      "Built 20+ pages and 7+ features on a library of 30+ reusable components.",
+      "Built 20+ pages and 7+ features across client platforms on a library of 30+ reusable components.",
+      "Delivered client platforms such as the Peacefulness Institute internationalized portal with multi-locale resources, scheduling, and partner authentication.",
       "Integrated roughly five to ten backend APIs and the Keycloak authentication flow.",
       "Profiled with Lighthouse and worked through the biggest costs first, raising the performance score from 67 to 90.",
-      "Worked in a small team, so consistency came from shared components and conventions rather than review bottlenecks.",
     ],
     outcomes: [
       {
         n: "20+",
         l: "Pages",
-        d: "Across 7+ features.",
+        d: "Across 7+ features and client platforms.",
       },
       {
         n: "30+",
@@ -358,12 +438,12 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
     ],
     learned:
-      "In a team of three, the component library is the architecture, and performance work pays off when you measure first and fix the biggest cost first. The source is private, and the figures are those I reported.",
+      "In a team of three, the component library is the architecture, and performance work pays off when you measure first and fix the biggest cost first. The source is private client work, and the figures are those I reported.",
     next: "createstacksapp",
   },
   {
     slug: "createstacksapp",
-    idx: "06",
+    idx: "07",
     name: "create-stacks-app",
     tag: "OSS",
     cat: "oss",
@@ -414,7 +494,12 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
 ];
 
-export const FEATURED_PROJECTS: FeaturedProject[] = CASE_STUDIES.slice(0, 3).map(
+export const FEATURED_PROJECTS: FeaturedProject[] = [
+  CASE_STUDIES.find((cs) => cs.slug === "zamir")!,
+  CASE_STUDIES.find((cs) => cs.slug === "coinsafe")!,
+  CASE_STUDIES.find((cs) => cs.slug === "triple-cure")!,
+  CASE_STUDIES.find((cs) => cs.slug === "zk-implementations")!,
+].map(
   ({ slug, idx, name, tag, year, desc, stack, role, duration, image, logo, logoBg, imagePosition }) => ({
     slug,
     idx,

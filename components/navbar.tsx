@@ -11,6 +11,8 @@ import { MoMark } from "@/lib/brand-mark";
 
 const navLinks: { name: string; href: string }[] = [
   { name: "Work", href: "/work" },
+  { name: "Systems", href: "/systems" },
+  { name: "Tools", href: "/tools" },
   { name: "About", href: "/about" },
   { name: "Notes", href: "/blog" },
 ];
@@ -125,13 +127,13 @@ export function Navbar(): React.ReactNode {
         </div>
 
         {/* Center: Desktop Nav Links */}
-        <div className="flex gap-6 max-[820px]:hidden items-center justify-self-center">
+        <div className="flex gap-7 max-[820px]:hidden items-center justify-self-center">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               data-active={isActive(link.href)}
-              className={`group relative font-mono text-[12px] uppercase tracking-widest font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-2`}
+              className="group relative font-sans text-[13px] tracking-[0.01em] font-medium transition-colors duration-150 no-underline text-secondary-foreground hover:text-(--ink) data-[active=true]:text-(--v3-accent) py-1.5"
             >
               {link.name}
               <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-(--v3-accent) scale-x-0 transition-transform duration-200 origin-left group-hover:scale-x-100 group-data-[active=true]:scale-x-100" />
@@ -139,12 +141,12 @@ export function Navbar(): React.ReactNode {
           ))}
         </div>
 
-        <div className="flex gap-3 items-center justify-self-end">
-          <CommandPaletteTrigger />
+        <div className="flex gap-2.5 items-center justify-self-end">
+          <CommandPaletteTrigger compact />
 
           <MagneticWrapper strength={15}>
             <button
-              className="w-11 h-11 min-w-[44px] min-h-[44px] sm:w-9.5 sm:h-9.5 rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[16px] hover:border-muted-foreground hover:text-(--ink)"
+              className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full border border-(--rule) bg-transparent text-secondary-foreground cursor-pointer flex items-center justify-center transition-all duration-150 text-[15px] hover:border-muted-foreground hover:text-(--ink)"
               onClick={() => setTheme(isDark ? "light" : "dark")}
               aria-label={
                 isDark ? "Switch to light mode" : "Switch to dark mode"
@@ -163,15 +165,29 @@ export function Navbar(): React.ReactNode {
             </button>
           </MagneticWrapper>
 
+          <span className="hidden min-[960px]:block w-px h-4 bg-(--rule)/80 mx-0.5" aria-hidden="true" />
+
+          <MagneticWrapper strength={15}>
+            <a
+              href="https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="max-[960px]:hidden inline-flex items-center justify-center px-3.5 py-1.5 rounded-full font-mono text-[11px] uppercase tracking-wider font-medium cursor-pointer border border-(--rule) text-secondary-foreground hover:text-(--ink) hover:border-muted-foreground transition-all duration-150 no-underline whitespace-nowrap"
+              aria-label="View Resume / CV"
+            >
+              CV ↗
+            </a>
+          </MagneticWrapper>
+
           <MagneticWrapper strength={20}>
             <Link
               href="/contact"
-              className="group max-[820px]:hidden inline-flex items-center justify-center px-5 py-2 rounded-full font-mono text-[12px] uppercase tracking-widest font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:-translate-y-0.25 hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)]"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-4 py-1.5 rounded-full font-mono text-[11px] uppercase tracking-wider font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:opacity-90"
               aria-label="Book a call"
             >
               Book a call{" "}
               <ArrowRight
-                className="inline-block transition-transform duration-250 group-hover:translate-x-1 ml-1.5 w-4 h-4"
+                className="inline-block transition-transform duration-250 group-hover:translate-x-0.5 ml-1 w-3.5 h-3.5"
                 aria-hidden="true"
               />
             </Link>
@@ -219,6 +235,15 @@ export function Navbar(): React.ReactNode {
           </Link>
         ))}
         <div className="flex items-center gap-3 pt-4 mt-2">
+          <a
+            href="https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center px-4 py-2.25 rounded-full font-mono text-[12px] uppercase tracking-wider font-medium border border-(--rule) text-secondary-foreground hover:text-(--ink) transition-colors no-underline"
+            onClick={() => setIsOpen(false)}
+          >
+            Resume / CV ↗
+          </a>
           <Link
             href="/contact"
             className="group inline-flex items-center gap-2.5 px-4 py-2.25 rounded-full font-sans text-[13px] font-medium tracking-[-0.005em] cursor-pointer border border-transparent transition-all duration-200 no-underline bg-(--v3-accent) text-(--bg) hover:bg-(--v3-accent-2)"

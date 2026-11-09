@@ -334,6 +334,16 @@ export function AboutClientContent({
               </Link>
             </MagneticWrapper>
             <MagneticWrapper strength={15}>
+              <a
+                href="https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="v3-btn v3-btn-ghost"
+              >
+                Download CV ↗
+              </a>
+            </MagneticWrapper>
+            <MagneticWrapper strength={15}>
               <Link href="/contact" className="v3-btn v3-btn-ghost">
                 Book a call
               </Link>

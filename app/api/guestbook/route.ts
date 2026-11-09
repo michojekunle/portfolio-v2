@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { guestbookNotificationEmail } from "@/lib/email/templates";
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -87,6 +89,25 @@ export async function POST(request: NextRequest): Promise<Response> {
         { error: "Failed to save entry" },
         { status: 500 }
       );
+    }
+
+    // Best-effort notification to Michael
+    const resendKey = process.env.RESEND_API_KEY;
+    const toEmail = process.env.CONTACT_TO_EMAIL;
+    const fromEmail = process.env.CONTACT_FROM_EMAIL ?? "Michael Ojekunle <no-reply@michaelojekunle.dev>";
+
+    if (resendKey && toEmail) {
+      try {
+        const resend = new Resend(resendKey);
+        await resend.emails.send({
+          from: fromEmail,
+          to: toEmail,
+          subject: `[Guestbook] New signature from ${name}`,
+          html: guestbookNotificationEmail(name, message),
+        });
+      } catch (emailErr) {
+        console.error("[guestbook] Notification email failed:", emailErr);
+      }
     }
 
     return NextResponse.json(data, { status: 201 });

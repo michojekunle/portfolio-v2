@@ -95,10 +95,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "*.supabase.co",
+        pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "*.zamir.app",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/**",
       },
     ],
     formats: ["image/avif", "image/webp"],
@@ -111,6 +113,7 @@ const nextConfig = {
 const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
+  disable: process.env.NODE_ENV !== "production",
 });
 
 export default withSerwist(nextConfig);

@@ -14,6 +14,7 @@ const PROJECT_COLORS: Record<string, string> = {
   createstacksapp: "#ec4899",
   "zk-implementations": "#0d9488",
   rhng: "#64748b",
+  "triple-cure": "#0284c7",
   edifition: "#7c3aed",
 }
 
@@ -53,7 +54,7 @@ export function ProjectsSection(): React.ReactElement {
             </h2>
           </div>
           <p className="max-w-[44ch] text-[15px] sm:text-[16px] leading-[1.6] text-secondary-foreground m-0">
-            Three I&apos;d most want to talk about. Full case studies inside with process,
+            Four I&apos;d most want to talk about. Full case studies inside with process,
             wrong turns, and what shipped.
           </p>
         </div>

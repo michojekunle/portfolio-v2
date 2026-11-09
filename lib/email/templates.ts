@@ -558,3 +558,217 @@ export function contactConfirmationEmail(name: string): string {
     "no-reply"
   );
 }
+
+// ── Newsletter subscriber notification (to Michael) ──────────────────────────
+
+export function newsletterNotificationEmail(subscriberEmail: string): string {
+  const adminUrl = `${SITE_URL}/admin/newsletter`;
+
+  const content = `
+    <!-- Label -->
+    <tr>
+      <td style="padding-bottom:16px;">${pill("New subscriber")}</td>
+    </tr>
+
+    <!-- Headline -->
+    <tr>
+      <td style="padding-bottom:20px;">
+        <h1 class="h1" style="margin:0;font-family:${F};font-size:24px;font-weight:700;color:#0a0a0a;letter-spacing:-0.5px;line-height:1.3;">Someone joined Field Notes.</h1>
+      </td>
+    </tr>
+    <tr><td style="padding-bottom:20px;">${HR}</td></tr>
+
+    <!-- Details -->
+    <tr>
+      <td style="padding-bottom:24px;">
+        <p style="margin:0 0 8px 0;font-family:${F};font-size:11px;font-weight:700;color:#bbb;letter-spacing:1.5px;text-transform:uppercase;">Subscriber Email</p>
+        <p style="margin:0;font-family:${F};font-size:16px;color:#0a0a0a;font-weight:500;">${subscriberEmail}</p>
+      </td>
+    </tr>
+
+    <!-- CTA -->
+    <tr>
+      <td>${cta("View in admin", adminUrl)}</td>
+    </tr>`;
+
+  return shell(
+    `New newsletter subscriber: ${subscriberEmail}`,
+    content,
+    "admin"
+  );
+}
+
+// ── Newsletter welcome email (to the new subscriber) ─────────────────────────
+
+export function newsletterWelcomeEmail(subscriberEmail: string): string {
+  const content = `
+    <!-- Label -->
+    <tr>
+      <td style="padding-bottom:16px;">${pill("Welcome to Field Notes")}</td>
+    </tr>
+
+    <!-- Headline -->
+    <tr>
+      <td style="padding-bottom:20px;">
+        <h1 class="h1" style="margin:0;font-family:${F};font-size:26px;font-weight:700;color:#0a0a0a;letter-spacing:-0.6px;line-height:1.25;">Glad you&rsquo;re here.</h1>
+      </td>
+    </tr>
+    <tr><td style="padding-bottom:24px;">${HR}</td></tr>
+
+    <!-- Body text -->
+    <tr>
+      <td style="padding-bottom:24px;">
+        <p style="margin:0 0 16px 0;font-family:${F};font-size:16px;color:#444;line-height:1.8;">
+          Thanks for subscribing. I write field notes on software engineering, Rust systems, product craft, and lessons learned from building in public.
+        </p>
+        <p style="margin:0 0 16px 0;font-family:${F};font-size:16px;color:#444;line-height:1.8;">
+          No spam, no rigid schedule — just thoughtful write-ups whenever a project ships or a deep problem is solved.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Recommended places to start -->
+    <tr>
+      <td style="padding-bottom:24px;">
+        <p style="margin:0 0 14px 0;font-family:${F};font-size:11px;font-weight:700;color:#bbb;letter-spacing:1.5px;text-transform:uppercase;">Three places worth starting</p>
+        <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td style="padding:12px 16px;background-color:#fafafa;border:1px solid #ebebeb;border-radius:10px;margin-bottom:8px;">
+              <a href="${SITE_URL}/work/zamir" style="font-family:${F};font-size:14px;font-weight:600;color:#0a0a0a;text-decoration:none;display:block;">
+                Zamir &rarr; <span style="font-size:13px;font-weight:400;color:#666;">Turning scripture into worship music in 10 languages</span>
+              </a>
+            </td>
+          </tr>
+          <tr><td style="height:8px;"></td></tr>
+          <tr>
+            <td style="padding:12px 16px;background-color:#fafafa;border:1px solid #ebebeb;border-radius:10px;margin-bottom:8px;">
+              <a href="${SITE_URL}/work/zk-implementations" style="font-family:${F};font-size:14px;font-weight:600;color:#0a0a0a;text-decoration:none;display:block;">
+                ZK Proof Systems in Rust &rarr; <span style="font-size:13px;font-weight:400;color:#666;">GKR, KZG, and turning papers into code</span>
+              </a>
+            </td>
+          </tr>
+          <tr><td style="height:8px;"></td></tr>
+          <tr>
+            <td style="padding:12px 16px;background-color:#fafafa;border:1px solid #ebebeb;border-radius:10px;">
+              <a href="${SITE_URL}/systems" style="font-family:${F};font-size:14px;font-weight:600;color:#0a0a0a;text-decoration:none;display:block;">
+                Systems Roadmap &rarr; <span style="font-size:13px;font-weight:400;color:#666;">How far down the stack I&rsquo;ve been</span>
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- Sign-off -->
+    <tr>
+      <td style="padding-top:12px;padding-bottom:28px;">
+        <p style="margin:0 0 20px 0;font-family:${F};font-size:14px;color:#888;">&mdash;&nbsp;Michael Ojekunle</p>
+        ${cta("Read the latest notes", `${SITE_URL}/blog`)}
+      </td>
+    </tr>`;
+
+  return shell(
+    "Welcome to Field Notes — software engineering, systems, and product craft.",
+    content,
+    subscriberEmail
+  );
+}
+
+// ── Tool onboarding notification (to Michael) ────────────────────────────────
+
+export function toolOnboardingNotificationEmail(opts: {
+  tool: string;
+  userIdentifier: string;
+  details: Record<string, string | number>;
+}): string {
+  const detailRows = Object.entries(opts.details)
+    .map(
+      ([k, v]) => `
+      <tr>
+        <td style="padding:6px 0;font-family:${F};font-size:13px;color:#888;width:35%;vertical-align:top;text-transform:capitalize;">${k.replace(/_/g, " ")}</td>
+        <td style="padding:6px 0;font-family:${F};font-size:13px;color:#0a0a0a;font-weight:500;">${v}</td>
+      </tr>`
+    )
+    .join("");
+
+  const content = `
+    <!-- Label -->
+    <tr>
+      <td style="padding-bottom:16px;">${pill(opts.tool)}</td>
+    </tr>
+
+    <!-- Headline -->
+    <tr>
+      <td style="padding-bottom:20px;">
+        <h1 class="h1" style="margin:0;font-family:${F};font-size:24px;font-weight:700;color:#0a0a0a;letter-spacing:-0.5px;line-height:1.3;">New ${opts.tool} onboarding.</h1>
+      </td>
+    </tr>
+    <tr><td style="padding-bottom:20px;">${HR}</td></tr>
+
+    <!-- Details Table -->
+    <tr>
+      <td style="padding-bottom:24px;">
+        <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td style="padding:6px 0;font-family:${F};font-size:13px;color:#888;width:35%;">User</td>
+            <td style="padding:6px 0;font-family:${F};font-size:13px;color:#0a0a0a;font-weight:500;word-break:break-all;">${opts.userIdentifier}</td>
+          </tr>
+          ${detailRows}
+        </table>
+      </td>
+    </tr>
+
+    <!-- CTA -->
+    <tr>
+      <td>${cta("Open Creator Suite", `${SITE_URL}/tools`)}</td>
+    </tr>`;
+
+  return shell(
+    `[${opts.tool}] New user onboarded`,
+    content,
+    "admin"
+  );
+}
+
+// ── Guestbook notification (to Michael) ──────────────────────────────────────
+
+export function guestbookNotificationEmail(name: string, message: string): string {
+  const content = `
+    <!-- Label -->
+    <tr>
+      <td style="padding-bottom:16px;">${pill("Guestbook")}</td>
+    </tr>
+
+    <!-- Headline -->
+    <tr>
+      <td style="padding-bottom:20px;">
+        <h1 class="h1" style="margin:0;font-family:${F};font-size:24px;font-weight:700;color:#0a0a0a;letter-spacing:-0.5px;line-height:1.3;">New guestbook entry.</h1>
+      </td>
+    </tr>
+    <tr><td style="padding-bottom:20px;">${HR}</td></tr>
+
+    <!-- Entry Details -->
+    <tr>
+      <td style="padding-bottom:20px;">
+        <p style="margin:0 0 4px 0;font-family:${F};font-size:11px;font-weight:700;color:#bbb;letter-spacing:1.5px;text-transform:uppercase;">From</p>
+        <p style="margin:0;font-family:${F};font-size:15px;color:#0a0a0a;font-weight:600;">${name}</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-bottom:24px;">
+        <p style="margin:0 0 6px 0;font-family:${F};font-size:11px;font-weight:700;color:#bbb;letter-spacing:1.5px;text-transform:uppercase;">Message</p>
+        <p style="margin:0;font-family:${F};font-size:15px;color:#444;line-height:1.7;white-space:pre-wrap;">${message}</p>
+      </td>
+    </tr>
+
+    <!-- CTA -->
+    <tr>
+      <td>${cta("View Guestbook", `${SITE_URL}/guestbook`)}</td>
+    </tr>`;
+
+  return shell(
+    `Guestbook entry from ${name}`,
+    content,
+    "admin"
+  );
+}

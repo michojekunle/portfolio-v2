@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -32,34 +31,22 @@ export function NewsletterForm(): React.ReactElement {
       // Validate email with Zod
       const validatedEmail = emailSchema.parse(email);
 
-      const supabase = createClient();
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: validatedEmail }),
+      });
 
-      const { error } = await supabase.from("email_subscribers").insert([
-        {
-          email: validatedEmail,
-        },
-      ]);
+      const data = await res.json();
 
-      if (error) {
-        // Handle duplicate email
-        if (
-          error.code === "23505" ||
-          error.message.toLowerCase().includes("duplicate")
-        ) {
-          toast.success("You're already subscribed!");
-          setStatus('idle');
-          setEmail("")
-          return;
-        } else {
-          throw new Error(error.message);
-        }
-      } else {
-        setStatus("success");
-        toast.success("You're subscribed! I'll send new posts your way.");
-        setEmail("");
-        // Reset to idle after 4 s so the user can re-submit if needed
-        setTimeout(() => setStatus("idle"), 4000);
+      if (!res.ok) {
+        throw new Error(data.error || "Subscription failed");
       }
+
+      setStatus("success");
+      toast.success(data.message || "You're subscribed! I'll send new posts your way.");
+      setEmail("");
+      setTimeout(() => setStatus("idle"), 4000);
     } catch (err: unknown) {
       setStatus("idle");
 
