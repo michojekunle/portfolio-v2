@@ -119,7 +119,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
       {
         n: "69",
-        l: "Active listeners",
+        l: "Believers",
         d: "People using Zamir organically as of November 2026.",
       },
       {
@@ -159,7 +159,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Base",
       "PWA",
     ],
-    role: "Frontend & Web3 Engineer · Founding Team",
+    role: "Blockchain Integrations Engineer · Founding Team",
     duration: "~18 months",
     team: "4–6 people",
     image: "/work/coinsafe/landing2.webp",
