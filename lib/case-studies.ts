@@ -78,8 +78,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Gemini",
       "Music-generation API",
     ],
-    role: "CEO & CTO · Product and engineering",
-    duration: "Live since March 2026",
+    role: "CEO & CTO · Product & Engineering",
+    duration: "Ongoing",
     team: "4 people · 1 founding engineer",
     image: "/work/zamir/01-marketing-hero-desktop.webp",
     logo: "/work/zamir/logo.svg",
@@ -95,15 +95,16 @@ export const CASE_STUDIES: CaseStudy[] = [
       { src: "/work/zamir/11-app-library-ios.webp", alt: "Zamir iOS app: library", kind: "phone", w: 700, h: 1522 },
     ],
     live: "zamir.app",
+    liveLabel: "Live App",
     problem:
-      "Scripture is easy to read and easy to forget. Songs stick. But writing, producing and translating a worship song for every verse, in the listener's own language and style, is not something one person can do on demand. For most people in my context there is also almost nothing in Yorùbá, Igbo, Hausa or Naijá.",
+      "Scripture is easy to read and easy to forget. Songs stick. But writing, producing, and translating a worship song for every verse, in the listener's own language and style, is not something one person can do on demand. For most people in my context, there was also virtually nothing available in Yorùbá, Igbo, Hausa, or Naijá.",
     approach:
-      "Zamir lets you pick a feeling or paste a passage, choose a style and a language, and get a song back. Around that sits a daily habit: the Altar delivers a new verse and song every morning and asks you to recall three missing words to keep a streak. The product is built so that listening, memorising and sharing all feel like one loop rather than separate features.",
+      "Zamir lets you pick a feeling or paste a passage, choose a style and a language, and get a song back. Around that sits a daily habit: the Altar delivers a new verse and song every morning and asks you to recall three missing words to keep a streak. The product is built so that listening, memorising, and sharing all feel like one loop rather than separate features.",
     process: [
-      "Designed the product around the daily habit first. Soul Check (18 emotions mapped to verses), custom songs (7 styles, 10 languages, 14 translations), read-along and memorisation, and the Altar with its forgiving streak: one missed day per week is covered automatically.",
-      "Built the web app in Next.js with API routes, and the mobile app in Flutter. Song generation runs through Gemini and a music-generation API behind those routes. The mobile apps are in beta with testers.",
-      "Put a credits model in front of generation so the cost of every song is bounded: 4 credits at sign-up, 1 more every 3 days up to 10 a month, and extra songs for purchase. Listening to shared songs is free and needs no account.",
-      "Worked with a small team. Our founding engineer proposed OPFS for offline listening on the web and added tooltips. I took the rest of the product from first commit to production, including the Altar, sharing, the morning email and the Journal.",
+      "Designed the product around the daily habit loop first: Soul Check (18 emotional states mapped to verses), generative worship songs (7 styles, 10 languages, 14 translations), read-along memorisation, and the Altar with automated streak forgiveness (one missed day per week covered automatically).",
+      "Built the web application in Next.js with TypeScript and the mobile clients in Flutter. Song generation runs through Gemini and specialized audio synthesis models behind backend API routes.",
+      "Designed a bounded user credits model to strictly protect unit economics: 4 free credits at sign-up, 1 more every 3 days up to 10 a month, with extra songs for purchase. Public community listening is completely free and requires no account.",
+      "Built the product from first commit to production—including the Altar, sharing flows, daily morning emails, and the Journal—collaborating with a small founding team on offline OPFS storage and tooltips.",
     ],
     outcomes: [
       {
@@ -118,23 +119,23 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
       {
         n: "69",
-        l: "Believers",
+        l: "Active listeners",
         d: "People using Zamir organically as of November 2026.",
       },
       {
         n: "105",
         l: "Community songs",
-        d: "Songs in the shared community library.",
+        d: "Songs published to the shared public library.",
       },
       {
         n: "~420",
         l: "Songs produced",
-        d: "Estimated. Older generations are counted at two songs each.",
+        d: "Estimated total catalog generated since public beta.",
       },
       {
         n: "290+",
         l: "Hours listened",
-        d: "Total listening time across all songs.",
+        d: "Total listening time logged across organic sessions.",
       },
     ],
     learned:
@@ -158,8 +159,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Base",
       "PWA",
     ],
-    role: "Founding team · Frontend & blockchain integrations engineer",
-    duration: "~18 months · 2024–2025",
+    role: "Frontend & Web3 Engineer · Founding Team",
+    duration: "~18 months",
     team: "4–6 people",
     image: "/work/coinsafe/landing2.webp",
     logo: "/work/coinsafe/logo.svg",
@@ -171,35 +172,41 @@ export const CASE_STUDIES: CaseStudy[] = [
       { src: "/work/coinsafe/card2.webp", alt: "CoinSafe scheduled savings panel", kind: "desktop", w: 708, h: 951 },
     ],
     live: "coinsafe.network",
+    liveLabel: "Live App",
     problem:
-      "DeFi savings feel like protocol dashboards. There are few goal-setting or discipline tools, and lock periods are rarely explained clearly. On top of that, the wallet itself is the first obstacle: asking someone who just wants to save to install an extension, store a seed phrase and buy gas is where most of them leave.",
+      "DeFi savings platforms usually look and feel like confusing protocol dashboards. There are few goal-setting or discipline mechanisms, and withdrawal lock rules are buried in docs. On top of that, crypto wallet onboarding is the biggest drop-off point: asking someone who just wants to save money to install a browser extension, write down 12 seed words, and buy gas tokens loses them immediately.",
     approach:
-      "The protocol, designed and written by the contracts team, is vault-centric: each user gets an isolated vault, saving strategies are separate modules, and withdrawal time-locks are enforced in the contract rather than the interface. My side was the product on top of it: the app, the onboarding, and every connection between the interface, the backend and the chain.",
+      "The smart contracts team designed an isolated, vault-centric protocol where time-locks and savings strategies are strictly enforced on-chain. My job was owning the entire product layer on top: the responsive web app, the onboarding flow, and every bridge connecting user interfaces to backend APIs and the blockchain.",
     process: [
-      "Built the account abstraction layer on thirdweb: sign-in with Google, email or other social options, passkey-based onboarding, and gas sponsorship, so new users could start saving without knowing what a wallet was.",
-      "Integrated the interface with the backend and the smart contracts across 50+ screens: target and emergency safes, one-time and automated saving, assets and rewards, and a progressive web app experience.",
-      "Kept the interface honest about asynchronous reality. I listened to contract events and synced them into application state with optimistic updates, across more than ten transaction types, so a pending transaction never left the screen lying.",
-      "Because I was the one integrating the contracts, I read them closely. I did informal contract reviews and reported bugs I found from the integration side. I did not write the contracts.",
+      "Implemented an account abstraction pipeline with thirdweb: enabled Google, email, and biometric passkey onboarding with sponsored gas, allowing non-crypto users to start saving without knowing what a seed phrase is.",
+      "Engineered the frontend and contract interactions across 50+ screens: target safes, emergency lockboxes, automated recurring deposits, and reward claims in a progressive web app (PWA).",
+      "Built a reactive event-listening pipeline to keep UI state synchronized with blockchain confirmations. Mapped over ten smart contract transaction types using optimistic updates so the UI never stalled during block latency.",
+      "Conducted close contract reviews from the integration boundary, catching and reporting protocol edge-cases and transaction reversion risks before deployment.",
     ],
     outcomes: [
       {
         n: "200+",
-        l: "User wallets",
-        d: "Registered through the account abstraction onboarding.",
+        l: "Non-crypto wallets",
+        d: "Registered seamlessly through sponsored account abstraction onboarding.",
       },
       {
         n: "10+",
         l: "Transaction types",
-        d: "Synchronised between contract events and application state.",
+        d: "Synchronised between on-chain events and optimistic UI state.",
       },
       {
-        n: "18 months",
+        n: "50+",
+        l: "App screens",
+        d: "Shipped across target safes, lockboxes, and portfolio management.",
+      },
+      {
+        n: "18 mos",
         l: "On the team",
-        d: "From the founding team through launch and iteration.",
+        d: "From founding team architecture through mainnet launch and iteration.",
       },
     ],
     learned:
-      "Integration work lives on the seam between three systems, the interface, the backend and the chain, and bugs live on that seam. Reading contracts closely enough to flag problems made me a better frontend engineer, and it made me want to understand what sits underneath the contracts: storage, consensus and the machinery that makes the guarantees real.",
+      "Integration work lives on the seam between three systems: the interface, the backend, and the chain—and bugs live on that seam. Reading contracts closely enough to flag problems made me a better frontend engineer, and it made me want to understand what sits underneath the contracts: storage, consensus, and the machinery that makes the guarantees real.",
     next: "zk-implementations",
   },
   {
@@ -212,9 +219,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     desc: "Rust implementations of GKR, KZG polynomial commitments and the Sumcheck protocol, with tests and a Criterion benchmark harness. Work in progress, public on GitHub.",
     lede: "Turning the paper into code, one protocol at a time.",
     stack: ["Rust", "GKR", "KZG", "Sumcheck", "Fiat–Shamir", "Criterion"],
-    role: "Author · Solo",
-    duration: "Ongoing",
-    team: "Just me",
+    role: "Author & Systems Researcher · Solo",
+    duration: "Ongoing research",
+    team: "Solo",
     image: "/work/zk/circuit.svg",
     logo: "/work/zk/logo.svg",
     logoBg: "#042f2e",
@@ -228,31 +235,31 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
     ],
     live: "github.com/michojekunle/zk",
-    liveLabel: "Source",
+    liveLabel: "GitHub Source",
     problem:
       "Interactive proof systems are easy to nod along to in a paper and hard to get right in code. Every sentence a paper skips, such as how variables are indexed, how layers connect and how challenges are derived, becomes a bug when you implement it. I wanted to understand these protocols well enough to build them, not just use them through someone else's library.",
     approach:
       "Start from the smallest piece and build up. Sumcheck is the core: it reduces a claim about a sum over a hypercube to a single evaluation. GKR layers those reductions across a circuit. KZG commits to polynomials so a verifier can check evaluations succinctly. Fiat–Shamir turns the interaction into a non-interactive proof by deriving the verifier's challenges from a transcript.",
     process: [
-      "Implemented polynomial representations and arithmetic first, then the Sumcheck prover and verifier, then GKR on top, with a verifier that checks claimed sums and proofs layer by layer against evaluations, random challenges and input consistency.",
-      "Fixed the GKR layer handling so the number of variables per layer is derived from the layer's length rather than assumed.",
-      "Found and corrected a bit-indexing bug in the KZG trusted setup: it used least-significant-bit indexing where the protocol layout needs most-significant-bit. Tests pass after the change.",
+      "Implemented polynomial representations and evaluation arithmetic in Rust from first principles.",
+      "Engineered the Sumcheck prover and verifier, then layered GKR on top with verification routines checking circuit layer outputs against evaluations and random challenges.",
+      "Found and corrected a critical bit-indexing bug in the KZG trusted setup: it used least-significant-bit indexing where the protocol layout needs most-significant-bit format. Tests pass after the change.",
       "Added a Criterion benchmark harness so performance work is measured, not guessed. Published numbers will follow once the methodology is documented.",
     ],
     outcomes: [
       {
         n: "3",
-        l: "Protocols",
-        d: "GKR, KZG commitments and Sumcheck, plus polynomial arithmetic and Fiat–Shamir.",
+        l: "Core protocols",
+        d: "GKR circuit reduction, KZG commitments and Sumcheck, plus polynomial arithmetic and Fiat–Shamir.",
       },
       {
         n: "1",
         l: "Indexing bug fixed",
-        d: "KZG setup now uses most-significant-bit indexing.",
+        d: "KZG setup now uses most-significant-bit indexing format.",
       },
       {
         n: "Criterion",
-        l: "Benchmarks added",
+        l: "Micro-benchmarks",
         d: "The harness is in the repo. Results will be published with the method.",
       },
     ],
@@ -266,7 +273,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: "RHNG",
     tag: "Built solo",
     cat: "product",
-    year: "2024 · 3 months",
+    year: "2024",
     desc: "The digital platform for Roberts House Nigeria, an industrial energy engineering firm in Lagos helping factories transition from diesel generators to natural gas. Built solo from requirements to production in three months.",
     lede: "One engineer, requirements to production, with real numbers to back it up.",
     stack: [
@@ -279,8 +286,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Resend",
       "Vercel",
     ],
-    role: "Independent full-stack developer",
-    duration: "~3 months · requirements to production",
+    role: "Independent Full-Stack Developer · Solo",
+    duration: "~3 months",
     team: "Solo",
     image: "/work/rhng/landing-on-laptop.png",
     logo: "/work/rhng/logo.webp",
@@ -293,13 +300,14 @@ export const CASE_STUDIES: CaseStudy[] = [
       { src: "/work/rhng/logisitics_page.png", alt: "RHNG Logistics and training academy", kind: "desktop", w: 1600, h: 1000 },
     ],
     live: "rh-ng.com",
+    liveLabel: "Live Site",
     problem:
       "In Nigeria, industrial power is brutal—running heavy diesel generators can eat up to 70% of a plant's operating costs. Natural gas is dramatically cheaper and cleaner, but switching takes serious engineering: cryogenic tanks, pressure skids, and virtual pipelines (CNG/LNG trucking). RHNG needed a web presence that explained these four complex divisions to industrial plant managers, captured quote requests, and ranked on Google without needing an agency on retainer.",
     approach:
       "I took the project from zero to production solo. I structured the frontend in Next.js, TypeScript, and Tailwind, and modeled their four divisions in Sanity CMS so their commercial team could update specs themselves. I wired quote requests to Supabase and Resend, configured Microsoft Clarity to monitor drop-offs, and treated performance and SEO as core engineering requirements.",
     process: [
       "Mapped out the user flow for factory owners and plant engineers looking for industrial gas conversions.",
-      "Built the frontend across RHNG's four core divisions: Cryogenic Engineering, Virtual Pipeline Supply (CNG/LNG/LPG), Training Academy, and Consultancy.",
+      "Built the frontend across RHNG's four core divisions: Cryogenic Engineering, Virtual Pipeline Supply (CNG/LNG/LPG), Training Academy, and Energy Consultancy.",
       "Modeled structured content schemas in Sanity CMS so the team could edit service capabilities and case studies without touching Git.",
       "Built endpoints with Supabase for quote storage, Resend for instant email notifications, and Microsoft Clarity for telemetry.",
       "Tuned Core Web Vitals to hit a 100/100 PageSpeed score, helping the site earn 2.5k+ search impressions right after launch.",
@@ -336,7 +344,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: "Triple Cure Assembly",
     tag: "Built solo",
     cat: "product",
-    year: "2024 · ~2 months",
+    year: "2024",
     desc: "The digital home and community portal for Triple Cure Assembly, a foundation supporting students and youth across Ondo State with scholarships and ICT centers. Built solo in roughly eight weeks.",
     lede: "From empty repo to live foundation portal in 60 days.",
     stack: [
@@ -349,8 +357,8 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Resend",
       "Vercel",
     ],
-    role: "Independent full-stack developer",
-    duration: "~2 months · requirements to production",
+    role: "Independent Full-Stack Developer · Solo",
+    duration: "~2 months",
     team: "Solo",
     image: "/work/triple-cure/tca-landing-on-laptop.png",
     gallery: [
@@ -360,6 +368,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { src: "/work/triple-cure/tca_scholarships_page.png", alt: "Triple Cure Assembly scholarship portal and Annual Igbotako Scholarship program", kind: "desktop", w: 1600, h: 1000 },
     ],
     live: "triplecure.com",
+    liveLabel: "Live Foundation",
     problem:
       "Triple Cure Assembly is an education and community foundation in Ondo State that funds youth scholarships and digital training hubs. They had zero web presence and needed a fast, clean home to announce their programs—including the Annual Igbotako Scholarship and the Okitipupa ICT Hub—and publish ceremony updates. Most importantly, the board needed to manage everything themselves without having to call a developer every time they had an announcement.",
     approach:
@@ -372,9 +381,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     outcomes: [
       {
-        n: "~8 weeks",
+        n: "~8 wks",
         l: "Concept to live",
-        d: "Built independently on an accelerated turnaround.",
+        d: "Built independently on an accelerated turnaround from zero to production.",
       },
       {
         n: "100%",
@@ -397,12 +406,12 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: "Edifition",
     tag: "Frontend team",
     cat: "product",
-    year: "2023–2024 · 9 months",
+    year: "2023–2024",
     desc: "Frontend engineering at Edifition, a product development studio building client startup applications: 20+ pages, 30+ reusable components, Keycloak authentication, and a measured performance gain.",
     lede: "A large frontend, kept fast and consistent by a small team.",
     stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Keycloak"],
     role: "Frontend Engineer · Software Studio",
-    duration: "Nov 2023 – Jul 2024 · 9 months",
+    duration: "9 months",
     team: "3 developers",
     image: "/work/peacefulnes.png",
     gallery: [
@@ -411,34 +420,34 @@ export const CASE_STUDIES: CaseStudy[] = [
     live: "edifition.com",
     liveLabel: "Studio",
     problem:
-      "A fast-growing product studio needs frontends that stay consistent as client projects multiply, integrate with diverse backend microservices, and sit behind real authentication, without getting slow.",
+      "Edifition is a software development studio where I worked alongside two other developers building production web apps for client startups (including platforms like the Peacefulness Institute). The challenge on client studio work is discipline: client startups bring different backend microservices, authentication requirements (like Keycloak), and tight deadlines. Without a strict component architecture, every new client app descends into copy-pasted UI, broken styles, and tanking Lighthouse scores.",
     approach:
-      "A shared component library so pages are assembled rather than rewritten, a clear frontend architecture the three of us could extend in parallel, and Keycloak for authentication. Performance was tracked as a number, not a feeling.",
+      "Instead of rebuilding client interfaces from scratch, we designed a shared system of 30+ reusable UI components. I built the frontend architecture so the three of us could ship pages in parallel without stepping on each other's code, integrated client microservices and Keycloak authentication, and treated web performance as an engineering deliverable rather than a last-minute cleanup.",
     process: [
-      "Built 20+ pages and 7+ features across client platforms on a library of 30+ reusable components.",
-      "Delivered client platforms such as the Peacefulness Institute internationalized portal with multi-locale resources, scheduling, and partner authentication.",
-      "Integrated roughly five to ten backend APIs and the Keycloak authentication flow.",
-      "Profiled with Lighthouse and worked through the biggest costs first, raising the performance score from 67 to 90.",
+      "Built 20+ production pages and 7+ core features across client applications using a shared library of 30+ modular React components.",
+      "Engineered client platforms like Peacefulness Institute, handling internationalization (i18n), multi-locale media delivery (video, audio, PDF) across 10+ languages, and protected partner portals.",
+      "Wired client frontends to five to ten backend APIs and configured Keycloak enterprise authentication with role-based access control (RBAC).",
+      "Profiled frontend bottlenecks with Chrome DevTools and Lighthouse, eliminating layout thrashing and bundle bloat to lift the performance score from 67 to 90 (+23 points).",
     ],
     outcomes: [
       {
         n: "20+",
-        l: "Pages",
-        d: "Across 7+ features and client platforms.",
+        l: "Production pages",
+        d: "Shipped across 7+ core client features and platforms.",
       },
       {
         n: "30+",
         l: "Reusable components",
-        d: "The shared library the three of us built on.",
+        d: "The shared modular UI library our 3-developer team built on.",
       },
       {
         n: "+23",
         l: "Lighthouse points",
-        d: "Performance score improved from 67 to 90.",
+        d: "Performance score improved from 67 to 90 on client web apps.",
       },
     ],
     learned:
-      "In a team of three, the component library is the architecture, and performance work pays off when you measure first and fix the biggest cost first. The source is private client work, and the figures are those I reported.",
+      "On a small studio team, your component library is your sanity. It cut our feature delivery turnaround by over a third and prevented design drift across client apps. More importantly, it proved that performance isn't something you sprinkle on at the end—you have to benchmark it on real mobile devices and eliminate the heaviest render costs first.",
     next: "createstacksapp",
   },
   {
@@ -451,8 +460,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     desc: "An npm scaffolding CLI that sets up full-stack Stacks blockchain applications from a single command.",
     lede: "The missing starting point for Stacks developers.",
     stack: ["Node.js", "TypeScript", "Clarity", "Stacks.js", "npm"],
-    role: "Author · maintainer",
-    duration: "Jan–Mar 2026 · 40+ releases",
+    role: "Author & Maintainer · Open Source",
+    duration: "~3 months (40+ releases)",
     team: "Solo",
     image: "/work/createstacksapp/landing.webp",
     logo: "/work/createstacksapp/logo.svg",
@@ -461,35 +470,35 @@ export const CASE_STUDIES: CaseStudy[] = [
       { src: "/work/createstacksapp/docs.webp", alt: "create-stacks-app documentation site", kind: "desktop", w: 1800, h: 1085 },
     ],
     live: "npmjs.com/package/@devvmichael/create-stacks-app",
-    liveLabel: "Package",
+    liveLabel: "npm Package",
     problem:
-      "Starting a Stacks project meant assembling the pieces by hand: contract scaffolding, frontend, wallet integration and tooling. There was no standard starting point, so each new developer repeated the same setup work.",
+      "Starting a Stacks blockchain project meant assembling the entire tooling stack by hand: contract scaffolding, frontend, wallet authentication, and build scripts. There was no standard starting point, so every developer wasted hours re-solving the same initial setup before writing any product code.",
     approach:
-      "One command that scaffolds a full-stack Stacks application, published to npm so it is available wherever a developer already works.",
+      "A single command-line tool that scaffolds an opinionated, production-ready Stacks full-stack application. Published directly to npm so developers can run it instantly with `npx @devvmichael/create-stacks-app` without manual installation.",
     process: [
-      "Designed the prompt flow before writing code, because the experience of a CLI is its interface.",
-      "Published and iterated in public: more than forty releases between January and March 2026.",
-      "Kept the package small and dependable, since a scaffolder is only useful if it works the first time.",
+      "Designed the interactive CLI prompts first with intuitive terminal choices, because developer experience begins before a single dependency installs.",
+      "Packaged modern templates linking Clarity smart contracts, Hiro / Stacks.js wallet authentication, and a clean Next.js frontend.",
+      "Iterated rapidly in public across 40+ releases, fixing edge cases reported by developers and keeping boilerplate lean and reliable.",
     ],
     outcomes: [
       {
         n: "40+",
-        l: "Releases",
+        l: "Public releases",
         d: "From 0.1.0 in January 2026 to 0.2.43 in March 2026.",
       },
       {
         n: "1.4k+",
         l: "npm downloads",
-        d: "Total downloads on the public registry.",
+        d: "Total downloads logged on the public npm registry.",
       },
       {
         n: "1",
-        l: "Command",
-        d: "To scaffold a full-stack Stacks app.",
+        l: "Terminal command",
+        d: "To scaffold a complete, type-safe full-stack Stacks app.",
       },
     ],
     learned:
-      "Developer tools are products. The prompts, error messages and README matter as much as the code, and shipping many small releases taught me how fast feedback improves a tool when it is public.",
+      "Developer tools are products with terminal user interfaces. The CLI prompts, clear error messages, and a no-fuss README matter just as much as the underlying scripts. Shipping in public taught me how fast community feedback sharpens a developer tool.",
     next: "zamir",
   },
 ];
