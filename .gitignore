@@ -46,3 +46,5 @@ sendgrid.env
 .antigravitycli
 # original full-size screenshots (optimized .webp copies are committed)
 public/work/**/_orig/
+
+inspos.md

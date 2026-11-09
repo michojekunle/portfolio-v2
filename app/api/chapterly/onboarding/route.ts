@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { CURATED_BOOKS } from "@/lib/chapterly/curated";
 import type { RecommendedBookPlanItem } from "@/lib/chapterly/types";
+import { toolOnboardingNotificationEmail } from "@/lib/email/templates";
 
 const OnboardingSchema = z.object({
   daily_minutes: z.number().int().min(5).max(120),
@@ -83,6 +85,34 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (error) {
     console.error("[onboarding] database error:", error);
     return NextResponse.json({ error: "Failed to save goals" }, { status: 500 });
+  }
+
+  // Best-effort notification to Michael
+  const resendKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const fromEmail = process.env.CONTACT_FROM_EMAIL ?? "Michael Ojekunle <no-reply@michaelojekunle.dev>";
+
+  if (resendKey && toEmail) {
+    try {
+      const resend = new Resend(resendKey);
+      await resend.emails.send({
+        from: fromEmail,
+        to: toEmail,
+        subject: `[Chapterly] New reader onboarded: ${daily_minutes}m/day`,
+        html: toolOnboardingNotificationEmail({
+          tool: "Chapterly",
+          userIdentifier: user.email ?? user.id,
+          details: {
+            daily_minutes: `${daily_minutes} mins`,
+            annual_books: `${annual_books} books`,
+            reading_level: parsed.data.reading_level,
+            interests: interests.join(", ") || "General",
+          },
+        }),
+      });
+    } catch (emailErr) {
+      console.error("[chapterly/onboarding] Notification email failed:", emailErr);
+    }
   }
 
   return NextResponse.json({ success: true });

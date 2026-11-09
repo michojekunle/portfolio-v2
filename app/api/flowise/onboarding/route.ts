@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 import { z } from "zod";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
@@ -7,6 +8,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { classifyPersona } from "@/lib/flowise/persona";
 import { SYSTEM_CATEGORIES, CURRENCIES, PERSONA_CONFIG } from "@/lib/flowise/types";
 import type { SuggestedBudget, SuggestedGoal, SystemCategoryId } from "@/lib/flowise/types";
+import { toolOnboardingNotificationEmail } from "@/lib/email/templates";
 
 const VALID_CATEGORY_IDS = new Set<string>(SYSTEM_CATEGORIES.map((c) => c.id));
 
@@ -185,6 +187,35 @@ Return ONLY JSON matching this schema, no markdown:
   if (error) {
     console.error("[flowise/onboarding] profile upsert error:", error);
     return NextResponse.json({ error: "Failed to save your profile" }, { status: 500 });
+  }
+
+  // Best-effort notification to Michael
+  const resendKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const fromEmail = process.env.CONTACT_FROM_EMAIL ?? "Michael Ojekunle <no-reply@michaelojekunle.dev>";
+
+  if (resendKey && toEmail) {
+    try {
+      const resend = new Resend(resendKey);
+      await resend.emails.send({
+        from: fromEmail,
+        to: toEmail,
+        subject: `[Flowise] New user onboarded: ${persona}`,
+        html: toolOnboardingNotificationEmail({
+          tool: "Flowise",
+          userIdentifier: user.email ?? user.id,
+          details: {
+            persona,
+            primary_goal,
+            income_type,
+            monthly_income_range,
+            currency,
+          },
+        }),
+      });
+    } catch (emailErr) {
+      console.error("[flowise/onboarding] Notification email failed:", emailErr);
+    }
   }
 
   return NextResponse.json({ persona, welcome_message: welcomeMessage, budgets, goals });
