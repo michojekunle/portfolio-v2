@@ -167,6 +167,18 @@ export function Footer(): React.ReactElement {
               </li>
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
+                  <a
+                    href="https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-secondary-foreground no-underline hover:text-(--v3-accent) transition-colors inline-block"
+                  >
+                    Resume / CV <ArrowUpRight className="inline w-3 h-3 ml-0.5" />
+                  </a>
+                </MagneticWrapper>
+              </li>
+              <li>
+                <MagneticWrapper strength={10} className="inline-block">
                   <Link
                     href="/changelog"
                     className="text-secondary-foreground no-underline hover:text-(--v3-accent) transition-colors inline-block"

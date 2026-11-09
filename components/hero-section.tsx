@@ -73,16 +73,25 @@ export function HeroSection(): React.ReactElement {
             </MagneticWrapper>
           </div>
 
-          <Link
-            href="/work/zamir"
-            className="group mt-12 flex items-baseline gap-3 flex-wrap text-[15px] leading-normal text-secondary-foreground no-underline hover:text-(--ink) transition-colors"
-          >
+          <div className="mt-12 flex items-baseline gap-2.5 flex-wrap text-[15px] leading-normal text-secondary-foreground">
             <span className="font-medium text-(--ink)">Latest:</span>
-            <span>Zamir has 69 believers and 4,699 plays since March 2026.</span>
-            <span className="inline-flex items-center gap-1 text-(--v3-accent) underline decoration-(--rule) underline-offset-4 group-hover:decoration-(--v3-accent)">
-              Read the case study <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </span>
-          </Link>
+            <span>Zamir: 4.7k plays, 40.7% repeat listening rate across 10 languages.</span>
+            <Link
+              href="/work/zamir"
+              className="group inline-flex items-center gap-1 text-(--v3-accent) underline decoration-(--rule) underline-offset-4 hover:decoration-(--v3-accent) no-underline font-medium"
+            >
+              Case study <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
+            <span className="text-muted-foreground/40">·</span>
+            <a
+              href="https://zamir.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-muted-foreground hover:text-(--ink) transition-colors no-underline font-mono text-[13px]"
+            >
+              zamir.app ↗
+            </a>
+          </div>
         </motion.div>
       </div>
     </section>
