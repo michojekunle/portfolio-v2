@@ -1,564 +1,329 @@
-import { MagneticWrapper } from "@/components/magnetic-wrapper";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Share2, LayoutGrid, BookMarked, Compass, Wallet } from "lucide-react";
+import { MagneticWrapper } from "@/components/magnetic-wrapper";
+import {
+  LayoutGrid,
+  BookMarked,
+  BookOpen,
+  Wallet,
+  Compass,
+  Share2,
+  ArrowRight,
+  Sparkles,
+  Check,
+} from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Creator Suite",
+  title: "Tools & Workbench · Michael Ojekunle",
   description:
-    "Six live tools built for creators who read, ship, and share: BookBreaks turns books into content, Chapterly is a reading OS with AI voice chat, Flowise tracks your money, Vela is a life journal for objectives and daily logs, Thread Studio engineers viral X threads, and Carousel Lab builds scroll-stopping slides.",
+    "Personal utilities, workflow experiments, and lab prototypes built by Michael Ojekunle — featuring Carousel Lab, his daily driver for Instagram carousel creation.",
 };
 
-const TOOLS = [
+interface LabTool {
+  id: string;
+  name: string;
+  badge: string;
+  tagline: string;
+  description: string;
+  notes: string;
+  href: string;
+  icon: typeof LayoutGrid;
+  tags: string[];
+}
+
+const LAB_EXPERIMENTS: LabTool[] = [
+  {
+    id: "chapterly",
+    name: "Chapterly",
+    badge: "Prototype · Reading",
+    tagline: "A distraction-free reading dashboard & EPUB companion.",
+    description:
+      "Built to test clean reader typography for EPUBs, highlight management, and reading streaks without bloated social network features.",
+    notes: "Active prototype testing custom font rendering and highlight exports.",
+    href: "/tools/chapterly",
+    icon: BookMarked,
+    tags: ["EPUB Reader", "Highlights", "Reading Streaks"],
+  },
   {
     id: "bookbreaks",
     name: "BookBreaks",
-    tagline: "Books → Content, instantly.",
+    badge: "Experiment · Content",
+    tagline: "Extracting core arguments and lessons from books.",
     description:
-      "Turn every book you read into blog articles, X threads, Instagram carousels, and TikTok scripts. AI-powered, multi-platform, built for creators learning in public.",
-    status: "live" as const,
+      "A personal experiment in breaking down non-fiction reading notes into structured takeaways, slide outlines, and bite-sized post drafts.",
+    notes: "Prototype testing prompt pipelines for content structuring.",
     href: "/tools/bookbreaks",
-    accent: "#C85A2C",
-    accentSoft: "rgba(200,90,44,0.12)",
     icon: BookOpen,
-    stats: ["4 books seeded", "5 content types", "Groq + Gemini AI"],
-    cta: "Repurpose my first book",
+    tags: ["Book Notes", "Takeaways", "Draft Outlines"],
+  },
+  {
+    id: "flowise",
+    name: "Flowise",
+    badge: "Work in progress · Finance",
+    tagline: "A lightweight interface for personal money flows.",
+    description:
+      "A finance tracking experiment tailored to Nigerian money flows (OPay, Kuda, bank transaction SMS alerts) and simple spending categories without accounting clutter.",
+    notes: "Early prototype testing manual logging and SMS parser concepts.",
+    href: "/tools/flowise",
+    icon: Wallet,
+    tags: ["Expense Log", "NGN Alerts", "Category Budgets"],
+  },
+  {
+    id: "journal",
+    name: "Vela",
+    badge: "Prototype · Reflection",
+    tagline: "Daily check-ins, objectives, and reflection logs.",
+    description:
+      "A quiet, structured daily log experiment built to track daily intentions, energy levels, and priority milestones without productivity guilt.",
+    notes: "Personal check-in experiment built for intentional daily logging.",
+    href: "/tools/journal",
+    icon: Compass,
+    tags: ["Daily Logs", "Objectives", "Energy Tracking"],
   },
   {
     id: "thread-studio",
     name: "Thread Studio",
-    tagline: "Engineer viral threads.",
+    badge: "Sandbox · Writing",
+    tagline: "Distraction-free drafting for multi-post threads.",
     description:
-      "Draft, structure, and schedule long-form X threads. Hook optimiser, engagement analytics, and a distraction-free writing canvas.",
-    status: "live" as const,
+      "A minimal writing scratchpad to preview post lengths, character counts, and thread pacing before copying over to social platforms.",
+    notes: "Clean drafting scratchpad for long-form social threads.",
     href: "/tools/thread-studio",
-    accent: "#818CF8",
-    accentSoft: "rgba(129,140,248,0.12)",
     icon: Share2,
-    stats: ["Thread builder", "Hook analyser", "Scheduling"],
-    cta: "Engineer my next thread",
+    tags: ["Writing Canvas", "Thread Splitter", "Pacing Preview"],
   },
-  {
-    id: "carousel-lab",
-    name: "Carousel Lab",
-    tagline: "Design scroll-stopping slides.",
-    description:
-      "Build Instagram and LinkedIn carousels with book-themed templates. Export as PNG or HTML, publish directly from the browser.",
-    status: "live" as const,
-    href: "/tools/carousel-lab",
-    accent: "#FF6B35",
-    accentSoft: "rgba(255,107,53,0.12)",
-    icon: LayoutGrid,
-    stats: ["4 visual themes", "6-slide templates", "One-click export"],
-    cta: "Design a scroll-stopper",
-  },
-  {
-    id: "chapterly",
-    name: "Chapterly",
-    tagline: "Read everything. Remember everything.",
-    description:
-      "A personal reading OS. Upload PDFs, EPUBs, DOCX and more. AI reading companion, voice chat about your books, streaks, goals, highlights — and a direct bridge to BookBreaks.",
-    status: "live" as const,
-    href: "/tools/chapterly",
-    accent: "#7E9AA8",
-    accentSoft: "rgba(126,154,168,0.12)",
-    icon: BookMarked,
-    stats: ["10+ formats", "AI voice chat", "Streaks & goals"],
-    bridge: "bookbreaks",
-    cta: "Start remembering more",
-  },
-] as const;
+];
 
-export default function CreatorSuitePage(): React.ReactElement {
+export default function ToolsPage(): React.ReactElement {
   return (
     <main
       id="main-content"
       tabIndex={-1}
-      className="outline-none min-h-screen"
-      style={{ background: "var(--bg)" }}
+      className="outline-none min-h-screen bg-(--bg) text-(--ink)"
     >
-      {/* ── Hero ── */}
-      <section
-        className="pt-36 pb-18 max-[720px]:pt-24 max-[720px]:pb-12 border-b border-(--rule)"
-      >
+      {/* ── HERO / HEADER ── */}
+      <section className="pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 border-b border-(--rule)">
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-          <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-12 items-end">
-            <div>
-              <h1
-                className="m-0 font-display font-normal text-[clamp(44px,7.5vw,98px)] leading-[0.92] tracking-[-0.035em] text-(--ink) text-balance fvs-display"
-              >
-                Tools for{" "}
-                <em
-                  className="not-italic italic text-(--v3-accent) fvs-soft"
-                >
-                  builders
-                </em>{" "}
-                <br className="max-[900px]:hidden" />
-                who share.
-              </h1>
+          <div className="flex flex-col gap-6 max-w-[85ch]">
+            {/* Context Eyebrow */}
+            <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground flex-wrap">
+              <span className="font-semibold text-(--ink)">Tools &amp; Lab</span>
+              <span className="text-(--rule)">·</span>
+              <span className="text-(--v3-accent) font-medium">Personal Workbench</span>
+              <span className="text-(--rule)">·</span>
+              <span>Updated 2026</span>
             </div>
-            <div className="max-w-[44ch] max-[900px]:max-w-none">
-              <p
-                className="text-[clamp(17px,2vw,20px)] leading-[1.6] m-0 text-secondary-foreground"
-              >
-                Six production tools I built because I needed them. Turn books
-                into content, track every naira, journal your objectives, build
-                viral threads, design carousel slides — and read anything with
-                an AI that remembers your highlights.
+
+            {/* Page Heading */}
+            <h1 className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.02] tracking-tight text-(--ink) fvs-display text-balance">
+              Personal tools, utilities, and things{" "}
+              <em className="not-italic italic text-(--v3-accent) fvs-soft">in the works.</em>
+            </h1>
+
+            {/* Honest Subtitle */}
+            <p className="m-0 text-base sm:text-lg lg:text-xl text-secondary-foreground leading-relaxed max-w-[65ch]">
+              A candid collection of utilities, workflow hacks, and prototypes I built to scratch my
+              own everyday itches. Most of what you see here are work-in-progress experiments being
+              fleshed out in the open — except <strong className="text-(--ink) font-semibold">Carousel Lab</strong>, which
+              is my active, battle-tested daily driver for social publishing.
+            </p>
+
+            {/* Quick Status Bar */}
+            <div className="flex items-center gap-4 pt-2 flex-wrap font-mono text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5 font-medium text-(--ink)">
+                <span className="w-2 h-2 rounded-full bg-(--v3-accent)" aria-hidden="true" />
+                1 Daily Driver (Carousel Lab)
+              </span>
+              <span className="text-(--rule)">/</span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-muted-foreground" aria-hidden="true" />
+                5 Prototypes in Progress
+              </span>
+              <span className="text-(--rule)">/</span>
+              <span>No paywalls · Free personal utilities</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FLAGSHIP SPOTLIGHT: CAROUSEL LAB ── */}
+      <section className="py-16 sm:py-20 lg:py-24 border-b border-(--rule)">
+        <div className="max-w-(--maxw) mx-auto px-(--gutter)">
+          {/* Spotlight Header */}
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 sm:gap-6 mb-10 sm:mb-12">
+            <div className="shrink-0">
+              <div className="flex items-center gap-2 font-mono text-xs text-(--v3-accent) font-medium mb-2 flex-wrap">
+                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                <span>Featured Daily Driver</span>
+                <span className="text-(--rule)">·</span>
+                <span className="text-muted-foreground">Active Production Use</span>
+              </div>
+              <h2 className="m-0 font-display font-normal text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-(--ink) fvs-display">
+                Carousel Lab
+              </h2>
+            </div>
+            <p className="m-0 max-w-[50ch] text-sm sm:text-base text-secondary-foreground leading-relaxed">
+              The tool I actually use to design and export every multi-slide carousel I post on my
+              personal Instagram (<span className="font-mono text-xs text-(--ink)">@devvmichaell</span>).
+            </p>
+          </div>
+
+          {/* Spotlight Presentation Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 xl:gap-14 items-start">
+            {/* Left: Punchy Purpose & Highlights */}
+            <div className="flex flex-col gap-6">
+              <p className="m-0 text-lg sm:text-xl text-(--ink) leading-relaxed max-w-[52ch]">
+                Built for raw speed: pick an aesthetic mood, draft your slides, and export retina PNG decks directly from your browser in seconds.
               </p>
-              <div className="mt-8 flex items-center gap-3 flex-wrap">
-                <MagneticWrapper>
+
+              {/* Core Strengths */}
+              <div className="space-y-3.5 pt-1">
+                <div className="flex items-center gap-3 text-base text-secondary-foreground">
+                  <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
+                  <span>Instant high-res PNG &amp; ZIP exports rendered 100% in-browser</span>
+                </div>
+                <div className="flex items-center gap-3 text-base text-secondary-foreground">
+                  <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
+                  <span>Curated typographic moods: Fraunces, Grotesk, Playfair &amp; Minimal</span>
+                </div>
+                <div className="flex items-center gap-3 text-base text-secondary-foreground">
+                  <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
+                  <span>Flexible aspect ratios: 4:5 Instagram portrait &amp; 1:1 square</span>
+                </div>
+                <div className="flex items-center gap-3 text-base text-secondary-foreground">
+                  <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) shrink-0" aria-hidden="true" />
+                  <span>Zero lag, no account required, and auto-saving scratchpad</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-4 pt-2 flex-wrap">
+                <MagneticWrapper strength={15}>
                   <Link
-                    href="/tools/bookbreaks"
-                    className="inline-flex items-center gap-2 py-3 px-6 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                    href="/tools/carousel-lab"
+                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-mono text-xs tracking-wider font-semibold bg-(--ink) text-(--bg) no-underline transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                   >
-                    Launch BookBreaks{" "}
-                    <span className="text-[14px]" aria-hidden="true">
-                      →
-                    </span>
+                    Open Carousel Lab <ArrowRight className="w-4 h-4" />
                   </Link>
                 </MagneticWrapper>
+                <span className="font-mono text-xs text-muted-foreground">
+                  Free · Runs 100% client-side
+                </span>
+              </div>
+            </div>
+
+            {/* Right: Clean Live Preview Canvas */}
+            <div className="border border-(--rule) rounded-2xl overflow-hidden bg-(--paper) shadow-[0_16px_40px_-16px_color-mix(in_oklab,var(--ink)_8%,transparent)]">
+              {/* Chrome header */}
+              <div className="h-10 px-4 border-b border-(--rule) flex items-center justify-between font-mono text-xs text-muted-foreground">
+                <svg width="36" height="10" viewBox="0 0 36 10" fill="none" aria-hidden="true" className="shrink-0">
+                  <circle cx="5" cy="5" r="4" fill="var(--rule)" />
+                  <circle cx="17" cy="5" r="4" fill="var(--rule)" />
+                  <circle cx="29" cy="5" r="4" fill="var(--rule)" />
+                </svg>
+                <span className="text-(--ink) font-medium">tools/carousel-lab · Live Canvas</span>
+                <span className="text-(--v3-accent) font-semibold">● Ready</span>
+              </div>
+
+              {/* Sample Slide Graphic */}
+              <div className="p-8 sm:p-10 flex flex-col justify-between aspect-[4/3] relative">
+                <div className="flex items-center justify-between font-mono text-xs text-muted-foreground">
+                  <span className="text-(--v3-accent) font-semibold">01 / 06</span>
+                  <span>Instagram 4:5</span>
+                </div>
+
+                <div className="my-auto py-4">
+                  <div className="font-mono text-xs text-(--v3-accent) font-medium tracking-wider mb-2">
+                    The Art of Shipping
+                  </div>
+                  <h3 className="m-0 font-display font-normal text-2xl sm:text-3xl leading-tight text-(--ink) fvs-display">
+                    Stop designing for perfection. Ship the prototype and let real usage show you where to polish.
+                  </h3>
+                </div>
+
+                <div className="flex items-center justify-between font-mono text-xs pt-4 border-t border-(--rule)/50 text-muted-foreground">
+                  <span className="font-semibold text-(--ink)">@devvmichaell</span>
+                  <span>Swipe next →</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Tool grid: 2×2 + full-width Flowise ── */}
-      <section className="max-w-(--maxw) mx-auto px-(--gutter) py-[100px] max-[720px]:py-16">
-        <div className="border border-(--rule) rounded-sm">
-          {/* Top 4 tools — 2 column */}
-          <div className="grid grid-cols-2 max-[900px]:grid-cols-1">
-            {TOOLS.map((tool, i) => (
-              <ToolCard key={tool.id} tool={tool} index={i} totalInGrid={TOOLS.length} />
-            ))}
-          </div>
-          {/* Vela — full-width featured row */}
-          <VelaCard />
-          {/* Flowise — full-width featured row */}
-          <FlowiseCard />
-        </div>
-      </section>
-
-      {/* ── Philosophy strip ── */}
-      <section
-        className="border-y py-20 max-[720px]:py-14"
-        style={{
-          borderColor: "var(--rule)",
-          background: "var(--bg-2)",
-        }}
-      >
+      {/* ── THE WORKBENCH SHELF: EDITORIAL ROW LIST (FLAT HIERARCHY) ── */}
+      <section className="py-16 sm:py-20 lg:py-24 border-b border-(--rule)">
         <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-          <div className="grid grid-cols-3 max-[720px]:grid-cols-1 gap-12">
-            {[
-              {
-                num: "01",
-                head: "Built for actual use.",
-                body: "Every tool here has auth, a real database, AI integrations, and handles edge cases. Not demos — products.",
-              },
-              {
-                num: "02",
-                head: "Nigerian context, global reach.",
-                body: "Flowise supports OPay, Kuda, and GTBank natively. The other tools work for anyone, anywhere.",
-              },
-              {
-                num: "03",
-                head: "Free to start.",
-                body: "All tools have a free tier that covers real daily use. No bait-and-switch. Upgrade only when you need more.",
-              },
-            ].map((p) => (
-              <div key={p.head}>
-                <h3
-                  className="font-display font-normal text-[28px] leading-[1.1] tracking-[-0.02em] mb-3 fvs-text m-0"
-                  style={{ color: "var(--ink)" }}
-                >
-                  {p.head}
-                </h3>
-                <p
-                  className="text-[15px] leading-[1.6] m-0"
-                  style={{ color: "var(--ink-2)" }}
-                >
-                  {p.body}
-                </p>
+          {/* Shelf Section Header */}
+          <div className="max-w-[65ch] mb-12 sm:mb-16">
+            <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground mb-2">
+              <span className="font-semibold text-(--ink)">The Workbench Shelf</span>
+              <span className="text-(--rule)">·</span>
+              <span className="text-(--v3-accent) font-medium">In Fleshing Out State</span>
+            </div>
+            <h2 className="m-0 font-display font-normal text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-(--ink) fvs-display mb-4">
+              Experimental prototypes &amp; utilities.
+            </h2>
+            <p className="m-0 text-base text-secondary-foreground leading-relaxed">
+              These are personal experiments and early-stage prototypes I have built to test
+              APIs, reader interfaces, and workflows. They are rough around the edges, openly evolving, and free to explore.
+            </p>
+          </div>
+
+          {/* Flat Editorial Rows */}
+          <div className="border-t border-(--rule)" role="list" aria-label="Workbench prototypes list">
+            {LAB_EXPERIMENTS.map((tool) => (
+              <div
+                key={tool.id}
+                className="py-8 sm:py-10 border-b border-(--rule) grid grid-cols-1 lg:grid-cols-[1.2fr_1.5fr_auto] gap-6 lg:gap-10 items-start group"
+                role="listitem"
+              >
+                {/* Column 1: Identity & Meta */}
+                <div>
+                  <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground mb-2">
+                    <span className="font-medium text-(--v3-accent)">{tool.badge}</span>
+                  </div>
+                  <h3 className="m-0 font-display font-normal text-2xl sm:text-3xl text-(--ink) group-hover:text-(--v3-accent) transition-colors fvs-display">
+                    {tool.name}
+                  </h3>
+                  <div className="font-mono text-xs text-muted-foreground mt-1">
+                    {tool.tagline}
+                  </div>
+                </div>
+
+                {/* Column 2: Problem & Notes */}
+                <div className="space-y-3 max-w-[65ch]">
+                  <p className="m-0 text-sm sm:text-base text-secondary-foreground leading-relaxed">
+                    {tool.description}
+                  </p>
+                  <div className="font-mono text-xs text-muted-foreground">
+                    <span className="text-(--ink) font-medium">Current status:</span> {tool.notes}
+                  </div>
+                  <ul className="flex flex-wrap gap-2 pt-1 m-0 p-0 list-none font-mono text-xs text-muted-foreground" role="list">
+                    {tool.tags.map((t) => (
+                      <li key={t} className="after:content-['·'] after:ml-2 last:after:content-none">
+                        {t}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Column 3: Launch Action */}
+                <div className="lg:text-right pt-1">
+                  <Link
+                    href={tool.href}
+                    className="inline-flex items-center gap-2 font-mono text-xs tracking-wider font-semibold text-(--ink) group-hover:text-(--v3-accent) transition-colors no-underline py-2"
+                  >
+                    <span>Launch prototype</span>
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
     </main>
-  );
-}
-
-function ToolCard({
-  tool,
-  index,
-  totalInGrid,
-}: {
-  tool: (typeof TOOLS)[number];
-  index: number;
-  totalInGrid: number;
-}): React.ReactElement {
-  const isLive = tool.status === "live";
-  const borderRight = index % 2 === 0;
-  const borderBottom = index < totalInGrid - 2 || (totalInGrid % 2 !== 0 && index < totalInGrid - 1);
-
-  return (
-    <div
-      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
-      style={{
-        borderRight: borderRight ? "1px solid var(--rule)" : undefined,
-        borderBottom: borderBottom ? "1px solid var(--rule)" : undefined,
-      }}
-    >
-      {/* Accent hover background */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none rounded-sm"
-        style={{ background: tool.accentSoft }}
-      />
-
-      <div className="relative z-10">
-        {/* Header row */}
-        <div className="flex items-start justify-between mb-8">
-          <div
-            className="w-13 h-13 rounded-lg flex items-center justify-center text-[24px] font-mono select-none"
-            style={{
-              background: tool.accentSoft,
-              border: `1px solid ${tool.accent}22`,
-            }}
-            aria-hidden="true"
-          >
-            <tool.icon className="w-6 h-6" style={{ color: tool.accent }} />
-          </div>
-          <StatusBadge status={tool.status} />
-        </div>
-
-        {/* Name + tagline */}
-        <h2
-          className="font-display font-normal text-[36px] max-[720px]:text-[28px] leading-[1.05] tracking-tight mb-2 fvs-text m-0"
-          style={{ color: "var(--ink)" }}
-        >
-          {tool.name}
-        </h2>
-        <div
-          className="font-mono text-xs tracking-wider mb-5"
-          style={{ color: tool.accent }}
-        >
-          {tool.tagline}
-        </div>
-
-        {/* Description */}
-        <p
-          className="text-[15px] leading-[1.65] mb-7 max-w-[44ch] m-0"
-          style={{ color: "var(--ink-2)" }}
-        >
-          {tool.description}
-        </p>
-
-        {/* Stats pills */}
-        <div className="flex flex-wrap gap-2 mb-9">
-          {tool.stats.map((s) => (
-            <span
-              key={s}
-              className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
-              style={{
-                background: "var(--bg-2)",
-                color: "var(--ink-3)",
-                border: "1px solid var(--rule)",
-              }}
-            >
-              {s}
-            </span>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <div className="flex items-center gap-4 flex-wrap">
-          {isLive ? (
-            <Link
-              href={tool.href}
-              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider font-semibold no-underline transition-all duration-200 group/link"
-              style={{ color: tool.accent }}
-            >
-              {tool.cta}
-              <span
-                className="inline-block transition-transform duration-200 group-hover/link:translate-x-1"
-                aria-hidden="true"
-              >
-                →
-              </span>
-            </Link>
-          ) : (
-            <span
-              className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider"
-              style={{ color: "var(--ink-4)" }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full inline-block"
-                style={{ background: "var(--ink-4)" }}
-                aria-hidden="true"
-              />
-              Notify me when ready
-            </span>
-          )}
-          {"bridge" in tool && tool.bridge === "bookbreaks" && (
-            <Link
-              href="/tools/bookbreaks"
-              className="font-mono text-xs tracking-wider uppercase no-underline transition-colors px-2 py-0.75 rounded-full"
-              style={{
-                color: "#C85A2C",
-                background: "rgba(200,90,44,0.1)",
-                border: "1px solid rgba(200,90,44,0.2)",
-              }}
-            >
-              pairs with BookBreaks →
-            </Link>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function VelaCard(): React.ReactElement {
-  const accent = "#D97706";
-  const accentSoft = "rgba(217,119,6,0.10)";
-
-  return (
-    <div
-      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
-      style={{ borderTop: "1px solid var(--rule)" }}
-    >
-      <div
-        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{ background: accentSoft }}
-      />
-      <div className="relative z-10">
-        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-10 items-start">
-          <div>
-            <div className="flex items-center gap-4 mb-6 flex-wrap">
-              <div
-                className="w-13 h-13 rounded-lg flex items-center justify-center font-mono select-none"
-                style={{ background: accentSoft, border: `1px solid ${accent}22` }}
-                aria-hidden="true"
-              >
-                <Compass className="w-6 h-6" style={{ color: accent }} />
-              </div>
-              <StatusBadge status="live" />
-              <span
-                className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
-              >
-                Daily driver
-              </span>
-            </div>
-
-            <h2
-              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
-              style={{ color: "var(--ink)" }}
-            >
-              Vela
-            </h2>
-            <div
-              className="font-mono text-xs tracking-wider mb-5"
-              style={{ color: accent }}
-            >
-              Set your course. Log your progress.
-            </div>
-
-            <p
-              className="text-[15px] leading-[1.65] mb-7 max-w-[56ch] m-0"
-              style={{ color: "var(--ink-2)" }}
-            >
-              A structured life journal for people who want to move with intention. Set clear
-              objectives with milestones, plan each day against them, log what you actually
-              accomplished, and track where your energy really goes — day by day.
-            </p>
-
-            <div className="flex flex-wrap gap-2">
-              {[
-                "Objectives + milestones",
-                "Daily structured logs",
-                "7-day streak",
-                "Energy tracking",
-                "Priority-first",
-                "Reflection prompts",
-              ].map((s) => (
-                <span
-                  key={s}
-                  className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
-                  style={{
-                    background: "var(--bg-2)",
-                    color: "var(--ink-2)",
-                    border: "1px solid var(--rule)",
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
-            <Link
-              href="/tools/journal"
-              className="inline-flex items-center justify-center gap-2 py-3 px-7 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
-            >
-              Set my first objective
-              <span
-                className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75"
-                aria-hidden="true"
-              >
-                →
-              </span>
-            </Link>
-            <div
-              className="px-4 py-3 rounded-[10px] text-center"
-              style={{ background: accentSoft }}
-            >
-              <div
-                className="font-mono text-xs tracking-wider uppercase mb-0.5"
-                style={{ color: accent }}
-              >
-                Free tier includes
-              </div>
-              <div
-                className="text-[12px] leading-normal"
-                style={{ color: "var(--ink-2)" }}
-              >
-                Unlimited logs · All objectives · Streaks
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FlowiseCard(): React.ReactElement {
-  const accent = "#16A34A";
-  const accentSoft = "rgba(22,163,74,0.10)";
-
-  return (
-    <div
-      className="p-[48px_40px] max-[720px]:p-[36px_24px] relative group/card transition-colors duration-300"
-      style={{ borderTop: "1px solid var(--rule)" }}
-    >
-      {/* Accent hover background */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{ background: accentSoft }}
-      />
-
-      <div className="relative z-10">
-        <div className="grid grid-cols-[1fr_auto] max-[900px]:grid-cols-1 gap-10 items-start">
-          <div>
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-6 flex-wrap">
-              <div
-                className="w-13 h-13 rounded-lg flex items-center justify-center font-mono select-none"
-                style={{ background: accentSoft, border: `1px solid ${accent}22` }}
-                aria-hidden="true"
-              >
-                <Wallet className="w-6 h-6" style={{ color: accent }} />
-              </div>
-              <StatusBadge status="live" />
-              <span
-                className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
-              >
-                Nigeria-first
-              </span>
-            </div>
-
-            <h2
-              className="font-display font-normal text-[42px] max-[720px]:text-[32px] leading-[1.0] tracking-[-0.03em] mb-2 fvs-text m-0"
-              style={{ color: "var(--ink)" }}
-            >
-              Flowise
-            </h2>
-            <div
-              className="font-mono text-xs tracking-wider mb-5"
-              style={{ color: accent }}
-            >
-              Your money, mapped.
-            </div>
-
-            <p
-              className="text-[15px] leading-[1.65] mb-7 max-w-[56ch] m-0"
-              style={{ color: "var(--ink-2)" }}
-            >
-              A personal finance OS. Log transactions manually, import bank statements, scan
-              receipts with AI, set monthly budgets and savings goals — then get plain-language
-              insights into where your money actually goes. Built for Nigerian money flows:
-              OPay, Kuda, PalmPay, GTBank, and more.
-            </p>
-
-            {/* Stats pills */}
-            <div className="flex flex-wrap gap-2">
-              {["Multi-account", "AI categorization", "Budget & goals", "NGN-first", "CSV import"].map((s) => (
-                <span
-                  key={s}
-                  className="font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full"
-                  style={{ background: "var(--bg-2)", color: "var(--ink-3)", border: "1px solid var(--rule)" }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA block */}
-          <div className="flex flex-col gap-3 max-[900px]:flex-row max-[900px]:flex-wrap">
-            <Link
-              href="/tools/flowise"
-              className="inline-flex items-center justify-center gap-2 py-3 px-7 rounded-full font-mono text-xs uppercase tracking-wider font-semibold text-(--bg) bg-(--ink) no-underline transition-all duration-200 hover:opacity-90 group/link whitespace-nowrap"
-            >
-              Take control of my money
-              <span className="inline-block transition-transform duration-200 group-hover/link:translate-x-0.75" aria-hidden="true">
-                →
-              </span>
-            </Link>
-            <div
-              className="px-4 py-3 rounded-[10px] text-center"
-              style={{ background: accentSoft }}
-            >
-              <div className="font-mono text-xs tracking-wider uppercase mb-0.5" style={{ color: accent }}>
-                Free tier includes
-              </div>
-              <div className="text-[12px] text-secondary-foreground leading-normal">
-                3 accounts · 100 tx/month · 3 goals
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatusBadge({
-  status,
-}: {
-  status: "live" | "soon";
-}): React.ReactElement {
-  if (status === "live") {
-    return (
-      <span
-        className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-2)"
-      >
-        <span
-          className="w-1.5 h-1.5 rounded-full bg-emerald-600"
-          aria-hidden="true"
-        />
-        Live
-      </span>
-    );
-  }
-
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase px-2.5 py-1 rounded-full font-medium border border-(--rule) bg-(--bg-2) text-(--ink-3)"
-    >
-      Coming soon
-    </span>
   );
 }

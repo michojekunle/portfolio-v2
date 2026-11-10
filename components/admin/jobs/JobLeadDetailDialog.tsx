@@ -63,7 +63,7 @@ export function JobLeadDetailDialog({
               {lead.tip && (
                 <div>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Why it fits you</p>
-                  <p className="text-sm leading-relaxed bg-muted/60 rounded-md p-3 border-l-2 border-primary/40">
+                  <p className="text-sm leading-relaxed bg-muted/40 rounded-md p-3 border border-(--rule)">
                     {lead.tip}
                   </p>
                 </div>

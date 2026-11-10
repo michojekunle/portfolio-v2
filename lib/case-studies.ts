@@ -257,9 +257,9 @@ export const CASE_STUDIES: CaseStudy[] = [
         d: "GKR circuit reduction, KZG commitments and Sumcheck, plus polynomial arithmetic and Fiat–Shamir.",
       },
       {
-        n: "1",
-        l: "Indexing bug fixed",
-        d: "KZG setup now uses most-significant-bit indexing format.",
+        n: "Zero-dep",
+        l: "First principles",
+        d: "Custom multilinear polynomial representations, evaluation arithmetic, and Fiat–Shamir transcript.",
       },
       {
         n: "Criterion",
@@ -364,10 +364,10 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Independent Full-Stack Developer · Solo",
     duration: "~2 months",
     team: "Solo",
-    image: "/work/triple-cure/tca-landing-on-laptop.png",
+    image: "/work/triple-cure/tca_landing_page.png",
     gallery: [
-      { src: "/work/triple-cure/tca-landing-on-laptop.png", alt: "Triple Cure Assembly on laptop mockup showing initiatives and ICT literacy programs", kind: "desktop", w: 1600, h: 1000 },
       { src: "/work/triple-cure/tca_landing_page.png", alt: "Triple Cure Assembly homepage: Where Potential Meets Purpose", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/triple-cure/tca-landing-on-laptop.png", alt: "Triple Cure Assembly on laptop mockup showing initiatives and ICT literacy programs", kind: "desktop", w: 1600, h: 1000 },
       { src: "/work/triple-cure/tca_about_page.png", alt: "Triple Cure Assembly about page: A Vision Born From Service honoring Barrister Clement Oyedele Akintola Arikawe", kind: "desktop", w: 1600, h: 1000 },
       { src: "/work/triple-cure/tca_scholarships_page.png", alt: "Triple Cure Assembly scholarship portal and Annual Igbotako Scholarship program", kind: "desktop", w: 1600, h: 1000 },
     ],

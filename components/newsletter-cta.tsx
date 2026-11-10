@@ -24,10 +24,10 @@ export function NewsletterCTA({
   return (
     <div id="newsletter" className="py-20 px-(--gutter) bg-(--bg-2) border-y border-(--rule) text-center">
       <div className="max-w-[500px] mx-auto flex flex-col items-center">
-        <h2 className="m-0 font-display text-[clamp(32px,5vw,48px)] font-normal text-(--ink) leading-[1.1] tracking-[-0.03em] mb-4 fvs-display">
+        <h2 className="m-0 font-display text-3xl sm:text-4xl lg:text-5xl font-normal text-(--ink) leading-[1.1] tracking-[-0.03em] mb-4 fvs-display">
           {title}
         </h2>
-        <p className="text-[17px] text-secondary-foreground leading-[1.6] mb-10 text-balance">
+        <p className="text-base text-secondary-foreground leading-[1.6] mb-10 text-balance">
           {description}
         </p>
         <NewsletterForm />

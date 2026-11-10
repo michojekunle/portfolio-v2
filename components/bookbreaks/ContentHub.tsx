@@ -453,7 +453,7 @@ export function ContentHub({ content, books }: ContentHubProps) {
           color: var(--v3-accent);
         }
         .bb-prose blockquote {
-          border-left: 3px solid var(--v3-accent);
+          border-left: 1px solid var(--rule);
           margin: 0.75em 0;
           padding: 0.25em 0 0.25em 1em;
           color: var(--ink-3);

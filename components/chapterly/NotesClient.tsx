@@ -931,7 +931,7 @@ export function ChNotesClient({
                       className="absolute inset-0 rounded-[20px] border border-(--rule) bg-(--bg-2) p-7 flex flex-col z-20 select-none"
                       style={{
                         transform: isDragging ? `translateX(${dragDelta}px) rotate(${dragDelta * 0.04}deg)` : "translateX(0) rotate(0)",
-                        transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                        transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
                         cursor: isDragging ? "grabbing" : "grab",
                         boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
                       }}
@@ -1181,7 +1181,7 @@ export function ChNotesClient({
                   className="rounded-[10px] p-4 text-[13px] leading-[1.6]"
                   style={{
                     background: "color-mix(in oklab, var(--ch-accent) 5%, transparent)",
-                    borderLeft: `3px solid ${ACCENT}`,
+                    border: `1px solid color-mix(in oklab, var(--ch-accent) 25%, transparent)`,
                   }}
                 >
                   <div className="font-mono text-[10px] tracking-widest uppercase text-secondary-foreground mb-1 font-semibold">

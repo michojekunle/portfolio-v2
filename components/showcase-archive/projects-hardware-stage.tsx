@@ -11,6 +11,7 @@ import {
   Zap,
   Radio,
   ExternalLink,
+  Lock,
 } from "lucide-react"
 
 interface Hotspot {
@@ -41,7 +42,7 @@ interface ProjectStageConfig {
 
 const STAGE_CONFIGS: Record<string, ProjectStageConfig> = {
   coinsafe: {
-    accentColor: "#f59e0b",
+    accentColor: "var(--v3-accent)",
     desktopImage: "/work/coinsafe/coinsafe-landing.png",
     mobileOverlay: {
       src: "/work/coinsafe/card1.webp",
@@ -87,7 +88,7 @@ const STAGE_CONFIGS: Record<string, ProjectStageConfig> = {
     ],
   },
   zamir: {
-    accentColor: "#3b82f6",
+    accentColor: "var(--v3-accent)",
     desktopImage: "/work/zamir/01-marketing-hero-desktop.webp",
     mobileOverlay: {
       src: "/work/zamir/10-app-altar-ios.webp",
@@ -130,7 +131,7 @@ const STAGE_CONFIGS: Record<string, ProjectStageConfig> = {
     ],
   },
   "triple-cure": {
-    accentColor: "#10b981",
+    accentColor: "var(--v3-accent)",
     desktopImage: "/work/triple-cure/tca-landing-on-laptop.png",
     architecture: {
       protocol: "Headless Content Infrastructure",
@@ -169,7 +170,7 @@ const STAGE_CONFIGS: Record<string, ProjectStageConfig> = {
     ],
   },
   "zk-implementations": {
-    accentColor: "#14b8a6",
+    accentColor: "var(--v3-accent)",
     desktopImage: "/work/peacefulnes.png",
     architecture: {
       protocol: "Zero-Knowledge Proof Systems",
@@ -279,10 +280,10 @@ export function ProjectsHardwareStage({
         </div>
       )}
 
-      {/* ── THE HARDWARE THEATER STAGE: Clean Unified Paper Surface, Zero Nested Cards ── */}
+      {/* ── THE HARDWARE THEATER STAGE: Clean Editorial Theater (Apple Pro Spacing, Zero Nested Cards) ── */}
       <div
         id="flagship-stage"
-        className="scroll-mt-24 rounded-2xl sm:rounded-3xl border border-(--rule) bg-(--paper) p-6 sm:p-8 lg:p-12 text-(--ink) relative transition-colors duration-300"
+        className="scroll-mt-28 p-6 sm:p-8 lg:p-12 text-(--ink) relative transition-colors duration-300"
       >
         {/* ── STAGE TOP BAR: Title & Actions ── */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 sm:pb-8 border-b border-(--rule)/70">
@@ -290,18 +291,15 @@ export function ProjectsHardwareStage({
             <h3 className="m-0 font-display font-normal text-3xl sm:text-4xl lg:text-5xl text-(--ink) tracking-tight fvs-display">
               {project.name}
             </h3>
-            <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground tracking-wider py-1 px-3 rounded-full border border-(--rule) bg-(--bg-2)">
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: config.accentColor }}
-              />
+            <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent)" />
               <span className="text-(--ink) font-medium">{project.tag}</span>
               <span className="text-(--rule)">·</span>
-              <span>Flagship</span>
+              <span>{project.slug === "zamir" ? "Product Engineering" : "Production System"}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 flex-wrap">
             {project.live && (
               <a
                 href={`https://${project.live.replace(/^https?:\/\//, "")}`}
@@ -323,50 +321,55 @@ export function ProjectsHardwareStage({
           </div>
         </div>
 
-        {/* ── PANORAMIC SCREEN VIEWPORT (Integrated Directly, No Nested Outer Bezel Card) ── */}
-        <div className="my-6 sm:my-8 rounded-xl sm:rounded-2xl border border-(--rule) overflow-hidden bg-black">
+        {/* ── PANORAMIC SCREEN VIEWPORT (Integrated Screen Stage, Theme Aligned, Zero Redundant Box Borders) ── */}
+        <div className="my-6 sm:my-8 rounded-xl sm:rounded-2xl overflow-hidden">
           {/* Top Display Chrome */}
-          <div className="h-7 px-3 bg-(--bg-2) border-b border-(--rule) flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-black/15 dark:bg-white/15" />
-              <span className="w-2.5 h-2.5 rounded-full bg-black/15 dark:bg-white/15" />
-              <span className="w-2.5 h-2.5 rounded-full bg-black/15 dark:bg-white/15" />
+          <div className="h-9 px-4 border-b border-(--rule) flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-(--rule)" />
+              <span className="w-2 h-2 rounded-full bg-(--rule)" />
+              <span className="w-2 h-2 rounded-full bg-(--rule)" />
             </div>
-            <div className="w-2.5 h-2.5 rounded-full bg-black/20 dark:bg-white/20 flex items-center justify-center">
-              <span className="w-1 h-1 rounded-full bg-emerald-500" />
+            <div className="flex items-center gap-2 font-mono text-[11px] tracking-wider text-muted-foreground">
+              <Lock className="w-3 h-3 text-(--v3-accent)" />
+              <span className="text-(--ink) font-medium">{project.slug === "zamir" ? "zamir.app" : `${project.slug}.network`}</span>
+              <span className="text-(--rule)">·</span>
+              <span>Live Stage</span>
             </div>
-            <span className="font-mono text-xs tracking-wider text-muted-foreground">
-              Studio View · 4K
+            <span className="font-mono text-[11px] tracking-wider text-muted-foreground hidden sm:inline">
+              Retina Display
             </span>
           </div>
 
-          {/* Screen Canvas */}
-          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={project.slug}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="relative w-full h-full"
-              >
-                <Image
-                  src={config.desktopImage}
-                  alt={project.name}
-                  fill
-                  className="object-cover object-top"
-                  sizes="(max-width: 1320px) 100vw, 1320px"
-                  priority
-                  unoptimized={config.desktopImage.endsWith(".svg")}
-                />
-              </motion.div>
-            </AnimatePresence>
+          {/* Screen Canvas (Unclipped Parent Container) */}
+          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-(--bg-2)">
+            {/* Clipped Display Surface */}
+            <div className="absolute inset-0 overflow-hidden" suppressHydrationWarning>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={project.slug}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="relative w-full h-full"
+                >
+                  <Image
+                    src={config.desktopImage}
+                    alt={project.name}
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 1320px) 100vw, 1320px"
+                    priority
+                    unoptimized={config.desktopImage.endsWith(".svg")}
+                  />
+                </motion.div>
+              </AnimatePresence>
 
-            {/* Atmospheric lighting gradient */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 via-transparent to-black/15" />
+              {/* Atmospheric lighting gradient */}
+              <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+            </div>
 
-            {/* ── BESPOKE RADAR PINS (No generic ping animation) ── */}
+            {/* ── BESPOKE RADAR PINS (Tactile Authored State, Zero Generic Ping Animation) ── */}
             {config.hotspots.map((h, hIdx) => {
               const isActive = activeHotspotId === h.id
               return (
@@ -375,55 +378,38 @@ export function ProjectsHardwareStage({
                   type="button"
                   onClick={() => setActiveHotspotId(h.id)}
                   style={{ left: `${h.x}%`, top: `${h.y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 z-20 group cursor-pointer border-none bg-transparent p-2 focus:outline-none"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-20 group cursor-pointer border-none bg-transparent p-1 focus:outline-none"
                   aria-label={`Inspect ${h.label}`}
                 >
-                  {/* Authored gentle pulsing halo */}
-                  <motion.span
-                    className="absolute inset-1 rounded-full pointer-events-none"
-                    style={{
-                      border: `1.5px solid ${config.accentColor}`,
-                    }}
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.65, 0, 0.65],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: hIdx * 0.5,
-                    }}
-                  />
-
-                  {/* Pin button */}
+                  {/* Pin button: high-contrast tactile pill */}
                   <span
                     className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs font-medium transition-all duration-200 border ${
                       isActive
-                        ? "bg-(--ink) text-(--bg) border-(--ink) scale-105"
-                        : "bg-black/90 text-white border-white/20 hover:border-white/60 hover:scale-102 backdrop-blur-md"
+                        ? "bg-(--ink) text-(--bg) border-(--ink) scale-105 shadow-xs"
+                        : "bg-(--paper)/90 text-(--ink) border-(--rule) hover:border-(--ink) hover:scale-102 backdrop-blur-md dark:bg-black/85 dark:text-white dark:border-white/20"
                     }`}
                   >
                     <span
-                      className="w-1.5 h-1.5 rounded-full shrink-0"
-                      style={{ backgroundColor: config.accentColor }}
+                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                        isActive ? "bg-(--v3-accent)" : "bg-(--v3-accent)/80"
+                      }`}
                     />
                     <span className="hidden sm:inline whitespace-nowrap">{h.label}</span>
-                    <span className="sm:hidden font-mono text-xs whitespace-nowrap">{h.label.split(" ")[0]}</span>
+                    <span className="sm:hidden font-mono text-[11px] font-bold">{hIdx + 1}</span>
                   </span>
                 </button>
               )
             })}
 
-            {/* ── FLOATING SECONDARY DEVICE ── */}
+            {/* ── FLOATING SECONDARY DEVICE (Shown on xl screens to prevent hotspot collision on tablets) ── */}
             {config.mobileOverlay && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="hidden md:block absolute bottom-4 right-4 lg:bottom-6 lg:right-6 z-25 w-[140px] sm:w-[170px] lg:w-[195px] aspect-[9/16] rounded-2xl border border-white/20 bg-zinc-950 p-1 overflow-hidden"
+                className="hidden xl:block absolute bottom-6 right-6 z-25 w-[180px] lg:w-[200px] aspect-[9/16] rounded-2xl overflow-hidden border border-(--rule)/80"
               >
-                <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
+                <div className="relative w-full h-full">
                   <Image
                     src={config.mobileOverlay.src}
                     alt={config.mobileOverlay.alt}
@@ -445,15 +431,12 @@ export function ProjectsHardwareStage({
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2 font-mono text-xs">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: config.accentColor }}
-                />
+                <span className="w-2 h-2 rounded-full bg-(--v3-accent)" />
                 <span className="text-(--ink) font-semibold">{activeHotspot.label}</span>
                 <span className="text-muted-foreground">·</span>
                 <span className="text-secondary-foreground">{activeHotspot.spec}</span>
               </div>
-              <span className="font-mono text-xs tracking-wider text-muted-foreground">
+              <span className="font-mono text-xs tracking-wider text-muted-foreground hidden sm:inline">
                 Click pins on screen to inspect
               </span>
             </div>

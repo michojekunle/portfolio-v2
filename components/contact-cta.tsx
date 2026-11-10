@@ -44,7 +44,7 @@ export function ContactCTA(): React.ReactElement {
           {/* Left: CTA */}
           <div className="v3-cta-left">
             <h2>
-              Let&apos;s build <em>something.</em>
+              Let&apos;s build <span className="text-(--v3-accent)">something.</span>
             </h2>
             <p>
               Open to full-time roles, selective contract work, and conversations that

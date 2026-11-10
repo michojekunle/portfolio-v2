@@ -6,12 +6,12 @@ import { MagneticWrapper } from "./magnetic-wrapper"
 import { ArrowRight, BookOpen, BookMarked, Wallet, Compass, Share2, LayoutGrid } from "lucide-react"
 
 const TOOLS = [
-  { name: "BookBreaks",    tagline: "Books into content",        accent: "#C85A2C", icon: BookOpen,   status: "live", href: "/tools/bookbreaks"    },
-  { name: "Chapterly",    tagline: "Read + remember",            accent: "#4F6D7A", icon: BookMarked, status: "live", href: "/tools/chapterly"     },
-  { name: "Flowise",      tagline: "Money mapped",               accent: "#16A34A", icon: Wallet,     status: "live", href: "/tools/flowise"       },
-  { name: "Vela",         tagline: "Set your course daily",      accent: "#B45309", icon: Compass,    status: "live", href: "/tools/journal"       },
-  { name: "Thread Studio", tagline: "Viral threads",             accent: "#2563EB", icon: Share2,     status: "live", href: "/tools/thread-studio" },
-  { name: "Carousel Lab",  tagline: "Scroll-stopping slides",    accent: "#FF6B35", icon: LayoutGrid, status: "live", href: "/tools/carousel-lab"  },
+  { name: "Carousel Lab",  tagline: "Social slides daily driver", accent: "#FF6B35", icon: LayoutGrid, status: "daily driver", href: "/tools/carousel-lab"  },
+  { name: "Chapterly",    tagline: "EPUB reader prototype",      accent: "#4F6D7A", icon: BookMarked, status: "in lab",       href: "/tools/chapterly"     },
+  { name: "Flowise",      tagline: "Finance flow experiment",    accent: "#16A34A", icon: Wallet,     status: "in lab",       href: "/tools/flowise"       },
+  { name: "Vela",         tagline: "Daily log & check-in",       accent: "#B45309", icon: Compass,    status: "prototype",    href: "/tools/journal"       },
+  { name: "BookBreaks",    tagline: "Book takeaways pipeline",   accent: "#C85A2C", icon: BookOpen,   status: "experiment",   href: "/tools/bookbreaks"    },
+  { name: "Thread Studio", tagline: "Writing scratchpad",        accent: "#2563EB", icon: Share2,     status: "sandbox",      href: "/tools/thread-studio" },
 ] as const
 
 export function CreatorSuiteSection(): React.ReactElement {
@@ -30,15 +30,14 @@ export function CreatorSuiteSection(): React.ReactElement {
         <div>
           <h2
             id="creator-suite-heading"
-            className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
+            className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
           >
-            A suite I{" "}
-            <em className="not-italic italic text-(--v3-accent) fvs-soft">built</em>{" "}
-            and ship.
+            Personal workbench,{" "}
+            <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
-          <p className="mt-4 max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground m-0">
-            Six live tools for creators learning in public to read more, build faster, share
-            consistently, track every naira, and log every win.
+          <p className="mt-4 max-w-[56ch] text-base leading-[1.6] text-secondary-foreground m-0">
+            Software utilities and prototypes I built to scratch my own everyday itches — anchored by Carousel Lab,
+            which I use for my own Instagram slides, alongside reading and finance experiments being fleshed out in the open.
           </p>
         </div>
       </motion.div>
@@ -63,8 +62,11 @@ export function CreatorSuiteSection(): React.ReactElement {
                     <tool.icon className="w-4.5 h-4.5" style={{ color: tool.accent }} />
                   </div>
                   <span className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
-                    live
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${tool.status === "daily driver" ? "bg-emerald-500" : "bg-amber-500"}`}
+                      aria-hidden="true"
+                    />
+                    {tool.status}
                   </span>
                 </div>
                 <div className="font-display font-medium text-[19px] leading-[1.2] text-(--ink) mb-1.5 group-hover:text-(--v3-accent) transition-colors">
@@ -75,7 +77,7 @@ export function CreatorSuiteSection(): React.ReactElement {
                 </div>
               </div>
               <div className="mt-5 pt-3 border-t border-(--rule)/70 flex items-center justify-between font-mono text-xs text-muted-foreground">
-                <span>Launch tool</span>
+                <span>Open tool</span>
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </div>
             </Link>
@@ -92,14 +94,14 @@ export function CreatorSuiteSection(): React.ReactElement {
         className="flex items-center justify-between gap-6 max-[720px]:flex-col max-[720px]:items-start"
       >
         <p className="m-0 text-[15px] text-muted-foreground max-w-[52ch]">
-          Each tool has auth, a database and AI integrations behind it.
+          Personal utilities running free with no paywalls or gated features.
         </p>
         <MagneticWrapper>
           <Link
             href="/tools"
             className="group inline-flex items-center gap-2.5 py-3.5 px-7 rounded-full font-mono text-[12px] tracking-[0.04em] font-semibold no-underline transition-all duration-300 whitespace-nowrap border hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-(--ink) border-(--rule)"
           >
-            Explore Creator Suite
+            Explore all workbench tools
             <ArrowRight
               className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
               aria-hidden="true"

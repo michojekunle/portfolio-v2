@@ -65,7 +65,7 @@ export function Preloader(): React.ReactElement {
               initial="hidden"
               animate="visible"
               exit={{ y: "-50px", opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
-              className="font-display font-extrabold text-[clamp(50px,11vw,140px)] tracking-[-0.04em] text-(--ink) leading-[1.0] mb-6 fvs-display"
+              className="font-display font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-[-0.04em] text-(--ink) leading-[1.0] mb-6 fvs-display"
             >
               {name.map((char, index) => (
                 <motion.span key={index} variants={charVariants} className={char === "." ? "text-(--v3-accent)" : ""}>
@@ -80,7 +80,7 @@ export function Preloader(): React.ReactElement {
               initial="hidden"
               animate="visible"
               exit={{ y: "-30px", opacity: 0, transition: { duration: 0.8, ease: "easeInOut", delay: 0.1 } }}
-              className="font-mono text-[clamp(12px,1.5vw,16px)] uppercase tracking-[0.2em] text-secondary-foreground"
+              className="font-mono text-xs sm:text-sm tracking-[0.2em] text-secondary-foreground"
             >
               {/* Dummy span to delay the second line stagger naturally */}
               <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 0, transition: { delay: 0.4 } } }} />

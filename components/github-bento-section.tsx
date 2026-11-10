@@ -163,11 +163,11 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
         <div>
           <h2
             id="bento-heading"
-            className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
+            className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
           >
             Activity
           </h2>
-          <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+          <div className="max-w-[56ch] text-base leading-[1.6] text-secondary-foreground mt-4.5">
             Real code in public: commit streaks, cryptographic implementations,
             and libraries built to scratch my own itch.
           </div>
@@ -191,35 +191,36 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
             )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[14px] font-semibold text-(--ink)">
+                <span className="font-mono text-sm font-semibold text-(--ink)">
                   @michojekunle
                 </span>
-                <span className="font-mono text-xs tracking-wider uppercase px-2 py-0.5 rounded-full border border-(--rule) bg-(--bg-2) text-muted-foreground">
+                <span className="text-(--rule)">·</span>
+                <span className="font-mono text-xs text-muted-foreground">
                   GitHub
                 </span>
               </div>
-              <div className="text-[13px] text-secondary-foreground mt-0.5">
+              <div className="text-xs text-secondary-foreground mt-0.5">
                 Software engineer &amp; builder · Systems &amp; AI
                 infrastructure
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-6 font-mono text-[12px]">
+          <div className="flex items-center gap-6 font-mono text-xs">
             <div>
-              <span className="text-[16px] font-semibold text-(--ink) block leading-tight">
+              <span className="text-base font-semibold text-(--ink) block leading-tight">
                 {data.totalRepos}
               </span>
-              <span className="text-muted-foreground text-[11px] uppercase tracking-wider">
+              <span className="text-muted-foreground text-xs tracking-wider">
                 Repos
               </span>
             </div>
             <div className="w-px h-7 bg-(--rule)" />
             <div>
-              <span className="text-[16px] font-semibold text-(--v3-accent) block leading-tight">
+              <span className="text-base font-semibold text-(--v3-accent) block leading-tight">
                 {data.totalContributions.toLocaleString()}
               </span>
-              <span className="text-muted-foreground text-[11px] uppercase tracking-wider">
+              <span className="text-muted-foreground text-xs tracking-wider">
                 Contributions (1 yr)
               </span>
             </div>
@@ -229,19 +230,19 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
         {/* Contributions Matrix */}
         <div className="pt-6">
           <div className="flex items-center justify-between mb-4">
-            <span className="font-mono text-[13px] font-medium text-(--ink) flex items-center gap-2">
+            <span className="font-mono text-xs font-medium text-(--ink) flex items-center gap-2">
               <GitCommit className="w-4 h-4 text-(--v3-accent)" />
               <span>
                 {data.totalContributions.toLocaleString()} contributions in the
                 last year
               </span>
             </span>
-            <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+            <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <span>Less</span>
-              <span className="w-2.5 h-2.5 rounded-[2px] bg-(--bg-2) border border-(--rule)/40 inline-block" />
-              <span className="w-2.5 h-2.5 rounded-[2px] bg-[color-mix(in_oklab,var(--v3-accent)_35%,var(--paper))] inline-block" />
-              <span className="w-2.5 h-2.5 rounded-[2px] bg-[color-mix(in_oklab,var(--v3-accent)_70%,var(--paper))] inline-block" />
-              <span className="w-2.5 h-2.5 rounded-[2px] bg-(--v3-accent) inline-block" />
+              <span className="w-2.5 h-2.5 bg-(--bg-2) border border-(--rule)/40 inline-block" />
+              <span className="w-2.5 h-2.5 bg-[color-mix(in_oklab,var(--v3-accent)_35%,var(--paper))] inline-block" />
+              <span className="w-2.5 h-2.5 bg-[color-mix(in_oklab,var(--v3-accent)_70%,var(--paper))] inline-block" />
+              <span className="w-2.5 h-2.5 bg-(--v3-accent) inline-block" />
               <span>More</span>
             </div>
           </div>
@@ -278,7 +279,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                     return (
                       <div
                         key={day.date}
-                        className={`w-[11px] h-[11px] rounded-[2px] transition-transform hover:scale-125 ${bg}`}
+                        className={`w-[11px] h-[11px] transition-transform hover:scale-125 ${bg}`}
                         title={`${day.date}: ${count} contribution${count !== 1 ? "s" : ""}`}
                       />
                     );
@@ -307,11 +308,11 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
               aria-label={`${repo.name} on GitHub`}
             >
               <div className="flex justify-between items-start mb-3">
-                <div className="font-display font-normal text-[22px] text-(--ink) leading-[1.1] fvs-text group-hover:text-(--v3-accent) transition-colors">
+                <div className="font-display font-normal text-xl text-(--ink) leading-[1.2] fvs-text group-hover:text-(--v3-accent) transition-colors">
                   {repo.name}
                 </div>
                 {repo.pushedAt && (
-                  <span className="inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
+                  <span className="inline-flex items-center gap-1 font-mono text-xs text-muted-foreground whitespace-nowrap">
                     <Clock className="w-3 h-3 text-(--v3-accent)" />
                     {formatDistanceToNow(new Date(repo.pushedAt), {
                       addSuffix: true,
@@ -321,14 +322,14 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
               </div>
 
               {repo.description && (
-                <p className="text-[14px] leading-[1.6] text-secondary-foreground mb-6 flex-[1] line-clamp-3 overflow-hidden">
+                <p className="text-sm leading-[1.6] text-secondary-foreground mb-6 flex-[1] line-clamp-3 overflow-hidden">
                   {repo.description}
                 </p>
               )}
 
               <div className="flex flex-wrap gap-2.5 items-center mt-auto pt-3 border-t border-(--rule)/50">
                 {repo.language && (
-                  <span className="flex items-center gap-1.5 font-mono text-[12px] text-muted-foreground">
+                  <span className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
                     <svg
                       className="w-2 h-2 shrink-0"
                       viewBox="0 0 8 8"
@@ -339,14 +340,18 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                     {repo.language}
                   </span>
                 )}
-                {repo.topics.slice(0, 2).map((t) => (
-                  <span
-                    key={t}
-                    className="font-mono text-[11px] px-2 py-0.5 rounded bg-(--bg-2) text-secondary-foreground border border-(--rule)/50"
-                  >
-                    {t}
-                  </span>
-                ))}
+                {repo.topics.slice(0, 2).length > 0 && (
+                  <ul className="flex items-center gap-1.5 p-0 m-0 list-none" role="list">
+                    {repo.topics.slice(0, 2).map((t) => (
+                      <li
+                        key={t}
+                        className="font-mono text-xs px-2 py-0.5 rounded bg-(--bg-2) text-secondary-foreground border border-(--rule)/50"
+                      >
+                        {t}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div
@@ -366,7 +371,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
             href={`https://github.com/${process.env.GITHUB_USERNAME ?? "michojekunle"}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-mono text-[12px] uppercase tracking-wider font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-200 no-underline hover:border-muted-foreground hover:bg-(--paper)"
+            className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-mono text-xs tracking-wider font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-200 no-underline hover:border-muted-foreground hover:bg-(--paper)"
           >
             All repos on GitHub{" "}
             <ArrowUpRight

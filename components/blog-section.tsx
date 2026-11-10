@@ -27,12 +27,11 @@ export async function BlogSection(): Promise<React.ReactElement> {
         <div>
           <h2
             id="blog-heading"
-            className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
+            className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
           >
-            Field{" "}
-            <em className="not-italic text-(--v3-accent) fvs-soft">notes.</em>
+            Field <span className="text-(--v3-accent)">notes.</span>
           </h2>
-          <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+          <div className="max-w-[56ch] text-base leading-[1.6] text-secondary-foreground mt-4.5">
             Short essays on engineering, Rust, and learning in public.
           </div>
         </div>
@@ -65,7 +64,7 @@ export async function BlogSection(): Promise<React.ReactElement> {
           ))}
         </div>
       ) : (
-        <p className="font-mono text-[13px] text-muted-foreground">
+        <p className="font-mono text-xs text-muted-foreground">
           No posts yet. Check back soon.
         </p>
       )}
@@ -74,7 +73,7 @@ export async function BlogSection(): Promise<React.ReactElement> {
         <MagneticWrapper strength={20}>
           <Link
             href="/blog"
-            className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] tracking-[0.06em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]"
+            className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-xs tracking-[0.04em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]"
           >
             Read all notes{" "}
             <ArrowRight

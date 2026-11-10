@@ -61,7 +61,7 @@ export function MarkdownRenderer({
         .public-article ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 1rem 0 !important; }
         .public-article ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 1rem 0 !important; }
         .public-article li { margin-bottom: 0.5rem !important; display: list-item !important; }
-        .public-article blockquote { border-left: 4px solid hsl(var(--primary)) !important; padding: 0.75rem 1.5rem !important; font-style: italic !important; color: hsl(var(--muted-foreground)) !important; background: hsl(var(--muted)/0.3) !important; border-radius: 0 0.5rem 0.5rem 0 !important; margin: 2rem 0 !important; }
+        .public-article blockquote { border-left: 1px solid hsl(var(--border)) !important; padding: 0.75rem 1.5rem !important; font-style: italic !important; color: hsl(var(--muted-foreground)) !important; background: hsl(var(--muted)/0.3) !important; border-radius: 0 0.5rem 0.5rem 0 !important; margin: 2rem 0 !important; }
         .public-article img { display: block !important; max-width: 100% !important; border-radius: 1rem !important; margin: 3rem auto !important; border: 1px solid rgba(255,255,255,0.05) !important; box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2) !important; }
         .public-article a { color: hsl(var(--primary)) !important; text-decoration: underline !important; text-underline-offset: 4px !important; font-weight: 500 !important; }
         .public-article hr { border: 0 !important; border-top: 2px solid hsl(var(--border)) !important; margin: 3rem 0 !important; }
