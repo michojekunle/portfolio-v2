@@ -4,20 +4,11 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
-import { FEATURED_PROJECTS } from "@/lib/case-studies"
-import { MagneticWrapper } from "./magnetic-wrapper"
-import { AnimatedCounter } from "./animated-counter"
+import { FEATURED_PROJECTS, type FeaturedProject } from "@/lib/case-studies"
 import {
   ArrowRight,
-  ArrowUpRight,
-  CheckCircle2,
-  Lock,
-  Layers,
   Shield,
-  Smartphone,
-  Cpu,
   Zap,
-  Globe,
   Radio,
   ExternalLink,
 } from "lucide-react"
@@ -223,10 +214,20 @@ const STAGE_CONFIGS: Record<string, ProjectStageConfig> = {
   },
 }
 
-export function ProjectsHardwareStage(): React.ReactElement {
+interface ProjectsHardwareStageProps {
+  project?: FeaturedProject
+  projects?: FeaturedProject[]
+  standaloneTopProject?: boolean
+}
+
+export function ProjectsHardwareStage({
+  project: overrideProject,
+  projects = FEATURED_PROJECTS,
+  standaloneTopProject = true,
+}: ProjectsHardwareStageProps): React.ReactElement {
   const [selectedIdx, setSelectedIdx] = useState<number>(0)
-  const project = FEATURED_PROJECTS[selectedIdx]
-  const config = STAGE_CONFIGS[project.slug] ?? STAGE_CONFIGS.coinsafe
+  const project = overrideProject ?? (standaloneTopProject ? FEATURED_PROJECTS[0] : projects[selectedIdx])
+  const config = STAGE_CONFIGS[project.slug] ?? STAGE_CONFIGS.zamir
   const [activeHotspotId, setActiveHotspotId] = useState<string>(config.hotspots[0]?.id ?? "")
 
   const activeHotspot =
@@ -234,7 +235,7 @@ export function ProjectsHardwareStage(): React.ReactElement {
 
   function handleProjectChange(idx: number) {
     setSelectedIdx(idx)
-    const nextConfig = STAGE_CONFIGS[FEATURED_PROJECTS[idx].slug]
+    const nextConfig = STAGE_CONFIGS[projects[idx].slug]
     if (nextConfig?.hotspots[0]) {
       setActiveHotspotId(nextConfig.hotspots[0].id)
     }
@@ -242,47 +243,49 @@ export function ProjectsHardwareStage(): React.ReactElement {
 
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
-      {/* ── TOP SEGMENTED DOCK CONTROLLER ── */}
-      <div className="flex justify-start sm:justify-center overflow-x-auto pb-2 scrollbar-none">
-        <div className="inline-flex p-1.5 rounded-full border border-(--rule) bg-(--paper) shadow-md gap-1 sm:gap-1.5">
-          {FEATURED_PROJECTS.map((p, idx) => {
-            const isSelected = selectedIdx === idx
-            const pConfig = STAGE_CONFIGS[p.slug]
-            return (
-              <button
-                key={p.slug}
-                type="button"
-                onClick={() => handleProjectChange(idx)}
-                className={`relative px-4 sm:px-6 py-2.5 rounded-full font-mono text-[11px] sm:text-[12px] uppercase tracking-wider font-medium cursor-pointer transition-colors duration-200 border-none outline-none flex items-center gap-2 whitespace-nowrap ${
-                  isSelected ? "text-(--ink)" : "text-muted-foreground hover:text-(--ink) bg-transparent"
-                }`}
-                aria-selected={isSelected}
-                role="tab"
-              >
-                {isSelected && (
-                  <motion.div
-                    layoutId="hardwareTheaterDockActive"
-                    className="absolute inset-0 rounded-full bg-(--bg-2) border border-(--rule) shadow-xs"
-                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-2">
-                  <span
-                    className="w-2 h-2 rounded-full transition-colors"
-                    style={{
-                      backgroundColor: isSelected ? pConfig?.accentColor ?? "var(--v3-accent)" : "rgba(150,150,150,0.4)",
-                      boxShadow: isSelected ? `0 0 10px ${pConfig?.accentColor}` : "none",
-                    }}
-                  />
-                  <span>0{idx + 1}</span>
-                  <span className="hidden sm:inline text-muted-foreground">·</span>
-                  <span className="font-semibold">{p.name}</span>
-                </span>
-              </button>
-            )
-          })}
+      {/* ── TOP DOCK: Only shown if multiple projects are provided without standalone mode ── */}
+      {!standaloneTopProject && projects.length > 1 && (
+        <div className="flex justify-start sm:justify-center overflow-x-auto pb-2 scrollbar-none">
+          <div className="inline-flex p-1.5 rounded-full border border-(--rule) bg-(--paper) shadow-md gap-1 sm:gap-1.5">
+            {projects.map((p, idx) => {
+              const isSelected = selectedIdx === idx
+              const pConfig = STAGE_CONFIGS[p.slug]
+              return (
+                <button
+                  key={p.slug}
+                  type="button"
+                  onClick={() => handleProjectChange(idx)}
+                  className={`relative px-4 sm:px-6 py-2.5 rounded-full font-mono text-[11px] sm:text-xs uppercase tracking-wider font-medium cursor-pointer transition-colors duration-200 border-none outline-none flex items-center gap-2 whitespace-nowrap ${
+                    isSelected ? "text-(--ink)" : "text-muted-foreground hover:text-(--ink) bg-transparent"
+                  }`}
+                  aria-selected={isSelected}
+                  role="tab"
+                >
+                  {isSelected && (
+                    <motion.div
+                      layoutId="hardwareTheaterDockActive"
+                      className="absolute inset-0 rounded-full bg-(--bg-2) border border-(--rule) shadow-xs"
+                      transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-2">
+                    <span
+                      className="w-2 h-2 rounded-full transition-colors"
+                      style={{
+                        backgroundColor: isSelected ? pConfig?.accentColor ?? "var(--v3-accent)" : "rgba(150,150,150,0.4)",
+                        boxShadow: isSelected ? `0 0 10px ${pConfig?.accentColor}` : "none",
+                      }}
+                    />
+                    <span>0{idx + 1}</span>
+                    <span className="hidden sm:inline text-muted-foreground">·</span>
+                    <span className="font-semibold">{p.name}</span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── THE OBSIDIAN HARDWARE THEATER STAGE ── */}
       <div className="rounded-[32px] sm:rounded-[44px] border border-zinc-800 bg-[#0b0c0e] p-6 sm:p-10 lg:p-14 text-white relative overflow-hidden shadow-[0_45px_110px_-30px_rgba(0,0,0,0.85)]">
@@ -300,7 +303,7 @@ export function ProjectsHardwareStage(): React.ReactElement {
                 className="w-2 h-2 rounded-full animate-pulse"
                 style={{ backgroundColor: config.accentColor }}
               />
-              <span>Interactive Hardware Stage</span>
+              <span>Flagship Architecture Stage</span>
               <span className="text-zinc-700">·</span>
               <span className="text-zinc-300 font-semibold">{project.tag}</span>
             </div>
@@ -345,7 +348,7 @@ export function ProjectsHardwareStage(): React.ReactElement {
               <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
                 <span className="w-1 h-1 rounded-full bg-emerald-500/80" />
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">
                 Studio View · 4K
               </span>
             </div>
@@ -460,12 +463,12 @@ export function ProjectsHardwareStage(): React.ReactElement {
                 <span className="text-zinc-600">·</span>
                 <span className="text-zinc-400">{activeHotspot.spec}</span>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500">
+              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-500">
                 Click pins on screen to inspect
               </span>
             </div>
 
-            <p className="m-0 text-[14px] sm:text-[15px] text-zinc-300 leading-[1.6]">
+            <p className="m-0 text-sm sm:text-base text-zinc-300 leading-[1.6]">
               {activeHotspot.detail}
             </p>
           </div>
@@ -473,28 +476,28 @@ export function ProjectsHardwareStage(): React.ReactElement {
           {/* Architecture Spec Sheet */}
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-950/40 flex flex-col gap-1">
-              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+              <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-wider">
                 Protocol Architecture
               </span>
-              <span className="text-[13px] font-semibold text-zinc-200">
+              <span className="text-sm font-semibold text-zinc-200">
                 {config.architecture.protocol}
               </span>
             </div>
 
             <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-950/40 flex flex-col gap-1">
-              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+              <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-wider">
                 Role & Accountability
               </span>
-              <span className="text-[13px] font-semibold text-zinc-200">
+              <span className="text-sm font-semibold text-zinc-200">
                 {config.architecture.role}
               </span>
             </div>
 
             <div className="col-span-2 p-4 rounded-xl border border-zinc-800/80 bg-zinc-950/40 flex flex-col gap-1">
-              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+              <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-wider">
                 Hard Proof Benchmark
               </span>
-              <span className="text-[13px] font-semibold text-zinc-200">
+              <span className="text-sm font-semibold text-zinc-200">
                 {config.architecture.benchmark}
               </span>
             </div>

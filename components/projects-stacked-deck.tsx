@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { FEATURED_PROJECTS, type FeaturedProject } from "@/lib/case-studies"
 import { MagneticWrapper } from "./magnetic-wrapper"
 import { AnimatedCounter } from "./animated-counter"
-import { ArrowRight, ArrowUpRight, Lock, ExternalLink, Layers, Sparkles } from "lucide-react"
+import { ArrowRight, Lock, ExternalLink } from "lucide-react"
 
 // Gallery views for each project so users can inspect real screens at scale
 interface ProjectView {
@@ -114,7 +114,7 @@ interface DeckCardProps {
   total: number
 }
 
-function DeckCard({ project, index, total }: DeckCardProps) {
+function DeckCard({ project, index }: DeckCardProps) {
   const views = PROJECT_VIEWS[project.slug] ?? [
     {
       id: "default",
@@ -147,7 +147,7 @@ function DeckCard({ project, index, total }: DeckCardProps) {
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-6 sm:pb-8 border-b border-(--rule)/60">
             <div className="flex flex-col gap-3 max-w-[70ch]">
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="font-mono text-[12px] sm:text-[13px] font-semibold text-(--v3-accent) tracking-wider">
+                <span className="font-mono text-xs sm:text-sm font-semibold text-(--v3-accent) tracking-wider">
                   0{index + 1}
                 </span>
                 <span className="text-(--rule)">/</span>
@@ -165,7 +165,7 @@ function DeckCard({ project, index, total }: DeckCardProps) {
               </h3>
 
               {project.lede && (
-                <p className="m-0 text-[16px] sm:text-[18px] text-secondary-foreground leading-[1.55] max-w-[58ch]">
+                <p className="m-0 text-base sm:text-lg text-secondary-foreground leading-[1.55] max-w-[58ch]">
                   {project.lede}
                 </p>
               )}
@@ -236,7 +236,7 @@ function DeckCard({ project, index, total }: DeckCardProps) {
                   {project.live ? project.live.replace(/^https?:\/\//, "") : `${project.slug}.dev`}
                 </span>
                 <span className="text-zinc-600 hidden sm:inline">·</span>
-                <span className="text-zinc-400 text-[10px] hidden sm:inline uppercase tracking-wider">
+                <span className="text-zinc-400 text-[11px] hidden sm:inline uppercase tracking-wider">
                   {activeView.label}
                 </span>
               </div>
@@ -276,11 +276,11 @@ function DeckCard({ project, index, total }: DeckCardProps) {
 
               {/* Floating Caption Badge */}
               <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-auto max-w-[560px] z-10 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-black/75 backdrop-blur-md border border-white/15 text-white shadow-xl">
-                <div className="flex items-center gap-2 font-mono text-[10px] text-(--v3-accent) uppercase tracking-[0.14em] font-semibold mb-1">
+                <div className="flex items-center gap-2 font-mono text-[11px] text-(--v3-accent) uppercase tracking-[0.14em] font-semibold mb-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent)" />
                   <span>{activeView.label}</span>
                 </div>
-                <p className="m-0 text-[12px] sm:text-[13px] text-zinc-300 leading-[1.5]">
+                <p className="m-0 text-xs sm:text-sm text-zinc-300 leading-[1.5]">
                   {activeView.caption}
                 </p>
               </div>
@@ -292,13 +292,13 @@ function DeckCard({ project, index, total }: DeckCardProps) {
             {/* Proof Metric 1 */}
             {metrics[0] && (
               <div className="p-4 sm:p-5 rounded-2xl border border-(--rule)/80 bg-(--bg-2)/60 flex flex-col gap-1">
-                <div className="font-display font-light text-[32px] sm:text-[38px] text-(--ink) leading-none">
+                <div className="font-display font-light text-3xl sm:text-4xl text-(--ink) leading-none">
                   <AnimatedCounter value={metrics[0].n} />
                 </div>
                 <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-(--ink)">
                   {metrics[0].l}
                 </div>
-                <div className="text-[12px] text-secondary-foreground leading-normal">
+                <div className="text-xs text-secondary-foreground leading-normal">
                   {metrics[0].desc}
                 </div>
               </div>
@@ -307,13 +307,13 @@ function DeckCard({ project, index, total }: DeckCardProps) {
             {/* Proof Metric 2 */}
             {metrics[1] && (
               <div className="p-4 sm:p-5 rounded-2xl border border-(--rule)/80 bg-(--bg-2)/60 flex flex-col gap-1">
-                <div className="font-display font-light text-[32px] sm:text-[38px] text-(--ink) leading-none">
+                <div className="font-display font-light text-3xl sm:text-4xl text-(--ink) leading-none">
                   <AnimatedCounter value={metrics[1].n} />
                 </div>
                 <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-(--ink)">
                   {metrics[1].l}
                 </div>
-                <div className="text-[12px] text-secondary-foreground leading-normal">
+                <div className="text-xs text-secondary-foreground leading-normal">
                   {metrics[1].desc}
                 </div>
               </div>
@@ -335,7 +335,7 @@ function DeckCard({ project, index, total }: DeckCardProps) {
               <MagneticWrapper strength={15}>
                 <Link
                   href={`/work/${project.slug}`}
-                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-mono text-[12px] uppercase tracking-wider font-semibold border border-(--rule) bg-(--ink) text-(--bg) transition-all duration-200 no-underline hover:opacity-90 shadow-sm"
+                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-mono text-xs uppercase tracking-wider font-semibold border border-(--rule) bg-(--ink) text-(--bg) transition-all duration-200 no-underline hover:opacity-90 shadow-sm"
                 >
                   Read Deep Dive Case Study <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -348,16 +348,22 @@ function DeckCard({ project, index, total }: DeckCardProps) {
   )
 }
 
-export function ProjectsStackedDeck(): React.ReactElement {
+interface ProjectsStackedDeckProps {
+  projects?: FeaturedProject[]
+}
+
+export function ProjectsStackedDeck({
+  projects = FEATURED_PROJECTS.slice(1),
+}: ProjectsStackedDeckProps): React.ReactElement {
   return (
     <div className="relative">
       <div className="flex flex-col">
-        {FEATURED_PROJECTS.map((project, index) => (
+        {projects.map((project, index) => (
           <DeckCard
             key={project.slug}
             project={project}
             index={index}
-            total={FEATURED_PROJECTS.length}
+            total={projects.length}
           />
         ))}
       </div>

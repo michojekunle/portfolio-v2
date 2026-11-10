@@ -5,16 +5,22 @@ import { motion } from "framer-motion"
 import { MagneticWrapper } from "./magnetic-wrapper"
 import { ProjectsStackedDeck } from "./projects-stacked-deck"
 import { ProjectsHardwareStage } from "./projects-hardware-stage"
-import { ArrowRight, Layers, LayoutGrid } from "lucide-react"
+import { FEATURED_PROJECTS } from "@/lib/case-studies"
+import { ArrowRight, Layers } from "lucide-react"
 
 export function ProjectsSection(): React.ReactElement {
+  // Flagship top project is rendered on the interactive hardware stage
+  const flagshipProject = FEATURED_PROJECTS[0]
+  // Remaining production projects are rendered on the panoramic card deck
+  const remainingProjects = FEATURED_PROJECTS.slice(1)
+
   return (
     <section
       className="py-20 sm:py-24 lg:py-32 relative max-w-(--maxw) mx-auto px-(--gutter)"
       id="projects"
       aria-labelledby="projects-heading"
     >
-      {/* Header with Option Switcher Jump Links */}
+      {/* ── SECTION HEADER ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -26,7 +32,7 @@ export function ProjectsSection(): React.ReactElement {
           <div>
             <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-(--v3-accent) font-semibold mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent)" />
-              Showcase Comparison · Pick Your Favorite
+              Selected Systems · Shipped
             </div>
             <h2
               id="projects-heading"
@@ -36,61 +42,37 @@ export function ProjectsSection(): React.ReactElement {
             </h2>
           </div>
 
-          <div className="flex flex-col gap-3 max-w-[46ch]">
-            <p className="text-[15px] sm:text-[16px] leading-[1.6] text-secondary-foreground m-0">
-              Two world-class layout concepts implemented back-to-back on this page. Scroll through both and let me know which one you prefer.
+          <div className="flex flex-col gap-2 max-w-[48ch]">
+            <p className="text-sm sm:text-base leading-[1.6] text-secondary-foreground m-0">
+              Interactive hardware telemetry for my flagship build, followed by deep-dive production monographs below. Full case studies inside with architecture, wrong turns, and verified benchmarks.
             </p>
-            <div className="flex items-center gap-2 pt-1 flex-wrap">
-              <a
-                href="#option-1"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider border border-(--rule) bg-(--paper) text-secondary-foreground hover:text-(--ink) hover:border-muted-foreground transition-all no-underline"
-              >
-                <Layers className="w-3 h-3 text-(--v3-accent)" />
-                Option 1: Sticky Deck
-              </a>
-              <a
-                href="#option-2"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider border border-(--rule) bg-(--paper) text-secondary-foreground hover:text-(--ink) hover:border-muted-foreground transition-all no-underline"
-              >
-                <LayoutGrid className="w-3 h-3 text-(--v3-accent)" />
-                Option 2: Hardware Stage
-              </a>
-            </div>
           </div>
         </div>
       </motion.div>
 
-      {/* ── OPTION 1: THE APPLE CINEMATIC STICKY CARD DECK ── */}
-      <div id="option-1" className="scroll-mt-32">
-        <div className="flex items-center justify-between gap-4 mb-8 pb-3 border-b border-(--rule)/60">
-          <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-(--ink) font-semibold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-(--v3-accent)" />
-            Option 1 · The Cinematic Sticky Card Deck
-          </span>
-          <span className="font-mono text-[11px] text-muted-foreground uppercase tracking-wider hidden sm:inline">
-            Scroll to stack cards
-          </span>
-        </div>
-
-        <ProjectsStackedDeck />
+      {/* ── 1. FLAGSHIP SHOWCASE: THE PRO INTERACTIVE HARDWARE STAGE ── */}
+      <div className="mb-20 sm:mb-28">
+        <ProjectsHardwareStage
+          project={flagshipProject}
+          standaloneTopProject={true}
+        />
       </div>
 
-      {/* ── OPTION 2: THE APPLE PRO INTERACTIVE HARDWARE STAGE ── */}
-      <div id="option-2" className="pt-24 sm:pt-32 scroll-mt-32 border-t border-(--rule) mt-16 sm:mt-24">
-        <div className="flex items-center justify-between gap-4 mb-8 pb-3 border-b border-(--rule)/60">
-          <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-(--ink) font-semibold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-(--v3-accent)" />
-            Option 2 · The Apple Pro Interactive Hardware Stage
-          </span>
-          <span className="font-mono text-[11px] text-muted-foreground uppercase tracking-wider hidden sm:inline">
-            Click tabs & inspect features
-          </span>
+      {/* ── 2. MONOGRAPH INTERLUDE: Hairline Divider & Sub-Header ── */}
+      <div className="flex items-center justify-between gap-4 mb-10 pb-4 border-b border-(--rule)/70">
+        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-(--ink) font-semibold">
+          <Layers className="w-4 h-4 text-(--v3-accent)" />
+          <span>Production Deployments · Panoramic Archive</span>
         </div>
-
-        <ProjectsHardwareStage />
+        <span className="font-mono text-[11px] text-muted-foreground uppercase tracking-wider hidden sm:inline">
+          Scroll to stack cards · Click views to inspect
+        </span>
       </div>
 
-      {/* Global Bottom CTA: Complete Archive */}
+      {/* ── 3. REMAINING PROJECTS: THE PANORAMIC STICKY CARD DECK ── */}
+      <ProjectsStackedDeck projects={remainingProjects} />
+
+      {/* ── 4. GLOBAL BOTTOM CTA: Complete Archive ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -101,7 +83,7 @@ export function ProjectsSection(): React.ReactElement {
         <MagneticWrapper strength={20}>
           <Link
             href="/work"
-            className="group inline-flex items-center justify-center w-full sm:w-auto px-7 sm:px-9 py-3.5 rounded-full font-mono text-[12px] uppercase tracking-[0.08em] font-medium cursor-pointer border border-(--rule) bg-(--paper) text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-center shadow-sm"
+            className="group inline-flex items-center justify-center w-full sm:w-auto px-7 sm:px-9 py-3.5 rounded-full font-mono text-xs uppercase tracking-[0.08em] font-medium cursor-pointer border border-(--rule) bg-(--paper) text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-center shadow-sm"
           >
             Explore complete archive{" "}
             <ArrowRight
