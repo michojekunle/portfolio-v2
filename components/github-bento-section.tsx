@@ -1,43 +1,43 @@
-import { CASE_STUDIES } from "@/lib/case-studies"
-import { MagneticWrapper } from "./magnetic-wrapper"
-import { ArrowUpRight, GitCommit, Clock, GitBranch } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import Image from "next/image"
+import { CASE_STUDIES } from "@/lib/case-studies";
+import { MagneticWrapper } from "./magnetic-wrapper";
+import { ArrowUpRight, GitCommit, Clock, GitBranch } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import Image from "next/image";
 
 interface PinnedRepo {
-  name: string
-  description: string | null
-  url: string
-  language: string | null
-  topics: string[]
-  homepage: string | null
-  pushedAt: string | null
+  name: string;
+  description: string | null;
+  url: string;
+  language: string | null;
+  topics: string[];
+  homepage: string | null;
+  pushedAt: string | null;
 }
 
 interface ContributionDay {
-  contributionCount: number
-  date: string
+  contributionCount: number;
+  date: string;
 }
 
 interface ContributionWeek {
-  contributionDays: ContributionDay[]
+  contributionDays: ContributionDay[];
 }
 
 interface GitHubData {
-  avatarUrl: string
-  totalContributions: number
-  totalRepos: number
-  weeks: ContributionWeek[]
-  repos: PinnedRepo[]
+  avatarUrl: string;
+  totalContributions: number;
+  totalRepos: number;
+  weeks: ContributionWeek[];
+  repos: PinnedRepo[];
 }
 
-const FEATURED_SLUGS = new Set(CASE_STUDIES.map((cs) => cs.slug))
+const FEATURED_SLUGS = new Set(CASE_STUDIES.map((cs) => cs.slug));
 
 async function fetchGitHubData(): Promise<GitHubData | null> {
-  const token = process.env.GITHUB_TOKEN
-  const username = process.env.GITHUB_USERNAME ?? "michojekunle"
+  const token = process.env.GITHUB_TOKEN;
+  const username = process.env.GITHUB_USERNAME ?? "michojekunle";
 
-  if (!token) return null
+  if (!token) return null;
 
   const query = `
     query {
@@ -68,7 +68,7 @@ async function fetchGitHubData(): Promise<GitHubData | null> {
         }
       }
     }
-  `
+  `;
 
   try {
     const res = await fetch("https://api.github.com/graphql", {
@@ -80,15 +80,15 @@ async function fetchGitHubData(): Promise<GitHubData | null> {
       },
       body: JSON.stringify({ query }),
       next: { revalidate: 3600 },
-    })
+    });
 
-    if (!res.ok) return null
+    if (!res.ok) return null;
 
-    const json = await res.json()
-    const user = json.data?.user
-    if (!user) return null
+    const json = await res.json();
+    const user = json.data?.user;
+    if (!user) return null;
 
-    const pinnedNodes = user.pinnedItems?.nodes ?? []
+    const pinnedNodes = user.pinnedItems?.nodes ?? [];
     const repos: PinnedRepo[] = pinnedNodes.map((r: any) => ({
       name: r.name,
       description: r.description,
@@ -97,17 +97,19 @@ async function fetchGitHubData(): Promise<GitHubData | null> {
       topics: r.repositoryTopics?.nodes?.map((t: any) => t.topic.name) ?? [],
       homepage: r.homepageUrl,
       pushedAt: r.pushedAt ?? null,
-    }))
+    }));
 
     return {
       avatarUrl: user.avatarUrl,
-      totalContributions: user.contributionsCollection?.contributionCalendar?.totalContributions ?? 2102,
+      totalContributions:
+        user.contributionsCollection?.contributionCalendar
+          ?.totalContributions ?? 2102,
       totalRepos: user.repositories?.totalCount ?? 229,
       weeks: user.contributionsCollection?.contributionCalendar?.weeks ?? [],
       repos,
-    }
+    };
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -120,31 +122,36 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Python: "#3572a5",
   Go: "#00add8",
   Clarity: "#7b5ea7",
-}
+};
 
 export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
-  const data = await fetchGitHubData()
-  if (!data) return null
+  const data = await fetchGitHubData();
+  if (!data) return null;
 
   // Filter out repos that are already featured as case studies
   const filteredRepos = data.repos.filter(
-    (r) => !FEATURED_SLUGS.has(r.name) && !FEATURED_SLUGS.has(r.name.replace(/-/g, "").toLowerCase())
-  )
+    (r) =>
+      !FEATURED_SLUGS.has(r.name) &&
+      !FEATURED_SLUGS.has(r.name.replace(/-/g, "").toLowerCase()),
+  );
 
-  const monthLabels: { label: string; weekIndex: number }[] = []
-  let lastMonth = -1
+  const monthLabels: { label: string; weekIndex: number }[] = [];
+  let lastMonth = -1;
   data.weeks.forEach((week, i) => {
     if (week.contributionDays[0]) {
-      const m = new Date(week.contributionDays[0].date).getUTCMonth()
+      const m = new Date(week.contributionDays[0].date).getUTCMonth();
       if (m !== lastMonth) {
         monthLabels.push({
-          label: new Date(week.contributionDays[0].date).toLocaleDateString("en-US", { month: "short", timeZone: "UTC" }),
+          label: new Date(week.contributionDays[0].date).toLocaleDateString(
+            "en-US",
+            { month: "short", timeZone: "UTC" },
+          ),
           weekIndex: i,
-        })
-        lastMonth = m
+        });
+        lastMonth = m;
       }
     }
-  })
+  });
 
   return (
     <section
@@ -154,11 +161,15 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
     >
       <div className="mb-16 max-[720px]:mb-10">
         <div>
-          <h2 id="bento-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
-            Activity &amp; open <em className="not-italic italic text-(--v3-accent) fvs-soft">source.</em>
+          <h2
+            id="bento-heading"
+            className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
+          >
+            Activity
           </h2>
           <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
-            Real code in public: commit streaks, cryptographic implementations, and libraries built to scratch my own itch.
+            Real code in public: commit streaks, cryptographic implementations,
+            and libraries built to scratch my own itch.
           </div>
         </div>
       </div>
@@ -180,28 +191,37 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
             )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[14px] font-semibold text-(--ink)">@michojekunle</span>
+                <span className="font-mono text-[14px] font-semibold text-(--ink)">
+                  @michojekunle
+                </span>
                 <span className="font-mono text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full border border-(--rule) bg-(--bg-2) text-muted-foreground">
                   GitHub
                 </span>
               </div>
               <div className="text-[13px] text-secondary-foreground mt-0.5">
-                Software engineer &amp; builder · Systems &amp; AI infrastructure
+                Software engineer &amp; builder · Systems &amp; AI
+                infrastructure
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-6 font-mono text-[12px]">
             <div>
-              <span className="text-[16px] font-semibold text-(--ink) block leading-tight">{data.totalRepos}</span>
-              <span className="text-muted-foreground text-[11px] uppercase tracking-wider">Repos</span>
+              <span className="text-[16px] font-semibold text-(--ink) block leading-tight">
+                {data.totalRepos}
+              </span>
+              <span className="text-muted-foreground text-[11px] uppercase tracking-wider">
+                Repos
+              </span>
             </div>
             <div className="w-px h-7 bg-(--rule)" />
             <div>
               <span className="text-[16px] font-semibold text-(--v3-accent) block leading-tight">
                 {data.totalContributions.toLocaleString()}
               </span>
-              <span className="text-muted-foreground text-[11px] uppercase tracking-wider">Contributions (1 yr)</span>
+              <span className="text-muted-foreground text-[11px] uppercase tracking-wider">
+                Contributions (1 yr)
+              </span>
             </div>
           </div>
         </div>
@@ -211,7 +231,10 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
           <div className="flex items-center justify-between mb-4">
             <span className="font-mono text-[13px] font-medium text-(--ink) flex items-center gap-2">
               <GitCommit className="w-4 h-4 text-(--v3-accent)" />
-              <span>{data.totalContributions.toLocaleString()} contributions in the last year</span>
+              <span>
+                {data.totalContributions.toLocaleString()} contributions in the
+                last year
+              </span>
             </span>
             <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
               <span>Less</span>
@@ -228,26 +251,28 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
             {/* Month labels row */}
             <div className="flex gap-[3px] min-w-[720px] justify-between mb-1.5 font-mono text-[10px] text-muted-foreground select-none">
               {data.weeks.map((_, i) => {
-                const label = monthLabels.find((ml) => ml.weekIndex === i)
+                const label = monthLabels.find((ml) => ml.weekIndex === i);
                 return (
                   <div key={i} className="w-[11px] shrink-0 text-left">
                     {label ? label.label : ""}
                   </div>
-                )
+                );
               })}
             </div>
             <div className="flex gap-[3px] min-w-[720px] justify-between">
               {data.weeks.map((week, wIdx) => (
                 <div key={wIdx} className="flex flex-col gap-[3px]">
                   {week.contributionDays.map((day) => {
-                    const count = day.contributionCount
-                    let bg = "bg-(--bg-2) border border-(--rule)/40"
+                    const count = day.contributionCount;
+                    let bg = "bg-(--bg-2) border border-(--rule)/40";
                     if (count > 0 && count <= 2) {
-                      bg = "bg-[color-mix(in_oklab,var(--v3-accent)_35%,var(--paper))]"
+                      bg =
+                        "bg-[color-mix(in_oklab,var(--v3-accent)_35%,var(--paper))]";
                     } else if (count > 2 && count <= 5) {
-                      bg = "bg-[color-mix(in_oklab,var(--v3-accent)_70%,var(--paper))]"
+                      bg =
+                        "bg-[color-mix(in_oklab,var(--v3-accent)_70%,var(--paper))]";
                     } else if (count > 5) {
-                      bg = "bg-(--v3-accent)"
+                      bg = "bg-(--v3-accent)";
                     }
 
                     return (
@@ -256,7 +281,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                         className={`w-[11px] h-[11px] rounded-[2px] transition-transform hover:scale-125 ${bg}`}
                         title={`${day.date}: ${count} contribution${count !== 1 ? "s" : ""}`}
                       />
-                    )
+                    );
                   })}
                 </div>
               ))}
@@ -268,8 +293,9 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
       {/* Pinned Repositories with Recency Timestamps */}
       <div className="grid grid-cols-3 max-[920px]:grid-cols-2 max-[720px]:grid-cols-1 gap-4 mb-16">
         {filteredRepos.slice(0, 6).map((repo, i) => {
-          const langColor = LANGUAGE_COLORS[repo.language ?? ""] ?? "var(--v3-accent)"
-          const isWide = i === 0 || i === 4
+          const langColor =
+            LANGUAGE_COLORS[repo.language ?? ""] ?? "var(--v3-accent)";
+          const isWide = i === 0 || i === 4;
 
           return (
             <a
@@ -287,7 +313,9 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                 {repo.pushedAt && (
                   <span className="inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
                     <Clock className="w-3 h-3 text-(--v3-accent)" />
-                    {formatDistanceToNow(new Date(repo.pushedAt), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(repo.pushedAt), {
+                      addSuffix: true,
+                    })}
                   </span>
                 )}
               </div>
@@ -301,24 +329,34 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
               <div className="flex flex-wrap gap-2.5 items-center mt-auto pt-3 border-t border-(--rule)/50">
                 {repo.language && (
                   <span className="flex items-center gap-1.5 font-mono text-[12px] text-muted-foreground">
-                    <svg className="w-2 h-2 shrink-0" viewBox="0 0 8 8" aria-hidden="true">
+                    <svg
+                      className="w-2 h-2 shrink-0"
+                      viewBox="0 0 8 8"
+                      aria-hidden="true"
+                    >
                       <circle cx="4" cy="4" r="4" fill={langColor} />
                     </svg>
                     {repo.language}
                   </span>
                 )}
                 {repo.topics.slice(0, 2).map((t) => (
-                  <span key={t} className="font-mono text-[11px] px-2 py-0.5 rounded bg-(--bg-2) text-secondary-foreground border border-(--rule)/50">
+                  <span
+                    key={t}
+                    className="font-mono text-[11px] px-2 py-0.5 rounded bg-(--bg-2) text-secondary-foreground border border-(--rule)/50"
+                  >
                     {t}
                   </span>
                 ))}
               </div>
 
-              <div className="absolute top-5 right-5 text-(--v3-accent) opacity-0 -translate-x-1 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" aria-hidden="true">
+              <div
+                className="absolute top-5 right-5 text-(--v3-accent) opacity-0 -translate-x-1 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
+                aria-hidden="true"
+              >
                 <ArrowUpRight className="w-4 h-4" />
               </div>
             </a>
-          )
+          );
         })}
       </div>
 
@@ -330,11 +368,14 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-mono text-[12px] uppercase tracking-wider font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-200 no-underline hover:border-muted-foreground hover:bg-(--paper)"
           >
-            All repos on GitHub <ArrowUpRight className="inline-block transition-transform duration-250 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 w-4 h-4" aria-hidden="true" />
+            All repos on GitHub{" "}
+            <ArrowUpRight
+              className="inline-block transition-transform duration-250 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 w-4 h-4"
+              aria-hidden="true"
+            />
           </a>
         </MagneticWrapper>
       </div>
     </section>
-  )
+  );
 }
-

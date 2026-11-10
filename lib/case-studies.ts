@@ -52,6 +52,7 @@ export interface FeaturedProject {
   tag: string;
   year: string;
   desc: string;
+  lede?: string;
   stack: string[];
   role: string;
   duration: string;
@@ -59,6 +60,9 @@ export interface FeaturedProject {
   logo?: string;
   logoBg?: string;
   imagePosition?: string;
+  live?: string;
+  liveLabel?: string;
+  outcomes?: CaseStudyOutcome[];
 }
 
 export const CASE_STUDIES: CaseStudy[] = [
@@ -509,13 +513,14 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   CASE_STUDIES.find((cs) => cs.slug === "triple-cure")!,
   CASE_STUDIES.find((cs) => cs.slug === "zk-implementations")!,
 ].map(
-  ({ slug, idx, name, tag, year, desc, stack, role, duration, image, logo, logoBg, imagePosition }) => ({
+  ({
     slug,
     idx,
     name,
     tag,
     year,
     desc,
+    lede,
     stack,
     role,
     duration,
@@ -523,6 +528,27 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     logo,
     logoBg,
     imagePosition,
+    live,
+    liveLabel,
+    outcomes,
+  }) => ({
+    slug,
+    idx,
+    name,
+    tag,
+    year,
+    desc,
+    lede,
+    stack,
+    role,
+    duration,
+    image,
+    logo,
+    logoBg,
+    imagePosition,
+    live,
+    liveLabel,
+    outcomes,
   })
 );
 
