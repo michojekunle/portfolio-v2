@@ -59,13 +59,13 @@ export function ProjectsSection(): React.ReactElement {
       </div>
 
       {/* ── 2. MONOGRAPH INTERLUDE: Hairline Divider & Sub-Header ── */}
-      <div className="flex items-center justify-between gap-4 mb-10 pb-4 border-b border-(--rule)/70">
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-(--ink) font-semibold">
+      <div className="flex items-center justify-between gap-4 mb-8 pb-3.5 border-b border-(--rule)/70">
+        <div className="flex items-center gap-2 font-mono text-xs tracking-wider text-(--ink) font-medium">
           <Layers className="w-4 h-4 text-(--v3-accent)" />
-          <span>Production Deployments · Panoramic Archive</span>
+          <span>Production Systems · Architecture Archive</span>
         </div>
-        <span className="font-mono text-[11px] text-muted-foreground uppercase tracking-wider hidden sm:inline">
-          Scroll to stack cards · Click views to inspect
+        <span className="font-mono text-[11px] text-muted-foreground tracking-wider hidden sm:inline">
+          Scroll to stack cards · Click tabs to inspect
         </span>
       </div>
 
