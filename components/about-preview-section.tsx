@@ -32,7 +32,7 @@ export function AboutPreviewSection(): React.ReactElement {
         className="mb-20 max-[720px]:mb-12"
       >
         <div>
-          <h2 id="about-preview-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+          <h2 id="about-preview-heading" className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             <TextReveal delay={0.1}>From the interface</TextReveal> <br className="max-[720px]:hidden" />
             <TextReveal delay={0.3} className="italic text-(--v3-accent) fvs-soft">down.</TextReveal>
           </h2>
@@ -41,7 +41,7 @@ export function AboutPreviewSection(): React.ReactElement {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5"
+            className="max-w-[56ch] text-base leading-[1.6] text-secondary-foreground mt-4.5"
           >
             I build products end to end, and I&apos;m learning what sits underneath them: memory, protocols and the systems that keep them running.
           </motion.div>
@@ -76,7 +76,7 @@ export function AboutPreviewSection(): React.ReactElement {
         className="mt-20 pt-10 border-t border-(--rule) flex justify-center"
       >
         <MagneticWrapper strength={20}>
-          <Link href="/about" className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] tracking-[0.06em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
+          <Link href="/about" className="group inline-flex items-center justify-center px-8 py-3.5 rounded-full font-mono text-[12px] tracking-[0.04em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)]">
             More about my journey <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-2.5 w-3 h-3" aria-hidden="true" />
           </Link>
         </MagneticWrapper>

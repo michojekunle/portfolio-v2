@@ -23,11 +23,11 @@ export function FilmReelSection(): React.ReactElement {
     >
       <div className="max-w-(--maxw) mx-auto px-(--gutter) mb-20 max-[720px]:mb-12">
         <div className="flex justify-between items-end max-[720px]:flex-col max-[720px]:items-start gap-6">
-          <h2 id="reel-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+          <h2 id="reel-heading" className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
             Everything I&apos;ve <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
           </h2>
           <MagneticWrapper strength={20}>
-            <Link href="/work" className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full font-mono text-[11px] uppercase tracking-[0.12em] font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-3">
+            <Link href="/work" className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full font-mono text-xs tracking-wider font-medium cursor-pointer border border-(--rule) bg-transparent text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] shrink-0 mb-3">
               View full index <ArrowRight className="inline-block transition-transform duration-300 group-hover:translate-x-1 w-3 h-3" aria-hidden="true" />
             </Link>
           </MagneticWrapper>

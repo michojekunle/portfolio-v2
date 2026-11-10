@@ -35,7 +35,7 @@ interface BookItem {
 function UpdatedBadge({ date }: { date?: string | null }): React.ReactElement | null {
   if (!date) return null
   return (
-    <span className="font-mono text-[11px] text-muted-foreground/70 whitespace-nowrap">
+    <span className="font-mono text-[11px] text-muted-foreground/70 whitespace-nowrap" suppressHydrationWarning>
       Updated {formatDistanceToNow(new Date(date))} ago
     </span>
   )
@@ -87,10 +87,10 @@ export async function NowSection(): Promise<React.ReactElement> {
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
         <div className="mb-20 max-[720px]:mb-12">
           <div>
-            <h2 id="now-heading" className="m-0 font-display font-normal text-[clamp(44px,7vw,88px)] leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
-              Currently <em className="not-italic italic text-(--v3-accent) fvs-soft">working on.</em>
+            <h2 id="now-heading" className="m-0 font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display">
+              Currently <span className="text-(--v3-accent)">working on.</span>
             </h2>
-            <div className="max-w-[56ch] text-[17px] leading-[1.6] text-secondary-foreground mt-4.5">
+            <div className="max-w-[56ch] text-base leading-[1.6] text-secondary-foreground mt-4.5">
               What I&apos;m building, learning and reading right now.
             </div>
           </div>
@@ -107,7 +107,7 @@ export async function NowSection(): Promise<React.ReactElement> {
 
           {/* Building */}
           <div className="p-8 max-[720px]:p-5 border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.06em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Side quests (for the fun of it)</h4>
+            <h4 className="font-mono text-[12px] tracking-[0.04em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Side quests (for the fun of it)</h4>
             <ul className="list-none p-0 m-0">
               {building.length > 0 ? (
                 building.map((item, i) => (
@@ -155,7 +155,7 @@ export async function NowSection(): Promise<React.ReactElement> {
 
           {/* Learning */}
           <div className="p-8 max-[720px]:p-5 border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.06em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Learning</h4>
+            <h4 className="font-mono text-[12px] tracking-[0.04em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Learning</h4>
             <ul className="list-none p-0 m-0">
               {learning.length > 0 ? (
                 learning.map((item, i) => (
@@ -192,7 +192,7 @@ export async function NowSection(): Promise<React.ReactElement> {
 
           {/* Off-screen / reading */}
           <div className="p-8 max-[720px]:p-5 border-r border-(--rule) last:border-r-0 max-[920px]:border-r-0 max-[920px]:border-b max-[920px]:border-(--rule) max-[920px]:last:border-b-0">
-            <h4 className="font-mono text-[12px] tracking-[0.06em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Off-screen</h4>
+            <h4 className="font-mono text-[12px] tracking-[0.04em] text-muted-foreground m-[0_0_24px] font-medium flex items-center gap-2 before:content-[''] before:w-2 before:h-2 before:bg-(--v3-accent) before:rounded-full">Off-screen</h4>
             <ul className="list-none p-0 m-0">
               {books.length > 0 ? (
                 <>

@@ -21,18 +21,26 @@ interface SpotifyAuthRecord {
 }
 
 /**
- * Builds the OAuth callback URL from NEXT_PUBLIC_SITE_URL, stripping any
- * trailing slash first — Spotify's redirect_uri match is byte-exact, and a
- * trailing slash on the env var silently produces a double slash
- * (".dev//api/...") that won't match what's registered on the app.
+ * Builds the OAuth callback URL. If an incoming request is provided, uses its
+ * origin (e.g. http://localhost:3000 or https://www.michaelojekunle.dev) so the
+ * redirect_uri strictly matches where the user is authenticating and avoids
+ * cross-subdomain / localhost cookie loss and state_mismatch errors.
  */
-export function getSpotifyRedirectUri(): string | null {
+export function getSpotifyRedirectUri(req?: Request | { url: string }): string | null {
+  if (req?.url) {
+    try {
+      const url = new URL(req.url);
+      return `${url.origin.replace(/\/+$/, "")}/api/spotify/callback`;
+    } catch {
+      // fallback to siteUrl
+    }
+  }
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!siteUrl) return null;
   return `${siteUrl.replace(/\/+$/, "")}/api/spotify/callback`;
 }
 
-function withTimeout<T>(promise: Promise<T>, ms = 800): Promise<T> {
+function withTimeout<T>(promise: Promise<T>, ms = 400): Promise<T> {
   let timer: NodeJS.Timeout;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error("Timeout")), ms);
@@ -40,12 +48,15 @@ function withTimeout<T>(promise: Promise<T>, ms = 800): Promise<T> {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
+let lastRedisFailure = 0;
+
 export async function getSpotifyAuth(): Promise<SpotifyAuthRecord | null> {
-  if (!redis) return null;
+  if (!redis || Date.now() - lastRedisFailure < 30_000) return null;
   try {
     return await withTimeout(redis.get<SpotifyAuthRecord>(REDIS_KEY));
   } catch (e) {
-    console.error("[spotify] redis read error:", e);
+    lastRedisFailure = Date.now();
+    console.warn("[spotify] redis read error (reconnect at /admin/now):", e instanceof Error ? e.message : e);
     return null;
   }
 }
@@ -64,7 +75,7 @@ export async function clearSpotifyAuth(): Promise<void> {
   try {
     await withTimeout(redis.del(REDIS_KEY));
   } catch (e) {
-    console.error("[spotify] redis del error:", e);
+    console.warn("[spotify] redis del error:", e instanceof Error ? e.message : e);
   }
 }
 
@@ -105,11 +116,15 @@ export async function getSpotifyConnectionStatus(): Promise<SpotifyConnectionSta
 export const SPOTIFY_SCOPES =
   "user-read-currently-playing user-read-playback-state user-read-recently-played user-top-read";
 
+let lastTokenFailure = 0;
+
 /** Exchanges the stored refresh token for a fresh access token. Shared by every Spotify data fetcher below so token-refresh/expiry handling lives in exactly one place. */
 async function getSpotifyAccessToken(): Promise<string | null> {
   const client_id = process.env.SPOTIFY_CLIENT_ID;
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
   if (!client_id || !client_secret) return null;
+
+  if (Date.now() - lastTokenFailure < 60_000) return null;
 
   const stored = await getSpotifyAuth();
   // Falls back to the legacy env-var token for a first deploy that hasn't
@@ -130,9 +145,11 @@ async function getSpotifyAccessToken(): Promise<string | null> {
       },
       body: new URLSearchParams({ grant_type: "refresh_token", refresh_token }),
       cache: "no-store",
+      signal: AbortSignal.timeout(1200),
     });
 
     if (!response.ok) {
+      lastTokenFailure = Date.now();
       const body: unknown = await response.json().catch(() => null);
       const errorCode =
         body && typeof body === "object" && "error" in body
@@ -142,12 +159,12 @@ async function getSpotifyAccessToken(): Promise<string | null> {
         // Expired (6-month lifetime) or revoked — stop retrying with a dead
         // token and surface a clear "reconnect" state in /admin/now instead
         // of failing silently on every request.
-        console.error(
+        console.warn(
           "[spotify] refresh token invalid/expired — reconnect at /admin/now"
         );
         await clearSpotifyAuth();
       } else {
-        console.error("[spotify] token refresh failed:", response.status, body);
+        console.warn("[spotify] token refresh failed:", response.status, body);
       }
       return null;
     }
@@ -165,7 +182,8 @@ async function getSpotifyAccessToken(): Promise<string | null> {
 
     return tokenData.access_token;
   } catch (e) {
-    console.error("[spotify] token refresh error:", e);
+    lastTokenFailure = Date.now();
+    console.warn("[spotify] token refresh error:", e instanceof Error ? e.message : e);
     return null;
   }
 }
@@ -183,18 +201,20 @@ async function withCache<T>(
   ttlSeconds: number,
   fetcher: () => Promise<T>
 ): Promise<T> {
-  if (!redis) return fetcher();
+  if (!redis || Date.now() - lastRedisFailure < 30_000) return fetcher();
   try {
     const cached = await withTimeout(redis.get<T>(key));
     if (cached !== null && cached !== undefined) return cached;
   } catch (e) {
-    console.error(`[spotify] cache read error (${key}):`, e);
+    lastRedisFailure = Date.now();
+    console.warn(`[spotify] cache read error (${key}):`, e instanceof Error ? e.message : e);
   }
   const fresh = await fetcher();
   try {
     await withTimeout(redis.set(key, fresh, { ex: ttlSeconds }));
   } catch (e) {
-    console.error(`[spotify] cache write error (${key}):`, e);
+    lastRedisFailure = Date.now();
+    console.warn(`[spotify] cache write error (${key}):`, e instanceof Error ? e.message : e);
   }
   return fresh;
 }
@@ -274,7 +294,7 @@ export async function getSpotifyNowPlaying(): Promise<SpotifyNowPlaying> {
           fetchedAt: Date.now(),
         };
       } catch (e) {
-        console.error("[spotify] now-playing fetch error:", e);
+        console.warn("[spotify] now-playing fetch error:", e instanceof Error ? e.message : e);
         return empty;
       }
     }
@@ -337,7 +357,7 @@ export async function getSpotifyRecentlyPlayed(
           playedAt: entry.played_at,
         }));
       } catch (e) {
-        console.error("[spotify] recently-played fetch error:", e);
+        console.warn("[spotify] recently-played fetch error:", e instanceof Error ? e.message : e);
         return [];
       }
     }
@@ -375,7 +395,7 @@ export async function getSpotifyTopTracks(
         };
         return (data.items ?? []).map(toTrackRef);
       } catch (e) {
-        console.error("[spotify] top-tracks fetch error:", e);
+        console.warn("[spotify] top-tracks fetch error:", e instanceof Error ? e.message : e);
         return [];
       }
     }

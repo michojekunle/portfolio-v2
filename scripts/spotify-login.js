@@ -48,11 +48,11 @@ const server = http.createServer(async (req, res) => {
   const parsedUrl = url.parse(req.url, true);
 
   if (parsedUrl.pathname === "/") {
-    // Redirect to Spotify Auth
-    const scope = "user-read-currently-playing user-read-playback-state";
+    // Redirect to Spotify Auth with all required scopes
+    const scope = "user-read-currently-playing user-read-playback-state user-read-recently-played user-top-read";
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${encodeURIComponent(
       redirect_uri
-    )}&scope=${encodeURIComponent(scope)}`;
+    )}&scope=${encodeURIComponent(scope)}&show_dialog=true`;
     
     res.writeHead(302, { Location: authUrl });
     res.end();
@@ -99,7 +99,7 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      // Update .env file
+      // 1. Update local .env file
       let updatedEnvContent = envContent;
       const regex = /^SPOTIFY_REFRESH_TOKEN=.*$/m;
       if (regex.test(updatedEnvContent)) {
@@ -109,18 +109,51 @@ const server = http.createServer(async (req, res) => {
       }
       fs.writeFileSync(envPath, updatedEnvContent, "utf-8");
 
+      // 2. Sync directly to Upstash Redis for production
+      let redisSynced = false;
+      if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
+        try {
+          const redisUrl = env.UPSTASH_REDIS_REST_URL.replace(/^"|"$/g, "").replace(/\/+$/, "");
+          const redisToken = env.UPSTASH_REDIS_REST_TOKEN.replace(/^"|"$/g, "");
+          const redisRecord = {
+            refresh_token: newRefreshToken,
+            authorized_at: new Date().toISOString(),
+          };
+          const redisRes = await fetch(`${redisUrl}/set/spotify_auth`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${redisToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(redisRecord),
+          });
+          if (redisRes.ok) {
+            redisSynced = true;
+            console.log("[success] Synced new token to Upstash Redis (production)!");
+          } else {
+            console.warn("[warn] Upstash Redis set status:", redisRes.status);
+          }
+        } catch (redisErr) {
+          console.warn("[warn] Failed to sync to Upstash Redis:", redisErr.message);
+        }
+      }
+
       res.writeHead(200, { "Content-Type": "text/html" });
       res.end(`
-        <div style="font-family: sans-serif; text-align: center; padding-top: 50px;">
-          <h1 style="color: #1DB954;">Spotify Authenticated Successfully!</h1>
-          <p>The new refresh token has been written directly to your <strong>.env</strong> file.</p>
-          <p>You can close this tab and stop the Node script now.</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center; padding-top: 60px; max-width: 520px; margin: 0 auto; color: #111;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background: #1DB954; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px;">✓</div>
+          <h1 style="color: #111; font-size: 24px; margin-bottom: 8px;">Spotify Authenticated Successfully!</h1>
+          <p style="color: #666; font-size: 15px; line-height: 1.5;">The new refresh token has been written to your <strong>.env</strong> file${redisSynced ? " and synced directly to <strong>Upstash Redis</strong> for production" : ""}.</p>
+          <p style="color: #999; font-size: 13px; margin-top: 24px;">You can close this window now.</p>
         </div>
       `);
 
       console.log("\n=========================================");
       console.log("[success] Authentication Successful!");
-      console.log(`New Refresh Token saved: ${newRefreshToken}`);
+      console.log(`New Refresh Token: ${newRefreshToken}`);
+      if (redisSynced) {
+        console.log("[success] Upstash Redis: SYNCED");
+      }
       console.log("=========================================\n");
       process.exit(0);
     } catch (err) {

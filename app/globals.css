@@ -840,7 +840,7 @@ h1, h2, h3, h4, h5 {
 .v3-note-card h3 {
   font-family: var(--display-font);
   font-variation-settings: "opsz" 144; font-weight: 400;
-  font-size: 26px; line-height: 1.15; letter-spacing: -0.018em;
+  font-size: 26px; line-height: 1.35; letter-spacing: -0.018em;
   color: var(--ink); margin: 0;
 }
 
@@ -1146,7 +1146,7 @@ h1, h2, h3, h4, h5 {
 
 .v3-blog-row .title {
   font-family: var(--display-font); font-variation-settings: "opsz" 144;
-  font-size: 28px; line-height: 1.1; letter-spacing: -0.018em; font-weight: 400; color: var(--ink);
+  font-size: 28px; line-height: 1.35; letter-spacing: -0.018em; font-weight: 400; color: var(--ink);
 }
 
 .v3-blog-row .title .tag {
@@ -1701,7 +1701,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .v3-cta-field input::placeholder,
-.v3-cta-field textarea::placeholder { color: var(--ink-4); }
+.v3-cta-field textarea::placeholder { color: var(--ink-2); opacity: 0.9; }
 
 .v3-cta-field input:focus,
 .v3-cta-field textarea:focus {

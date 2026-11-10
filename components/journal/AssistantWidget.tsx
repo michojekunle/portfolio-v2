@@ -476,7 +476,7 @@ export function AssistantWidget({ hasObjectives }: Props): React.ReactElement {
                     className="text-white rounded-[14px] rounded-br-sm px-4 py-3 flex items-center gap-2 animate-pulse"
                     style={{ background: ACCENT }}
                   >
-                    <Mic className="animate-bounce" size={14} />
+                    <Mic className="animate-pulse" size={14} />
                     <span className="font-mono text-[10px]">Listening… {interimTranscript}</span>
                   </div>
                 </div>

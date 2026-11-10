@@ -34,7 +34,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",

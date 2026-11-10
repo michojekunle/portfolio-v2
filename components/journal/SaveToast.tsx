@@ -31,12 +31,12 @@ export function SaveToast({
         transform: visible ? "translateY(0) scale(1)" : "translateY(80px) scale(0.92)",
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "auto" : "none",
-        transition: "transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease",
+        transition: "transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease",
         willChange: "transform, opacity",
       }}
     >
       <CheckCircle size={16} strokeWidth={2.5} />
-      <span className="font-mono text-[11px] tracking-[0.12em] font-semibold uppercase">
+      <span className="font-mono text-[11px] tracking-[0.12em] font-semibold">
         {message}
       </span>
     </div>

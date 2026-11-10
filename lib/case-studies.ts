@@ -52,6 +52,7 @@ export interface FeaturedProject {
   tag: string;
   year: string;
   desc: string;
+  lede?: string;
   stack: string[];
   role: string;
   duration: string;
@@ -59,6 +60,9 @@ export interface FeaturedProject {
   logo?: string;
   logoBg?: string;
   imagePosition?: string;
+  live?: string;
+  liveLabel?: string;
+  outcomes?: CaseStudyOutcome[];
 }
 
 export const CASE_STUDIES: CaseStudy[] = [
@@ -162,12 +166,12 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Blockchain Integrations Engineer · Founding Team",
     duration: "~18 months",
     team: "4–6 people",
-    image: "/work/coinsafe/landing2.webp",
+    image: "/work/coinsafe/coinsafe-landing.png",
     logo: "/work/coinsafe/logo.svg",
     logoBg: "#451a03",
     gallery: [
       { src: "/work/coinsafe/vault.webp", alt: "CoinSafe vault with savings targets and locked balances", kind: "desktop", w: 1800, h: 1026 },
-      { src: "/work/coinsafe/landing2.webp", alt: "CoinSafe landing page: save and earn", kind: "desktop", w: 1800, h: 1026 },
+      { src: "/work/coinsafe/coinsafe-landing.png", alt: "CoinSafe landing page: save and earn", kind: "desktop", w: 2748, h: 1656 },
       { src: "/work/coinsafe/card1.webp", alt: "CoinSafe save flow: one-time save with target and duration", kind: "desktop", w: 1187, h: 1175 },
       { src: "/work/coinsafe/card2.webp", alt: "CoinSafe scheduled savings panel", kind: "desktop", w: 708, h: 951 },
     ],
@@ -253,9 +257,9 @@ export const CASE_STUDIES: CaseStudy[] = [
         d: "GKR circuit reduction, KZG commitments and Sumcheck, plus polynomial arithmetic and Fiat–Shamir.",
       },
       {
-        n: "1",
-        l: "Indexing bug fixed",
-        d: "KZG setup now uses most-significant-bit indexing format.",
+        n: "Zero-dep",
+        l: "First principles",
+        d: "Custom multilinear polynomial representations, evaluation arithmetic, and Fiat–Shamir transcript.",
       },
       {
         n: "Criterion",
@@ -360,10 +364,10 @@ export const CASE_STUDIES: CaseStudy[] = [
     role: "Independent Full-Stack Developer · Solo",
     duration: "~2 months",
     team: "Solo",
-    image: "/work/triple-cure/tca-landing-on-laptop.png",
+    image: "/work/triple-cure/tca_landing_page.png",
     gallery: [
-      { src: "/work/triple-cure/tca-landing-on-laptop.png", alt: "Triple Cure Assembly on laptop mockup showing initiatives and ICT literacy programs", kind: "desktop", w: 1600, h: 1000 },
       { src: "/work/triple-cure/tca_landing_page.png", alt: "Triple Cure Assembly homepage: Where Potential Meets Purpose", kind: "desktop", w: 1600, h: 1000 },
+      { src: "/work/triple-cure/tca-landing-on-laptop.png", alt: "Triple Cure Assembly on laptop mockup showing initiatives and ICT literacy programs", kind: "desktop", w: 1600, h: 1000 },
       { src: "/work/triple-cure/tca_about_page.png", alt: "Triple Cure Assembly about page: A Vision Born From Service honoring Barrister Clement Oyedele Akintola Arikawe", kind: "desktop", w: 1600, h: 1000 },
       { src: "/work/triple-cure/tca_scholarships_page.png", alt: "Triple Cure Assembly scholarship portal and Annual Igbotako Scholarship program", kind: "desktop", w: 1600, h: 1000 },
     ],
@@ -509,13 +513,14 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   CASE_STUDIES.find((cs) => cs.slug === "triple-cure")!,
   CASE_STUDIES.find((cs) => cs.slug === "zk-implementations")!,
 ].map(
-  ({ slug, idx, name, tag, year, desc, stack, role, duration, image, logo, logoBg, imagePosition }) => ({
+  ({
     slug,
     idx,
     name,
     tag,
     year,
     desc,
+    lede,
     stack,
     role,
     duration,
@@ -523,6 +528,27 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     logo,
     logoBg,
     imagePosition,
+    live,
+    liveLabel,
+    outcomes,
+  }) => ({
+    slug,
+    idx,
+    name,
+    tag,
+    year,
+    desc,
+    lede,
+    stack,
+    role,
+    duration,
+    image,
+    logo,
+    logoBg,
+    imagePosition,
+    live,
+    liveLabel,
+    outcomes,
   })
 );
 

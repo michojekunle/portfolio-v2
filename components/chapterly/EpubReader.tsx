@@ -155,6 +155,7 @@ export function EpubReader({
 
           const fontLink = doc.createElement("link");
           fontLink.rel = "stylesheet";
+          // impeccable-disable-next-line design-system-font -- EPUB reader book rendering font
           fontLink.href = "https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&display=swap";
           doc.head.appendChild(fontLink);
 

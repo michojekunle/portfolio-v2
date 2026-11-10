@@ -10,10 +10,10 @@ export function Footer(): React.ReactElement {
   return (
     <footer className="bg-(--bg-2) border-t border-(--rule) pt-[100px] pb-8">
       <div className="max-w-(--maxw) mx-auto px-(--gutter) pb-15 flex flex-col min-[921px]:flex-row min-[921px]:justify-between gap-20 max-[920px]:gap-10 items-start border-b border-(--rule) mb-15">
-        <h2 className="font-display font-normal text-[clamp(58px,14.5vw,160px)] leading-[0.88] tracking-tighter mb-6 min-[921px]:mb-14 text-(--ink)">
+        <h2 className="font-display font-normal text-6xl sm:text-7xl lg:text-8xl xl:text-9xl leading-[0.88] tracking-tighter mb-6 min-[921px]:mb-14 text-(--ink)">
           Michael
           <br />
-          <em>Ojekunle.</em>
+          <span className="text-(--v3-accent)">Ojekunle.</span>
         </h2>
         <div className="shrink-0 pt-6">
           <ThemeSelector />
@@ -21,16 +21,16 @@ export function Footer(): React.ReactElement {
       </div>
 
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
-        <p className="font-sans font-normal text-[20px] text-secondary-foreground max-w-[32ch] mb-20">
+        <p className="font-sans font-normal text-xl text-secondary-foreground max-w-[32ch] mb-20">
           Engineer, writer &amp; builder. Going deep on Rust and AI infrastructure, based in Lagos.
         </p>
 
         <div className="grid grid-cols-4 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1 gap-8 pt-10 border-t border-(--rule)">
           <div className="flex flex-col">
-            <h3 className="font-mono text-[12px] text-muted-foreground mb-4.5 font-medium">
+            <h3 className="font-mono text-xs text-muted-foreground mb-4.5 font-medium">
               Work
             </h3>
-            <ul className="list-none p-0 m-0 text-[14px] leading-[2.0]">
+            <ul className="list-none p-0 m-0 text-sm leading-[2.0]">
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
                   <Link

@@ -172,7 +172,7 @@ export function Navbar(): React.ReactNode {
               href="https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="max-[960px]:hidden inline-flex items-center justify-center px-3.5 py-1.5 rounded-full font-mono text-[11px] uppercase tracking-wider font-medium cursor-pointer border border-(--rule) text-secondary-foreground hover:text-(--ink) hover:border-muted-foreground transition-all duration-150 no-underline whitespace-nowrap"
+              className="max-[960px]:hidden inline-flex items-center justify-center px-3.5 py-1.5 rounded-full font-mono text-[11px] tracking-wider font-medium cursor-pointer border border-(--rule) text-secondary-foreground hover:text-(--ink) hover:border-muted-foreground transition-all duration-150 no-underline whitespace-nowrap"
               aria-label="View Resume / CV"
             >
               CV ↗
@@ -182,7 +182,7 @@ export function Navbar(): React.ReactNode {
           <MagneticWrapper strength={20}>
             <Link
               href="/contact"
-              className="group max-[820px]:hidden inline-flex items-center justify-center px-4 py-1.5 rounded-full font-mono text-[11px] uppercase tracking-wider font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:opacity-90"
+              className="group max-[820px]:hidden inline-flex items-center justify-center px-4 py-1.5 rounded-full font-mono text-[11px] tracking-wider font-medium cursor-pointer border border-(--rule) transition-all duration-200 no-underline bg-(--ink) text-(--bg) whitespace-nowrap shrink-0 hover:opacity-90"
               aria-label="Book a call"
             >
               Book a call{" "}
@@ -239,7 +239,7 @@ export function Navbar(): React.ReactNode {
             href="https://drive.google.com/file/d/1D1Jw7YNms5KZdPB3U285_SZxvdeAxZWZ/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-4 py-2.25 rounded-full font-mono text-[12px] uppercase tracking-wider font-medium border border-(--rule) text-secondary-foreground hover:text-(--ink) transition-colors no-underline"
+            className="inline-flex items-center justify-center px-4 py-2.25 rounded-full font-mono text-[12px] tracking-wider font-medium border border-(--rule) text-secondary-foreground hover:text-(--ink) transition-colors no-underline"
             onClick={() => setIsOpen(false)}
           >
             Resume / CV ↗

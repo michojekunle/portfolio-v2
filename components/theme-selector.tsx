@@ -209,19 +209,27 @@ export function ThemeSelector(): React.ReactElement {
 
       {/* Marginalia toggle */}
       <div className="flex flex-col gap-3">
-        <div className="font-mono text-[12px] tracking-[0.18em] uppercase text-muted-foreground font-semibold">Marginalia</div>
+        <div className="font-mono text-xs tracking-wider text-muted-foreground font-semibold">Marginalia</div>
         <div className="flex items-center justify-between gap-4">
-          <button
-            className={`group flex items-center gap-2.5 bg-transparent border-none cursor-pointer font-inherit text-[13px] p-0 transition-colors duration-150 hover:text-(--ink) ${showMarginalia ? "text-(--ink)" : "text-secondary-foreground"}`}
-            onClick={() => handleMarginalia(!showMarginalia)}
-            aria-pressed={showMarginalia}
-          >
-            <span className={`w-9 h-5 rounded-full relative transition-colors duration-150 ${showMarginalia ? "bg-(--v3-accent)" : "bg-(--rule)"}`}>
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-(--bg) transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${showMarginalia ? "translate-x-4" : "translate-x-0"}`} />
-            </span>
-            <span>{showMarginalia ? "Visible" : "Hidden"}</span>
-          </button>
-          <span className="text-[13px] text-muted-foreground">Side notes in essays</span>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={showMarginalia}
+              className={`w-9 h-5 rounded-full relative transition-colors duration-150 p-0 border-none cursor-pointer ${showMarginalia ? "bg-(--v3-accent)" : "bg-(--rule)"}`}
+              onClick={() => handleMarginalia(!showMarginalia)}
+            >
+              <svg
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+                className={`w-4 h-4 block transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${showMarginalia ? "translate-x-4.5" : "translate-x-0.5"}`}
+              >
+                <circle cx="8" cy="8" r="8" fill="var(--bg)" />
+              </svg>
+            </button>
+            <span className="text-xs text-secondary-foreground">{showMarginalia ? "Visible" : "Hidden"}</span>
+          </div>
+          <span className="text-xs text-muted-foreground">Side notes in essays</span>
         </div>
       </div>
 
