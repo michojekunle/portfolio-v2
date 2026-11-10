@@ -194,7 +194,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                 <span className="font-mono text-[14px] font-semibold text-(--ink)">
                   @michojekunle
                 </span>
-                <span className="font-mono text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full border border-(--rule) bg-(--bg-2) text-muted-foreground">
+                <span className="font-mono text-xs tracking-wider uppercase px-2 py-0.5 rounded-full border border-(--rule) bg-(--bg-2) text-muted-foreground">
                   GitHub
                 </span>
               </div>
@@ -249,7 +249,7 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
           {/* Matrix Scroll Wrapper */}
           <div className="overflow-x-auto pb-2 scrollbar-thin">
             {/* Month labels row */}
-            <div className="flex gap-[3px] min-w-[720px] justify-between mb-1.5 font-mono text-[10px] text-muted-foreground select-none">
+            <div className="flex gap-[3px] min-w-[720px] justify-between mb-1.5 font-mono text-[11px] text-muted-foreground select-none">
               {data.weeks.map((_, i) => {
                 const label = monthLabels.find((ml) => ml.weekIndex === i);
                 return (

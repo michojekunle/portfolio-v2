@@ -20,7 +20,7 @@ export function ProjectsSection(): React.ReactElement {
       id="projects"
       aria-labelledby="projects-heading"
     >
-      {/* ── SECTION HEADER ── */}
+      {/* ── SECTION HEADER (Clean Editorial Heading without Eyebrow/Kicker) ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -30,21 +30,17 @@ export function ProjectsSection(): React.ReactElement {
       >
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
-            <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-(--v3-accent) font-semibold mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent)" />
-              Selected Systems · Shipped
-            </div>
             <h2
               id="projects-heading"
-              className="m-0 font-display font-normal text-[clamp(34px,6vw,80px)] leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
+              className="m-0 font-display font-normal text-[clamp(2.25rem,5vw,4rem)] leading-[1] sm:leading-[0.95] tracking-tight text-(--ink) text-balance fvs-display"
             >
-              Selected work, <em className="not-italic italic text-(--v3-accent) fvs-soft">shipped.</em>
+              Selected work, <span className="text-(--v3-accent)">shipped.</span>
             </h2>
           </div>
 
           <div className="flex flex-col gap-2 max-w-[48ch]">
             <p className="text-sm sm:text-base leading-[1.6] text-secondary-foreground m-0">
-              Interactive hardware telemetry for my flagship build, followed by deep-dive production monographs below. Full case studies inside with architecture, wrong turns, and verified benchmarks.
+              Interactive telemetry for flagship architecture, followed by production monographs below. Full case studies inside with architecture, wrong turns, and verified benchmarks.
             </p>
           </div>
         </div>
@@ -64,7 +60,7 @@ export function ProjectsSection(): React.ReactElement {
           <Layers className="w-4 h-4 text-(--v3-accent)" />
           <span>Production Systems · Architecture Archive</span>
         </div>
-        <span className="font-mono text-[11px] text-muted-foreground tracking-wider hidden sm:inline">
+        <span className="font-mono text-xs text-muted-foreground tracking-wider hidden sm:inline">
           Scroll to stack cards · Click tabs to inspect
         </span>
       </div>
@@ -83,7 +79,7 @@ export function ProjectsSection(): React.ReactElement {
         <MagneticWrapper strength={20}>
           <Link
             href="/work"
-            className="group inline-flex items-center justify-center w-full sm:w-auto px-7 sm:px-9 py-3.5 rounded-full font-mono text-xs uppercase tracking-[0.08em] font-medium cursor-pointer border border-(--rule) bg-(--paper) text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-center shadow-sm"
+            className="group inline-flex items-center justify-center w-full sm:w-auto px-7 sm:px-9 py-3.5 rounded-full font-mono text-xs uppercase tracking-[0.08em] font-medium cursor-pointer border border-(--rule) bg-(--paper) text-(--ink) transition-all duration-300 no-underline hover:border-(--v3-accent) hover:text-(--v3-accent) hover:bg-[color-mix(in_oklab,var(--v3-accent)_5%,transparent)] text-center shadow-xs"
           >
             Explore complete archive{" "}
             <ArrowRight
