@@ -9,7 +9,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (auth.unauthorized) return NextResponse.redirect(new URL("/admin/login", request.url));
 
   const client_id = process.env.SPOTIFY_CLIENT_ID;
-  const redirect_uri = getSpotifyRedirectUri();
+  const redirect_uri = getSpotifyRedirectUri(request);
   if (!client_id || !redirect_uri) {
     return NextResponse.json({ error: "SPOTIFY_CLIENT_ID or NEXT_PUBLIC_SITE_URL not configured" }, { status: 500 });
   }

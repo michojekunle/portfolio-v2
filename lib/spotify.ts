@@ -21,12 +21,20 @@ interface SpotifyAuthRecord {
 }
 
 /**
- * Builds the OAuth callback URL from NEXT_PUBLIC_SITE_URL, stripping any
- * trailing slash first — Spotify's redirect_uri match is byte-exact, and a
- * trailing slash on the env var silently produces a double slash
- * (".dev//api/...") that won't match what's registered on the app.
+ * Builds the OAuth callback URL. If an incoming request is provided, uses its
+ * origin (e.g. http://localhost:3000 or https://www.michaelojekunle.dev) so the
+ * redirect_uri strictly matches where the user is authenticating and avoids
+ * cross-subdomain / localhost cookie loss and state_mismatch errors.
  */
-export function getSpotifyRedirectUri(): string | null {
+export function getSpotifyRedirectUri(req?: Request | { url: string }): string | null {
+  if (req?.url) {
+    try {
+      const url = new URL(req.url);
+      return `${url.origin.replace(/\/+$/, "")}/api/spotify/callback`;
+    } catch {
+      // fallback to siteUrl
+    }
+  }
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!siteUrl) return null;
   return `${siteUrl.replace(/\/+$/, "")}/api/spotify/callback`;

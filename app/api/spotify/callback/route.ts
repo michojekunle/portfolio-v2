@@ -7,9 +7,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const auth = await requireAdminAuth();
   if (auth.unauthorized) return NextResponse.redirect(new URL("/admin/login", request.url));
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  const redirectTarget = new URL("/admin/now", siteUrl ?? request.url);
-  const redirect_uri = getSpotifyRedirectUri();
+  // Always redirect back to /admin/now on the origin where the request was made
+  const redirectTarget = new URL("/admin/now", request.url);
+  const redirect_uri = getSpotifyRedirectUri(request);
 
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
@@ -52,6 +52,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!refresh_token) return fail("no_refresh_token");
 
     await setSpotifyAuth(refresh_token);
+
+    // If running in development with a local .env file, keep it in sync
+    if (process.env.NODE_ENV !== "production") {
+      try {
+        const fs = await import("fs");
+        const path = await import("path");
+        const envPath = path.join(process.cwd(), ".env");
+        if (fs.existsSync(envPath)) {
+          let envContent = fs.readFileSync(envPath, "utf-8");
+          const regex = /^SPOTIFY_REFRESH_TOKEN=.*$/m;
+          if (regex.test(envContent)) {
+            envContent = envContent.replace(regex, `SPOTIFY_REFRESH_TOKEN=${refresh_token}`);
+          } else {
+            envContent += `\nSPOTIFY_REFRESH_TOKEN=${refresh_token}\n`;
+          }
+          fs.writeFileSync(envPath, envContent, "utf-8");
+        }
+      } catch (err) {
+        console.warn("[spotify/callback] could not update local .env:", err);
+      }
+    }
   } catch (err) {
     console.error("[spotify/callback] unexpected error:", err);
     return fail("unexpected");
