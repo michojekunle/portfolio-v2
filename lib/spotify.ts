@@ -30,7 +30,10 @@ export function getSpotifyRedirectUri(req?: Request | { url: string }): string |
   if (req?.url) {
     try {
       const url = new URL(req.url);
-      return `${url.origin.replace(/\/+$/, "")}/api/spotify/callback`;
+      const origin = url.origin
+        .replace(/\/+$/, "")
+        .replace("http://localhost:", "http://127.0.0.1:");
+      return `${origin}/api/spotify/callback`;
     } catch {
       // fallback to siteUrl
     }
@@ -87,7 +90,19 @@ export interface SpotifyConnectionStatus {
 }
 
 export async function getSpotifyConnectionStatus(): Promise<SpotifyConnectionStatus> {
-  const auth = await getSpotifyAuth();
+  let auth = await getSpotifyAuth();
+  if (!auth && process.env.SPOTIFY_REFRESH_TOKEN) {
+    const cleanToken = process.env.SPOTIFY_REFRESH_TOKEN.split("&")[0].trim();
+    if (cleanToken) {
+      auth = {
+        refresh_token: cleanToken,
+        authorized_at: new Date().toISOString(),
+      };
+      // Auto-heal Redis
+      await setSpotifyAuth(cleanToken).catch(() => {});
+    }
+  }
+
   if (!auth)
     return {
       connected: false,

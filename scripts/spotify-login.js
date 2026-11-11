@@ -31,7 +31,7 @@ envContent.split("\n").forEach(line => {
 const client_id = env.SPOTIFY_CLIENT_ID;
 const client_secret = env.SPOTIFY_CLIENT_SECRET;
 const PORT = 8888;
-const redirect_uri = `http://localhost:${PORT}/callback`;
+const redirect_uri = `http://127.0.0.1:${PORT}/callback`;
 
 if (!client_id || !client_secret) {
   console.error("[error] SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET is missing from your .env file!");
@@ -164,8 +164,8 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  const localUrl = `http://localhost:${PORT}`;
+server.listen(PORT, "127.0.0.1", () => {
+  const localUrl = `http://127.0.0.1:${PORT}`;
   console.log(`Please make sure "${redirect_uri}" is added to your Spotify Developer Dashboard under "Redirect URIs".`);
   console.log(`Open this link in your browser to log in:\n   \x1b[36m${localUrl}\x1b[0m\n`);
   

@@ -1,9 +1,9 @@
-import { HeroSection } from "@/components/hero-section"
-import { AboutPreviewSection } from "@/components/about-preview-section"
-import { ProjectsSection } from "@/components/projects-section"
-import { GitHubBentoSection } from "@/components/github-bento-section"
-import { NowSection } from "@/components/now-section"
-import { BlogSection } from "@/components/blog-section"
+import { HeroSection } from "@/components/hero-section";
+import { AboutPreviewSection } from "@/components/about-preview-section";
+import { ProjectsSection } from "@/components/projects-section";
+import { GitHubBentoSection } from "@/components/github-bento-section";
+import { NowSection } from "@/components/now-section";
+import { BlogSection } from "@/components/blog-section";
 
 export default function Home(): React.ReactElement {
   return (
@@ -28,5 +28,5 @@ export default function Home(): React.ReactElement {
 
       <BlogSection />
     </main>
-  )
+  );
 }
