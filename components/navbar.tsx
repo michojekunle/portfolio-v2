@@ -108,7 +108,7 @@ export function Navbar(): React.ReactNode {
 
   return (
     <nav
-      className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_86%,transparent)] backdrop-blur-3.5 border-b border-(--rule)"
+      className="sticky top-0 z-100 bg-[color-mix(in_oklab,var(--bg)_92%,transparent)] backdrop-blur-md border-b border-(--rule)"
       aria-label="Main navigation"
     >
       <div className="max-w-(--maxw) mx-auto px-(--gutter) py-4.5 flex justify-between items-center gap-8 min-[820px]:grid min-[820px]:grid-cols-[1fr_auto_1fr]">
