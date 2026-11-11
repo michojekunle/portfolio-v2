@@ -341,7 +341,10 @@ export async function GitHubBentoSection(): Promise<React.ReactElement | null> {
                   </span>
                 )}
                 {repo.topics.slice(0, 2).length > 0 && (
-                  <ul className="flex items-center gap-1.5 p-0 m-0 list-none" role="list">
+                  <ul
+                    className="flex items-center gap-1.5 p-0 m-0 list-none"
+                    role="list"
+                  >
                     {repo.topics.slice(0, 2).map((t) => (
                       <li
                         key={t}

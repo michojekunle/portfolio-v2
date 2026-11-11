@@ -49,9 +49,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const { refresh_token } = (await tokenRes.json()) as { refresh_token?: string };
-    if (!refresh_token) return fail("no_refresh_token");
+    const effectiveToken =
+      refresh_token ??
+      process.env.SPOTIFY_REFRESH_TOKEN?.split("&")[0].trim();
+    if (!effectiveToken) return fail("no_refresh_token");
 
-    await setSpotifyAuth(refresh_token);
+    await setSpotifyAuth(effectiveToken);
 
     // If running in development with a local .env file, keep it in sync
     if (process.env.NODE_ENV !== "production") {
