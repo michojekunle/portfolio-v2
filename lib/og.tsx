@@ -31,6 +31,10 @@ interface OgCardOptions {
   cta: string;
   /** Path shown bottom-right after the domain, e.g. "/work". Omit for home. */
   path?: string;
+  /** Optional tags, e.g. tech stack, key metrics. */
+  tags?: string[];
+  /** Optional key outcome badge/stat, e.g. "4.7k Plays" or "100% PageSpeed". */
+  stat?: { value: string; label: string };
 }
 
 function titleSize(title: string): number {
@@ -46,6 +50,8 @@ export function renderOgCard({
   subtitle,
   cta,
   path,
+  tags,
+  stat,
 }: OgCardOptions): ImageResponse {
   return new ImageResponse(
     (
@@ -183,15 +189,64 @@ export function renderOgCard({
             <div
               style={{
                 display: "flex",
-                fontSize: 26,
+                fontSize: 24,
                 fontWeight: 400,
                 color: INK_MUTED,
-                lineHeight: 1.5,
+                lineHeight: 1.45,
                 letterSpacing: "-0.3px",
-                maxWidth: 860,
+                maxWidth: 960,
               }}
             >
               {subtitle}
+            </div>
+          )}
+
+          {((tags && tags.length > 0) || stat) && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                marginTop: 22,
+                flexWrap: "wrap",
+              }}
+            >
+              {stat && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: "rgba(255,255,255,0.12)",
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    padding: "6px 14px",
+                    borderRadius: 8,
+                    color: INK,
+                    fontSize: 15,
+                    fontWeight: 700,
+                  }}
+                >
+                  <span style={{ color: ACCENT }}>{stat.value}</span>
+                  <span style={{ color: INK_MUTED, fontWeight: 500 }}>{stat.label}</span>
+                </div>
+              )}
+              {tags?.slice(0, 5).map((t) => (
+                <div
+                  key={t}
+                  style={{
+                    display: "flex",
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    padding: "6px 12px",
+                    borderRadius: 6,
+                    color: INK_MUTED,
+                    fontSize: 14,
+                    fontWeight: 500,
+                  }}
+                >
+                  {t}
+                </div>
+              ))}
             </div>
           )}
         </div>
