@@ -47,6 +47,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: "Post not found" };
 
   const postUrl = `${SITE}/blog/${slug}`;
+  const ogImageUrl = post.cover_image
+    ? post.cover_image
+    : `${SITE}/blog/${slug}/opengraph-image`;
 
   return {
     title: post.title,
@@ -62,12 +65,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: post.updated_at ?? undefined,
       authors: ["https://michaelojekunle.dev"],
       tags: post.category ? [post.category] : undefined,
-      images: post.cover_image ? [{ url: post.cover_image }] : undefined,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt ?? undefined,
+      images: [ogImageUrl],
       creator: "@devvmichael",
     },
   };

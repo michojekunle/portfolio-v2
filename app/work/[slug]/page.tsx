@@ -11,13 +11,42 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return CASE_STUDIES.map((cs) => ({ slug: cs.slug }))
 }
 
+const SITE = "https://michaelojekunle.dev"
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const cs = getCaseStudy(slug)
   if (!cs) return { title: "Project not found" }
+
+  const url = `${SITE}/work/${slug}`
+  const ogImageUrl = `${SITE}/work/${slug}/opengraph-image`
+
   return {
     title: `${cs.name} Case Study`,
     description: cs.desc,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${cs.name} Case Study — Michael Ojekunle`,
+      description: cs.desc,
+      url,
+      type: "website",
+      siteName: "Michael Ojekunle",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${cs.name} Case Study`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${cs.name} Case Study — Michael Ojekunle`,
+      description: cs.desc,
+      images: [ogImageUrl],
+      creator: "@devvmichael",
+    },
   }
 }
 

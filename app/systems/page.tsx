@@ -2,10 +2,37 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowUpRight, Check, Circle, CircleDot } from "lucide-react"
 
+const SITE = "https://michaelojekunle.dev"
+
 export const metadata: Metadata = {
   title: "Systems",
   description:
     "How far down the stack I've been, in public: what exists, what's missing and what's next across Rust, cryptography, memory and operating systems.",
+  alternates: { canonical: `${SITE}/systems` },
+  openGraph: {
+    title: "Systems Roadmap — Michael Ojekunle",
+    description:
+      "How far down the stack I've been, in public: what exists, what's missing and what's next across Rust, cryptography, memory and operating systems.",
+    url: `${SITE}/systems`,
+    type: "website",
+    siteName: "Michael Ojekunle",
+    images: [
+      {
+        url: `${SITE}/systems/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Systems Roadmap — Michael Ojekunle",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Systems Roadmap — Michael Ojekunle",
+    description:
+      "How far down the stack I've been, in public: what exists, what's missing and what's next across Rust, cryptography, memory and operating systems.",
+    images: [`${SITE}/systems/opengraph-image`],
+    creator: "@devvmichael",
+  },
 }
 
 type LayerStatus = "Shipped" | "In progress" | "Planned"

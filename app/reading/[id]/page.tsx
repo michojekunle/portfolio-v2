@@ -9,13 +9,43 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
+const SITE = "https://michaelojekunle.dev"
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const book = await getPublicBookById(id)
   if (!book) return { title: "Book not found" }
+
+  const url = `${SITE}/reading/${id}`
+  const ogImageUrl = `${SITE}/reading/${id}/opengraph-image`
+  const desc = `Notes, quotes, and takeaways from ${book.title} by ${book.author}.`
+
   return {
     title: `${book.title} — Reading Notes`,
-    description: `Notes, quotes, and takeaways from ${book.title} by ${book.author}.`,
+    description: desc,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${book.title} — Reading Notes`,
+      description: desc,
+      url,
+      type: "article",
+      siteName: "Michael Ojekunle",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${book.title} — Reading Notes`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${book.title} — Reading Notes`,
+      description: desc,
+      images: [ogImageUrl],
+      creator: "@devvmichael",
+    },
   }
 }
 
