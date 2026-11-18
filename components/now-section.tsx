@@ -2,8 +2,7 @@ import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { createClient } from "@/lib/supabase/server"
 import { MagneticWrapper } from "./magnetic-wrapper"
-import { SpotifyListeningPanel } from "./spotify-listening-panel"
-import { ZamirListeningPanel } from "./zamir-listening-panel"
+import { HybridListeningPanel } from "./hybrid-listening-panel"
 import { getSpotifyNowPlaying, getSpotifyTopTracks, getSpotifyRecentlyPlayed } from "@/lib/spotify"
 import { getZamirNowPlaying } from "@/lib/zamir"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
@@ -86,13 +85,6 @@ export async function NowSection(): Promise<React.ReactElement> {
   const learning = (learningRaw ?? []) as LearningItem[]
   const books = (booksRaw ?? []) as BookItem[]
 
-  // Hybrid Music Display Strategy:
-  // Show Zamir whenever active worship is playing, or when Spotify is idle and Zamir has a recently played track.
-  const showZamir = Boolean(
-    zamirData.isPlaying ||
-    (!nowPlaying.isPlaying && (zamirData.lastPlayed || zamirData.recentlyPlayed.length > 0))
-  )
-
   return (
     <section className="relative py-30 max-[720px]:py-18 bg-(--bg-2) border-y border-(--rule)" id="now" aria-labelledby="now-heading">
       <div className="max-w-(--maxw) mx-auto px-(--gutter)">
@@ -107,15 +99,12 @@ export async function NowSection(): Promise<React.ReactElement> {
           </div>
         </div>
 
-        {showZamir ? (
-          <ZamirListeningPanel initialData={zamirData} />
-        ) : (
-          <SpotifyListeningPanel
-            initialNowPlaying={nowPlaying}
-            initialTopTracks={topTracks}
-            initialRecentlyPlayed={recentlyPlayed}
-          />
-        )}
+        <HybridListeningPanel
+          initialSpotifyNowPlaying={nowPlaying}
+          initialSpotifyTopTracks={topTracks}
+          initialSpotifyRecentlyPlayed={recentlyPlayed}
+          initialZamirData={zamirData}
+        />
 
         <h3 className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground mb-6 font-medium">The work</h3>
         <div className="grid grid-cols-3 max-[920px]:grid-cols-1 gap-0 border-y border-(--rule)">
