@@ -125,7 +125,7 @@ export function SpotifyListeningPanel({ initialNowPlaying, initialTopTracks, ini
     : (fallbackTrack ? "Last played" : "Spotify")
 
   return (
-    <div className="grid grid-cols-[1.05fr_1fr] max-[820px]:grid-cols-1 gap-0 border-y border-(--rule) mb-16 bg-(--bg)">
+    <div className="grid grid-cols-[1.05fr_1fr] max-[820px]:grid-cols-1 gap-0 border-y border-(--rule) bg-(--bg)">
       {/* Now playing — hero */}
       <div className="relative p-8 max-[820px]:p-6 border-r border-(--rule) max-[820px]:border-r-0 max-[820px]:border-b overflow-hidden flex flex-col">
         {/* Blurred album backdrop for a premium now-playing feel */}
