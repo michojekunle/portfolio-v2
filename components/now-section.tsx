@@ -3,7 +3,9 @@ import { formatDistanceToNow } from "date-fns"
 import { createClient } from "@/lib/supabase/server"
 import { MagneticWrapper } from "./magnetic-wrapper"
 import { SpotifyListeningPanel } from "./spotify-listening-panel"
+import { ZamirListeningPanel } from "./zamir-listening-panel"
 import { getSpotifyNowPlaying, getSpotifyTopTracks, getSpotifyRecentlyPlayed } from "@/lib/spotify"
+import { getZamirNowPlaying } from "@/lib/zamir"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 // DB column is `name` for building_projects and learning_items
@@ -65,6 +67,7 @@ export async function NowSection(): Promise<React.ReactElement> {
     nowPlaying,
     topTracks,
     recentlyPlayed,
+    zamirData,
   ] = await Promise.all([
     supabase.from("books").select("title, author, status, cover_url, updated_at").order("sort_order"),
     supabase.from("learning_items").select("name, description, progress, updated_at").order("sort_order"),
@@ -72,6 +75,7 @@ export async function NowSection(): Promise<React.ReactElement> {
     getSpotifyNowPlaying(),
     getSpotifyTopTracks(),
     getSpotifyRecentlyPlayed(),
+    getZamirNowPlaying(),
   ])
 
   if (booksErr) console.error("[NowSection] books:", booksErr.message)
@@ -81,6 +85,13 @@ export async function NowSection(): Promise<React.ReactElement> {
   const building = (buildingRaw ?? []) as BuildingItem[]
   const learning = (learningRaw ?? []) as LearningItem[]
   const books = (booksRaw ?? []) as BookItem[]
+
+  // Hybrid Music Display Strategy:
+  // Show Zamir whenever active worship is playing, or when Spotify is idle and Zamir has a recently played track.
+  const showZamir = Boolean(
+    zamirData.isPlaying ||
+    (!nowPlaying.isPlaying && (zamirData.lastPlayed || zamirData.recentlyPlayed.length > 0))
+  )
 
   return (
     <section className="relative py-30 max-[720px]:py-18 bg-(--bg-2) border-y border-(--rule)" id="now" aria-labelledby="now-heading">
@@ -96,11 +107,15 @@ export async function NowSection(): Promise<React.ReactElement> {
           </div>
         </div>
 
-        <SpotifyListeningPanel
-          initialNowPlaying={nowPlaying}
-          initialTopTracks={topTracks}
-          initialRecentlyPlayed={recentlyPlayed}
-        />
+        {showZamir ? (
+          <ZamirListeningPanel initialData={zamirData} />
+        ) : (
+          <SpotifyListeningPanel
+            initialNowPlaying={nowPlaying}
+            initialTopTracks={topTracks}
+            initialRecentlyPlayed={recentlyPlayed}
+          />
+        )}
 
         <h3 className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground mb-6 font-medium">The work</h3>
         <div className="grid grid-cols-3 max-[920px]:grid-cols-1 gap-0 border-y border-(--rule)">
