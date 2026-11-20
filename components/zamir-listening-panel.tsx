@@ -21,6 +21,18 @@ function timeAgo(epochMs: number): string {
   return `${Math.floor(seconds / 86400)}d ago`;
 }
 
+function cleanTitle(title: string): string {
+  // Strip trailing " // Zamir" or " - Zamir" if present
+  return title.replace(/\s*(\/\/|-)\s*zamir\s*$/i, "").trim() || title;
+}
+
+function cleanDescription(desc?: string): string {
+  if (!desc) return "Sacred Worship";
+  // If the description is a long prompt (e.g. contains audio generation instructions), shorten/clean it
+  const firstPart = desc.split(/[;.]/)[0].trim();
+  return firstPart || desc;
+}
+
 interface Props {
   initialData?: ZamirNowPlaying;
   handle?: string;
@@ -92,9 +104,9 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
       : "Zamir Worship";
 
   return (
-    <div className="grid grid-cols-[1.05fr_1fr] max-[820px]:grid-cols-1 gap-0 border-y border-(--rule) bg-(--bg)">
+    <div className="grid grid-cols-[1.05fr_1fr] max-[820px]:grid-cols-1 gap-0 border-y border-(--rule) bg-(--bg) w-full overflow-hidden">
       {/* Hero Now Playing */}
-      <div className="relative p-8 max-[820px]:p-6 border-r border-(--rule) max-[820px]:border-r-0 max-[820px]:border-b overflow-hidden flex flex-col">
+      <div className="relative p-8 max-[820px]:p-6 border-r border-(--rule) max-[820px]:border-r-0 max-[820px]:border-b overflow-hidden flex flex-col justify-between min-w-0">
         {/* Soft atmospheric cover backdrop */}
         {activeTrack?.coverUrl && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -106,32 +118,32 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
           />
         )}
 
-        <div className="relative flex flex-col h-full z-10">
+        <div className="relative flex flex-col h-full z-10 min-w-0">
           {/* Header Row */}
-          <div className="flex items-center justify-between gap-3 mb-6">
-            <h3 className="font-mono text-[12px] tracking-[0.16em] uppercase text-muted-foreground m-0 font-medium flex items-center gap-2">
+          <div className="flex items-center justify-between gap-3 mb-6 min-w-0">
+            <h3 className="font-mono text-[12px] tracking-[0.16em] uppercase text-muted-foreground m-0 font-medium flex items-center gap-2 min-w-0 truncate">
               <span
-                className={`w-2 h-2 rounded-full ${
+                className={`w-2 h-2 rounded-full shrink-0 ${
                   isLive ? "bg-(--v3-accent) animate-pulse" : "bg-muted-foreground/40"
                 }`}
               />
-              <span>{headerLabel}</span>
+              <span className="truncate">{headerLabel}</span>
               {data?.fetchedAt && (
-                <span className="text-muted-foreground/50 normal-case font-normal">
+                <span className="text-muted-foreground/50 normal-case font-normal shrink-0 hidden sm:inline">
                   synced {syncedSecondsAgo}s ago
                 </span>
               )}
             </h3>
 
             {/* Zamir brand badge */}
-            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full border border-(--rule) bg-(--bg-2) text-(--ink) font-medium">
+            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full border border-(--rule) bg-(--bg-2) text-(--ink) font-medium shrink-0">
               <Radio className={`w-3 h-3 ${isLive ? "text-(--v3-accent)" : "text-muted-foreground"}`} />
               Worship App
             </span>
           </div>
 
           {activeTrack ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 py-2">
+            <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 py-2 min-w-0">
               {/* Cover Art / Icon with equalizer */}
               <div className="relative shrink-0">
                 {activeTrack.coverUrl ? (
@@ -169,19 +181,23 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
               </div>
 
               {/* Track Meta */}
-              <div className="w-full min-w-0 max-w-[420px]">
+              <div className="w-full min-w-0 max-w-[420px] px-2">
                 {activeTrack.zamirUrl ? (
                   <a
                     href={activeTrack.zamirUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block font-display text-[22px] max-[820px]:text-[20px] leading-tight tracking-[-0.01em] text-(--ink) fvs-text truncate hover:text-(--v3-accent) transition-colors no-underline"
+                    title={activeTrack.title}
                   >
-                    {activeTrack.title}
+                    {cleanTitle(activeTrack.title)}
                   </a>
                 ) : (
-                  <span className="block font-display text-[22px] leading-tight tracking-[-0.01em] text-(--ink) fvs-text truncate">
-                    {activeTrack.title}
+                  <span
+                    className="block font-display text-[22px] leading-tight tracking-[-0.01em] text-(--ink) fvs-text truncate"
+                    title={activeTrack.title}
+                  >
+                    {cleanTitle(activeTrack.title)}
                   </span>
                 )}
 
@@ -191,7 +207,7 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
                       {activeTrack.scriptureRef} ·{" "}
                     </span>
                   ) : null}
-                  {activeTrack.artistOrTheme || "Sacred Worship"}
+                  {cleanDescription(activeTrack.artistOrTheme)}
                 </p>
               </div>
 
@@ -223,14 +239,14 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
       </div>
 
       {/* Right Column — Recent Devotions */}
-      <div className="p-8 max-[820px]:p-6 flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between mb-5 gap-3">
-            <h4 className="font-mono text-[12px] tracking-[0.16em] uppercase text-muted-foreground m-0 font-medium flex items-center gap-2">
+      <div className="p-8 max-[820px]:p-6 flex flex-col justify-between min-w-0 overflow-hidden">
+        <div className="min-w-0">
+          <div className="flex items-center justify-between mb-5 gap-3 min-w-0">
+            <h4 className="font-mono text-[12px] tracking-[0.16em] uppercase text-muted-foreground m-0 font-medium flex items-center gap-2 shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-(--v3-accent)" />
               Recent Devotions
             </h4>
-            <span className="font-mono text-[11px] text-muted-foreground/70 uppercase">
+            <span className="font-mono text-[11px] text-muted-foreground/70 uppercase truncate">
               Scripture on repeat
             </span>
           </div>
@@ -242,9 +258,9 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
               </p>
             </div>
           ) : (
-            <ul className="list-none p-0 m-0 space-y-3">
+            <ul className="list-none p-0 m-0 space-y-3 min-w-0">
               {data.recentlyPlayed.slice(0, 5).map((track, i) => (
-                <li key={`${track.id}-${track.playedAt || i}`} className="flex items-center gap-3">
+                <li key={`${track.id}-${track.playedAt || i}`} className="flex items-center gap-3 min-w-0">
                   <span className="font-mono text-[12px] text-muted-foreground/60 w-4 shrink-0 text-right">
                     {i + 1}
                   </span>
@@ -264,22 +280,23 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
                     </div>
                   )}
 
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <a
                       href={track.zamirUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block text-[13px] text-(--ink) truncate hover:text-(--v3-accent) transition-colors no-underline font-medium"
+                      title={track.title}
                     >
-                      {track.title}
+                      {cleanTitle(track.title)}
                     </a>
-                    <span className="block font-mono text-[12px] text-muted-foreground truncate">
+                    <span className="block font-mono text-[12px] text-muted-foreground truncate" title={track.artistOrTheme}>
                       {track.scriptureRef ? `${track.scriptureRef} · ` : ""}
-                      {track.artistOrTheme || "Zamir"}
+                      {cleanDescription(track.artistOrTheme)}
                     </span>
                   </div>
 
-                  <span className="font-mono text-[12px] text-muted-foreground/60 shrink-0">
+                  <span className="font-mono text-[12px] text-muted-foreground/60 shrink-0 ml-2">
                     {timeAgo(track.playedAt)}
                   </span>
                 </li>
@@ -289,13 +306,13 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
         </div>
 
         {/* Zamir Link Footer */}
-        <div className="pt-6 mt-6 border-t border-(--rule) flex items-center justify-between text-[12px] font-mono">
-          <span className="text-muted-foreground">Personal daily worship habit</span>
+        <div className="pt-6 mt-6 border-t border-(--rule) flex items-center justify-between text-[12px] font-mono min-w-0 gap-2">
+          <span className="text-muted-foreground truncate">Personal daily worship habit</span>
           <a
             href="https://play.zamir.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-(--v3-accent) hover:text-(--ink) transition-colors font-medium"
+            className="text-(--v3-accent) hover:text-(--ink) transition-colors font-medium shrink-0"
           >
             Open Zamir ↗
           </a>
