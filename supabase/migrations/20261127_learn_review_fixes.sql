@@ -4,8 +4,8 @@
 --
 -- 1. Create/join take a per-learner lock, so a double-tap or two invite tabs
 --    can't leave someone in two groups for one language.
--- 2. Moving a voice note (storage UPDATE) re-checks group membership on the
---    destination, like uploads do.
+-- 2. Voice-note storage rules are rebuilt on the safe membership helper, and
+--    moving a note re-checks membership on the destination.
 -- 3. Learners who turned on reminders on the old French page are carried over
 --    to learn_reminders (the old 10 PM workflow is gone), and new sign-ups on
 --    that page keep flowing through.
@@ -73,7 +73,44 @@ end;
 $$;
 
 
--- ── 2. Moving a voice note keeps the membership check ──────────────────
+-- ── 2. Voice-note storage rules ─────────────────────────────────────────
+-- Databases that ran an early copy of 20261125 lack this helper (and cast the
+-- folder to uuid inline, which can break other buckets), so it's (re)defined
+-- here and every learn-voice policy is recreated on top of it.
+create or replace function learn_voice_member(p_bucket text, p_name text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  folder text := (storage.foldername(p_name))[1];
+begin
+  if p_bucket <> 'learn-voice' or folder is null
+     or folder !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+    return false;
+  end if;
+  return learn_is_group_member(folder::uuid);
+end;
+$$;
+
+grant execute on function learn_voice_member(text, text) to authenticated;
+
+drop policy if exists "learn_voice_read_group" on storage.objects;
+create policy "learn_voice_read_group" on storage.objects
+  for select to authenticated
+  using (learn_voice_member(bucket_id, name));
+
+drop policy if exists "learn_voice_write_own" on storage.objects;
+create policy "learn_voice_write_own" on storage.objects
+  for insert to authenticated
+  with check (
+    learn_voice_member(bucket_id, name)
+    and storage.filename(name) like auth.uid()::text || '.%'
+  );
+
+-- Moving a voice note re-checks membership on the destination, like uploads do.
 drop policy if exists "learn_voice_update_own" on storage.objects;
 create policy "learn_voice_update_own" on storage.objects
   for update to authenticated
@@ -82,6 +119,11 @@ create policy "learn_voice_update_own" on storage.objects
     learn_voice_member(bucket_id, name)
     and storage.filename(name) like auth.uid()::text || '.%'
   );
+
+drop policy if exists "learn_voice_delete_own" on storage.objects;
+create policy "learn_voice_delete_own" on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'learn-voice' and storage.filename(name) like auth.uid()::text || '.%');
 
 -- ── 3. Old French page subscribers → learn_reminders ───────────────────
 -- The old page stored "HH:MM" in West Africa Time; the new job runs hourly.
