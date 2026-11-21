@@ -18,6 +18,8 @@ export interface PackVariant {
   readonly speechLocale: string;
   readonly accentRegion: string;
   readonly voiceHints: RegExp;
+  /** Free in-browser neural voice (Piper) for this accent. */
+  readonly piperVoice: string;
   /** Tells the lesson generator which dialect and vocabulary to use. */
   readonly aiDialect: string;
   readonly fallbackLessons?: readonly Lesson[];
@@ -41,6 +43,8 @@ export interface LanguagePack {
   readonly accentRegion: string;
   /** Voice names that tend to sound natural on common platforms. */
   readonly voiceHints: RegExp;
+  /** Free in-browser neural voice (Piper) id; overridden by a variant. */
+  readonly piperVoice: string;
   readonly topics: readonly string[];
   readonly fallbackLessons: readonly Lesson[];
   /** Grammar and length guide per level, for the lesson generator. */
@@ -81,6 +85,7 @@ export function withVariant(pack: LanguagePack, variantId: string | null | undef
     speechLocale: variant.speechLocale,
     accentRegion: variant.accentRegion,
     voiceHints: variant.voiceHints,
+    piperVoice: variant.piperVoice,
     aiDialect: variant.aiDialect,
     fallbackLessons: variant.fallbackLessons ?? pack.fallbackLessons,
   };

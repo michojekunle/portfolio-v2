@@ -160,6 +160,7 @@ export const SPANISH: LanguagePack = {
   api: "/api/spanish",
   speechLocale: "es-ES",
   accentRegion: "Spain",
+  piperVoice: "es_ES-davefx-medium",
   // Spain-Spanish voices on common platforms (Paulina is Mexican, so she is not here).
   voiceHints: /mónica|monica|jorge|lucía|lucia|elvira|álvaro|alvaro|helena|laura|pablo|google español de españa|google español/i,
   topics: [
@@ -195,6 +196,7 @@ export const SPANISH: LanguagePack = {
       label: "Spain",
       speechLocale: "es-ES",
       accentRegion: "Spain",
+      piperVoice: "es_ES-davefx-medium",
       voiceHints: /mónica|monica|jorge|lucía|lucia|elvira|álvaro|alvaro|helena|laura|pablo|google español de españa|google español/i,
       aiDialect: "Spain Spanish (castellano): use vosotros and everyday Spain vocabulary such as coche, móvil, ordenador, vale",
     },
@@ -203,6 +205,7 @@ export const SPANISH: LanguagePack = {
       label: "Latin America",
       speechLocale: "es-MX",
       accentRegion: "Latin America",
+      piperVoice: "es_MX-ald-medium",
       voiceHints: /paulina|juan|dalia|jorge|google español de estados unidos|google español de méxico|sabina/i,
       aiDialect: "Latin American Spanish: use ustedes (never vosotros) and widely understood vocabulary such as carro, celular, computadora",
       fallbackLessons: LATAM_LESSONS,

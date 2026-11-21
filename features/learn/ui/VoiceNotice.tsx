@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactElement } from "react";
 import { Volume2 } from "lucide-react";
 import type { VoiceMatch } from "../domain/voices";
+import { useBrowserVoiceEnabled } from "./browser-voice-preference";
 import { useLang } from "./lang-context";
 import { QuietButton } from "./primitives";
 import { voiceMatch } from "./speech-io";
@@ -17,6 +18,7 @@ export function VoiceNotice(): ReactElement | null {
   const [match, setMatch] = useState<VoiceMatch>("native");
   const [open, setOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [browserVoiceOn] = useBrowserVoiceEnabled(pack.id);
 
   useEffect(() => {
     let alive = true;
@@ -35,7 +37,7 @@ export function VoiceNotice(): ReactElement | null {
     };
   }, [pack.id]);
 
-  if (match === "native" || dismissed) return null;
+  if (match === "native" || dismissed || browserVoiceOn) return null;
 
   const dismiss = (): void => {
     setDismissed(true);
@@ -56,7 +58,7 @@ export function VoiceNotice(): ReactElement | null {
           {match === "none"
             ? `This device has no ${pack.name} voice, so the audio won't sound right.`
             : `This device's ${pack.name} voice isn't from ${pack.accentRegion}, so the accent will be a little off.`}{" "}
-          Adding a {language} voice takes two minutes.
+          Turn on the free natural voice in settings, or add a {language} voice to your device (two minutes).
         </span>
       </p>
       {open ? (

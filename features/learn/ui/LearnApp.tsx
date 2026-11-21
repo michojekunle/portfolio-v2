@@ -26,7 +26,8 @@ import { withVariant, type LanguageId, type LanguagePack } from "../domain/langu
 import { LANGUAGES } from "../domain/languages";
 import { COPY } from "./copy";
 import { LangProvider } from "./lang-context";
-import { setNaturalVoices, setSpeechLanguage } from "./speech-io";
+import { useBrowserVoiceEnabled } from "./browser-voice-preference";
+import { setBrowserVoice, setNaturalVoices, setSpeechLanguage } from "./speech-io";
 import { usePageStyle, type PageStyle } from "./style-preference";
 import { useInstall } from "./use-install";
 
@@ -85,9 +86,11 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     }
   }, [basePack.id]);
   const pack = withVariant(basePack, payload?.profile.variant ?? guestVariant);
+  const [browserVoiceOn] = useBrowserVoiceEnabled(basePack.id);
   // Set during render (idempotent): child screens speak in their own mount effects, which run before a parent effect would.
   setSpeechLanguage(pack.speechLocale, pack.voiceHints);
   setNaturalVoices(payload?.plus ? pack.api : null);
+  setBrowserVoice(browserVoiceOn ? pack.piperVoice : null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("home");
   const [result, setResult] = useState<CompletePayload | null>(null);
