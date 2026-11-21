@@ -25,6 +25,8 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Français",
   },
+  openGraph: { title: "French Daily", description: DESCRIPTION, url: "/french", siteName: "French Daily", type: "website" },
+  twitter: { card: "summary_large_image", title: "French Daily", description: DESCRIPTION },
   formatDetection: { telephone: false },
   other: {
     "mobile-web-app-capable": "yes",
