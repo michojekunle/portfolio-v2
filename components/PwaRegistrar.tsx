@@ -7,6 +7,8 @@ import { TOOL_COLORS } from "@/lib/tool-colors";
 
 interface Props {
   toolId: string;
+  /** Tools with their own install UI (e.g. /french) register the worker only. */
+  showPrompt?: boolean;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -26,9 +28,10 @@ const TOOL_NAMES: Record<string, string> = {
   journal: "Journal",
   "thread-studio": "Thread Studio",
   french: "French Daily",
+  spanish: "Spanish Daily",
 };
 
-export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
+export function PwaRegistrar({ toolId, showPrompt = true }: Props): React.ReactElement | null {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [showInstall, setShowInstall] = useState(false);
@@ -36,8 +39,8 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
-    // Tools under /tools/<id> use a sub-scope; french lives at /french directly
-    const scope = toolId === "french" ? "/french" : `/tools/${toolId}/`;
+    // Tools under /tools/<id> use a sub-scope; the language apps live at /french and /spanish directly
+    const scope = toolId === "french" || toolId === "spanish" ? `/${toolId}` : `/tools/${toolId}/`;
 
     void navigator.serviceWorker
       .register("/sw.js", { scope })
@@ -61,14 +64,16 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
   }, [toolId]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !showPrompt) return;
 
     // Suppress prompt if dismissed in this session
     try {
       if (sessionStorage.getItem(`pwa_dismissed_${toolId}`)) {
         return;
       }
-    } catch {}
+    } catch (error) {
+      console.warn("[pwa] could not read dismissal state", error);
+    }
 
     const handleBeforeInstall = (e: Event): void => {
       e.preventDefault();
@@ -80,7 +85,7 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
     };
-  }, [toolId]);
+  }, [toolId, showPrompt]);
 
   const handleInstallClick = async (): Promise<void> => {
     if (!deferredPrompt) return;
@@ -98,7 +103,9 @@ export function PwaRegistrar({ toolId }: Props): React.ReactElement | null {
   const handleDismiss = (): void => {
     try {
       sessionStorage.setItem(`pwa_dismissed_${toolId}`, "true");
-    } catch {}
+    } catch (error) {
+      console.warn("[pwa] could not save dismissal state", error);
+    }
     setShowInstall(false);
   };
 

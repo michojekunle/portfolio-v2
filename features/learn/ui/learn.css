@@ -1,0 +1,648 @@
+/*
+ * Daily language pages — two paper worlds per language, one markup.
+ *   notebook   : the school exercise book. French: Seyès cahier, violet ink.
+ *                Spanish: cuaderno cuadriculado (5 mm squares), blue ballpoint.
+ *                Both: red margin rule, teacher's red pen.
+ *   dictionary : the reference-book page. Black ink, red headwords, thumb-index tabs.
+ * Every component reads semantic tokens; the style attribute swaps the world.
+ */
+
+/* In the components layer, so explicit Tailwind utilities in the JSX always win. */
+@layer components {
+.fr-app {
+  --fr-margin: 64px;
+  --fr-gutter-right: 20px;
+  --fr-sheet-w: 600px;
+
+  --fr-desk: #ece8df;
+  --fr-paper: #fbfaf7;
+  --fr-ink: #1f1b2e;
+  --fr-soft: #5e5873;
+  --fr-rule: #dad5e6;
+  --fr-key: #4b2fa8;
+  --fr-action: #4b2fa8;
+  --fr-action-ink: #ffffff;
+  --fr-action-shadow: 0 2px 0 rgb(37 22 92 / 0.35), 0 8px 20px -8px rgb(37 22 92 / 0.45);
+  --fr-mark: #c81e28;
+  --fr-line-main: rgb(75 47 168 / 0.26);
+  --fr-line-sub: rgb(75 47 168 / 0.09);
+  --fr-margin-rule: #e0484e;
+  --fr-radius: 6px;
+
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: var(--fr-desk);
+  color: var(--fr-ink);
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+:root.dark .fr-app {
+  --fr-desk: #0e0c15;
+  --fr-paper: #16131f;
+  --fr-ink: #ece8f7;
+  --fr-soft: #a39dba;
+  --fr-rule: #2c2740;
+  --fr-key: #b3a2ff;
+  --fr-action: #a995ff;
+  --fr-action-ink: #16131f;
+  --fr-action-shadow: 0 2px 0 rgb(0 0 0 / 0.5), 0 8px 20px -8px rgb(0 0 0 / 0.6);
+  --fr-mark: #ff6b6f;
+  --fr-line-main: rgb(169 149 255 / 0.17);
+  --fr-line-sub: rgb(169 149 255 / 0.06);
+  --fr-margin-rule: #9e3a40;
+}
+
+.fr-app[data-style="dictionary"] {
+  --fr-margin: 24px;
+  --fr-gutter-right: 56px;
+  --fr-desk: #e7e2d6;
+  --fr-paper: #f6f3ec;
+  --fr-ink: #16130f;
+  --fr-soft: #6a6357;
+  --fr-rule: #d9d2c3;
+  --fr-key: #c8102e;
+  --fr-action: #16130f;
+  --fr-action-ink: #f6f3ec;
+  --fr-action-shadow: none;
+  --fr-mark: #c8102e;
+  --fr-radius: 3px;
+}
+
+:root.dark .fr-app[data-style="dictionary"] {
+  --fr-desk: #0b0907;
+  --fr-paper: #14110d;
+  --fr-ink: #efe8da;
+  --fr-soft: #a39a89;
+  --fr-rule: #2e2922;
+  --fr-key: #ff6b6b;
+  --fr-action: #efe8da;
+  --fr-action-ink: #14110d;
+  --fr-mark: #ff6b6b;
+}
+
+.fr-app ::selection {
+  background: color-mix(in srgb, var(--fr-key) 22%, transparent);
+  color: var(--fr-ink);
+}
+.fr-app :focus-visible {
+  outline: 2px solid var(--fr-key);
+  outline-offset: 3px;
+}
+.fr-app textarea {
+  caret-color: var(--fr-key);
+}
+
+/* ── The sheet ─────────────────────────────────────────────── */
+
+.fr-sheet {
+  position: relative;
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--fr-sheet-w);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: max(16px, env(safe-area-inset-top)) var(--fr-gutter-right) max(24px, env(safe-area-inset-bottom)) var(--fr-margin);
+  background-color: var(--fr-paper);
+}
+
+@media (min-width: 640px) {
+  .fr-sheet {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 24px 48px -24px rgb(0 0 0 / 0.18);
+  }
+}
+
+/* Desktop: the page lies on a desk, with room around it, a wider margin and bigger type. */
+@media (min-width: 768px) {
+  .fr-app {
+    --fr-sheet-w: 680px;
+    --fr-margin: 96px;
+    --fr-gutter-right: 56px;
+    padding-block: 40px;
+  }
+  .fr-app[data-style="dictionary"] {
+    --fr-margin: 56px;
+    --fr-gutter-right: 88px;
+  }
+  .fr-sheet {
+    min-height: calc(100dvh - 80px);
+    border-radius: 3px;
+    padding-top: 28px;
+    padding-bottom: 32px;
+  }
+  .fr-app[data-style="dictionary"] .fr-trail {
+    top: 152px;
+  }
+  /* Tall screens fit the whole page: no need to dock the action over the ruling. */
+  .fr-app .fr-dock {
+    position: static;
+    background: none;
+  }
+  /* Loose-leaf "copie double": four punched holes along the left edge. */
+  .fr-app[data-style="notebook"] .fr-sheet::before {
+    content: "";
+    position: absolute;
+    left: 26px;
+    top: 14%;
+    bottom: 14%;
+    width: 16px;
+    background: radial-gradient(circle at 50% 50%, var(--fr-desk) 6.5px, rgb(0 0 0 / 0.12) 7.5px, transparent 8.5px) 0 0 / 16px 33.333% repeat-y;
+    pointer-events: none;
+  }
+}
+
+/* Seyès ruling: 8px guide lines, a firmer line every 32px, 32px columns, red margin. */
+.fr-app[data-style="notebook"] .fr-sheet {
+  background-image:
+    linear-gradient(90deg, transparent calc(var(--fr-margin) - 10px), var(--fr-margin-rule) calc(var(--fr-margin) - 10px), var(--fr-margin-rule) calc(var(--fr-margin) - 8.5px), transparent calc(var(--fr-margin) - 8.5px)),
+    linear-gradient(var(--fr-line-main) 1px, transparent 1px),
+    linear-gradient(var(--fr-line-sub) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fr-line-sub) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 32px, 100% 8px, 32px 100%;
+  background-position: 0 0, 0 23px, 0 23px, calc(var(--fr-margin) - 9px) 0;
+}
+
+/* Dictionary: running head ruled in ink. */
+.fr-app[data-style="dictionary"] .fr-head {
+  border-bottom: 1px solid var(--fr-ink);
+}
+
+/* ── Type voices ───────────────────────────────────────────── */
+
+.fr-print {
+  font-family: var(--font-fr-print), Georgia, serif;
+}
+.fr-ui {
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+}
+
+/* The learner's hand. */
+.fr-hand {
+  color: var(--fr-key);
+}
+.fr-app[data-style="notebook"] .fr-hand {
+  font-family: var(--font-fr-hand), cursive;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.fr-app[data-style="dictionary"] .fr-hand {
+  font-family: var(--font-fr-print), Georgia, serif;
+  font-style: italic;
+  color: var(--fr-ink);
+}
+
+/* The teacher's red pen. */
+.fr-mark {
+  color: var(--fr-mark);
+}
+.fr-app[data-style="notebook"] .fr-mark {
+  font-family: var(--font-fr-hand), cursive;
+}
+.fr-app[data-style="dictionary"] .fr-mark {
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+  font-weight: 700;
+}
+
+/* A headword / word being learned. */
+.fr-word {
+  font-family: var(--font-fr-print), Georgia, serif;
+  color: var(--fr-ink);
+}
+.fr-app[data-style="dictionary"] .fr-word {
+  color: var(--fr-key);
+  font-weight: 700;
+}
+
+.fr-greeting {
+  color: var(--fr-ink);
+}
+/* The dictionary's greeting is today's headword. */
+.fr-app[data-style="dictionary"] .fr-greeting {
+  color: var(--fr-key);
+  font-weight: 700;
+}
+
+/* Margin notes live in the cahier's red-ruled margin; in the dictionary they sit inline, like sense numbers. */
+.fr-row {
+  position: relative;
+}
+.fr-note {
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fr-mark);
+}
+.fr-app[data-style="notebook"] .fr-note {
+  position: absolute;
+  right: calc(100% + 14px);
+  top: 0;
+  width: calc(var(--fr-margin) - 18px);
+  text-align: right;
+  line-height: inherit;
+}
+.fr-app[data-style="dictionary"] .fr-note {
+  display: inline-block;
+  min-width: 14px;
+  margin-right: 6px;
+  vertical-align: 0.15em;
+}
+
+/* ── Actions ───────────────────────────────────────────────── */
+
+.fr-action {
+  display: flex;
+  width: 100%;
+  min-height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: var(--fr-radius);
+  background: var(--fr-action);
+  color: var(--fr-action-ink);
+  box-shadow: var(--fr-action-shadow);
+  font-family: var(--font-fr-print), Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: left;
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms, opacity 160ms;
+}
+.fr-action:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+.fr-action:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.fr-action-meta {
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.fr-action.is-compact {
+  min-height: 48px;
+  font-size: 18px;
+  justify-content: center;
+  text-align: center;
+}
+
+.fr-quiet {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 4px;
+  color: var(--fr-soft);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--fr-rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: color 160ms, text-decoration-color 160ms;
+}
+.fr-quiet:hover {
+  color: var(--fr-ink);
+  text-decoration-color: currentColor;
+}
+.fr-quiet:disabled {
+  opacity: 0.4;
+}
+
+.fr-outline {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid var(--fr-rule);
+  border-radius: var(--fr-radius);
+  background: var(--fr-paper);
+  color: var(--fr-ink);
+  font-size: 15px;
+  font-weight: 700;
+  transition: border-color 160ms, background 160ms;
+}
+.fr-outline:hover {
+  border-color: var(--fr-ink);
+}
+.fr-outline[aria-pressed="true"] {
+  border-color: var(--fr-key);
+  color: var(--fr-key);
+}
+
+.fr-speaker {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--fr-key);
+  transition: background 160ms;
+}
+.fr-speaker:hover {
+  background: color-mix(in srgb, var(--fr-key) 10%, transparent);
+}
+
+/* The one action stays in reach on short phones; the page scrolls under it. */
+.fr-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  padding: 24px 0 12px;
+  background: linear-gradient(to bottom, transparent, var(--fr-paper) 24px);
+}
+
+/* ── Session trail ─────────────────────────────────────────── */
+
+.fr-trail {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 14px;
+  row-gap: 0;
+  font-size: 13px;
+  color: var(--fr-soft);
+  list-style: none;
+}
+.fr-trail li {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+.fr-trail [data-state="done"] {
+  color: var(--fr-ink);
+}
+.fr-trail [data-state="done"] svg {
+  color: var(--fr-mark);
+}
+.fr-trail [data-state="current"] {
+  color: var(--fr-key);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--fr-mark);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+}
+
+/* Dictionary: the trail becomes the thumb index cut into the page edge. */
+.fr-app[data-style="dictionary"] .fr-trail {
+  position: fixed;
+  z-index: 10;
+  top: 112px;
+  right: max(0px, calc((100% - var(--fr-sheet-w)) / 2));
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.fr-trail-slot {
+  min-height: 32px;
+  padding-top: 4px;
+}
+.fr-app[data-style="dictionary"] .fr-trail-slot {
+  min-height: 0;
+  padding: 0;
+}
+.fr-app[data-style="dictionary"] .fr-trail li {
+  writing-mode: vertical-rl;
+  justify-content: center;
+  width: 40px;
+  min-height: 84px;
+  transform: translateX(8px);
+  padding: 10px 0;
+  border-radius: 6px 0 0 6px;
+  background: var(--fr-rule);
+  color: color-mix(in srgb, var(--fr-ink) 78%, var(--fr-rule));
+  text-decoration: none;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), background 220ms;
+}
+.fr-app[data-style="dictionary"] .fr-trail li svg {
+  display: none;
+}
+.fr-app[data-style="dictionary"] .fr-trail [data-state="done"] {
+  background: var(--fr-ink);
+  color: var(--fr-paper);
+}
+.fr-app[data-style="dictionary"] .fr-trail [data-state="current"] {
+  transform: none;
+  background: var(--fr-mark);
+  color: var(--fr-paper);
+}
+
+/* On the cahier's home page the plan already lists the steps. */
+.fr-app[data-style="notebook"] .fr-trail-preview {
+  display: none;
+}
+
+/* ── Paper inputs ──────────────────────────────────────────── */
+
+.fr-field {
+  width: 100%;
+  border: 1px solid var(--fr-rule);
+  border-radius: var(--fr-radius);
+  background: color-mix(in srgb, var(--fr-paper) 70%, transparent);
+  color: var(--fr-ink);
+  transition: border-color 160ms;
+}
+.fr-field {
+  padding: 12px;
+}
+.fr-field::placeholder {
+  color: var(--fr-soft);
+  opacity: 0.8;
+}
+.fr-field:focus {
+  outline: none;
+  border-color: var(--fr-key);
+}
+/* In the cahier, writing sits on the page's own lines. */
+.fr-app[data-style="notebook"] .fr-field.is-lined {
+  border: 0;
+  border-bottom: 2px solid var(--fr-key);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 0 2px;
+  line-height: 32px;
+}
+
+/* ── Signature: the red-pen correction ─────────────────────── */
+
+.fr-strike {
+  position: relative;
+  white-space: nowrap;
+}
+.fr-strike::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 52%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--fr-mark);
+  transform: rotate(-2deg) scaleX(1);
+  transform-origin: left center;
+  animation: fr-strike 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 120ms + 150ms);
+}
+@keyframes fr-strike {
+  from {
+    transform: rotate(-2deg) scaleX(0);
+  }
+}
+
+.fr-written {
+  animation: fr-write 900ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-delay: var(--delay, 500ms);
+}
+@keyframes fr-write {
+  from {
+    clip-path: inset(-20% 100% -20% 0);
+  }
+  to {
+    clip-path: inset(-20% 0 -20% 0);
+  }
+}
+
+.fr-underline-drawn {
+  position: relative;
+  display: inline-block;
+}
+.fr-underline-drawn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--fr-mark);
+  transform-origin: left center;
+  animation: fr-strike 600ms cubic-bezier(0.16, 1, 0.3, 1) 700ms both;
+}
+
+.fr-enter {
+  animation: fr-enter 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes fr-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fr-strike::after,
+  .fr-written,
+  .fr-underline-drawn::after,
+  .fr-enter {
+    animation: none;
+  }
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Keyboard hints only where there's a keyboard. */
+.fr-kbd {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .fr-kbd {
+    display: inline;
+  }
+}
+
+
+/* ── Spanish: cuaderno cuadriculado ───────────────────────── */
+.fr-app[data-lang="es"] {
+  --fr-paper: #fdfdfb;
+  --fr-ink: #172033;
+  --fr-soft: #556079;
+  --fr-rule: #d3dbe8;
+  --fr-key: #1d4fb8;
+  --fr-action: #1d4fb8;
+  --fr-action-shadow: 0 2px 0 rgb(14 40 100 / 0.35), 0 8px 20px -8px rgb(14 40 100 / 0.45);
+  --fr-grid: rgb(29 79 184 / 0.13);
+}
+:root.dark .fr-app[data-lang="es"] {
+  --fr-paper: #0f1624;
+  --fr-ink: #e8eef9;
+  --fr-soft: #9aa8c2;
+  --fr-rule: #24314a;
+  --fr-key: #8fb2ff;
+  --fr-action: #7ea6ff;
+  --fr-action-ink: #0f1624;
+  --fr-grid: rgb(143 178 255 / 0.1);
+}
+/* The Spanish school notebook: an even 5 mm (20px) square grid, red margin rule. */
+.fr-app[data-lang="es"][data-style="notebook"] .fr-sheet {
+  background-image:
+    linear-gradient(90deg, transparent calc(var(--fr-margin) - 10px), var(--fr-margin-rule) calc(var(--fr-margin) - 10px), var(--fr-margin-rule) calc(var(--fr-margin) - 8.5px), transparent calc(var(--fr-margin) - 8.5px)),
+    linear-gradient(var(--fr-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fr-grid) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px, 20px 20px;
+  background-position: 0 0, 0 11px, calc(var(--fr-margin) - 9px) 0;
+}
+/* Spanish dictionary: oxblood headwords, like the RAE's red. */
+.fr-app[data-lang="es"][data-style="dictionary"] {
+  --fr-key: #9b1c1c;
+  --fr-mark: #9b1c1c;
+  --fr-paper: #f7f4ee;
+  --fr-ink: #17130f;
+  --fr-soft: #6a6357;
+  --fr-rule: #d9d2c3;
+  --fr-action: #17130f;
+  --fr-action-ink: #f7f4ee;
+  --fr-action-shadow: none;
+}
+:root.dark .fr-app[data-lang="es"][data-style="dictionary"] {
+  --fr-key: #ff8a7a;
+  --fr-mark: #ff8a7a;
+  --fr-paper: #14110d;
+  --fr-ink: #efe8da;
+  --fr-soft: #a39a89;
+  --fr-rule: #2e2922;
+  --fr-action: #efe8da;
+  --fr-action-ink: #14110d;
+}
+}
+
+/*
+ * Type voices stay unlayered: the site stylesheet sets an unlayered font on
+ * h1–h5, which would otherwise beat anything in a layer. Sizes and colours stay
+ * in the layer above, so utilities still win there. .fr-print comes after
+ * .fr-ui so an element carrying both reads as print.
+ */
+.fr-ui {
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+}
+.fr-print,
+.fr-word {
+  font-family: var(--font-fr-print), Georgia, serif;
+}
+.fr-app[data-style="notebook"] .fr-hand,
+.fr-app[data-style="notebook"] .fr-mark {
+  font-family: var(--font-fr-hand), cursive;
+}
+.fr-app[data-style="dictionary"] .fr-hand {
+  font-family: var(--font-fr-print), Georgia, serif;
+}
+.fr-app[data-style="dictionary"] .fr-mark {
+  font-family: var(--font-fr-ui), system-ui, sans-serif;
+}

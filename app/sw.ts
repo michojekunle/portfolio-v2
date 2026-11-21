@@ -43,9 +43,10 @@ swSelf.addEventListener("push", (event: { data?: { json(): unknown; text(): stri
 
   const options = {
     body,
-    icon:     "/icons/icon-192x192.png",
-    badge:    "/icons/badge-72x72.png",
-    tag:      "french-daily",
+    // Real files (the old /icons/icon-192x192.png paths didn't exist, so reminders showed no icon).
+    icon:     url.startsWith("/spanish") ? "/icons/spanish/icon-192.png" : "/icons/french/icon-192.png",
+    badge:    url.startsWith("/spanish") ? "/icons/spanish/badge-96.png" : "/icons/french/badge-96.png",
+    tag:      url.startsWith("/spanish") ? "spanish-daily" : "french-daily",
     renotify: true,
     data:     { url },
     actions:  [
@@ -57,7 +58,7 @@ swSelf.addEventListener("push", (event: { data?: { json(): unknown; text(): stri
   event.waitUntil(swSelf.registration.showNotification(title, options));
 });
 
-// ── Open /french when the notification is tapped ──────────────────────────────
+// ── Open the reminder's app (/french or /spanish) when the notification is tapped ──
 swSelf.addEventListener("notificationclick", (event: {
   notification: { close(): void; data: { url?: string }; action: string };
   action?: string;
@@ -72,7 +73,9 @@ swSelf.addEventListener("notificationclick", (event: {
     swSelf.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clients: { url: string; focus(): Promise<unknown> }[]) => {
-        const existing = clients.find((c) => c.url.includes("/french"));
+        // Focus a window already on the same app; the path prefix decides which.
+        const appPrefix = new URL(url, swSelf.location.origin).pathname.split("/")[1] ?? "french";
+        const existing = clients.find((c) => new URL(c.url).pathname.startsWith(`/${appPrefix}`));
         if (existing) return existing.focus();
         return swSelf.clients.openWindow(url);
       })
