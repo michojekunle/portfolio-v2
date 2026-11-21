@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { REMINDER_TIMES } from "./reminders";
 import { isValidTimeZone } from "./dates";
 import { LEVELS } from "./lessons";
 
@@ -56,6 +57,35 @@ export const SessionCompleteSchema = z.object({
   writingCorrect: z.boolean().nullable(),
 });
 export type SessionComplete = z.infer<typeof SessionCompleteSchema>;
+
+/**
+ * Browser push endpoints the server may call. Restricting hosts stops a crafted
+ * "subscription" from making the reminder job request internal or arbitrary URLs.
+ */
+const PUSH_HOSTS = [/\.googleapis\.com$/, /\.push\.services\.mozilla\.com$/, /\.notify\.windows\.com$/, /^web\.push\.apple\.com$/, /\.push\.apple\.com$/];
+
+export const PushSubscriptionSchema = z.object({
+  endpoint: z
+    .string()
+    .url()
+    .max(1000)
+    .refine((value) => {
+      const url = new URL(value);
+      return url.protocol === "https:" && PUSH_HOSTS.some((host) => host.test(url.hostname));
+    }, "Unsupported push service."),
+  keys: z.object({ p256dh: z.string().min(10).max(200), auth: z.string().min(8).max(100) }),
+});
+export type PushSubscriptionInput = z.infer<typeof PushSubscriptionSchema>;
+
+export const ReminderUpdateSchema = z.object({
+  /** null turns the reminder off. */
+  time: z.enum(REMINDER_TIMES).nullable(),
+  timezone: TimeZoneSchema,
+  email: z.boolean(),
+  /** Omitted = keep the stored one; null = remove it (e.g. permission revoked). */
+  push: PushSubscriptionSchema.nullable().optional(),
+});
+export type ReminderUpdate = z.infer<typeof ReminderUpdateSchema>;
 
 export const WordActionSchema = z.object({
   cardId: z.string().uuid(),

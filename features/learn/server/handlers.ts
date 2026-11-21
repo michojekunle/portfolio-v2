@@ -5,10 +5,11 @@
  */
 import { NextResponse } from "next/server";
 import type { LanguagePack } from "../domain/language";
-import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema, WordActionSchema } from "../domain/schemas";
+import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema, WordActionSchema, ReminderUpdateSchema } from "../domain/schemas";
 import { gradeSentence } from "./ai";
 import { clientIp, getLearnContext, rateLimited, readJson, toErrorResponse, unauthorized } from "./context";
 import { AiUnavailableError } from "./errors";
+import { getReminder, saveReminder } from "./reminders";
 import { completeUserSession, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord } from "./service";
 
 type Handler = (request: Request) => Promise<Response>;
@@ -120,6 +121,32 @@ export function wordsHandlers(pack: LanguagePack): { readonly GET: Handler; read
         return word ? NextResponse.json({ word }) : NextResponse.json({ error: "Word not found." }, { status: 404 });
       } catch (error) {
         return toErrorResponse(error, `${pack.id}/words`);
+      }
+    },
+  };
+}
+
+/** GET/PUT …/reminder — the learner's daily reminder for this language (time, email, push subscription). */
+export function reminderHandlers(pack: LanguagePack): { readonly GET: Handler; readonly PUT: Handler } {
+  return {
+    GET: async () => {
+      try {
+        const { user, db } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        return NextResponse.json(await getReminder(db, user.id, pack.id));
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/reminder`);
+      }
+    },
+    PUT: async (request) => {
+      try {
+        const { user, db } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        const limited = await rateLimited(`${pack.id}:reminder:${user.id}`, 20);
+        if (limited) return limited;
+        return NextResponse.json(await saveReminder(db, user.id, pack.id, ReminderUpdateSchema.parse(await readJson(request))));
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/reminder`);
       }
     },
   };

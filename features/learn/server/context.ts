@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import type { User } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { generateLesson } from "./ai";
@@ -11,6 +11,8 @@ import type { ServiceDeps } from "./service";
 
 export interface LearnContext {
   readonly user: User | null;
+  /** User-scoped client (RLS applies), for features outside the session service such as reminders. */
+  readonly db: SupabaseClient;
   readonly deps: ServiceDeps;
 }
 
@@ -23,6 +25,7 @@ export async function getLearnContext(pack: LanguagePack): Promise<LearnContext>
 
   return {
     user,
+    db: supabase,
     deps: {
       pack,
       repo: createRepository(supabase, pack),

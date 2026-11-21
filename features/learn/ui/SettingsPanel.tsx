@@ -10,6 +10,7 @@ import type { Commitment } from "../domain/commitment";
 import { LANGUAGES } from "../domain/languages";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { CommitmentPicker } from "./CommitmentPicker";
+import { ReminderSettings } from "./ReminderSettings";
 import { QuietButton } from "./primitives";
 import { PAGE_STYLES, type PageStyle } from "./style-preference";
 import type { InstallState } from "./use-install";
@@ -91,6 +92,12 @@ export function SettingsPanel(props: Props): ReactElement {
           <div className={props.pickingLevel ? "pointer-events-none opacity-50" : ""}>
             <ChoiceGroup label="Level" options={LEVELS} labels={LEVEL_LABEL} value={props.level} onChange={props.onPickLevel} />
           </div>
+        </Row>
+      ) : null}
+
+      {props.canChangeLevel ? (
+        <Row label={copy.settingsRows.reminder} hint="Only on days you haven't done your page">
+          <ReminderSettings />
         </Row>
       ) : null}
 

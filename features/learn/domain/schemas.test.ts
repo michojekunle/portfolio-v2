@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CARD_NOTES_MAX,
   NewCardSchema,
+  PushSubscriptionSchema,
   clipText,
   FeedbackRequestSchema,
   SessionCompleteSchema,
@@ -99,5 +100,21 @@ describe("clipText", () => {
   it("produces notes the schema accepts even from a maximal sentence and explanation", () => {
     const notes = clipText(`You wrote: “${"x".repeat(300)}” — ${"y".repeat(240)}`, CARD_NOTES_MAX);
     expect(NewCardSchema.safeParse({ french: "Bonjour.", english: "Hello.", notes, source: "error" }).success).toBe(true);
+  });
+});
+
+describe("PushSubscriptionSchema", () => {
+  const keys = { p256dh: "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM", auth: "tBHItJI5svbpez7KI4CCXg" };
+
+  it("accepts real browser push services", () => {
+    for (const endpoint of ["https://fcm.googleapis.com/fcm/send/abc", "https://updates.push.services.mozilla.com/wpush/v2/abc", "https://web.push.apple.com/QF1"]) {
+      expect(PushSubscriptionSchema.safeParse({ endpoint, keys }).success).toBe(true);
+    }
+  });
+
+  it("rejects anything that would make the server call an arbitrary or internal URL", () => {
+    for (const endpoint of ["http://fcm.googleapis.com/x", "https://169.254.169.254/latest", "https://evil.com/fcm.googleapis.com", "https://localhost/push"]) {
+      expect(PushSubscriptionSchema.safeParse({ endpoint, keys }).success).toBe(false);
+    }
   });
 });
