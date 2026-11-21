@@ -25,6 +25,8 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Español",
   },
+  openGraph: { title: "Spanish Daily", description: DESCRIPTION, url: "/spanish", siteName: "Spanish Daily", type: "website" },
+  twitter: { card: "summary_large_image", title: "Spanish Daily", description: DESCRIPTION },
   formatDetection: { telephone: false },
   other: {
     "mobile-web-app-capable": "yes",
