@@ -56,6 +56,23 @@ export function setNaturalVoices(api: string | null): void {
   naturalApi = api;
 }
 
+/** Free in-browser voice (Piper) id when the learner has turned it on, else null. */
+let browserVoiceId: string | null = null;
+export function setBrowserVoice(voiceId: string | null): void {
+  browserVoiceId = voiceId;
+}
+
+async function playBrowserVoice(voiceId: string, text: string, rate: number): Promise<void> {
+  const { synthesize } = await import("./piper-voice");
+  const url = await synthesize(voiceId, text);
+  player?.pause();
+  player = new Audio(url);
+  // Piper has no speed control, so slow playback stretches time while keeping pitch.
+  player.playbackRate = Math.min(1.25, Math.max(0.6, rate / 0.9));
+  player.preservesPitch = true;
+  await player.play();
+}
+
 async function playNatural(text: string, rate: number): Promise<void> {
   if (!naturalApi) throw new Error("natural voices off");
   const key = `${activeLocale}|${rate}|${text}`;
@@ -72,8 +89,22 @@ async function playNatural(text: string, rate: number): Promise<void> {
   await player.play();
 }
 
-/** Speak in the active language: a natural recording for Plus, otherwise the most local device voice. */
+/**
+ * Speak in the active language. Order: the free in-browser neural voice if
+ * the learner turned it on, then a Plus recording, then the device voice.
+ * Any failure falls through to the next, so audio never just stops.
+ */
 export function speak(text: string, rate = 0.9): void {
+  if (browserVoiceId) {
+    const voiceId = browserVoiceId;
+    if (canSpeak()) window.speechSynthesis.cancel();
+    void playBrowserVoice(voiceId, text, rate).catch((error: unknown) => {
+      console.warn("[learn] in-browser voice unavailable, falling back", error);
+      if (naturalApi) void playNatural(text, rate).catch(() => speakWithDevice(text, rate));
+      else speakWithDevice(text, rate);
+    });
+    return;
+  }
   if (naturalApi) {
     if (canSpeak()) window.speechSynthesis.cancel();
     void playNatural(text, rate).catch((error: unknown) => {

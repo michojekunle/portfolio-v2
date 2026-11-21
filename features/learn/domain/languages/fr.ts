@@ -80,6 +80,8 @@ export const FRENCH: LanguagePack = {
   api: "/api/french",
   speechLocale: "fr-FR",
   accentRegion: "France",
+  // Open-source neural voice that runs in the browser (free, no account): Piper "siwis", a France-French female voice.
+  piperVoice: "fr_FR-siwis-medium",
   // France-French voices on common platforms (Amélie is Canadian, so she is not here).
   voiceHints: /thomas|audrey|aurélie|aurelie|marie|hortense|denise|henri|julie|paul|google français|google francais/i,
   topics: [

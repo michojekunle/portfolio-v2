@@ -11,6 +11,7 @@ import type { Commitment } from "../domain/commitment";
 import { LANGUAGES } from "../domain/languages";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { CommitmentPicker } from "./CommitmentPicker";
+import { NaturalVoiceSettings } from "./NaturalVoiceSettings";
 import { ReminderSettings } from "./ReminderSettings";
 import { QuietButton } from "./primitives";
 import { PAGE_STYLES, type PageStyle } from "./style-preference";
@@ -123,7 +124,12 @@ export function SettingsPanel(props: Props): ReactElement {
         </Row>
       ) : null}
 
-      {!props.guest ? (
+      <Row label={copy.settingsRows.naturalVoice} hint="Open-source neural voice, free">
+        <NaturalVoiceSettings />
+      </Row>
+
+      {/* Plus (paid cloud voices) stays hidden until it's switched on with NEXT_PUBLIC_PLUS_ENABLED=true. */}
+      {!props.guest && process.env.NEXT_PUBLIC_PLUS_ENABLED === "true" ? (
         <Row label={copy.settingsRows.plus} hint="Natural, native-sounding voices">
           {props.plus ? (
             <p className="fr-ui px-2 py-3 text-sm text-(--fr-ink)">Natural voices are on. Thank you for supporting the app.</p>
