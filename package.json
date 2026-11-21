@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
-    "spotify:auth": "node scripts/spotify-login.js"
+    "spotify:auth": "node scripts/spotify-login.js",
+    "test": "vitest run"
   },
   "dependencies": {
     "@deepgram/sdk": "^3.13.0",
@@ -117,6 +118,7 @@
     "eslint-config-next": "^16.2.1",
     "postcss": "^8",
     "tailwindcss": "^4.2.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }
