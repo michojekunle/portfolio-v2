@@ -2,7 +2,7 @@
 
 import { useLang } from "./lang-context";
 import { useEffect, useRef, useState, type ReactElement } from "react";
-import { Flame, Settings2, Snowflake } from "lucide-react";
+import { BookOpen, Flame, Settings2, Snowflake } from "lucide-react";
 import { LEVELS, type Level } from "../domain/lessons";
 import { STAGE_SHAPE, practiceStage, sessionsToNextStage } from "../domain/progression";
 import type { SessionPayload } from "../server/service";
@@ -26,6 +26,8 @@ interface Props {
   readonly install: InstallState;
   readonly onSignOut: () => void;
   readonly onCommitmentChange: (next: Commitment) => void;
+  readonly onOpenWords: () => void;
+  readonly onVariantChange: (variant: string) => void;
 }
 
 const LEVEL_HINT: Record<Level, string> = {
@@ -53,7 +55,7 @@ function capitalise(text: string): string {
   return text.charAt(0).toLocaleUpperCase("fr") + text.slice(1);
 }
 
-export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLevel, style, onStyleChange, install, onSignOut, onCommitmentChange }: Props): ReactElement {
+export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLevel, style, onStyleChange, install, onSignOut, onCommitmentChange, onOpenWords, onVariantChange }: Props): ReactElement {
   const { copy, pack } = useLang();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const sheetEnd = useRef<HTMLDivElement>(null);
@@ -245,6 +247,11 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
           <span className="min-w-0">
             Level {profile.level} · {profile.dailyMinutes === 60 ? "1 h" : `${profile.dailyMinutes} min`}/day · {streak.longest > 0 ? `best run ${streak.longest} days` : "day one starts today"}
           </span>
+          {!guest && !needsLevel ? (
+            <QuietButton onClick={onOpenWords} className="shrink-0 text-xs">
+              <BookOpen className="size-4" aria-hidden="true" /> {copy.myWords}
+            </QuietButton>
+          ) : null}
           <QuietButton
             onClick={() => setSettingsOpen((open) => !open)}
             aria-expanded={settingsOpen}
@@ -267,6 +274,8 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
             install={install}
             onSignIn={onSignIn}
             onSignOut={onSignOut}
+            variant={profile.variant}
+            onVariantChange={onVariantChange}
             commitment={profile.dailyMinutes}
             onCommitmentChange={onCommitmentChange}
           />

@@ -15,6 +15,8 @@ export const ProfileUpdateSchema = z.object({
   timezone: TimeZoneSchema,
   /** Optional so older clients (level picker only) keep working. */
   dailyMinutes: z.union([z.literal(15), z.literal(30), z.literal(60)]).optional(),
+  /** Regional variant id; unknown ids fall back to the language's default (validated against the pack server-side). */
+  variant: z.string().trim().min(1).max(20).optional(),
 });
 export type ProfileUpdate = z.infer<typeof ProfileUpdateSchema>;
 
@@ -54,6 +56,12 @@ export const SessionCompleteSchema = z.object({
   writingCorrect: z.boolean().nullable(),
 });
 export type SessionComplete = z.infer<typeof SessionCompleteSchema>;
+
+export const WordActionSchema = z.object({
+  cardId: z.string().uuid(),
+  action: z.enum(["known", "again"]),
+});
+export type WordAction = z.infer<typeof WordActionSchema>;
 
 export const FeedbackRequestSchema = z.object({
   sentence: z.string().trim().min(2).max(300),

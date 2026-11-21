@@ -32,6 +32,8 @@ interface Props {
   readonly canChangeLevel: boolean;
   readonly pickingLevel: boolean;
   readonly onPickLevel: (level: Level) => void;
+  readonly variant: string | null;
+  readonly onVariantChange: (variant: string) => void;
   readonly commitment: Commitment;
   readonly onCommitmentChange: (next: Commitment) => void;
   readonly install: InstallState;
@@ -65,6 +67,20 @@ export function SettingsPanel(props: Props): ReactElement {
       <Row label={copy.settingsRows.page} hint="How the page looks">
         <ChoiceGroup label="Page style" options={PAGE_STYLES} labels={copy.styles} value={props.style} onChange={props.onStyleChange} />
       </Row>
+
+      {pack.variants && pack.variants.length > 1 ? (
+        <Row label={copy.settingsRows.variant} hint="Voice and vocabulary">
+          <div className={props.pickingLevel ? "pointer-events-none opacity-50" : ""}>
+            <ChoiceGroup
+              label={`${pack.name} variety`}
+              options={pack.variants.map((v) => v.id)}
+              labels={Object.fromEntries(pack.variants.map((v) => [v.id, v.label]))}
+              value={props.variant ?? pack.variants[0].id}
+              onChange={props.onVariantChange}
+            />
+          </div>
+        </Row>
+      ) : null}
 
       <Row label={copy.settingsRows.light} hint="Auto follows your device">
         <ChoiceGroup label="Light or dark" options={MODES} labels={copy.modes} value={mode} onChange={(next) => setTheme(next)} />

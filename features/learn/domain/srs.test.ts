@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_EASE,
+  KNOWN_INTERVAL_DAYS,
+  markKnown,
+  practiseAgain,
   LEARNING_STEP_MINUTES,
   MAX_EASE,
   MIN_EASE,
@@ -108,5 +111,29 @@ describe("isRecalled", () => {
     expect(isRecalled("hard")).toBe(true);
     expect(isRecalled("good")).toBe(true);
     expect(isRecalled("easy")).toBe(true);
+  });
+});
+
+describe("word list actions", () => {
+  const now = new Date("2026-11-21T10:00:00Z");
+  const card = { state: "learning" as const, ease: 2.1, intervalDays: 3, reps: 4, lapses: 1, dueAt: now, lastReviewedAt: null };
+
+  it("markKnown pushes a word ~6 months out and keeps its history", () => {
+    const known = markKnown(card, now);
+    expect(known.state).toBe("review");
+    expect(known.intervalDays).toBe(KNOWN_INTERVAL_DAYS);
+    expect(known.dueAt.getTime() - now.getTime()).toBe(KNOWN_INTERVAL_DAYS * 86_400_000);
+    expect(known.reps).toBe(4);
+    expect(known.lapses).toBe(1);
+    expect(known.ease).toBeGreaterThanOrEqual(2.5);
+  });
+
+  it("markKnown never shortens a longer interval", () => {
+    expect(markKnown({ ...card, intervalDays: 400 }, now).intervalDays).toBe(400);
+  });
+
+  it("practiseAgain makes it due right now as a learning card", () => {
+    const again = practiseAgain({ ...card, state: "review", intervalDays: 60 }, now);
+    expect(again).toMatchObject({ state: "learning", intervalDays: 0, dueAt: now, reps: 4, lapses: 1 });
   });
 });

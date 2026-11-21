@@ -5,11 +5,11 @@
  */
 import { NextResponse } from "next/server";
 import type { LanguagePack } from "../domain/language";
-import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema } from "../domain/schemas";
+import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema, WordActionSchema } from "../domain/schemas";
 import { gradeSentence } from "./ai";
 import { clientIp, getLearnContext, rateLimited, readJson, toErrorResponse, unauthorized } from "./context";
 import { AiUnavailableError } from "./errors";
-import { completeUserSession, loadGuestSession, loadUserSession, saveUserProfile } from "./service";
+import { completeUserSession, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord } from "./service";
 
 type Handler = (request: Request) => Promise<Response>;
 
@@ -25,7 +25,9 @@ export function sessionHandler(pack: LanguagePack): Handler {
       const parsedTz = tzParam ? TimeZoneSchema.safeParse(tzParam) : null;
       const timezone = parsedTz?.success ? parsedTz.data : null;
 
-      const payload = user ? await loadUserSession(deps, user.id, timezone) : loadGuestSession(pack, deps.now(), timezone);
+      // Guests choose a variant per device (?variant=); signed-in learners have it on their profile.
+      const variant = new URL(request.url).searchParams.get("variant");
+      const payload = user ? await loadUserSession(deps, user.id, timezone) : loadGuestSession(pack, deps.now(), timezone, variant);
       return NextResponse.json(payload);
     } catch (error) {
       return toErrorResponse(error, `${pack.id}/session`);
@@ -91,5 +93,34 @@ export function feedbackHandler(pack: LanguagePack): Handler {
     } catch (error) {
       return toErrorResponse(error, `${pack.id}/feedback`);
     }
+  };
+}
+
+/** GET …/words — the learner's deck. PATCH …/words — "known" / "again" on one card they own. */
+export function wordsHandlers(pack: LanguagePack): { readonly GET: Handler; readonly PATCH: Handler } {
+  return {
+    GET: async () => {
+      try {
+        const { user, deps } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        const limited = await rateLimited(`${pack.id}:words:${user.id}`, 30);
+        if (limited) return limited;
+        return NextResponse.json({ words: await listWords(deps, user.id) });
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/words`);
+      }
+    },
+    PATCH: async (request) => {
+      try {
+        const { user, deps } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        const limited = await rateLimited(`${pack.id}:words-update:${user.id}`, 60);
+        if (limited) return limited;
+        const word = await updateWord(deps, user.id, WordActionSchema.parse(await readJson(request)));
+        return word ? NextResponse.json({ word }) : NextResponse.json({ error: "Word not found." }, { status: 404 });
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/words`);
+      }
+    },
   };
 }

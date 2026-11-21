@@ -76,6 +76,82 @@ const FALLBACK_LESSONS: readonly Lesson[] = [
   },
 ];
 
+
+/**
+ * Latin American Spanish built-in lessons ("ustedes", "carro", "celular"),
+ * same shape as the Spain set above.
+ */
+const LATAM_LESSONS: readonly Lesson[] = [
+  {
+    title: "En la cafetería",
+    topic: "ordering at a café",
+    level: "A2",
+    sentences: [
+      { fr: "Hola, buenos días. ¿Me da un café con leche, por favor?", en: "Hello, good morning. Can I have a coffee with milk, please?", gloss: [{ fr: "hola", en: "hello" }, { fr: "buenos días", en: "good morning" }, { fr: "un café con leche", en: "a coffee with milk" }, { fr: "por favor", en: "please" }] },
+      { fr: "Claro. ¿Algo más?", en: "Sure. Anything else?", gloss: [{ fr: "claro", en: "sure / of course" }] },
+      { fr: "Sí, un pan dulce, pero sin azúcar encima.", en: "Yes, a sweet bread, but without sugar on top.", gloss: [{ fr: "sí", en: "yes" }, { fr: "un pan dulce", en: "a sweet bread (pastry)" }, { fr: "pero", en: "but" }, { fr: "azúcar", en: "sugar" }, { fr: "encima", en: "on top" }] },
+      { fr: "Son sesenta pesos.", en: "That's sixty pesos.", gloss: [{ fr: "son", en: "that's / they are" }, { fr: "sesenta", en: "sixty" }, { fr: "pesos", en: "pesos" }] },
+      { fr: "Aquí tiene. Quédese con el cambio.", en: "Here you are. Keep the change.", gloss: [{ fr: "aquí tiene", en: "here you are (formal)" }] },
+      { fr: "¡Muchas gracias, que le vaya bien!", en: "Thank you very much, all the best!", gloss: [{ fr: "muchas gracias", en: "thank you very much" }, { fr: "que le vaya bien", en: "all the best (formal)" }] },
+    ],
+    vocab: [
+      { fr: "me da", en: "can I have (when ordering)", note: "Common across Latin America" },
+      { fr: "algo más", en: "anything else" },
+      { fr: "sin", en: "without" },
+      { fr: "el cambio", en: "the change (money)" },
+      { fr: "quédese", en: "keep (formal)", note: "From quedarse, usted form" },
+    ],
+    shadow: { fr: "Hola, buenos días. ¿Me da un café con leche, por favor?", en: "Hello, good morning. Can I have a coffee with milk, please?" },
+    ask: { fr: "¿Qué tomas normalmente en una cafetería?", en: "What do you usually have at a café?" },
+    write: { prompt: "Escribe una frase para pedir algo con « me da ».", targetWord: "me da" },
+  },
+  {
+    title: "Este fin de semana",
+    topic: "making weekend plans",
+    level: "A2",
+    sentences: [
+      { fr: "¿Qué vas a hacer este fin de semana?", en: "What are you going to do this weekend?", gloss: [{ fr: "qué", en: "what" }, { fr: "hacer", en: "to do" }, { fr: "este fin de semana", en: "this weekend" }] },
+      { fr: "Todavía no sé. ¿Y tú?", en: "I don't know yet. And you?", gloss: [{ fr: "no sé", en: "I don't know" }, { fr: "y tú", en: "and you" }] },
+      { fr: "Voy a ir al mercado el sábado en la mañana.", en: "I'm going to go to the market on Saturday morning.", gloss: [{ fr: "al mercado", en: "to the market" }, { fr: "el sábado", en: "on Saturday" }, { fr: "en la mañana", en: "in the morning" }] },
+      { fr: "¿Quieres venir conmigo en el carro?", en: "Do you want to come with me in the car?", gloss: [{ fr: "quieres", en: "do you want" }, { fr: "venir", en: "to come" }, { fr: "en el carro", en: "in the car" }] },
+      { fr: "¡Claro! Después podemos comer juntos.", en: "Of course! Afterwards we can have lunch together.", gloss: [{ fr: "claro", en: "of course" }, { fr: "después", en: "afterwards" }, { fr: "podemos", en: "we can" }, { fr: "comer", en: "to have lunch / to eat" }] },
+      { fr: "Perfecto, te mando un mensaje el viernes.", en: "Perfect, I'll text you on Friday.", gloss: [{ fr: "perfecto", en: "perfect" }, { fr: "te mando un mensaje", en: "I'll send you a message" }, { fr: "el viernes", en: "on Friday" }] },
+    ],
+    vocab: [
+      { fr: "todavía", en: "yet / still" },
+      { fr: "voy a ir", en: "I'm going to go", note: "ir a + infinitive = near future" },
+      { fr: "conmigo", en: "with me" },
+      { fr: "el carro", en: "the car", note: "Latin America; in Spain: el coche" },
+      { fr: "juntos", en: "together" },
+    ],
+    shadow: { fr: "Voy a ir al mercado el sábado en la mañana.", en: "I'm going to go to the market on Saturday morning." },
+    ask: { fr: "¿Qué vas a hacer este fin de semana?", en: "What are you going to do this weekend?" },
+    write: { prompt: "Escribe una frase sobre tus planes con « voy a ».", targetWord: "voy a" },
+  },
+  {
+    title: "Anoche",
+    topic: "telling a story about yesterday",
+    level: "A2",
+    sentences: [
+      { fr: "Anoche fui al cine con una amiga.", en: "Last night I went to the cinema with a friend.", gloss: [{ fr: "al cine", en: "to the cinema" }, { fr: "con", en: "with" }, { fr: "una amiga", en: "a (female) friend" }] },
+      { fr: "Vimos una película muy chistosa.", en: "We saw a very funny film.", gloss: [{ fr: "vimos", en: "we saw" }, { fr: "una película", en: "a film" }, { fr: "muy", en: "very" }] },
+      { fr: "Después de la película, cenamos tacos.", en: "After the film, we had tacos for dinner.", gloss: [{ fr: "después de", en: "after" }, { fr: "cenamos", en: "we had dinner" }, { fr: "tacos", en: "tacos" }] },
+      { fr: "Estaba lloviendo, así que pedimos un taxi desde el celular.", en: "It was raining, so we ordered a taxi from the phone.", gloss: [{ fr: "estaba lloviendo", en: "it was raining" }, { fr: "pedimos", en: "we ordered" }, { fr: "un taxi", en: "a taxi" }, { fr: "desde el celular", en: "from the (mobile) phone" }] },
+      { fr: "La pasé muy bien.", en: "I had a really good time.", gloss: [{ fr: "la pasé muy bien", en: "I had a really good time" }] },
+    ],
+    vocab: [
+      { fr: "anoche", en: "last night" },
+      { fr: "fui", en: "I went", note: "Past of ir (also of ser)" },
+      { fr: "chistosa", en: "funny", note: "Latin America; in Spain: divertida" },
+      { fr: "así que", en: "so (therefore)" },
+      { fr: "el celular", en: "the mobile phone", note: "Latin America; in Spain: el móvil" },
+    ],
+    shadow: { fr: "Vimos una película muy chistosa.", en: "We saw a very funny film." },
+    ask: { fr: "¿Qué hiciste anoche?", en: "What did you do last night?" },
+    write: { prompt: "Escribe una frase en pasado con « fui ».", targetWord: "fui" },
+  },
+];
+
 export const SPANISH: LanguagePack = {
   id: "es",
   name: "Spanish",
@@ -112,6 +188,26 @@ export const SPANISH: LanguagePack = {
     B2: "B2 scenes use every common tense, including the subjunctive, and sound like natural speech.",
   },
   informalYou: "tú",
+  aiDialect: "Spain Spanish (castellano): use vosotros and everyday Spain vocabulary such as coche, móvil, ordenador, vale",
+  variants: [
+    {
+      id: "es",
+      label: "Spain",
+      speechLocale: "es-ES",
+      accentRegion: "Spain",
+      voiceHints: /mónica|monica|jorge|lucía|lucia|elvira|álvaro|alvaro|helena|laura|pablo|google español de españa|google español/i,
+      aiDialect: "Spain Spanish (castellano): use vosotros and everyday Spain vocabulary such as coche, móvil, ordenador, vale",
+    },
+    {
+      id: "latam",
+      label: "Latin America",
+      speechLocale: "es-MX",
+      accentRegion: "Latin America",
+      voiceHints: /paulina|juan|dalia|jorge|google español de estados unidos|google español de méxico|sabina/i,
+      aiDialect: "Latin American Spanish: use ustedes (never vosotros) and widely understood vocabulary such as carro, celular, computadora",
+      fallbackLessons: LATAM_LESSONS,
+    },
+  ],
   articles: ["el", "la", "los", "las", "un", "una", "unos", "unas"],
   accents: ["á", "é", "í", "ó", "ú", "ñ", "ü", "¿", "¡"],
   // Casual speech in much of Spain and Latin America; regional, not "wrong" — learners need to recognise it, not copy it.

@@ -27,7 +27,7 @@ export async function getLearnContext(pack: LanguagePack): Promise<LearnContext>
       pack,
       repo: createRepository(supabase, pack),
       now: () => new Date(),
-      makeLesson: (request) => generateLesson(pack, request),
+      makeLesson: generateLesson,
       onAiFallback: (error) => {
         console.warn(`[learn:${pack.id}] AI unavailable, serving fallback lesson:`, error instanceof Error ? error.message : "unknown");
       },

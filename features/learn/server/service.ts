@@ -1,4 +1,5 @@
 import { endOfLocalDay, localDateString, resolveTimeZone } from "../domain/dates";
+import type { WordAction } from "../domain/schemas";
 import {
   DEFAULT_LEVEL,
   fallbackLessonFor,
@@ -14,18 +15,19 @@ import {
 } from "../domain/schemas";
 import { COMMITMENT_STEPS, DEFAULT_COMMITMENT, type Commitment } from "../domain/commitment";
 import { LEVEL_UP_RULES, suggestNextLevel, type LevelSuggestion } from "../domain/level-up";
-import { gradeCard, isRecalled, newCardSchedule } from "../domain/srs";
+import { gradeCard, isRecalled, markKnown, newCardSchedule, practiseAgain } from "../domain/srs";
 import { applyCompletion, viewStreak } from "../domain/streak";
 import type { LessonRequest } from "./ai";
 import { AiUnavailableError, SessionNotEligibleError } from "./errors";
-import type { LearnRepository } from "./repository";
-import type { LanguagePack } from "../domain/language";
+import type { Card, LearnRepository } from "./repository";
+import { resolveVariantId, withVariant, type LanguagePack } from "../domain/language";
 
 export interface ServiceDeps {
   readonly pack: LanguagePack;
   readonly repo: LearnRepository;
   readonly now: () => Date;
-  readonly makeLesson: (request: LessonRequest) => Promise<Lesson>;
+  /** Takes the learner's effective pack (variant applied), so the lesson matches their dialect. */
+  readonly makeLesson: (pack: LanguagePack, request: LessonRequest) => Promise<Lesson>;
   /** Called when AI is down — injected so tests stay silent and prod can log. */
   readonly onAiFallback: (error: unknown) => void;
 }
@@ -49,7 +51,13 @@ export interface StreakDto {
 export interface SessionPayload {
   readonly guest: boolean;
   readonly today: string;
-  readonly profile: { readonly level: Level; readonly timezone: string; readonly isNew: boolean; readonly dailyMinutes: Commitment };
+  readonly profile: {
+    readonly level: Level;
+    readonly timezone: string;
+    readonly isNew: boolean;
+    readonly dailyMinutes: Commitment;
+    readonly variant: string | null;
+  };
   readonly streak: StreakDto;
   readonly due: readonly DueCardDto[];
   readonly dueTotal: number;
@@ -88,13 +96,15 @@ const toDueDto = (card: { id: string; french: string; english: string; notes: st
   notes: card.notes,
 });
 
-export function loadGuestSession(pack: LanguagePack, now: Date, clientTimezone: string | null): SessionPayload {
+export function loadGuestSession(basePack: LanguagePack, now: Date, clientTimezone: string | null, variantId: string | null = null): SessionPayload {
+  const variant = resolveVariantId(basePack, variantId);
+  const pack = withVariant(basePack, variant);
   const timezone = resolveTimeZone(clientTimezone);
   const today = localDateString(timezone, now);
   return {
     guest: true,
     today,
-    profile: { level: DEFAULT_LEVEL, timezone, isNew: true, dailyMinutes: DEFAULT_COMMITMENT },
+    profile: { level: DEFAULT_LEVEL, timezone, isNew: true, dailyMinutes: DEFAULT_COMMITMENT, variant },
     streak: { current: 0, longest: 0, freezes: 2, completedToday: false, atRisk: false, totalCompletions: 0 },
     due: [],
     dueTotal: 0,
@@ -117,9 +127,11 @@ export async function loadUserSession(
   const timezone = resolveTimeZone(clientTimezone ?? stored?.timezone);
   const level = stored?.level ?? DEFAULT_LEVEL;
   const dailyMinutes = stored?.dailyMinutes ?? DEFAULT_COMMITMENT;
+  const variant = resolveVariantId(deps.pack, stored?.variant);
+  const pack = withVariant(deps.pack, variant);
 
   // Keep the stored zone current so server-side jobs (reminders) can use it.
-  if (stored && stored.timezone !== timezone) await repo.upsertProfile(userId, { level, timezone, dailyMinutes });
+  if (stored && stored.timezone !== timezone) await repo.upsertProfile(userId, { level, timezone, dailyMinutes, variant });
 
   const today = localDateString(timezone, now);
   const [streakState, dueCards, dueTotal, cachedLesson, recentSessions] = await Promise.all([
@@ -137,15 +149,15 @@ export async function loadUserSession(
   // lesson) at a guessed one — they get the offline lesson, and the first
   // generated lesson after onboarding matches their real level.
   if (!lesson && stored === null) {
-    lesson = fallbackLessonFor(deps.pack.fallbackLessons, today);
+    lesson = fallbackLessonFor(pack.fallbackLessons, today);
     lessonSource = "fallback";
   }
 
   if (!lesson) {
     try {
-      lesson = await deps.makeLesson({
+      lesson = await deps.makeLesson(pack, {
         level,
-        topic: topicForDate(deps.pack.topics, today),
+        topic: topicForDate(pack.topics, today),
         recycleWords: dueCards.map((card) => card.french),
       });
       lessonSource = "ai";
@@ -154,7 +166,7 @@ export async function loadUserSession(
       if (!(error instanceof AiUnavailableError)) throw error;
       deps.onAiFallback(error);
       // Not cached: a transient AI outage should retry on the next load, not stick all day.
-      lesson = fallbackLessonFor(deps.pack.fallbackLessons, today);
+      lesson = fallbackLessonFor(pack.fallbackLessons, today);
       lessonSource = "fallback";
     }
   }
@@ -163,7 +175,7 @@ export async function loadUserSession(
   return {
     guest: false,
     today,
-    profile: { level, timezone, isNew: stored === null, dailyMinutes },
+    profile: { level, timezone, isNew: stored === null, dailyMinutes, variant },
     streak: {
       current: view.current,
       longest: streakState.longest,
@@ -188,6 +200,7 @@ export async function saveUserProfile(deps: ServiceDeps, userId: string, update:
     level: update.level,
     timezone: update.timezone,
     dailyMinutes: update.dailyMinutes ?? existing?.dailyMinutes ?? DEFAULT_COMMITMENT,
+    variant: resolveVariantId(deps.pack, update.variant ?? existing?.variant),
   });
 }
 
@@ -280,4 +293,53 @@ export async function completeUserSession(
     stats: { reviews: updates.length, recalled, newWords: input.newCards.length },
     tomorrowDue: await tomorrowDue(),
   };
+}
+
+
+// ── My words ──────────────────────────────────────────────────────────────
+
+export const MAX_WORDS_LISTED = 1000;
+
+export interface WordDto {
+  readonly id: string;
+  readonly text: string;
+  readonly english: string;
+  readonly notes: string | null;
+  readonly source: "lesson" | "manual" | "error";
+  /** "new" until first review; "learning" while short-interval; "known" once spaced out ≥ 21 days. */
+  readonly strength: "new" | "learning" | "known";
+  readonly dueAt: string;
+  readonly intervalDays: number;
+}
+
+/** A word counts as known once the schedule trusts it for three weeks — the usual "mature card" threshold. */
+const MATURE_DAYS = 21;
+
+function toWordDto(card: Card): WordDto {
+  const { schedule } = card;
+  const strength = schedule.intervalDays >= MATURE_DAYS ? "known" : schedule.reps === 0 ? "new" : "learning";
+  return {
+    id: card.id,
+    text: card.french,
+    english: card.english,
+    notes: card.notes,
+    source: card.source,
+    strength,
+    dueAt: schedule.dueAt.toISOString(),
+    intervalDays: schedule.intervalDays,
+  };
+}
+
+export async function listWords(deps: ServiceDeps, userId: string): Promise<readonly WordDto[]> {
+  return (await deps.repo.listAllCards(userId, MAX_WORDS_LISTED)).map(toWordDto);
+}
+
+/** Applies "I know this" / "practise again" to one of the learner's own cards. Returns null if it isn't theirs. */
+export async function updateWord(deps: ServiceDeps, userId: string, input: WordAction): Promise<WordDto | null> {
+  const [card] = await deps.repo.getCardsByIds(userId, [input.cardId]);
+  if (!card) return null;
+  const now = deps.now();
+  const schedule = input.action === "known" ? markKnown(card.schedule, now) : practiseAgain(card.schedule, now);
+  await deps.repo.updateCardSchedules(userId, [{ id: card.id, schedule }]);
+  return toWordDto({ ...card, schedule });
 }

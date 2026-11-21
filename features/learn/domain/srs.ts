@@ -115,3 +115,22 @@ export function gradeCard(card: CardSchedule, grade: Grade, now: Date): CardSche
 export function isRecalled(grade: Grade): boolean {
   return grade !== "again";
 }
+
+/** "I already know this": push it far out so it stops taking review time, without deleting it. */
+export const KNOWN_INTERVAL_DAYS = 180;
+
+export function markKnown(card: CardSchedule, now: Date): CardSchedule {
+  return {
+    ...card,
+    state: "review",
+    ease: clampEase(Math.max(card.ease, DEFAULT_EASE)),
+    intervalDays: Math.max(card.intervalDays, KNOWN_INTERVAL_DAYS),
+    dueAt: addDays(now, Math.max(card.intervalDays, KNOWN_INTERVAL_DAYS)),
+    lastReviewedAt: now,
+  };
+}
+
+/** "Practise this again": back into today's reviews as a learning card. History (reps, lapses) is kept. */
+export function practiseAgain(card: CardSchedule, now: Date): CardSchedule {
+  return { ...card, state: "learning", intervalDays: 0, dueAt: now };
+}

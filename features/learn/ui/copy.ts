@@ -17,6 +17,7 @@ export interface Copy {
   readonly plan: string;
   readonly goal: string;
   readonly settings: string;
+  readonly myWords: string;
   readonly whereAreYou: string;
 
   readonly steps: { readonly review: string; readonly learn: string; readonly listen: string; readonly speak: string; readonly write: string; readonly dictation: string };
@@ -84,7 +85,7 @@ export interface Copy {
   readonly cardsTomorrow: (count: number) => string;
   readonly unlocked: Partial<Record<Stage, string>>;
 
-  readonly settingsRows: { readonly page: string; readonly light: string; readonly level: string; readonly time: string; readonly account: string; readonly classic: string; readonly otherLanguage: string };
+  readonly settingsRows: { readonly page: string; readonly light: string; readonly level: string; readonly time: string; readonly account: string; readonly classic: string; readonly otherLanguage: string; readonly variant: string };
   readonly modes: { readonly light: string; readonly dark: string; readonly system: string };
   readonly styles: { readonly notebook: string; readonly dictionary: string };
 }
@@ -102,6 +103,7 @@ const FR: Copy = {
   plan: "Au programme",
   goal: "Ton objectif",
   settings: "Réglages",
+  myWords: "Mes mots",
   whereAreYou: "Where are you with French?",
   steps: { review: "Revoir", learn: "Apprendre", listen: "Écouter", speak: "Parler", write: "Écrire", dictation: "Dictée" },
   check: "Vérifier",
@@ -160,7 +162,7 @@ const FR: Copy = {
   recalled: (p) => `${p} % retenus`,
   cardsTomorrow: (n) => `${plural(n, "carte", "cartes")} pour demain`,
   unlocked: { 2: "Nouveau demain : le mot qui manque.", 3: "Nouveau demain : ta propre phrase." },
-  settingsRows: { page: "Page", light: "Lumière", level: "Niveau", time: "Temps", account: "Compte", classic: "Ancienne vue", otherLanguage: "Autre langue" },
+  settingsRows: { page: "Page", light: "Lumière", level: "Niveau", time: "Temps", account: "Compte", classic: "Ancienne vue", otherLanguage: "Autre langue", variant: "Variante" },
   modes: { light: "Jour", dark: "Nuit", system: "Auto" },
   styles: { notebook: "Cahier", dictionary: "Dictionnaire" },
 };
@@ -176,6 +178,7 @@ const ES: Copy = {
   plan: "El plan de hoy",
   goal: "Tu objetivo",
   settings: "Ajustes",
+  myWords: "Mis palabras",
   whereAreYou: "Where are you with Spanish?",
   steps: { review: "Repasar", learn: "Aprender", listen: "Escuchar", speak: "Hablar", write: "Escribir", dictation: "Dictado" },
   check: "Comprobar",
@@ -234,7 +237,7 @@ const ES: Copy = {
   recalled: (p) => `${p} % recordadas`,
   cardsTomorrow: (n) => `${plural(n, "tarjeta", "tarjetas")} para mañana`,
   unlocked: { 2: "Mañana, novedad: la palabra que falta.", 3: "Mañana, novedad: tu propia frase." },
-  settingsRows: { page: "Página", light: "Luz", level: "Nivel", time: "Tiempo", account: "Cuenta", classic: "Vista clásica", otherLanguage: "Otro idioma" },
+  settingsRows: { page: "Página", light: "Luz", level: "Nivel", time: "Tiempo", account: "Cuenta", classic: "Vista clásica", otherLanguage: "Otro idioma", variant: "Variedad" },
   modes: { light: "Día", dark: "Noche", system: "Auto" },
   styles: { notebook: "Cuaderno", dictionary: "Diccionario" },
 };
