@@ -43,8 +43,49 @@ export async function voiceMatch(): Promise<VoiceMatch> {
   return pickBestVoice(await loadVoices(), activeLocale, activeVoiceHints).match;
 }
 
-/** Speak in the active language with the most local, natural voice installed. */
+/**
+ * Plus: natural neural recordings served by the app (cached per line). When
+ * enabled, speak() plays those and only falls back to the device voice if a
+ * recording can't be fetched.
+ */
+let naturalApi: string | null = null;
+const naturalUrls = new Map<string, string>();
+let player: HTMLAudioElement | null = null;
+
+export function setNaturalVoices(api: string | null): void {
+  naturalApi = api;
+}
+
+async function playNatural(text: string, rate: number): Promise<void> {
+  if (!naturalApi) throw new Error("natural voices off");
+  const key = `${activeLocale}|${rate}|${text}`;
+  let url = naturalUrls.get(key);
+  if (!url) {
+    const params = new URLSearchParams({ text, rate: String(rate), locale: activeLocale });
+    const response = await fetch(`${naturalApi}/tts?${params.toString()}`);
+    if (!response.ok) throw new Error(`tts ${response.status}`);
+    url = ((await response.json()) as { url: string }).url;
+    naturalUrls.set(key, url);
+  }
+  player?.pause();
+  player = new Audio(url);
+  await player.play();
+}
+
+/** Speak in the active language: a natural recording for Plus, otherwise the most local device voice. */
 export function speak(text: string, rate = 0.9): void {
+  if (naturalApi) {
+    if (canSpeak()) window.speechSynthesis.cancel();
+    void playNatural(text, rate).catch((error: unknown) => {
+      console.warn("[learn] natural voice unavailable, using the device voice", error);
+      speakWithDevice(text, rate);
+    });
+    return;
+  }
+  speakWithDevice(text, rate);
+}
+
+function speakWithDevice(text: string, rate: number): void {
   if (!canSpeak()) return;
   window.speechSynthesis.cancel();
   void loadVoices().then((voices) => {
@@ -59,6 +100,7 @@ export function speak(text: string, rate = 0.9): void {
 }
 
 export function stopSpeaking(): void {
+  player?.pause();
   if (canSpeak()) window.speechSynthesis.cancel();
 }
 

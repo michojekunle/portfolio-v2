@@ -9,7 +9,10 @@ import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, Time
 import { gradeSentence } from "./ai";
 import { clientIp, getLearnContext, rateLimited, readJson, toErrorResponse, unauthorized } from "./context";
 import { AiUnavailableError } from "./errors";
+import { adminClient } from "./admin";
+import { readEntitlement } from "./billing";
 import { applyGroupAction, getMyGroup } from "./groups";
+import { TtsUnavailableError, naturalVoiceUrl } from "./tts";
 import { getReminder, saveReminder } from "./reminders";
 import { completeUserSession, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord } from "./service";
 
@@ -19,7 +22,7 @@ type Handler = (request: Request) => Promise<Response>;
 export function sessionHandler(pack: LanguagePack): Handler {
   return async (request) => {
     try {
-      const { user, deps } = await getLearnContext(pack);
+      const { user, deps, db } = await getLearnContext(pack);
       const limited = await rateLimited(`${pack.id}:session:${user?.id ?? clientIp(request)}`, 30);
       if (limited) return limited;
 
@@ -30,7 +33,12 @@ export function sessionHandler(pack: LanguagePack): Handler {
       // Guests choose a variant per device (?variant=); signed-in learners have it on their profile.
       const variant = new URL(request.url).searchParams.get("variant");
       const payload = user ? await loadUserSession(deps, user.id, timezone) : loadGuestSession(pack, deps.now(), timezone, variant);
-      return NextResponse.json(payload);
+      // Plus is optional infrastructure: if its table isn't there yet, everyone is simply on the free plan.
+      const plus = user ? await readEntitlement(db, user.id).catch((error: unknown) => {
+        console.warn(`[learn/${pack.id}] entitlement check failed`, error instanceof Error ? error.message : error);
+        return false;
+      }) : false;
+      return NextResponse.json({ ...payload, plus });
     } catch (error) {
       return toErrorResponse(error, `${pack.id}/session`);
     }
@@ -177,5 +185,40 @@ export function groupHandlers(pack: LanguagePack): { readonly GET: Handler; read
         return toErrorResponse(error, `${pack.id}/group`);
       }
     },
+  };
+}
+
+
+/**
+ * GET …/tts?text=&rate=&locale= — a signed URL to a natural (neural) voice
+ * recording of one line. Plus only; synthesised once per line and cached.
+ */
+export function ttsHandler(pack: LanguagePack): Handler {
+  return async (request) => {
+    try {
+      const { user, db } = await getLearnContext(pack);
+      if (!user) return unauthorized();
+      if (!(await readEntitlement(db, user.id))) return NextResponse.json({ error: "Natural voices are part of Plus." }, { status: 402 });
+      const limited = await rateLimited(`${pack.id}:tts:${user.id}`, 120);
+      if (limited) return limited;
+
+      const params = new URL(request.url).searchParams;
+      const text = (params.get("text") ?? "").trim();
+      const rate = Number(params.get("rate") ?? "0.9");
+      const locale = params.get("locale") ?? pack.speechLocale;
+      const allowedLocales = [pack.speechLocale, ...(pack.variants ?? []).map((v) => v.speechLocale)];
+      if (!text || text.length > 300 || !Number.isFinite(rate) || rate < 0.5 || rate > 1.5 || !allowedLocales.includes(locale)) {
+        return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+      }
+      const admin = adminClient();
+      if (!admin) return NextResponse.json({ error: "Natural voices aren't configured." }, { status: 503 });
+      return NextResponse.json({ url: await naturalVoiceUrl(admin, text, locale, rate) });
+    } catch (error) {
+      if (error instanceof TtsUnavailableError) {
+        console.warn(`[learn/${pack.id}/tts]`, error.message);
+        return NextResponse.json({ error: "Natural voices are unavailable right now." }, { status: 503 });
+      }
+      return toErrorResponse(error, `${pack.id}/tts`);
+    }
   };
 }

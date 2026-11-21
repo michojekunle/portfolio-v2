@@ -64,6 +64,8 @@ export interface SessionPayload {
   readonly lesson: Lesson;
   readonly lessonSource: "ai" | "cached" | "fallback";
   readonly estimatedMinutes: number;
+  /** Set by the route: whether the learner has Plus (natural voices). Absent for guests. */
+  readonly plus?: boolean;
   /** Set when recent sessions show the learner is ready for the next level. Never for guests. */
   readonly levelSuggestion: LevelSuggestion | null;
 }

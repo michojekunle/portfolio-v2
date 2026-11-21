@@ -26,7 +26,7 @@ import { withVariant, type LanguageId, type LanguagePack } from "../domain/langu
 import { LANGUAGES } from "../domain/languages";
 import { COPY } from "./copy";
 import { LangProvider } from "./lang-context";
-import { setSpeechLanguage } from "./speech-io";
+import { setNaturalVoices, setSpeechLanguage } from "./speech-io";
 import { usePageStyle, type PageStyle } from "./style-preference";
 import { useInstall } from "./use-install";
 
@@ -87,6 +87,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
   const pack = withVariant(basePack, payload?.profile.variant ?? guestVariant);
   // Set during render (idempotent): child screens speak in their own mount effects, which run before a parent effect would.
   setSpeechLanguage(pack.speechLocale, pack.voiceHints);
+  setNaturalVoices(payload?.plus ? pack.api : null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("home");
   const [result, setResult] = useState<CompletePayload | null>(null);
@@ -177,6 +178,10 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
       } catch (error) {
         console.warn("[learn] could not read pending invite", error);
       }
+    }
+    if (url.searchParams.get("plus") === "welcome") {
+      toast.success("Welcome to Plus — natural voices are on. (It can take a minute to activate.)");
+      url.searchParams.delete("plus");
     }
     const start = url.searchParams.get("start") === "1";
     url.searchParams.delete("start");

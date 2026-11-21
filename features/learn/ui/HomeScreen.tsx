@@ -280,6 +280,7 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
             install={install}
             onSignIn={onSignIn}
             onSignOut={onSignOut}
+            plus={payload.plus ?? false}
             variant={profile.variant}
             onVariantChange={onVariantChange}
             commitment={profile.dailyMinutes}

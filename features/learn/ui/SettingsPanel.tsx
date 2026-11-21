@@ -4,6 +4,7 @@ import { useLang } from "./lang-context";
 import Link from "next/link";
 import { useEffect, useState, type ReactElement, type ReactNode } from "react";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import { Download, Share } from "lucide-react";
 import { LEVELS, type Level } from "../domain/lessons";
 import type { Commitment } from "../domain/commitment";
@@ -33,6 +34,7 @@ interface Props {
   readonly canChangeLevel: boolean;
   readonly pickingLevel: boolean;
   readonly onPickLevel: (level: Level) => void;
+  readonly plus: boolean;
   readonly variant: string | null;
   readonly onVariantChange: (variant: string) => void;
   readonly commitment: Commitment;
@@ -40,6 +42,18 @@ interface Props {
   readonly install: InstallState;
   readonly onSignIn: () => void;
   readonly onSignOut: () => void;
+}
+
+async function startCheckout(app: string): Promise<void> {
+  try {
+    const response = await fetch("/api/billing/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ app }) });
+    const data = (await response.json()) as { url?: string; error?: string };
+    if (!response.ok || !data.url) throw new Error(data.error ?? "Checkout didn't start.");
+    window.location.assign(data.url);
+  } catch (error) {
+    console.error("[learn] checkout failed", error);
+    toast.error(error instanceof Error ? error.message : "Checkout didn't start. Try again.");
+  }
 }
 
 function Row({ label, hint, children }: { readonly label: string; readonly hint?: string; readonly children: ReactNode }): ReactElement {
@@ -106,6 +120,18 @@ export function SettingsPanel(props: Props): ReactElement {
           <div className="pl-2">
             <CommitmentPicker value={props.commitment} busy={props.pickingLevel} onChange={props.onCommitmentChange} />
           </div>
+        </Row>
+      ) : null}
+
+      {!props.guest ? (
+        <Row label={copy.settingsRows.plus} hint="Natural, native-sounding voices">
+          {props.plus ? (
+            <p className="fr-ui px-2 py-3 text-sm text-(--fr-ink)">Natural voices are on. Thank you for supporting the app.</p>
+          ) : (
+            <QuietButton onClick={() => void startCheckout(pack.route)} className="text-(--fr-ink)">
+              Upgrade for natural voices →
+            </QuietButton>
+          )}
         </Row>
       ) : null}
 
