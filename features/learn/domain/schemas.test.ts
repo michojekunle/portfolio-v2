@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   CARD_NOTES_MAX,
+  GroupActionSchema,
   NewCardSchema,
+  PushSubscriptionSchema,
   clipText,
   FeedbackRequestSchema,
   SessionCompleteSchema,
@@ -99,5 +101,41 @@ describe("clipText", () => {
   it("produces notes the schema accepts even from a maximal sentence and explanation", () => {
     const notes = clipText(`You wrote: “${"x".repeat(300)}” — ${"y".repeat(240)}`, CARD_NOTES_MAX);
     expect(NewCardSchema.safeParse({ french: "Bonjour.", english: "Hello.", notes, source: "error" }).success).toBe(true);
+  });
+});
+
+describe("PushSubscriptionSchema", () => {
+  const keys = { p256dh: "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM", auth: "tBHItJI5svbpez7KI4CCXg" };
+
+  it("accepts real browser push services", () => {
+    for (const endpoint of ["https://fcm.googleapis.com/fcm/send/abc", "https://updates.push.services.mozilla.com/wpush/v2/abc", "https://web.push.apple.com/QF1"]) {
+      expect(PushSubscriptionSchema.safeParse({ endpoint, keys }).success).toBe(true);
+    }
+  });
+
+  it("rejects anything that would make the server call an arbitrary or internal URL", () => {
+    for (const endpoint of ["http://fcm.googleapis.com/x", "https://169.254.169.254/latest", "https://evil.com/fcm.googleapis.com", "https://localhost/push"]) {
+      expect(PushSubscriptionSchema.safeParse({ endpoint, keys }).success).toBe(false);
+    }
+  });
+});
+
+describe("GroupActionSchema", () => {
+  const group = "3f2b6a1e-8c4d-4e5f-9a0b-1c2d3e4f5a6b";
+  const user = "7d9e1c2a-5b3f-4e8a-b1c0-2f4a6c8e0d12";
+
+  it("accepts a well-formed voice note path", () => {
+    expect(GroupActionSchema.safeParse({ action: "post", path: `${group}/2026-11-21/${user}.webm`, durationMs: 12000, timezone: "Africa/Lagos" }).success).toBe(true);
+  });
+
+  it("rejects path traversal and other file shapes", () => {
+    for (const path of [`${group}/../${user}.webm`, `${group}/2026-11-21/${user}.exe`, `/${group}/2026-11-21/${user}.webm`, `${group}/2026-11-21/../../secret.webm`]) {
+      expect(GroupActionSchema.safeParse({ action: "post", path, durationMs: 12000, timezone: "Africa/Lagos" }).success).toBe(false);
+    }
+  });
+
+  it("requires a display name when joining or creating", () => {
+    expect(GroupActionSchema.safeParse({ action: "join", code: "ABCDEFGH", displayName: "  ", timezone: "Africa/Lagos" }).success).toBe(false);
+    expect(GroupActionSchema.safeParse({ action: "create", name: "Les matinaux", displayName: "Mo", timezone: "Africa/Lagos" }).success).toBe(true);
   });
 });

@@ -8,6 +8,7 @@ import {
   Wallet,
   Compass,
   Share2,
+  Languages,
   ArrowRight,
   Sparkles,
   Check,
@@ -79,6 +80,30 @@ const LAB_EXPERIMENTS: LabTool[] = [
     href: "/tools/journal",
     icon: Compass,
     tags: ["Daily Logs", "Objectives", "Energy Tracking"],
+  },
+  {
+    id: "french",
+    name: "French Daily",
+    badge: "Live · Language",
+    tagline: "One French page a day — about ten minutes, out loud.",
+    description:
+      "A one-button daily session: spaced review, a short scene you say back or type from memory, real-speed listening, and one sentence of your own corrected in red pen.",
+    notes: "Installable app. Free to try without an account.",
+    href: "/french",
+    icon: Languages,
+    tags: ["Spaced Review", "Speaking", "AI Correction"],
+  },
+  {
+    id: "spanish",
+    name: "Spanish Daily",
+    badge: "Live · Language",
+    tagline: "The same ten-minute page, for Spanish.",
+    description:
+      "Built on the same engine as French Daily, with its own Spanish lessons, voice, and cuaderno notebook look — including how Spanish actually sounds at speed.",
+    notes: "Installable app. Free to try without an account.",
+    href: "/spanish",
+    icon: Languages,
+    tags: ["Spaced Review", "Real-Speed Listening", "Dictation"],
   },
   {
     id: "thread-studio",

@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import type { User } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { generateLesson } from "./ai";
-import { FrenchDomainError, PersistenceError, SessionNotEligibleError } from "./errors";
+import { FrenchDomainError, GroupError, PersistenceError, SessionNotEligibleError } from "./errors";
 import type { LanguagePack } from "../domain/language";
 import { createRepository } from "./repository";
 import type { ServiceDeps } from "./service";
 
 export interface LearnContext {
   readonly user: User | null;
+  /** User-scoped client (RLS applies), for features outside the session service such as reminders. */
+  readonly db: SupabaseClient;
   readonly deps: ServiceDeps;
 }
 
@@ -23,11 +25,12 @@ export async function getLearnContext(pack: LanguagePack): Promise<LearnContext>
 
   return {
     user,
+    db: supabase,
     deps: {
       pack,
       repo: createRepository(supabase, pack),
       now: () => new Date(),
-      makeLesson: (request) => generateLesson(pack, request),
+      makeLesson: generateLesson,
       onAiFallback: (error) => {
         console.warn(`[learn:${pack.id}] AI unavailable, serving fallback lesson:`, error instanceof Error ? error.message : "unknown");
       },
@@ -59,6 +62,9 @@ export function toErrorResponse(error: unknown, scope: string): NextResponse {
   if (error instanceof PersistenceError) {
     console.error(`[learn/${scope}]`, error.message, error.cause);
     return NextResponse.json({ error: "Could not save your progress. Please try again." }, { status: 500 });
+  }
+  if (error instanceof GroupError) {
+    return NextResponse.json({ error: error.message }, { status: 422 });
   }
   if (error instanceof FrenchDomainError) {
     console.error(`[learn/${scope}]`, error.message);

@@ -8,7 +8,7 @@ import { newCardSchedule, type CardSchedule } from "../domain/srs";
 import { EMPTY_STREAK, type StreakState } from "../domain/streak";
 import { AiUnavailableError, SessionNotEligibleError } from "./errors";
 import type { Card, LearnRepository, Profile, SessionRecord } from "./repository";
-import { completeUserSession, estimateMinutes, loadGuestSession, loadUserSession, saveUserProfile, type ServiceDeps } from "./service";
+import { completeUserSession, estimateMinutes, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord, type ServiceDeps } from "./service";
 
 const USER = "user-1";
 const NOW = new Date("2026-11-20T10:00:00.000Z");
@@ -32,7 +32,7 @@ function makeCard(id: string, schedule: CardSchedule): Card {
 
 function setup(overrides: Partial<FakeState> = {}) {
   const state: FakeState = {
-    profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 15 },
+    profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 15, variant: null },
     streak: EMPTY_STREAK,
     cards: [],
     lessons: new Map(),
@@ -55,6 +55,7 @@ function setup(overrides: Partial<FakeState> = {}) {
     },
     listDueCards: async (_id, _before, limit) => state.cards.slice(0, limit),
     countDueCards: async () => state.cards.length,
+    listAllCards: async (_id, limit) => state.cards.slice(0, limit),
     getCardsByIds: async (_id, ids) => state.cards.filter((card) => ids.includes(card.id)),
     updateCardSchedules: async (_id, updates) => {
       for (const { id, schedule } of updates) {
@@ -155,9 +156,9 @@ describe("loadUserSession", () => {
   });
 
   it("keeps a chosen commitment when only the level changes", async () => {
-    const { deps, state } = setup({ profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 60 } });
+    const { deps, state } = setup({ profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 60, variant: null } });
     await saveUserProfile(deps, USER, { level: "B1", timezone: "Africa/Lagos" });
-    expect(state.profile).toEqual({ level: "B1", timezone: "Africa/Lagos", dailyMinutes: 60 });
+    expect(state.profile).toEqual({ level: "B1", timezone: "Africa/Lagos", dailyMinutes: 60, variant: null });
     const payload = await loadUserSession(deps, USER, "Africa/Lagos");
     expect(payload.profile.dailyMinutes).toBe(60);
   });
@@ -185,7 +186,7 @@ describe("loadUserSession", () => {
     const dueCard = makeCard(CARD_ID, newCardSchedule(NOW));
     const { deps, makeLesson } = setup({ cards: [dueCard] });
     await loadUserSession(deps, USER, "Africa/Lagos");
-    expect(makeLesson).toHaveBeenCalledWith(expect.objectContaining({ recycleWords: [dueCard.french] }));
+    expect(makeLesson).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ recycleWords: [dueCard.french] }));
   });
 });
 
@@ -253,5 +254,41 @@ describe("completeUserSession", () => {
     const { deps } = setup({ cards: [] });
     const result = await completeUserSession(deps, USER, session());
     expect(result.stats.reviews).toBe(0);
+  });
+});
+
+describe("my words", () => {
+  it("lists the deck and marks a word known or due again — only for the owner", async () => {
+    const { deps, state } = setup({ cards: [makeCard(CARD_ID, newCardSchedule(NOW))] });
+    expect((await listWords(deps, USER))[0]).toMatchObject({ id: CARD_ID, strength: "new" });
+
+    const known = await updateWord(deps, USER, { cardId: CARD_ID, action: "known" });
+    expect(known?.strength).toBe("known");
+    expect(state.cards[0].schedule.intervalDays).toBeGreaterThanOrEqual(180);
+
+    const again = await updateWord(deps, USER, { cardId: CARD_ID, action: "again" });
+    expect(again?.dueAt).toBe(NOW.toISOString());
+
+    expect(await updateWord(deps, USER, { cardId: "00000000-0000-4000-8000-000000000000", action: "known" })).toBeNull();
+  });
+});
+
+describe("regional variants", () => {
+  it("serves Latin American lessons and voice to a guest who picked them, and Spain by default", async () => {
+    const { SPANISH } = await import("../domain/languages");
+    const latam = loadGuestSession(SPANISH, NOW, "America/Mexico_City", "latam");
+    expect(latam.profile.variant).toBe("latam");
+    expect(latam.lesson.sentences.map((s) => s.fr).join(" ")).toMatch(/me da|carro|celular|chistosa|pesos/);
+
+    const unknown = loadGuestSession(SPANISH, NOW, "Europe/Madrid", "klingon");
+    expect(unknown.profile.variant).toBe("es");
+  });
+
+  it("generates AI lessons with the learner's variant", async () => {
+    const { SPANISH } = await import("../domain/languages");
+    const { deps, makeLesson } = setup({ profile: { level: "A2", timezone: "America/Bogota", dailyMinutes: 15, variant: "latam" } });
+    const spanishDeps = { ...deps, pack: SPANISH };
+    await loadUserSession(spanishDeps, USER, "America/Bogota");
+    expect(makeLesson.mock.calls[0][0].aiDialect).toMatch(/Latin American/);
   });
 });

@@ -108,6 +108,7 @@ export const FRENCH: LanguagePack = {
     B2: "B2 scenes use every common tense, including the subjunctive, and sound like natural speech.",
   },
   informalYou: "tu",
+  aiDialect: "standard French as spoken in France",
   articles: ["le", "la", "les", "l'", "un", "une", "des"],
   accents: ["é", "è", "ê", "à", "â", "ç", "ù", "û", "ô", "î", "ï", "ë", "œ"],
   reductions: [
