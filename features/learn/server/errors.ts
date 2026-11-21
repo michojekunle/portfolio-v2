@@ -16,3 +16,6 @@ export class PersistenceError extends FrenchDomainError {
 }
 
 export class AiUnavailableError extends FrenchDomainError {}
+
+/** A group action the learner can fix (full group, bad code, already in one). The message is safe to show. */
+export class GroupError extends FrenchDomainError {}

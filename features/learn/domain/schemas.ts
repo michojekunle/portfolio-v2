@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { REMINDER_TIMES } from "./reminders";
 import { isValidTimeZone } from "./dates";
 import { LEVELS } from "./lessons";
 
@@ -15,6 +16,8 @@ export const ProfileUpdateSchema = z.object({
   timezone: TimeZoneSchema,
   /** Optional so older clients (level picker only) keep working. */
   dailyMinutes: z.union([z.literal(15), z.literal(30), z.literal(60)]).optional(),
+  /** Regional variant id; unknown ids fall back to the language's default (validated against the pack server-side). */
+  variant: z.string().trim().min(1).max(20).optional(),
 });
 export type ProfileUpdate = z.infer<typeof ProfileUpdateSchema>;
 
@@ -54,6 +57,57 @@ export const SessionCompleteSchema = z.object({
   writingCorrect: z.boolean().nullable(),
 });
 export type SessionComplete = z.infer<typeof SessionCompleteSchema>;
+
+/**
+ * Browser push endpoints the server may call. Restricting hosts stops a crafted
+ * "subscription" from making the reminder job request internal or arbitrary URLs.
+ */
+const PUSH_HOSTS = [/\.googleapis\.com$/, /\.push\.services\.mozilla\.com$/, /\.notify\.windows\.com$/, /^web\.push\.apple\.com$/, /\.push\.apple\.com$/];
+
+export const PushSubscriptionSchema = z.object({
+  endpoint: z
+    .string()
+    .url()
+    .max(1000)
+    .refine((value) => {
+      const url = new URL(value);
+      return url.protocol === "https:" && PUSH_HOSTS.some((host) => host.test(url.hostname));
+    }, "Unsupported push service."),
+  keys: z.object({ p256dh: z.string().min(10).max(200), auth: z.string().min(8).max(100) }),
+});
+export type PushSubscriptionInput = z.infer<typeof PushSubscriptionSchema>;
+
+export const ReminderUpdateSchema = z.object({
+  /** null turns the reminder off. */
+  time: z.enum(REMINDER_TIMES).nullable(),
+  timezone: TimeZoneSchema,
+  email: z.boolean(),
+  /** Omitted = keep the stored one; null = remove it (e.g. permission revoked). */
+  push: PushSubscriptionSchema.nullable().optional(),
+});
+export type ReminderUpdate = z.infer<typeof ReminderUpdateSchema>;
+
+const DisplayNameSchema = z.string().trim().min(1, "Add a name your group will see.").max(30);
+
+export const GroupActionSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("create"), name: z.string().trim().min(1).max(40), displayName: DisplayNameSchema, timezone: TimeZoneSchema }),
+  z.object({ action: z.literal("join"), code: z.string().trim().min(4).max(20), displayName: DisplayNameSchema, timezone: TimeZoneSchema }),
+  z.object({ action: z.literal("leave") }),
+  z.object({
+    action: z.literal("post"),
+    /** Storage path the client uploaded to: <groupId>/<YYYY-MM-DD>/<userId>.<ext>; verified server-side. */
+    path: z.string().regex(/^[0-9a-f-]{36}\/\d{4}-\d{2}-\d{2}\/[0-9a-f-]{36}\.(webm|ogg|m4a|mp4|mp3|aac)$/),
+    durationMs: z.number().int().min(500).max(65000),
+    timezone: TimeZoneSchema,
+  }),
+]);
+export type GroupAction = z.infer<typeof GroupActionSchema>;
+
+export const WordActionSchema = z.object({
+  cardId: z.string().uuid(),
+  action: z.enum(["known", "again"]),
+});
+export type WordAction = z.infer<typeof WordActionSchema>;
 
 export const FeedbackRequestSchema = z.object({
   sentence: z.string().trim().min(2).max(300),

@@ -20,15 +20,17 @@ import { DoneScreen } from "./DoneScreen";
 import { HomeScreen } from "./HomeScreen";
 import { ActionButton } from "./primitives";
 import { SessionRunner } from "./SessionRunner";
-import type { LanguageId, LanguagePack } from "../domain/language";
+import { WordsScreen } from "./WordsScreen";
+import { GroupScreen } from "./GroupScreen";
+import { withVariant, type LanguageId, type LanguagePack } from "../domain/language";
 import { LANGUAGES } from "../domain/languages";
 import { COPY } from "./copy";
 import { LangProvider } from "./lang-context";
-import { setSpeechLanguage } from "./speech-io";
+import { setNaturalVoices, setSpeechLanguage } from "./speech-io";
 import { usePageStyle, type PageStyle } from "./style-preference";
 import { useInstall } from "./use-install";
 
-type Phase = "home" | "session" | "done";
+type Phase = "home" | "session" | "done" | "words" | "group";
 
 /** Paper colour per language, style and mode — the browser chrome / status bar matches the page (mirrors learn.css). */
 const PAPER: Record<
@@ -45,6 +47,17 @@ const PAPER: Record<
   },
 };
 
+/** The guest's chosen variant as a query param (read at call time so a fresh choice is used immediately). */
+function guestVariantParam(lang: LanguageId): string {
+  try {
+    const variant = window.localStorage.getItem(`${lang}-variant`);
+    return variant ? `&variant=${encodeURIComponent(variant)}` : "";
+  } catch (error) {
+    console.warn("[learn] could not read variant preference", error);
+    return "";
+  }
+}
+
 function browserTimeZone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
@@ -58,16 +71,28 @@ interface Props {
 
 /** The whole daily-page app for one language. French and Spanish are this component with a different pack. */
 export function LearnApp({ fontClassName, lang }: Props): ReactElement {
-  const pack = LANGUAGES[lang];
-  const copy = COPY[pack.id];
+  const basePack = LANGUAGES[lang];
+  const copy = COPY[basePack.id];
+  const [style, setStyle] = usePageStyle(basePack.id);
+  const [payload, setPayload] = useState<SessionPayload | null>(null);
+  // A guest's regional variant lives on the device; a signed-in learner's comes back on the payload.
+  const [guestVariant, setGuestVariant] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      setGuestVariant(window.localStorage.getItem(`${basePack.id}-variant`));
+    } catch (error) {
+      console.warn("[learn] could not read variant preference", error);
+    }
+  }, [basePack.id]);
+  const pack = withVariant(basePack, payload?.profile.variant ?? guestVariant);
   // Set during render (idempotent): child screens speak in their own mount effects, which run before a parent effect would.
   setSpeechLanguage(pack.speechLocale, pack.voiceHints);
-  const [style, setStyle] = usePageStyle(pack.id);
-  const [payload, setPayload] = useState<SessionPayload | null>(null);
+  setNaturalVoices(payload?.plus ? pack.api : null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("home");
   const [result, setResult] = useState<CompletePayload | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [pickingLevel, setPickingLevel] = useState(false);
   const install = useInstall(pack.route);
   const { resolvedTheme } = useTheme();
@@ -90,7 +115,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     setLoadError(null);
     try {
       const response = await fetch(
-        `${pack.api}/session?tz=${encodeURIComponent(browserTimeZone())}`,
+        `${pack.api}/session?tz=${encodeURIComponent(browserTimeZone())}${guestVariantParam(basePack.id)}`,
         { cache: "no-store" },
       );
       if (!response.ok)
@@ -124,6 +149,39 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     if (url.searchParams.get("auth_error") === "1") {
       toast.error("Sign-in didn't complete. Please try again.");
       setAuthOpen(true);
+    }
+    // Invite links (?join=CODE): signed-in learners land on the join form; guests sign in first.
+    const join = url.searchParams.get("join");
+    if (join) {
+      setInviteCode(join);
+      if (payload.guest) {
+        toast.message("Sign in to join your friend's group.");
+        setAuthOpen(true);
+        try {
+          window.sessionStorage.setItem(`${basePack.id}-pending-join`, join);
+        } catch (error) {
+          console.warn("[learn] could not remember invite", error);
+        }
+      } else {
+        setPhase("group");
+      }
+      url.searchParams.delete("join");
+    } else if (!payload.guest) {
+      // Came back from sign-in with an invite still pending.
+      try {
+        const pending = window.sessionStorage.getItem(`${basePack.id}-pending-join`);
+        if (pending) {
+          window.sessionStorage.removeItem(`${basePack.id}-pending-join`);
+          setInviteCode(pending);
+          setPhase("group");
+        }
+      } catch (error) {
+        console.warn("[learn] could not read pending invite", error);
+      }
+    }
+    if (url.searchParams.get("plus") === "welcome") {
+      toast.success("Welcome to Plus — natural voices are on. (It can take a minute to activate.)");
+      url.searchParams.delete("plus");
     }
     const start = url.searchParams.get("start") === "1";
     url.searchParams.delete("start");
@@ -161,6 +219,36 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     } catch (caught) {
       console.error("[learn] could not save level", caught);
       toast.error("Your level wasn't saved. Try again.");
+    } finally {
+      setPickingLevel(false);
+    }
+  };
+
+  const changeVariant = async (variant: string): Promise<void> => {
+    if (!payload) return;
+    try {
+      window.localStorage.setItem(`${basePack.id}-variant`, variant);
+    } catch (error) {
+      console.warn("[learn] could not save variant preference", error);
+    }
+    setGuestVariant(variant);
+    if (payload.guest) {
+      await load();
+      return;
+    }
+    setPickingLevel(true);
+    try {
+      const response = await fetch(`${pack.api}/profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ level: payload.profile.level, timezone: browserTimeZone(), variant }),
+      });
+      if (!response.ok) throw new Error(`Profile update failed with ${response.status}`);
+      await load();
+      toast.success("Saved — the voice changes now, the lessons from tomorrow's page.");
+    } catch (caught) {
+      console.error("[learn] could not save variant", caught);
+      toast.error("That didn't save. Try again.");
     } finally {
       setPickingLevel(false);
     }
@@ -241,6 +329,10 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         }}
       />
     );
+  } else if (phase === "group") {
+    screen = <GroupScreen onClose={backHome} inviteCode={inviteCode} />;
+  } else if (phase === "words") {
+    screen = <WordsScreen onClose={backHome} />;
   } else if (phase === "done") {
     const before = payload.streak.totalCompletions;
     const after = result && !result.alreadyCompleted ? before + 1 : before;
@@ -269,6 +361,9 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         install={install}
         onSignOut={() => void signOut()}
         onCommitmentChange={(next) => void changeCommitment(next)}
+        onVariantChange={(next) => void changeVariant(next)}
+        onOpenWords={() => setPhase("words")}
+        onOpenGroup={() => setPhase("group")}
       />
     );
   }

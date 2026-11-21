@@ -54,6 +54,7 @@ Topic: ${request.topic}.
 ${recycle.length > 0 ? `Naturally reuse these words the learner is reviewing: ${recycle.join(", ")}.` : ""}
 
 Rules:
+- Dialect: ${pack.aiDialect}.
 - Natural, idiomatic spoken ${pack.name} a native would actually say. No textbook stiffness. Grammar must be flawless.
 - "sentences": 6 short connected lines (a mini dialogue or story), each with an accurate English translation and a "gloss": every other word or short chunk in that line that a learner at this level might not know (skip the "vocab" items, names and numbers already obvious), each copied exactly as it appears in the line, with its meaning in this context.
 - "vocab": 4-5 of the most useful words/chunks from the sentences (prefer useful chunks over single words), with a short English meaning and optional note.

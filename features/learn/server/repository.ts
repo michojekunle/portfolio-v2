@@ -44,6 +44,8 @@ export interface Profile {
   readonly level: Level;
   readonly timezone: string;
   readonly dailyMinutes: Commitment;
+  /** Regional variant id (Spanish: "es" | "latam"); null when the language has none. */
+  readonly variant: string | null;
 }
 
 export interface NewCardInput {
@@ -98,13 +100,13 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
     async getProfile(userId: string): Promise<Profile | null> {
       const { data, error } = await db
         .from(t.profiles)
-        .select("level, timezone, daily_minutes")
+        .select("level, timezone, daily_minutes, variant")
         .eq("user_id", userId)
-        .maybeSingle<{ level: string; timezone: string; daily_minutes: number | null }>();
+        .maybeSingle<{ level: string; timezone: string; daily_minutes: number | null; variant: string | null }>();
       if (error) fail("getProfile", error);
       if (!data) return null;
       const level = (LEVELS as readonly string[]).includes(data.level) ? (data.level as Level) : DEFAULT_LEVEL;
-      return { level, timezone: data.timezone, dailyMinutes: toCommitment(data.daily_minutes) };
+      return { level, timezone: data.timezone, dailyMinutes: toCommitment(data.daily_minutes), variant: data.variant };
     },
 
     async upsertProfile(userId: string, profile: Profile): Promise<void> {
@@ -114,6 +116,7 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
           level: profile.level,
           timezone: profile.timezone,
           daily_minutes: profile.dailyMinutes,
+          variant: profile.variant,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" }
@@ -175,6 +178,19 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
         .lte("due_at", dueBefore.toISOString());
       if (error) fail("countDueCards", error);
       return count ?? 0;
+    },
+
+    /** The learner's whole deck, newest first (capped: a deck this app builds stays in the hundreds). */
+    async listAllCards(userId: string, limit: number): Promise<Card[]> {
+      const { data, error } = await db
+        .from(t.cards)
+        .select(CARD_COLUMNS)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(limit)
+        .returns<CardRow[]>();
+      if (error) fail("listAllCards", error);
+      return (data ?? []).map(toCard);
     },
 
     async getCardsByIds(userId: string, ids: readonly string[]): Promise<Card[]> {

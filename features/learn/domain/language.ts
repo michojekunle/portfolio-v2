@@ -10,6 +10,19 @@ export interface ReductionRule {
   readonly why: string;
 }
 
+/** A regional flavour of a language (Spain vs Latin American Spanish): voice, dialect and built-in lessons. */
+export interface PackVariant {
+  readonly id: string;
+  /** Shown in settings: "Spain", "Latin America". */
+  readonly label: string;
+  readonly speechLocale: string;
+  readonly accentRegion: string;
+  readonly voiceHints: RegExp;
+  /** Tells the lesson generator which dialect and vocabulary to use. */
+  readonly aiDialect: string;
+  readonly fallbackLessons?: readonly Lesson[];
+}
+
 /**
  * Everything that differs between languages, as plain data. The engine
  * (spaced repetition, streaks, stages, steps, UI) is shared; a language is
@@ -36,6 +49,10 @@ export interface LanguagePack {
   readonly levelUpChanges: Record<Level, string>;
   /** Informal "you" the lessons use when addressing the learner. */
   readonly informalYou: string;
+  /** Dialect instruction for the lesson generator (overridden by a variant). */
+  readonly aiDialect: string;
+  /** Regional variants; the first is the default. Absent = one variety only. */
+  readonly variants?: readonly PackVariant[];
   /** Articles that may precede a vocabulary item but be absent in context. */
   readonly articles: readonly string[];
   /** Letters most keyboards hide. */
@@ -53,4 +70,24 @@ export interface LanguagePack {
     /** Table the reminder cron reads, or null when the language has no reminders yet. */
     readonly completionLog: string | null;
   };
+}
+
+/** The pack as the learner experiences it: a variant's voice, dialect and lessons laid over the base. Unknown ids fall back to the default. */
+export function withVariant(pack: LanguagePack, variantId: string | null | undefined): LanguagePack {
+  const variant = pack.variants?.find((v) => v.id === variantId) ?? pack.variants?.[0];
+  if (!variant) return pack;
+  return {
+    ...pack,
+    speechLocale: variant.speechLocale,
+    accentRegion: variant.accentRegion,
+    voiceHints: variant.voiceHints,
+    aiDialect: variant.aiDialect,
+    fallbackLessons: variant.fallbackLessons ?? pack.fallbackLessons,
+  };
+}
+
+/** The variant id to store: a known one, or the default. */
+export function resolveVariantId(pack: LanguagePack, variantId: string | null | undefined): string | null {
+  if (!pack.variants || pack.variants.length === 0) return null;
+  return (pack.variants.find((v) => v.id === variantId) ?? pack.variants[0]).id;
 }

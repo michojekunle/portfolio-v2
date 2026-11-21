@@ -4,12 +4,14 @@ import { useLang } from "./lang-context";
 import Link from "next/link";
 import { useEffect, useState, type ReactElement, type ReactNode } from "react";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import { Download, Share } from "lucide-react";
 import { LEVELS, type Level } from "../domain/lessons";
 import type { Commitment } from "../domain/commitment";
 import { LANGUAGES } from "../domain/languages";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { CommitmentPicker } from "./CommitmentPicker";
+import { ReminderSettings } from "./ReminderSettings";
 import { QuietButton } from "./primitives";
 import { PAGE_STYLES, type PageStyle } from "./style-preference";
 import type { InstallState } from "./use-install";
@@ -32,11 +34,26 @@ interface Props {
   readonly canChangeLevel: boolean;
   readonly pickingLevel: boolean;
   readonly onPickLevel: (level: Level) => void;
+  readonly plus: boolean;
+  readonly variant: string | null;
+  readonly onVariantChange: (variant: string) => void;
   readonly commitment: Commitment;
   readonly onCommitmentChange: (next: Commitment) => void;
   readonly install: InstallState;
   readonly onSignIn: () => void;
   readonly onSignOut: () => void;
+}
+
+async function startCheckout(app: string): Promise<void> {
+  try {
+    const response = await fetch("/api/billing/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ app }) });
+    const data = (await response.json()) as { url?: string; error?: string };
+    if (!response.ok || !data.url) throw new Error(data.error ?? "Checkout didn't start.");
+    window.location.assign(data.url);
+  } catch (error) {
+    console.error("[learn] checkout failed", error);
+    toast.error(error instanceof Error ? error.message : "Checkout didn't start. Try again.");
+  }
 }
 
 function Row({ label, hint, children }: { readonly label: string; readonly hint?: string; readonly children: ReactNode }): ReactElement {
@@ -66,6 +83,20 @@ export function SettingsPanel(props: Props): ReactElement {
         <ChoiceGroup label="Page style" options={PAGE_STYLES} labels={copy.styles} value={props.style} onChange={props.onStyleChange} />
       </Row>
 
+      {pack.variants && pack.variants.length > 1 ? (
+        <Row label={copy.settingsRows.variant} hint="Voice and vocabulary">
+          <div className={props.pickingLevel ? "pointer-events-none opacity-50" : ""}>
+            <ChoiceGroup
+              label={`${pack.name} variety`}
+              options={pack.variants.map((v) => v.id)}
+              labels={Object.fromEntries(pack.variants.map((v) => [v.id, v.label]))}
+              value={props.variant ?? pack.variants[0].id}
+              onChange={props.onVariantChange}
+            />
+          </div>
+        </Row>
+      ) : null}
+
       <Row label={copy.settingsRows.light} hint="Auto follows your device">
         <ChoiceGroup label="Light or dark" options={MODES} labels={copy.modes} value={mode} onChange={(next) => setTheme(next)} />
       </Row>
@@ -79,10 +110,28 @@ export function SettingsPanel(props: Props): ReactElement {
       ) : null}
 
       {props.canChangeLevel ? (
+        <Row label={copy.settingsRows.reminder} hint="Only on days you haven't done your page">
+          <ReminderSettings />
+        </Row>
+      ) : null}
+
+      {props.canChangeLevel ? (
         <Row label={copy.settingsRows.time} hint="Per day — and what it gets you">
           <div className="pl-2">
             <CommitmentPicker value={props.commitment} busy={props.pickingLevel} onChange={props.onCommitmentChange} />
           </div>
+        </Row>
+      ) : null}
+
+      {!props.guest ? (
+        <Row label={copy.settingsRows.plus} hint="Natural, native-sounding voices">
+          {props.plus ? (
+            <p className="fr-ui px-2 py-3 text-sm text-(--fr-ink)">Natural voices are on. Thank you for supporting the app.</p>
+          ) : (
+            <QuietButton onClick={() => void startCheckout(pack.route)} className="text-(--fr-ink)">
+              Upgrade for natural voices →
+            </QuietButton>
+          )}
         </Row>
       ) : null}
 
