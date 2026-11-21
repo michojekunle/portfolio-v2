@@ -5,10 +5,11 @@
  */
 import { NextResponse } from "next/server";
 import type { LanguagePack } from "../domain/language";
-import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema, WordActionSchema, ReminderUpdateSchema } from "../domain/schemas";
+import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema, WordActionSchema, ReminderUpdateSchema, GroupActionSchema } from "../domain/schemas";
 import { gradeSentence } from "./ai";
 import { clientIp, getLearnContext, rateLimited, readJson, toErrorResponse, unauthorized } from "./context";
 import { AiUnavailableError } from "./errors";
+import { applyGroupAction, getMyGroup } from "./groups";
 import { getReminder, saveReminder } from "./reminders";
 import { completeUserSession, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord } from "./service";
 
@@ -147,6 +148,33 @@ export function reminderHandlers(pack: LanguagePack): { readonly GET: Handler; r
         return NextResponse.json(await saveReminder(db, user.id, pack.id, ReminderUpdateSchema.parse(await readJson(request))));
       } catch (error) {
         return toErrorResponse(error, `${pack.id}/reminder`);
+      }
+    },
+  };
+}
+
+/** GET …/group?tz= — my group for this language (or null). POST …/group — create / join / leave / post a voice note. */
+export function groupHandlers(pack: LanguagePack): { readonly GET: Handler; readonly POST: Handler } {
+  return {
+    GET: async (request) => {
+      try {
+        const { user, db } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        const tz = TimeZoneSchema.safeParse(new URL(request.url).searchParams.get("tz") ?? "");
+        return NextResponse.json({ group: await getMyGroup(db, user.id, pack, tz.success ? tz.data : "UTC") });
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/group`);
+      }
+    },
+    POST: async (request) => {
+      try {
+        const { user, db } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        const limited = await rateLimited(`${pack.id}:group:${user.id}`, 20);
+        if (limited) return limited;
+        return NextResponse.json({ group: await applyGroupAction(db, user.id, pack, GroupActionSchema.parse(await readJson(request))) });
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/group`);
       }
     },
   };

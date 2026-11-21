@@ -21,6 +21,7 @@ import { HomeScreen } from "./HomeScreen";
 import { ActionButton } from "./primitives";
 import { SessionRunner } from "./SessionRunner";
 import { WordsScreen } from "./WordsScreen";
+import { GroupScreen } from "./GroupScreen";
 import { withVariant, type LanguageId, type LanguagePack } from "../domain/language";
 import { LANGUAGES } from "../domain/languages";
 import { COPY } from "./copy";
@@ -29,7 +30,7 @@ import { setSpeechLanguage } from "./speech-io";
 import { usePageStyle, type PageStyle } from "./style-preference";
 import { useInstall } from "./use-install";
 
-type Phase = "home" | "session" | "done" | "words";
+type Phase = "home" | "session" | "done" | "words" | "group";
 
 /** Paper colour per language, style and mode — the browser chrome / status bar matches the page (mirrors learn.css). */
 const PAPER: Record<
@@ -90,6 +91,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
   const [phase, setPhase] = useState<Phase>("home");
   const [result, setResult] = useState<CompletePayload | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [pickingLevel, setPickingLevel] = useState(false);
   const install = useInstall(pack.route);
   const { resolvedTheme } = useTheme();
@@ -146,6 +148,35 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     if (url.searchParams.get("auth_error") === "1") {
       toast.error("Sign-in didn't complete. Please try again.");
       setAuthOpen(true);
+    }
+    // Invite links (?join=CODE): signed-in learners land on the join form; guests sign in first.
+    const join = url.searchParams.get("join");
+    if (join) {
+      setInviteCode(join);
+      if (payload.guest) {
+        toast.message("Sign in to join your friend's group.");
+        setAuthOpen(true);
+        try {
+          window.sessionStorage.setItem(`${basePack.id}-pending-join`, join);
+        } catch (error) {
+          console.warn("[learn] could not remember invite", error);
+        }
+      } else {
+        setPhase("group");
+      }
+      url.searchParams.delete("join");
+    } else if (!payload.guest) {
+      // Came back from sign-in with an invite still pending.
+      try {
+        const pending = window.sessionStorage.getItem(`${basePack.id}-pending-join`);
+        if (pending) {
+          window.sessionStorage.removeItem(`${basePack.id}-pending-join`);
+          setInviteCode(pending);
+          setPhase("group");
+        }
+      } catch (error) {
+        console.warn("[learn] could not read pending invite", error);
+      }
     }
     const start = url.searchParams.get("start") === "1";
     url.searchParams.delete("start");
@@ -293,6 +324,8 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         }}
       />
     );
+  } else if (phase === "group") {
+    screen = <GroupScreen onClose={backHome} inviteCode={inviteCode} />;
   } else if (phase === "words") {
     screen = <WordsScreen onClose={backHome} />;
   } else if (phase === "done") {
@@ -325,6 +358,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         onCommitmentChange={(next) => void changeCommitment(next)}
         onVariantChange={(next) => void changeVariant(next)}
         onOpenWords={() => setPhase("words")}
+        onOpenGroup={() => setPhase("group")}
       />
     );
   }

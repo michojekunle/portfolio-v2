@@ -87,6 +87,22 @@ export const ReminderUpdateSchema = z.object({
 });
 export type ReminderUpdate = z.infer<typeof ReminderUpdateSchema>;
 
+const DisplayNameSchema = z.string().trim().min(1, "Add a name your group will see.").max(30);
+
+export const GroupActionSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("create"), name: z.string().trim().min(1).max(40), displayName: DisplayNameSchema, timezone: TimeZoneSchema }),
+  z.object({ action: z.literal("join"), code: z.string().trim().min(4).max(20), displayName: DisplayNameSchema }),
+  z.object({ action: z.literal("leave") }),
+  z.object({
+    action: z.literal("post"),
+    /** Storage path the client uploaded to: <groupId>/<YYYY-MM-DD>/<userId>.<ext>; verified server-side. */
+    path: z.string().regex(/^[0-9a-f-]{36}\/\d{4}-\d{2}-\d{2}\/[0-9a-f-]{36}\.(webm|ogg|m4a|mp4|mp3|aac)$/),
+    durationMs: z.number().int().min(500).max(65000),
+    timezone: TimeZoneSchema,
+  }),
+]);
+export type GroupAction = z.infer<typeof GroupActionSchema>;
+
 export const WordActionSchema = z.object({
   cardId: z.string().uuid(),
   action: z.enum(["known", "again"]),

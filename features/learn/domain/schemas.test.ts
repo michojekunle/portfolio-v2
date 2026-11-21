@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   CARD_NOTES_MAX,
+  GroupActionSchema,
   NewCardSchema,
   PushSubscriptionSchema,
   clipText,
@@ -116,5 +117,25 @@ describe("PushSubscriptionSchema", () => {
     for (const endpoint of ["http://fcm.googleapis.com/x", "https://169.254.169.254/latest", "https://evil.com/fcm.googleapis.com", "https://localhost/push"]) {
       expect(PushSubscriptionSchema.safeParse({ endpoint, keys }).success).toBe(false);
     }
+  });
+});
+
+describe("GroupActionSchema", () => {
+  const group = "3f2b6a1e-8c4d-4e5f-9a0b-1c2d3e4f5a6b";
+  const user = "7d9e1c2a-5b3f-4e8a-b1c0-2f4a6c8e0d12";
+
+  it("accepts a well-formed voice note path", () => {
+    expect(GroupActionSchema.safeParse({ action: "post", path: `${group}/2026-11-21/${user}.webm`, durationMs: 12000, timezone: "Africa/Lagos" }).success).toBe(true);
+  });
+
+  it("rejects path traversal and other file shapes", () => {
+    for (const path of [`${group}/../${user}.webm`, `${group}/2026-11-21/${user}.exe`, `/${group}/2026-11-21/${user}.webm`, `${group}/2026-11-21/../../secret.webm`]) {
+      expect(GroupActionSchema.safeParse({ action: "post", path, durationMs: 12000, timezone: "Africa/Lagos" }).success).toBe(false);
+    }
+  });
+
+  it("requires a display name when joining or creating", () => {
+    expect(GroupActionSchema.safeParse({ action: "join", code: "ABCDEFGH", displayName: "  " }).success).toBe(false);
+    expect(GroupActionSchema.safeParse({ action: "create", name: "Les matinaux", displayName: "Mo", timezone: "Africa/Lagos" }).success).toBe(true);
   });
 });

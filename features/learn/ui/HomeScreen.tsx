@@ -2,7 +2,7 @@
 
 import { useLang } from "./lang-context";
 import { useEffect, useRef, useState, type ReactElement } from "react";
-import { BookOpen, Flame, Settings2, Snowflake } from "lucide-react";
+import { BookOpen, Flame, Settings2, Snowflake, Users } from "lucide-react";
 import { LEVELS, type Level } from "../domain/lessons";
 import { STAGE_SHAPE, practiceStage, sessionsToNextStage } from "../domain/progression";
 import type { SessionPayload } from "../server/service";
@@ -28,6 +28,7 @@ interface Props {
   readonly onCommitmentChange: (next: Commitment) => void;
   readonly onOpenWords: () => void;
   readonly onVariantChange: (variant: string) => void;
+  readonly onOpenGroup: () => void;
 }
 
 const LEVEL_HINT: Record<Level, string> = {
@@ -55,7 +56,7 @@ function capitalise(text: string): string {
   return text.charAt(0).toLocaleUpperCase("fr") + text.slice(1);
 }
 
-export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLevel, style, onStyleChange, install, onSignOut, onCommitmentChange, onOpenWords, onVariantChange }: Props): ReactElement {
+export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLevel, style, onStyleChange, install, onSignOut, onCommitmentChange, onOpenWords, onVariantChange, onOpenGroup }: Props): ReactElement {
   const { copy, pack } = useLang();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const sheetEnd = useRef<HTMLDivElement>(null);
@@ -243,24 +244,29 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
       </main>
 
       <footer className="fr-ui mt-8 border-t border-(--fr-rule) pt-1 text-xs text-(--fr-soft)">
-        <div className="flex items-center justify-between gap-x-3">
-          <span className="min-w-0">
-            Level {profile.level} · {profile.dailyMinutes === 60 ? "1 h" : `${profile.dailyMinutes} min`}/day · {streak.longest > 0 ? `best run ${streak.longest} days` : "day one starts today"}
-          </span>
+        <div className="-ml-1 flex flex-wrap items-center gap-x-3">
           {!guest && !needsLevel ? (
-            <QuietButton onClick={onOpenWords} className="shrink-0 text-xs">
-              <BookOpen className="size-4" aria-hidden="true" /> {copy.myWords}
-            </QuietButton>
+            <>
+              <QuietButton onClick={onOpenGroup} className="text-xs">
+                <Users className="size-4" aria-hidden="true" /> {copy.myGroup}
+              </QuietButton>
+              <QuietButton onClick={onOpenWords} className="text-xs">
+                <BookOpen className="size-4" aria-hidden="true" /> {copy.myWords}
+              </QuietButton>
+            </>
           ) : null}
           <QuietButton
             onClick={() => setSettingsOpen((open) => !open)}
             aria-expanded={settingsOpen}
             aria-controls="fr-settings"
-            className="shrink-0 text-xs"
+            className="text-xs"
           >
             <Settings2 className="size-4" aria-hidden="true" /> {copy.settings}
           </QuietButton>
         </div>
+        <p className="pb-1">
+          Level {profile.level} · {profile.dailyMinutes === 60 ? "1 h" : `${profile.dailyMinutes} min`}/day · {streak.longest > 0 ? `best run ${streak.longest} days` : "day one starts today"}
+        </p>
         {settingsOpen ? (
           <SettingsPanel
             id="fr-settings"

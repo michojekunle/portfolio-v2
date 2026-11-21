@@ -4,7 +4,7 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { generateLesson } from "./ai";
-import { FrenchDomainError, PersistenceError, SessionNotEligibleError } from "./errors";
+import { FrenchDomainError, GroupError, PersistenceError, SessionNotEligibleError } from "./errors";
 import type { LanguagePack } from "../domain/language";
 import { createRepository } from "./repository";
 import type { ServiceDeps } from "./service";
@@ -62,6 +62,9 @@ export function toErrorResponse(error: unknown, scope: string): NextResponse {
   if (error instanceof PersistenceError) {
     console.error(`[learn/${scope}]`, error.message, error.cause);
     return NextResponse.json({ error: "Could not save your progress. Please try again." }, { status: 500 });
+  }
+  if (error instanceof GroupError) {
+    return NextResponse.json({ error: error.message }, { status: 422 });
   }
   if (error instanceof FrenchDomainError) {
     console.error(`[learn/${scope}]`, error.message);

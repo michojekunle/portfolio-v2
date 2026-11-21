@@ -18,6 +18,7 @@ export interface Copy {
   readonly goal: string;
   readonly settings: string;
   readonly myWords: string;
+  readonly myGroup: string;
   readonly whereAreYou: string;
 
   readonly steps: { readonly review: string; readonly learn: string; readonly listen: string; readonly speak: string; readonly write: string; readonly dictation: string };
@@ -104,6 +105,7 @@ const FR: Copy = {
   goal: "Ton objectif",
   settings: "Réglages",
   myWords: "Mes mots",
+  myGroup: "Mon groupe",
   whereAreYou: "Where are you with French?",
   steps: { review: "Revoir", learn: "Apprendre", listen: "Écouter", speak: "Parler", write: "Écrire", dictation: "Dictée" },
   check: "Vérifier",
@@ -179,6 +181,7 @@ const ES: Copy = {
   goal: "Tu objetivo",
   settings: "Ajustes",
   myWords: "Mis palabras",
+  myGroup: "Mi grupo",
   whereAreYou: "Where are you with Spanish?",
   steps: { review: "Repasar", learn: "Aprender", listen: "Escuchar", speak: "Hablar", write: "Escribir", dictation: "Dictado" },
   check: "Comprobar",
