@@ -5,7 +5,7 @@
  * isn't done. Logic and tests: features/learn/server/reminders.ts.
  */
 import { NextResponse } from "next/server";
-import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
+import { adminClient } from "@/features/learn/server/admin";
 import webpush from "web-push";
 import { Resend } from "resend";
 import { runReminderJob, supabaseReminderDeps, type ReminderMessage } from "@/features/learn/server/reminders";
@@ -22,13 +22,11 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) {
-    console.error("[learn/reminders] SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required");
+  const admin = adminClient();
+  if (!admin) {
+    console.error("[learn/reminders] SUPABASE_URL and a service-role key (SUPABASE_SERVICE_ROLE_KEY or SUPABASE_KEY) are required");
     return NextResponse.json({ error: "Reminders are not configured." }, { status: 500 });
   }
-  const admin = createSupabaseAdmin(supabaseUrl, serviceKey, { auth: { persistSession: false } });
 
   const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
@@ -37,14 +35,15 @@ export async function POST(request: Request): Promise<Response> {
     webpush.setVapidDetails(`mailto:${process.env.REMINDER_CONTACT_EMAIL ?? "noreply@michaelojekunle.dev"}`, vapidPublic, vapidPrivate);
   }
   const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-  const from = process.env.REMINDER_FROM_EMAIL ?? "Daily pages <onboarding@resend.dev>";
+  // Reuse the site's verified sender when no reminder-specific one is set.
+  const from = process.env.REMINDER_FROM_EMAIL ?? process.env.CONTACT_FROM_EMAIL ?? "Daily pages <onboarding@resend.dev>";
   const base = siteUrl(request);
 
   try {
     const result = await runReminderJob(
       supabaseReminderDeps(admin, {
         sendPush: async (subscription, message: ReminderMessage) => {
-          if (!pushReady) return "sent";
+          if (!pushReady) return "skipped";
           try {
             await webpush.sendNotification(subscription, JSON.stringify({ title: message.title, body: message.body, url: message.url }));
             return "sent";

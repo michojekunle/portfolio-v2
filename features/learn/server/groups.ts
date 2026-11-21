@@ -120,7 +120,7 @@ export async function applyGroupAction(db: SupabaseClient, userId: string, pack:
     case "join": {
       const { error } = await db.rpc("learn_join_group", { p_invite_code: normaliseInviteCode(action.code), p_display_name: action.displayName });
       if (error) fromRpc(error);
-      return getMyGroup(db, userId, pack, "UTC");
+      return getMyGroup(db, userId, pack, action.timezone);
     }
     case "leave": {
       const groupId = await myGroupId(db, userId, pack);

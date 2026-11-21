@@ -92,7 +92,7 @@ export function GroupScreen({ onClose, inviteCode }: Props): ReactElement {
     const ok =
       mode === "create"
         ? await send({ action: "create", name, displayName, timezone: browserTimeZone() })
-        : await send({ action: "join", code, displayName });
+        : await send({ action: "join", code, displayName, timezone: browserTimeZone() });
     if (ok) toast.success(mode === "create" ? "Group created. Now invite your friends." : "You're in. Say hello with today's voice note.");
   };
 

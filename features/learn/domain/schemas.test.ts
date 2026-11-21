@@ -135,7 +135,7 @@ describe("GroupActionSchema", () => {
   });
 
   it("requires a display name when joining or creating", () => {
-    expect(GroupActionSchema.safeParse({ action: "join", code: "ABCDEFGH", displayName: "  " }).success).toBe(false);
+    expect(GroupActionSchema.safeParse({ action: "join", code: "ABCDEFGH", displayName: "  ", timezone: "Africa/Lagos" }).success).toBe(false);
     expect(GroupActionSchema.safeParse({ action: "create", name: "Les matinaux", displayName: "Mo", timezone: "Africa/Lagos" }).success).toBe(true);
   });
 });

@@ -71,3 +71,11 @@ describe("runReminderJob", () => {
     expect(d.calls).toEqual(["email", "mark:2026-11-21"]);
   });
 });
+
+describe("runReminderJob without push configured", () => {
+  it("doesn't mark a push-only reminder as sent when nothing went out", async () => {
+    const d = deps([row()], { sendPush: vi.fn(async () => "skipped" as const) });
+    expect((await runReminderJob(d)).sent).toBe(0);
+    expect(d.calls).toEqual([]);
+  });
+});

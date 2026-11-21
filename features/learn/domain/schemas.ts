@@ -91,7 +91,7 @@ const DisplayNameSchema = z.string().trim().min(1, "Add a name your group will s
 
 export const GroupActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), name: z.string().trim().min(1).max(40), displayName: DisplayNameSchema, timezone: TimeZoneSchema }),
-  z.object({ action: z.literal("join"), code: z.string().trim().min(4).max(20), displayName: DisplayNameSchema }),
+  z.object({ action: z.literal("join"), code: z.string().trim().min(4).max(20), displayName: DisplayNameSchema, timezone: TimeZoneSchema }),
   z.object({ action: z.literal("leave") }),
   z.object({
     action: z.literal("post"),

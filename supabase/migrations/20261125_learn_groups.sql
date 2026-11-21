@@ -195,6 +195,30 @@ grant execute on function learn_is_group_member(uuid) to authenticated;
 -- ── Voice notes: private bucket, readable and writable by the group only ──
 -- Path convention: <group_id>/<post_date>/<user_id>.webm
 
+-- Policies on storage.objects apply to EVERY bucket, and Postgres doesn't
+-- promise to evaluate "bucket_id = 'learn-voice'" before a ::uuid cast. A
+-- non-uuid folder in another bucket would then raise and break storage
+-- site-wide. This helper only casts after checking bucket and shape.
+create or replace function learn_voice_member(p_bucket text, p_name text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  folder text := (storage.foldername(p_name))[1];
+begin
+  if p_bucket <> 'learn-voice' or folder is null
+     or folder !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+    return false;
+  end if;
+  return learn_is_group_member(folder::uuid);
+end;
+$$;
+
+grant execute on function learn_voice_member(text, text) to authenticated;
+
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('learn-voice', 'learn-voice', false, 3145728, array['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/aac'])
 on conflict (id) do nothing;
@@ -202,14 +226,13 @@ on conflict (id) do nothing;
 drop policy if exists "learn_voice_read_group" on storage.objects;
 create policy "learn_voice_read_group" on storage.objects
   for select to authenticated
-  using (bucket_id = 'learn-voice' and learn_is_group_member(((storage.foldername(name))[1])::uuid));
+  using (learn_voice_member(bucket_id, name));
 
 drop policy if exists "learn_voice_write_own" on storage.objects;
 create policy "learn_voice_write_own" on storage.objects
   for insert to authenticated
   with check (
-    bucket_id = 'learn-voice'
-    and learn_is_group_member(((storage.foldername(name))[1])::uuid)
+    learn_voice_member(bucket_id, name)
     and storage.filename(name) like auth.uid()::text || '.%'
   );
 

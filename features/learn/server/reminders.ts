@@ -75,8 +75,8 @@ export interface ReminderJobDeps {
   readonly listEnabled: () => Promise<readonly ReminderRow[]>;
   /** Local date of the learner's last finished page in that language, or null. */
   readonly lastCompletedOn: (userId: string, language: LanguageId) => Promise<string | null>;
-  /** Resolves "gone" when the browser unsubscribed (HTTP 404/410), so the row can be cleaned. */
-  readonly sendPush: (subscription: PushSubscriptionInput, message: ReminderMessage) => Promise<"sent" | "gone">;
+  /** "gone" when the browser unsubscribed (HTTP 404/410), so the row can be cleaned; "skipped" when push isn't configured. */
+  readonly sendPush: (subscription: PushSubscriptionInput, message: ReminderMessage) => Promise<"sent" | "gone" | "skipped">;
   readonly sendEmail: (userId: string, message: ReminderMessage) => Promise<void>;
   readonly markSent: (userId: string, language: LanguageId, localDate: string) => Promise<void>;
   readonly clearPush: (userId: string, language: LanguageId) => Promise<void>;
@@ -111,7 +111,7 @@ export async function runReminderJob(deps: ReminderJobDeps): Promise<ReminderJob
       if (row.push_subscription) {
         const outcome = await deps.sendPush(row.push_subscription, message);
         if (outcome === "gone") await deps.clearPush(row.user_id, row.language);
-        else delivered = true;
+        else if (outcome === "sent") delivered = true;
       }
       if (row.email) {
         await deps.sendEmail(row.user_id, message);
