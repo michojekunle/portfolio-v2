@@ -320,9 +320,8 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
     },
 
     /**
-     * The reminder cron (api/french/trigger) decides "did they practise today?"
-     * from french_logs. Keep writing one row per completed day so reminders
-     * stop the moment a session is finished. Languages without reminders skip it.
+     * One french_logs row per completed day, which the classic French page's
+     * history still reads. Languages without that legacy log skip it.
      */
     async insertCompletionLog(userId: string): Promise<void> {
       if (!t.completionLog) return;

@@ -119,6 +119,7 @@
     "postcss": "^8",
     "tailwindcss": "^4.2.4",
     "typescript": "^5",
-    "vitest": "^3.2.7"
+    "vitest": "^3.2.7",
+    "@mintplex-labs/piper-tts-web": "1.0.5"
   }
 }

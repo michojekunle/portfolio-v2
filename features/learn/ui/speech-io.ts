@@ -52,34 +52,86 @@ let naturalApi: string | null = null;
 const naturalUrls = new Map<string, string>();
 let player: HTMLAudioElement | null = null;
 
+/**
+ * Every speak()/stopSpeaking() bumps this. Audio is fetched or generated
+ * asynchronously, so a slow older line must not start over a newer one or
+ * after the learner moved on.
+ */
+let speechToken = 0;
+const isCurrent = (token: number): boolean => token === speechToken;
+
+class StaleSpeechError extends Error {}
+class NaturalVoiceError extends Error {}
+
+async function playUrl(url: string, token: number, rate?: number): Promise<void> {
+  if (!isCurrent(token)) throw new StaleSpeechError("superseded");
+  player?.pause();
+  player = new Audio(url);
+  if (rate !== undefined) {
+    // Piper has no speed control, so slow playback stretches time while keeping pitch.
+    player.playbackRate = Math.min(1.25, Math.max(0.6, rate / 0.9));
+    player.preservesPitch = true;
+  }
+  await player.play();
+}
+
 export function setNaturalVoices(api: string | null): void {
   naturalApi = api;
 }
 
-async function playNatural(text: string, rate: number): Promise<void> {
-  if (!naturalApi) throw new Error("natural voices off");
+/** Free in-browser voice (Piper) id when the learner has turned it on, else null. */
+let browserVoiceId: string | null = null;
+export function setBrowserVoice(voiceId: string | null): void {
+  browserVoiceId = voiceId;
+}
+
+async function playBrowserVoice(voiceId: string, text: string, rate: number, token: number): Promise<void> {
+  const { synthesize } = await import("./piper-voice");
+  await playUrl(await synthesize(voiceId, text), token, rate);
+}
+
+async function playNatural(text: string, rate: number, token: number): Promise<void> {
+  if (!naturalApi) throw new NaturalVoiceError("natural voices off");
   const key = `${activeLocale}|${rate}|${text}`;
   let url = naturalUrls.get(key);
   if (!url) {
     const params = new URLSearchParams({ text, rate: String(rate), locale: activeLocale });
     const response = await fetch(`${naturalApi}/tts?${params.toString()}`);
-    if (!response.ok) throw new Error(`tts ${response.status}`);
+    if (!response.ok) throw new NaturalVoiceError(`tts ${response.status}`);
     url = ((await response.json()) as { url: string }).url;
     naturalUrls.set(key, url);
   }
-  player?.pause();
-  player = new Audio(url);
-  await player.play();
+  await playUrl(url, token);
 }
 
-/** Speak in the active language: a natural recording for Plus, otherwise the most local device voice. */
+/**
+ * Speak in the active language. Order: the free in-browser neural voice if
+ * the learner turned it on, then a Plus recording, then the device voice.
+ * Any failure falls through to the next, so audio never just stops.
+ */
 export function speak(text: string, rate = 0.9): void {
+  speechToken += 1;
+  const token = speechToken;
+  const device = (): void => {
+    if (isCurrent(token)) speakWithDevice(text, rate);
+  };
+  const fallback = (label: string, next: () => void) => (error: unknown): void => {
+    if (error instanceof StaleSpeechError || !isCurrent(token)) return;
+    console.warn(`[learn] ${label} unavailable, falling back`, error);
+    next();
+  };
+  const natural = (): void => {
+    void playNatural(text, rate, token).catch(fallback("natural voice", device));
+  };
+
+  if (browserVoiceId) {
+    if (canSpeak()) window.speechSynthesis.cancel();
+    void playBrowserVoice(browserVoiceId, text, rate, token).catch(fallback("in-browser voice", naturalApi ? natural : device));
+    return;
+  }
   if (naturalApi) {
     if (canSpeak()) window.speechSynthesis.cancel();
-    void playNatural(text, rate).catch((error: unknown) => {
-      console.warn("[learn] natural voice unavailable, using the device voice", error);
-      speakWithDevice(text, rate);
-    });
+    natural();
     return;
   }
   speakWithDevice(text, rate);
@@ -100,6 +152,7 @@ function speakWithDevice(text: string, rate: number): void {
 }
 
 export function stopSpeaking(): void {
+  speechToken += 1;
   player?.pause();
   if (canSpeak()) window.speechSynthesis.cancel();
 }

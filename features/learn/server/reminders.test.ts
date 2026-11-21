@@ -21,7 +21,7 @@ function deps(rows: ReturnType<typeof row>[], overrides: Partial<ReminderJobDeps
     calls,
     now: () => NOW,
     listEnabled: async () => rows,
-    lastCompletedOn: async () => null,
+    lastCompletedOn: vi.fn(async () => new Map<string, string>()),
     sendPush: vi.fn(async () => {
       calls.push("push");
       return "sent" as const;
@@ -47,7 +47,7 @@ describe("runReminderJob", () => {
   });
 
   it("skips learners who already finished today's page", async () => {
-    const d = deps([row()], { lastCompletedOn: async () => "2026-11-21" });
+    const d = deps([row()], { lastCompletedOn: async () => new Map([["user-1", "2026-11-21"]]) });
     expect((await runReminderJob(d)).sent).toBe(0);
     expect(d.calls).toEqual([]);
   });
@@ -62,13 +62,37 @@ describe("runReminderJob", () => {
     const failing = row({ user_id: "broken" });
     const emailOnly = row({ user_id: "user-2", push_subscription: null, email: true, language: "es" });
     const d = deps([failing, emailOnly], {
-      lastCompletedOn: async (userId) => {
-        if (userId === "broken") throw new Error("db down");
-        return null;
-      },
+      sendPush: vi.fn(async () => {
+        throw new Error("push service down");
+      }),
     });
     expect(await runReminderJob(d)).toEqual({ checked: 2, sent: 1, failed: 1 });
     expect(d.calls).toEqual(["email", "mark:2026-11-21"]);
+  });
+
+  it("only looks up progress for learners at their reminder hour, in one query per language", async () => {
+    const notYet = row({ user_id: "later", reminder_time: "21:00" });
+    const alreadySent = row({ user_id: "sent", last_sent_on: "2026-11-21" });
+    const lastCompletedOn = vi.fn(async () => new Map<string, string>());
+    const d = deps([row(), row({ user_id: "user-2" }), notYet, alreadySent], { lastCompletedOn });
+    expect(await runReminderJob(d)).toEqual({ checked: 4, sent: 2, failed: 0 });
+    expect(lastCompletedOn).toHaveBeenCalledTimes(1);
+    expect(lastCompletedOn).toHaveBeenCalledWith("fr", ["user-1", "user-2"]);
+  });
+
+  it("counts a whole language as failed when its progress can't be read, and still serves the other", async () => {
+    const d = deps([row(), row({ user_id: "es-user", language: "es" })], {
+      lastCompletedOn: async (language) => {
+        if (language === "fr") throw new Error("db down");
+        return new Map();
+      },
+    });
+    expect(await runReminderJob(d)).toEqual({ checked: 2, sent: 1, failed: 1 });
+  });
+
+  it("skips a row with an unreadable timezone without failing the job", async () => {
+    const d = deps([row({ timezone: "Not/AZone" }), row({ user_id: "user-2" })]);
+    expect((await runReminderJob(d)).sent).toBe(1);
   });
 });
 

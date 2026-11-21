@@ -86,7 +86,7 @@ export interface Copy {
   readonly cardsTomorrow: (count: number) => string;
   readonly unlocked: Partial<Record<Stage, string>>;
 
-  readonly settingsRows: { readonly page: string; readonly light: string; readonly level: string; readonly time: string; readonly account: string; readonly classic: string; readonly otherLanguage: string; readonly variant: string; readonly reminder: string; readonly plus: string };
+  readonly settingsRows: { readonly page: string; readonly light: string; readonly level: string; readonly time: string; readonly account: string; readonly classic: string; readonly otherLanguage: string; readonly variant: string; readonly reminder: string; readonly plus: string; readonly naturalVoice: string };
   readonly modes: { readonly light: string; readonly dark: string; readonly system: string };
   readonly styles: { readonly notebook: string; readonly dictionary: string };
 }
@@ -164,7 +164,7 @@ const FR: Copy = {
   recalled: (p) => `${p} % retenus`,
   cardsTomorrow: (n) => `${plural(n, "carte", "cartes")} pour demain`,
   unlocked: { 2: "Nouveau demain : le mot qui manque.", 3: "Nouveau demain : ta propre phrase." },
-  settingsRows: { page: "Page", light: "Lumière", level: "Niveau", time: "Temps", account: "Compte", classic: "Ancienne vue", otherLanguage: "Autre langue", variant: "Variante", reminder: "Rappel", plus: "Plus" },
+  settingsRows: { page: "Page", light: "Lumière", level: "Niveau", time: "Temps", account: "Compte", classic: "Ancienne vue", otherLanguage: "Autre langue", variant: "Variante", reminder: "Rappel", plus: "Plus", naturalVoice: "Voix naturelle" },
   modes: { light: "Jour", dark: "Nuit", system: "Auto" },
   styles: { notebook: "Cahier", dictionary: "Dictionnaire" },
 };
@@ -240,7 +240,7 @@ const ES: Copy = {
   recalled: (p) => `${p} % recordadas`,
   cardsTomorrow: (n) => `${plural(n, "tarjeta", "tarjetas")} para mañana`,
   unlocked: { 2: "Mañana, novedad: la palabra que falta.", 3: "Mañana, novedad: tu propia frase." },
-  settingsRows: { page: "Página", light: "Luz", level: "Nivel", time: "Tiempo", account: "Cuenta", classic: "Vista clásica", otherLanguage: "Otro idioma", variant: "Variedad", reminder: "Recordatorio", plus: "Plus" },
+  settingsRows: { page: "Página", light: "Luz", level: "Nivel", time: "Tiempo", account: "Cuenta", classic: "Vista clásica", otherLanguage: "Otro idioma", variant: "Variedad", reminder: "Recordatorio", plus: "Plus", naturalVoice: "Voz natural" },
   modes: { light: "Día", dark: "Noche", system: "Auto" },
   styles: { notebook: "Cuaderno", dictionary: "Diccionario" },
 };

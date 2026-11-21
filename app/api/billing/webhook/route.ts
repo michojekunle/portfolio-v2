@@ -6,7 +6,7 @@
 import { NextResponse } from "next/server";
 import { verifyStripeSignature } from "@/features/learn/domain/plus";
 import { adminClient } from "@/features/learn/server/admin";
-import { applyStripeEvent } from "@/features/learn/server/billing";
+import { applySubscriptionEvent, supabaseBillingDeps } from "@/features/learn/server/billing";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export async function POST(request: Request): Promise<Response> {
   }
   try {
     const event = JSON.parse(payload) as { type: string; data: { object: unknown } };
-    await applyStripeEvent(admin, event);
+    await applySubscriptionEvent(supabaseBillingDeps(admin), event);
     return NextResponse.json({ received: true });
   } catch (error) {
     // A 500 makes Stripe retry, which is what we want for a transient database error.

@@ -34,7 +34,8 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live https://va.vercel-scripts.com",
+              // blob: + cdnjs/jsdelivr: the free in-browser voice (Piper) runs in a blob: worker that loads its WASM runtime from these CDNs
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
@@ -49,6 +50,12 @@ const nextConfig = {
               [
                 "connect-src 'self' blob:",
                 "https://bible-api.com",
+                // Free in-browser voice (Piper): WASM runtime from CDNs, voice models from Hugging Face (LFS/Xet CDNs)
+                "https://cdnjs.cloudflare.com",
+                "https://cdn.jsdelivr.net",
+                "https://huggingface.co",
+                "https://*.huggingface.co",
+                "https://*.hf.co",
                 "https://*.instagram.com",
                 "https://*.tiktok.com",
                 "https://*.tiktokcdn.com",
@@ -68,6 +75,7 @@ const nextConfig = {
               ].join(" "),
               // Allow YouTube, Instagram, TikTok, and Vimeo embeds (plus blob: for epubjs)
               "frame-src 'self' blob: https://*.youtube.com https://*.youtube-nocookie.com https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://*.vimeo.com https://vercel.live https://*.vercel.live",
+              "worker-src 'self' blob:",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

@@ -19,3 +19,6 @@ export class AiUnavailableError extends FrenchDomainError {}
 
 /** A group action the learner can fix (full group, bad code, already in one). The message is safe to show. */
 export class GroupError extends FrenchDomainError {}
+
+/** A reminder couldn't be delivered (no address, provider rejected it). */
+export class ReminderDeliveryError extends FrenchDomainError {}

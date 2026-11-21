@@ -28,7 +28,7 @@ interface ReminderRow {
 }
 
 function fail(operation: string, cause: unknown): never {
-  throw new PersistenceError(`Database operation failed: ${operation}`, { cause });
+  throw new PersistenceError(operation, cause);
 }
 
 // ── Learner settings (user-scoped client; RLS limits to own rows) ─────────
@@ -73,8 +73,8 @@ export interface ReminderMessage {
 export interface ReminderJobDeps {
   readonly now: () => Date;
   readonly listEnabled: () => Promise<readonly ReminderRow[]>;
-  /** Local date of the learner's last finished page in that language, or null. */
-  readonly lastCompletedOn: (userId: string, language: LanguageId) => Promise<string | null>;
+  /** Local date of each learner's last finished page in that language (learners with none are absent). */
+  readonly lastCompletedOn: (language: LanguageId, userIds: readonly string[]) => Promise<ReadonlyMap<string, string>>;
   /** "gone" when the browser unsubscribed (HTTP 404/410), so the row can be cleaned; "skipped" when push isn't configured. */
   readonly sendPush: (subscription: PushSubscriptionInput, message: ReminderMessage) => Promise<"sent" | "gone" | "skipped">;
   readonly sendEmail: (userId: string, message: ReminderMessage) => Promise<void>;
@@ -93,37 +93,63 @@ export interface ReminderJobResult {
   readonly failed: number;
 }
 
-/** Sends every reminder that is due right now. One learner's failure never stops the rest. */
+function dueIgnoringCompletion(row: ReminderRow, now: Date): boolean {
+  try {
+    return isReminderDue({ time: row.reminder_time, timezone: row.timezone, lastSentOn: row.last_sent_on, lastCompletedOn: null }, now);
+  } catch (error) {
+    // A bad stored timezone shouldn't stop everyone else's reminders.
+    console.error(`[learn/reminders] unreadable reminder settings (${row.language})`, error instanceof Error ? error.message : error);
+    return false;
+  }
+}
+
+/**
+ * Sends every reminder that is due right now. One learner's failure never stops the rest.
+ * Only ~1/24 of learners are at their reminder hour, so the cheap time checks run first and
+ * "did they already finish today?" is fetched in one query per language for those few.
+ */
 export async function runReminderJob(deps: ReminderJobDeps): Promise<ReminderJobResult> {
   const now = deps.now();
   const rows = await deps.listEnabled();
+  const candidates = rows.filter((row) => dueIgnoringCompletion(row, now));
   let sent = 0;
   let failed = 0;
 
-  for (const row of rows) {
+  const languages = [...new Set(candidates.map((row) => row.language))];
+  for (const language of languages) {
+    const group = candidates.filter((row) => row.language === language);
+    let completed: ReadonlyMap<string, string>;
     try {
-      const lastCompletedOn = await deps.lastCompletedOn(row.user_id, row.language);
-      const due = isReminderDue({ time: row.reminder_time, timezone: row.timezone, lastSentOn: row.last_sent_on, lastCompletedOn }, now);
-      if (!due) continue;
-
-      const message = REMINDER_COPY[row.language];
-      let delivered = false;
-      if (row.push_subscription) {
-        const outcome = await deps.sendPush(row.push_subscription, message);
-        if (outcome === "gone") await deps.clearPush(row.user_id, row.language);
-        else if (outcome === "sent") delivered = true;
-      }
-      if (row.email) {
-        await deps.sendEmail(row.user_id, message);
-        delivered = true;
-      }
-      if (delivered) {
-        await deps.markSent(row.user_id, row.language, localDateString(row.timezone, now));
-        sent += 1;
-      }
+      completed = await deps.lastCompletedOn(language, group.map((row) => row.user_id));
     } catch (error) {
-      failed += 1;
-      console.error(`[learn/reminders] failed for one learner (${row.language})`, error instanceof Error ? error.message : error);
+      failed += group.length;
+      console.error(`[learn/reminders] couldn't read progress (${language})`, error instanceof Error ? error.message : error);
+      continue;
+    }
+
+    for (const row of group) {
+      try {
+        if (completed.get(row.user_id) === localDateString(row.timezone, now)) continue;
+
+        const message = REMINDER_COPY[row.language];
+        let delivered = false;
+        if (row.push_subscription) {
+          const outcome = await deps.sendPush(row.push_subscription, message);
+          if (outcome === "gone") await deps.clearPush(row.user_id, row.language);
+          else if (outcome === "sent") delivered = true;
+        }
+        if (row.email) {
+          await deps.sendEmail(row.user_id, message);
+          delivered = true;
+        }
+        if (delivered) {
+          await deps.markSent(row.user_id, row.language, localDateString(row.timezone, now));
+          sent += 1;
+        }
+      } catch (error) {
+        failed += 1;
+        console.error(`[learn/reminders] failed for one learner (${row.language})`, error instanceof Error ? error.message : error);
+      }
     }
   }
   return { checked: rows.length, sent, failed };
@@ -142,15 +168,21 @@ export function supabaseReminderDeps(
       if (error) fail("listEnabledReminders", error);
       return data ?? [];
     },
-    lastCompletedOn: async (userId, language) => {
-      const { data, error } = await admin
-        .from(streakTable[language])
-        .select("last_completed_date")
-        .eq("user_id", userId)
-        .maybeSingle<{ last_completed_date: string | null }>();
-      if (error) fail("lastCompletedOn", error);
-      return data?.last_completed_date ?? null;
+    lastCompletedOn: async (language, userIds) => {
+      const result = new Map<string, string>();
+      // Chunked so a big hour never builds an oversized URL.
+      for (let i = 0; i < userIds.length; i += 200) {
+        const { data, error } = await admin
+          .from(streakTable[language])
+          .select("user_id, last_completed_date")
+          .in("user_id", userIds.slice(i, i + 200))
+          .returns<{ user_id: string; last_completed_date: string | null }[]>();
+        if (error) fail("lastCompletedOn", error);
+        for (const row of data ?? []) if (row.last_completed_date) result.set(row.user_id, row.last_completed_date);
+      }
+      return result;
     },
+
     markSent: async (userId, language, localDate) => {
       const { error } = await admin.from("learn_reminders").update({ last_sent_on: localDate }).eq("user_id", userId).eq("language", language);
       if (error) fail("markReminderSent", error);
@@ -161,4 +193,11 @@ export function supabaseReminderDeps(
     },
     ...senders,
   };
+}
+
+/** A learner's sign-in email, for email reminders (service role). */
+export async function learnerEmail(admin: SupabaseClient, userId: string): Promise<string | null> {
+  const { data, error } = await admin.auth.admin.getUserById(userId);
+  if (error) fail("learnerEmail", error);
+  return data.user?.email ?? null;
 }

@@ -37,18 +37,22 @@ function shiftDate(date: string, days: number): string {
  * yesterday (it only breaks once a whole day passes with someone missing).
  * A member is only counted from the day they joined.
  */
+/** How far back the group streak looks; the activity query fetches the same window. */
+export const GROUP_STREAK_MAX_DAYS = 366;
+
 export function groupStreak(members: readonly MemberActivity[], today: string): number {
   if (members.length === 0) return 0;
   const sets = members.map((m) => ({ joinedOn: m.joinedOn, done: new Set(m.completedOn) }));
   const everyoneDone = (date: string): boolean => {
-    const present = sets.filter((m) => m.joinedOn <= date);
+    // joinedOn is a UTC date while completions are local, so the join day itself only counts if they finished it.
+    const present = sets.filter((m) => m.joinedOn < date || m.done.has(date));
     return present.length > 0 && present.every((m) => m.done.has(date));
   };
 
   let streak = 0;
   let day = everyoneDone(today) ? today : shiftDate(today, -1);
   const earliest = members.reduce((min, m) => (m.joinedOn < min ? m.joinedOn : min), members[0].joinedOn);
-  while (day >= earliest && everyoneDone(day) && streak < 366) {
+  while (day >= earliest && everyoneDone(day) && streak < GROUP_STREAK_MAX_DAYS) {
     streak += 1;
     day = shiftDate(day, -1);
   }
