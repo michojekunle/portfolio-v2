@@ -42,6 +42,19 @@ describe("groupStreak", () => {
     expect(groupStreak(members, today)).toBe(3);
   });
 
+  it("doesn't break the streak on the day someone joins without finishing", () => {
+    // joinedOn comes from a UTC timestamp, so it can be a day before the member's local join day.
+    const members = [member("a", ["2026-11-19", "2026-11-20", "2026-11-21"]), member("new", [], "2026-11-20")];
+    // Today is still open for "new"; their join day (11-20) is excused, so the streak holds at 2.
+    expect(groupStreak(members, today)).toBe(2);
+  });
+
+  it("counts streaks longer than two months", () => {
+    const days = Array.from({ length: 90 }, (_, i) => new Date(Date.UTC(2026, 10, 21 - i)).toISOString().slice(0, 10));
+    const members = [member("a", days, "2026-01-01"), member("b", days, "2026-01-01")];
+    expect(groupStreak(members, today)).toBe(90);
+  });
+
   it("is zero for an empty group", () => {
     expect(groupStreak([], today)).toBe(0);
   });

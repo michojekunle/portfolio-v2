@@ -4,7 +4,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { localDateString } from "../domain/dates";
-import { generateInviteCode, groupStreak, normaliseInviteCode, type MemberActivity } from "../domain/groups";
+import { GROUP_STREAK_MAX_DAYS, generateInviteCode, groupStreak, normaliseInviteCode, type MemberActivity } from "../domain/groups";
 import type { LanguagePack } from "../domain/language";
 import { fallbackLessonFor } from "../domain/lessons";
 import type { GroupAction } from "../domain/schemas";
@@ -37,7 +37,7 @@ const FRIENDLY: Record<string, string> = {
 };
 
 function fail(operation: string, cause: unknown): never {
-  throw new PersistenceError(`Database operation failed: ${operation}`, { cause });
+  throw new PersistenceError(operation, cause);
 }
 
 /** Turns the database's guard messages into errors the learner can act on. */
@@ -65,7 +65,7 @@ export async function getMyGroup(db: SupabaseClient, userId: string, pack: Langu
 
   const [{ data: group, error: groupError }, { data: activity, error: activityError }, { data: posts, error: postsError }] = await Promise.all([
     db.from("learn_groups").select("id, name, invite_code").eq("id", groupId).single<{ id: string; name: string; invite_code: string }>(),
-    db.rpc("learn_group_activity", { p_group: groupId, p_days: 60 }),
+    db.rpc("learn_group_activity", { p_group: groupId, p_days: GROUP_STREAK_MAX_DAYS }),
     db.from("learn_group_posts").select("user_id, audio_path, duration_ms").eq("group_id", groupId).eq("post_date", today),
   ]);
   if (groupError) fail("getGroup", groupError);
