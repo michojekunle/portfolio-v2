@@ -1,18 +1,88 @@
 {
+  "id": "/french",
   "name": "French Daily",
-  "short_name": "French Daily",
-  "description": "Your personal French language practice tracker — daily challenges, vocabulary log, and streak tracking.",
-  "start_url": "/french",
+  "short_name": "Français",
+  "description": "One French page a day, about ten minutes: review the words you're about to forget, hear a short scene, speak out loud, write one sentence and get it corrected.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/french?source=pwa",
   "scope": "/french",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
-  "categories": ["education", "productivity"],
-  "icons": [
-    { "src": "/api/tool-icon?tool=french&size=192", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/api/tool-icon?tool=french&size=512", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  "display_override": [
+    "standalone",
+    "minimal-ui"
   ],
-  "screenshots": [],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "background_color": "#FBFAF7",
+  "theme_color": "#FBFAF7",
+  "categories": [
+    "education",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/icons/french/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/french/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/french/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/french/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/french/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start today's page",
+      "short_name": "Commencer",
+      "description": "Jump straight into today's session",
+      "url": "/french?start=1&source=shortcut",
+      "icons": [
+        {
+          "src": "/icons/french/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/french/screens/narrow-home.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Today's page in the Cahier style: the plan and one button to start"
+    },
+    {
+      "src": "/icons/french/screens/wide-home.jpg",
+      "sizes": "800x500",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "French Daily on desktop: a notebook page with today's plan"
+    }
+  ],
   "prefer_related_applications": false
 }

@@ -1,0 +1,88 @@
+{
+  "id": "/spanish",
+  "name": "Spanish Daily",
+  "short_name": "Español",
+  "description": "One Spanish page a day, about ten minutes: review the words you're about to forget, hear a short scene, speak out loud, write one sentence and get it corrected.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/spanish?source=pwa",
+  "scope": "/spanish",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "background_color": "#FDFDFB",
+  "theme_color": "#FDFDFB",
+  "categories": [
+    "education",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/icons/spanish/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/spanish/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/spanish/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/spanish/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/spanish/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start today's page",
+      "short_name": "Empezar",
+      "description": "Jump straight into today's session",
+      "url": "/spanish?start=1&source=shortcut",
+      "icons": [
+        {
+          "src": "/icons/spanish/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/spanish/screens/narrow-home.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Today's page in the Cuaderno style: the plan and one button to start"
+    },
+    {
+      "src": "/icons/spanish/screens/wide-home.jpg",
+      "sizes": "800x500",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Spanish Daily on desktop: a squared notebook page with today's plan"
+    }
+  ],
+  "prefer_related_applications": false
+}

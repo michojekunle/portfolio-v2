@@ -15,6 +15,7 @@ const TOOL_LABELS: Record<ToolId, string> = {
   "carousel-lab": "CL",
   flowise: "FL",
   french: "FR",
+  spanish: "ES",
 };
 
 export async function GET(request: NextRequest): Promise<ImageResponse> {

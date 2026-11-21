@@ -144,7 +144,17 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
   }
-  const pendingUsers = allUsers.filter((u) => !completedUserIds.has(u.id));
+  // Only people who actually use French get nagged. This site's auth is shared
+  // with other tools, and `allUsers` is every account — without this filter the
+  // cron emailed anyone who had ever signed in anywhere, never having opted in.
+  const frenchUserIds = new Set<string>();
+  for (const row of (subs ?? []) as { user_id: string | null }[]) {
+    if (row.user_id) frenchUserIds.add(row.user_id);
+  }
+  for (const row of (streaks ?? []) as { user_id: string | null }[]) {
+    if (row.user_id) frenchUserIds.add(row.user_id);
+  }
+  const pendingUsers = allUsers.filter((u) => frenchUserIds.has(u.id) && !completedUserIds.has(u.id));
 
   // Initialize Web Push
   const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;

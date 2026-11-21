@@ -1,12 +1,22 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence, Variants } from "framer-motion"
+import { isToolAppPath } from "@/lib/tool-app-paths"
 
 export function Preloader(): React.ReactElement {
-  const [isLoading, setIsLoading] = useState(true)
+  // Self-contained apps (e.g. /french, installed as a PWA) are a fresh browser
+  // session on every launch, so the once-per-session intro would replay on every
+  // open and sit between the learner and the one thing they came to do.
+  const pathname = usePathname()
+  const [isLoading, setIsLoading] = useState(() => !isToolAppPath(pathname))
 
   useEffect(() => {
+    if (isToolAppPath(pathname)) {
+      setIsLoading(false)
+      return
+    }
     try {
       const hasSeen = sessionStorage.getItem("hasSeenPreloader")
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
