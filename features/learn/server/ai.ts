@@ -6,12 +6,21 @@ import { AiUnavailableError } from "./errors";
 
 const MODEL = "gemini-2.5-flash";
 
+/**
+ * gemini-2.5-flash "thinks" before answering, and thinking tokens count against
+ * maxOutputTokens. With a 600-token budget it spent ~550 thinking and cut the JSON
+ * answer off mid-sentence, which surfaced as "Corrections are offline". These
+ * tasks need no reasoning, so thinking is off. (The SDK's types predate the field,
+ * but it is forwarded to the API as-is.)
+ */
+export const NO_THINKING = { thinkingConfig: { thinkingBudget: 0 } } as const;
+
 function getModel(maxOutputTokens: number) {
   const apiKey = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   if (!apiKey) throw new AiUnavailableError("GEMINI_API_KEY is not configured");
   return new GoogleGenerativeAI(apiKey).getGenerativeModel({
     model: MODEL,
-    generationConfig: { responseMimeType: "application/json", maxOutputTokens, temperature: 0.6 },
+    generationConfig: { responseMimeType: "application/json", maxOutputTokens, temperature: 0.6, ...NO_THINKING },
   });
 }
 

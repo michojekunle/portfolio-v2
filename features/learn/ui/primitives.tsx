@@ -5,6 +5,16 @@ import type { ButtonHTMLAttributes, ReactElement, ReactNode } from "react";
 import { Check, Volume2 } from "lucide-react";
 import { speak } from "./speech-io";
 
+/**
+ * Spread onto the answer boxes. Grammarly and similar tools check text as English, "correct"
+ * French or Spanish answers, and fight with the accent keys; these attributes tell them to stay out.
+ */
+export const NO_WRITING_TOOLS = {
+  "data-gramm": "false",
+  "data-gramm_editor": "false",
+  "data-enable-grammarly": "false",
+} as const;
+
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { readonly children: ReactNode };
 
 /** The one action on a screen. `meta` sits right-aligned in small UI type (time, arrow). */

@@ -5,7 +5,7 @@ import { useRef, useState, type ReactElement } from "react";
 import { Check, X } from "lucide-react";
 import { checkGap, type Gap, type GapVerdict } from "../../domain/exercises";
 import { AccentKeys, insertAtCaret } from "../AccentKeys";
-import { ActionButton, QuietButton, StepHeading } from "../primitives";
+import { NO_WRITING_TOOLS, ActionButton, QuietButton, StepHeading } from "../primitives";
 import type { WriteResult } from "./WriteStep";
 
 interface Props {
@@ -96,6 +96,7 @@ export function GapStep({ gap, onDone }: Props): ReactElement {
             autoComplete="off"
             autoCapitalize="none"
             spellCheck={false}
+            {...NO_WRITING_TOOLS}
             autoFocus
             style={{ width, maxWidth: "100%" }}
             className="fr-hand mx-1 inline-block border-0 border-b-2 border-(--fr-key) bg-transparent px-1 text-center text-[26px] leading-9 focus:outline-none"

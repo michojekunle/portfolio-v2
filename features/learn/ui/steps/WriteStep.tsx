@@ -5,7 +5,7 @@ import { useRef, useState, type ReactElement } from "react";
 import { Loader2 } from "lucide-react";
 import type { Lesson, Level } from "../../domain/lessons";
 import { CARD_NOTES_MAX, CARD_TEXT_MAX, clipText, type Feedback } from "../../domain/schemas";
-import { ActionButton, QuietButton, StepHeading } from "../primitives";
+import { NO_WRITING_TOOLS, ActionButton, QuietButton, StepHeading } from "../primitives";
 import { AccentKeys, insertAtCaret } from "../AccentKeys";
 import { RedPen } from "../RedPen";
 import type { NewCardDto } from "./LearnStep";
@@ -153,6 +153,7 @@ export function WriteStep({ write, level, guest, onDone }: Props): ReactElement 
             rows={3}
             maxLength={300}
             spellCheck={false}
+            {...NO_WRITING_TOOLS}
             autoCapitalize="sentences"
             placeholder={copy.writePlaceholder}
             className="fr-field is-lined fr-hand resize-none text-[24px] leading-8"
