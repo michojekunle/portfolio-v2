@@ -14,9 +14,13 @@ export interface ReminderSettings {
   readonly time: string | null;
   readonly email: boolean;
   readonly push: boolean;
+  /** Opt-in Sunday email with the week's numbers. */
+  readonly weeklySummary: boolean;
+  /** Opt-in nudge when the learner's group streak is at risk tonight. */
+  readonly groupNudges: boolean;
 }
 
-interface ReminderRow {
+export interface ReminderRow {
   user_id: string;
   language: LanguageId;
   enabled: boolean;
@@ -25,6 +29,10 @@ interface ReminderRow {
   email: boolean;
   push_subscription: PushSubscriptionInput | null;
   last_sent_on: string | null;
+  weekly_summary: boolean;
+  last_weekly_on: string | null;
+  group_nudges: boolean;
+  last_nudge_on: string | null;
 }
 
 function fail(operation: string, cause: unknown): never {
@@ -36,13 +44,19 @@ function fail(operation: string, cause: unknown): never {
 export async function getReminder(db: SupabaseClient, userId: string, language: LanguageId): Promise<ReminderSettings> {
   const { data, error } = await db
     .from("learn_reminders")
-    .select("enabled, reminder_time, email, push_subscription")
+    .select("enabled, reminder_time, email, push_subscription, weekly_summary, group_nudges")
     .eq("user_id", userId)
     .eq("language", language)
-    .maybeSingle<Pick<ReminderRow, "enabled" | "reminder_time" | "email" | "push_subscription">>();
+    .maybeSingle<Pick<ReminderRow, "enabled" | "reminder_time" | "email" | "push_subscription" | "weekly_summary" | "group_nudges">>();
   if (error) fail("getReminder", error);
-  if (!data) return { time: null, email: false, push: false };
-  return { time: data.enabled ? data.reminder_time : null, email: data.email, push: data.push_subscription !== null };
+  if (!data) return { time: null, email: false, push: false, weeklySummary: false, groupNudges: false };
+  return {
+    time: data.enabled ? data.reminder_time : null,
+    email: data.email,
+    push: data.push_subscription !== null,
+    weeklySummary: data.weekly_summary,
+    groupNudges: data.group_nudges,
+  };
 }
 
 export async function saveReminder(db: SupabaseClient, userId: string, language: LanguageId, update: ReminderUpdate): Promise<ReminderSettings> {
@@ -56,6 +70,8 @@ export async function saveReminder(db: SupabaseClient, userId: string, language:
   };
   if (update.time !== null) row.reminder_time = update.time;
   if (update.push !== undefined) row.push_subscription = update.push;
+  if (update.weeklySummary !== undefined) row.weekly_summary = update.weeklySummary;
+  if (update.groupNudges !== undefined) row.group_nudges = update.groupNudges;
   const { error } = await db.from("learn_reminders").upsert(row, { onConflict: "user_id,language" });
   if (error) fail("saveReminder", error);
   return getReminder(db, userId, language);
@@ -72,12 +88,14 @@ export interface ReminderMessage {
 
 export interface ReminderJobDeps {
   readonly now: () => Date;
-  readonly listEnabled: () => Promise<readonly ReminderRow[]>;
+  /** Every learner with a reminder, weekly summary or nudge switched on; the jobs pick what's due. */
+  readonly listActive: () => Promise<readonly ReminderRow[]>;
   /** Local date of each learner's last finished page in that language (learners with none are absent). */
   readonly lastCompletedOn: (language: LanguageId, userIds: readonly string[]) => Promise<ReadonlyMap<string, string>>;
   /** "gone" when the browser unsubscribed (HTTP 404/410), so the row can be cleaned; "skipped" when push isn't configured. */
   readonly sendPush: (subscription: PushSubscriptionInput, message: ReminderMessage) => Promise<"sent" | "gone" | "skipped">;
-  readonly sendEmail: (userId: string, message: ReminderMessage) => Promise<void>;
+  /** "skipped" when email isn't configured, so nothing is marked as sent. */
+  readonly sendEmail: (userId: string, message: ReminderMessage) => Promise<"sent" | "skipped">;
   readonly markSent: (userId: string, language: LanguageId, localDate: string) => Promise<void>;
   readonly clearPush: (userId: string, language: LanguageId) => Promise<void>;
 }
@@ -110,8 +128,8 @@ function dueIgnoringCompletion(row: ReminderRow, now: Date): boolean {
  */
 export async function runReminderJob(deps: ReminderJobDeps): Promise<ReminderJobResult> {
   const now = deps.now();
-  const rows = await deps.listEnabled();
-  const candidates = rows.filter((row) => dueIgnoringCompletion(row, now));
+  const rows = await deps.listActive();
+  const candidates = rows.filter((row) => row.enabled && dueIgnoringCompletion(row, now));
   let sent = 0;
   let failed = 0;
 
@@ -138,10 +156,7 @@ export async function runReminderJob(deps: ReminderJobDeps): Promise<ReminderJob
           if (outcome === "gone") await deps.clearPush(row.user_id, row.language);
           else if (outcome === "sent") delivered = true;
         }
-        if (row.email) {
-          await deps.sendEmail(row.user_id, message);
-          delivered = true;
-        }
+        if (row.email && (await deps.sendEmail(row.user_id, message)) === "sent") delivered = true;
         if (delivered) {
           await deps.markSent(row.user_id, row.language, localDateString(row.timezone, now));
           sent += 1;
@@ -163,9 +178,13 @@ export function supabaseReminderDeps(
   const streakTable: Record<LanguageId, string> = { fr: "french_user_streaks", es: "spanish_user_streaks" };
   return {
     now: () => new Date(),
-    listEnabled: async () => {
-      const { data, error } = await admin.from("learn_reminders").select("*").eq("enabled", true).returns<ReminderRow[]>();
-      if (error) fail("listEnabledReminders", error);
+    listActive: async () => {
+      const { data, error } = await admin
+        .from("learn_reminders")
+        .select("*")
+        .or("enabled.eq.true,weekly_summary.eq.true,group_nudges.eq.true")
+        .returns<ReminderRow[]>();
+      if (error) fail("listActiveReminders", error);
       return data ?? [];
     },
     lastCompletedOn: async (language, userIds) => {

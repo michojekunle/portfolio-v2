@@ -35,7 +35,7 @@ export function createReminderSenders(config: ReminderSenderConfig): Pick<Remind
       }
     },
     sendEmail: async (userId, message) => {
-      if (!config.resend) return;
+      if (!config.resend) return "skipped";
       const to = await config.emailFor(userId);
       if (!to) throw new ReminderDeliveryError("No email address for this learner.");
       const link = `${config.siteUrl}${message.url}`;
@@ -47,6 +47,7 @@ export function createReminderSenders(config: ReminderSenderConfig): Pick<Remind
         html: `<p style="font-family:Georgia,serif;font-size:18px">${escapeHtml(message.body)}</p><p><a href="${escapeHtml(link)}">${message.language === "fr" ? "Commencer" : "Empezar"} →</a></p>`,
       });
       if (error) throw new ReminderDeliveryError(`Email provider rejected the reminder: ${error.message}`);
+      return "sent";
     },
   };
 }

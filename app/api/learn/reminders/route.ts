@@ -8,9 +8,21 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { adminClient } from "@/features/learn/server/admin";
 import { createReminderSenders } from "@/features/learn/server/reminder-senders";
+import { runDigestJob, supabaseDigestDeps } from "@/features/learn/server/digests";
+import { recordEvent } from "@/features/learn/server/events";
 import { learnerEmail, runReminderJob, supabaseReminderDeps } from "@/features/learn/server/reminders";
 
 export const dynamic = "force-dynamic";
+
+async function logRun(admin: NonNullable<ReturnType<typeof adminClient>>, reminders: Awaited<ReturnType<typeof runReminderJob>>, digests: Awaited<ReturnType<typeof runDigestJob>> | null): Promise<void> {
+  try {
+    await recordEvent(admin, { name: "reminder_run", props: { checked: reminders.checked, sent: reminders.sent, failed: reminders.failed } }, null);
+    if (digests && (digests.weekly.due > 0 || digests.weekly.failed > 0)) await recordEvent(admin, { name: "weekly_summary_run", props: { ...digests.weekly } }, null);
+    if (digests && (digests.nudges.due > 0 || digests.nudges.failed > 0)) await recordEvent(admin, { name: "group_nudge_run", props: { ...digests.nudges } }, null);
+  } catch (error) {
+    console.error("[learn/reminders] could not log the run", error instanceof Error ? error.message : error);
+  }
+}
 
 export async function POST(request: Request): Promise<Response> {
   const secret = process.env.LEARN_CRON_SECRET ?? process.env.FRENCH_CRON_SECRET;
@@ -36,7 +48,17 @@ export async function POST(request: Request): Promise<Response> {
   });
 
   try {
-    return NextResponse.json(await runReminderJob(supabaseReminderDeps(admin, senders)));
+    const reminderDeps = supabaseReminderDeps(admin, senders);
+    const reminders = await runReminderJob(reminderDeps);
+    // The opt-in extras are best-effort: a failure there must not hide the reminder result.
+    let digests: Awaited<ReturnType<typeof runDigestJob>> | null = null;
+    try {
+      digests = await runDigestJob(supabaseDigestDeps(admin, reminderDeps));
+    } catch (error) {
+      console.error("[learn/reminders] digest job failed", error);
+    }
+    await logRun(admin, reminders, digests);
+    return NextResponse.json({ ...reminders, digests });
   } catch (error) {
     console.error("[learn/reminders] job failed", error);
     return NextResponse.json({ error: "Reminder job failed." }, { status: 500 });

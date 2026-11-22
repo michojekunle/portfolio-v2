@@ -14,7 +14,7 @@ export interface ReminderState {
   readonly lastCompletedOn: string | null;
 }
 
-function localHour(timezone: string, now: Date): number {
+export function localHour(timezone: string, now: Date): number {
   const hour = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: timezone }).format(now);
   return Number(hour);
 }

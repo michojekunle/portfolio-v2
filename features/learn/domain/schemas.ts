@@ -84,6 +84,9 @@ export const ReminderUpdateSchema = z.object({
   email: z.boolean(),
   /** Omitted = keep the stored one; null = remove it (e.g. permission revoked). */
   push: PushSubscriptionSchema.nullable().optional(),
+  /** Omitted = keep the stored choice. */
+  weeklySummary: z.boolean().optional(),
+  groupNudges: z.boolean().optional(),
 });
 export type ReminderUpdate = z.infer<typeof ReminderUpdateSchema>;
 
