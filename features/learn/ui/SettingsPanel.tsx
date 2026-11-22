@@ -173,15 +173,6 @@ export function SettingsPanel(props: Props): ReactElement {
             </Link>
           </Row>
         ))}
-
-      {/* Only French has the older app (reminders, history). */}
-      {pack.id === "fr" ? (
-        <Row label={copy.settingsRows.classic} hint="Reminders and history live here for now">
-          <Link href={`${pack.route}/classic`} className="fr-quiet fr-ui">
-            Open the classic view
-          </Link>
-        </Row>
-      ) : null}
     </section>
   );
 }

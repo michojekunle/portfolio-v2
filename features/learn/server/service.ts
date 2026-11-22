@@ -264,7 +264,6 @@ export async function completeUserSession(
   const completion = applyCompletion(streakState, today);
   if (!completion.alreadyCompleted) {
     await repo.saveStreak(userId, completion.state);
-    await repo.insertCompletionLog(userId);
   }
 
   await repo.insertSession(userId, {

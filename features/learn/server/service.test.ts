@@ -21,7 +21,6 @@ interface FakeState {
   cards: Card[];
   lessons: Map<string, Lesson>;
   sessions: SessionRecord[];
-  logs: number;
   addedCards: string[];
   streakSaves: number;
 }
@@ -37,7 +36,6 @@ function setup(overrides: Partial<FakeState> = {}) {
     cards: [],
     lessons: new Map(),
     sessions: [],
-    logs: 0,
     addedCards: [],
     streakSaves: 0,
     ...overrides,
@@ -77,9 +75,6 @@ function setup(overrides: Partial<FakeState> = {}) {
     hasSession: async (_id, clientId) => state.sessions.some((s) => s.clientSessionId === clientId),
     insertSession: async (_id, record) => {
       state.sessions.push(record);
-    },
-    insertCompletionLog: async () => {
-      state.logs += 1;
     },
   };
 
@@ -207,7 +202,6 @@ describe("completeUserSession", () => {
     expect(result.streak.current).toBe(1);
     expect(result.stats).toEqual({ reviews: 2, recalled: 1, newWords: 1 });
     expect(state.addedCards).toEqual(["je voudrais"]);
-    expect(state.logs).toBe(1);
     expect(state.sessions).toHaveLength(1);
     expect(state.cards.find((c) => c.id === CARD_ID)?.schedule.state).toBe("review");
     expect(state.cards.find((c) => c.id === CARD_ID_2)?.schedule.state).toBe("learning");
@@ -229,7 +223,6 @@ describe("completeUserSession", () => {
     expect(retry.alreadyCompleted).toBe(true);
     expect(state.cards[0].schedule).toEqual(afterFirst);
     expect(state.sessions).toHaveLength(1);
-    expect(state.logs).toBe(1);
   });
 
   it("records a second same-day session without inflating the streak or the reminder log", async () => {
@@ -246,7 +239,6 @@ describe("completeUserSession", () => {
     ] }));
     expect(second.alreadyCompleted).toBe(true);
     expect(second.streak.current).toBe(1);
-    expect(state.logs).toBe(1);
     expect(state.sessions).toHaveLength(2);
   });
 

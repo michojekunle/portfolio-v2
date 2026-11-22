@@ -136,6 +136,5 @@ export const FRENCH: LanguagePack = {
     lessons: "french_lessons",
     sessions: "french_sessions",
     // The reminder cron reads "practised today" from french_logs.
-    completionLog: "french_logs",
   },
 };

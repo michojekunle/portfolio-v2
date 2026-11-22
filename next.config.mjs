@@ -11,6 +11,13 @@ const nextConfig = {
   // Suppress the turbopack/webpack mismatch warning when no turbopack config is needed.
   turbopack: {},
 
+  async redirects() {
+    return [
+      // The old French page was retired; its features live in the main app.
+      { source: "/french/classic", destination: "/french", permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {

@@ -318,16 +318,6 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
       });
       if (error) fail("insertSession", error);
     },
-
-    /**
-     * One french_logs row per completed day, which the classic French page's
-     * history still reads. Languages without that legacy log skip it.
-     */
-    async insertCompletionLog(userId: string): Promise<void> {
-      if (!t.completionLog) return;
-      const { error } = await db.from(t.completionLog).insert({ user_id: userId, type: "speaking" });
-      if (error) fail("insertCompletionLog", error);
-    },
   };
 }
 

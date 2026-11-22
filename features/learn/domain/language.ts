@@ -71,8 +71,6 @@ export interface LanguagePack {
     readonly cardText: string;
     readonly lessons: string;
     readonly sessions: string;
-    /** Table the reminder cron reads, or null when the language has no reminders yet. */
-    readonly completionLog: string | null;
   };
 }
 
