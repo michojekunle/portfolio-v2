@@ -64,6 +64,16 @@ export function Footer(): React.ReactElement {
               <li>
                 <MagneticWrapper strength={10} className="inline-block">
                   <Link
+                    href="/learn/french"
+                    className="text-secondary-foreground no-underline hover:text-(--v3-accent) transition-colors inline-block"
+                  >
+                    Daily languages
+                  </Link>
+                </MagneticWrapper>
+              </li>
+              <li>
+                <MagneticWrapper strength={10} className="inline-block">
+                  <Link
                     href="/contact"
                     className="text-secondary-foreground no-underline hover:text-(--v3-accent) transition-colors inline-block"
                   >
