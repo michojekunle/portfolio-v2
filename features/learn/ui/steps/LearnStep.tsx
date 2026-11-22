@@ -8,7 +8,7 @@ import type { Lesson } from "../../domain/lessons";
 import { compareSpoken, type SpokenComparison } from "../../domain/speech";
 import { AccentKeys, insertAtCaret } from "../AccentKeys";
 import { useLang } from "../lang-context";
-import { ActionButton, QuietButton, SpeakerButton } from "../primitives";
+import { NO_WRITING_TOOLS, ActionButton, QuietButton, SpeakerButton } from "../primitives";
 import { RedPen } from "../RedPen";
 import { canRecognize, listenOnce, speak, type ListenHandle } from "../speech-io";
 
@@ -231,6 +231,7 @@ export function LearnStep({ lesson, englishShown, onDone }: Props): ReactElement
               }}
               rows={2}
               spellCheck={false}
+              {...NO_WRITING_TOOLS}
               autoCapitalize="sentences"
               placeholder={copy.dictationPlaceholder}
               className="fr-field is-lined fr-hand resize-none text-[22px] leading-8"

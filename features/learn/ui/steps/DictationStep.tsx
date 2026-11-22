@@ -6,7 +6,7 @@ import { Snail } from "lucide-react";
 import { diffWords } from "../../domain/diff";
 import { CARD_NOTES_MAX, clipText } from "../../domain/schemas";
 import { AccentKeys, insertAtCaret } from "../AccentKeys";
-import { ActionButton, OutlineButton, QuietButton, StepHeading } from "../primitives";
+import { NO_WRITING_TOOLS, ActionButton, OutlineButton, QuietButton, StepHeading } from "../primitives";
 import { RedPen } from "../RedPen";
 import { speak } from "../speech-io";
 import type { NewCardDto } from "./LearnStep";
@@ -75,6 +75,7 @@ export function DictationStep({ sentence, onDone }: Props): ReactElement {
             onChange={(event) => setText(event.target.value.slice(0, 240))}
             rows={2}
             spellCheck={false}
+            {...NO_WRITING_TOOLS}
             autoCapitalize="sentences"
             placeholder={copy.dictationPlaceholder}
             className="fr-field is-lined fr-hand mt-6 resize-none text-[24px] leading-8"
