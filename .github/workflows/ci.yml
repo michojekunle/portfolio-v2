@@ -1,0 +1,27 @@
+name: CI
+
+# Type-check and unit tests on every pull request. These need no secrets.
+# End-to-end tests run locally with `pnpm e2e` (they need a running app).
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Type-check
+        run: npx tsc --noEmit
+      - name: Unit tests
+        run: pnpm test

@@ -5,6 +5,7 @@ import { Volume2 } from "lucide-react";
 import type { VoiceMatch } from "../domain/voices";
 import { useBrowserVoiceEnabled } from "./browser-voice-preference";
 import { useLang } from "./lang-context";
+import { NaturalVoiceSettings } from "./NaturalVoiceSettings";
 import { QuietButton } from "./primitives";
 import { voiceMatch } from "./speech-io";
 
@@ -58,9 +59,12 @@ export function VoiceNotice(): ReactElement | null {
           {match === "none"
             ? `This device has no ${pack.name} voice, so the audio won't sound right.`
             : `This device's ${pack.name} voice isn't from ${pack.accentRegion}, so the accent will be a little off.`}{" "}
-          Turn on the free natural voice in settings, or add a {language} voice to your device (two minutes).
+          Turn on the free natural voice below, or add a {language} voice to your device (two minutes).
         </span>
       </p>
+      <div className="pl-4">
+        <NaturalVoiceSettings />
+      </div>
       {open ? (
         <ul className="fr-ui mt-2 space-y-1 pl-6 text-sm leading-6 text-(--fr-soft)">
           <li>

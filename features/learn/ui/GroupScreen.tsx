@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { MAX_GROUP_SIZE } from "../domain/groups";
 import type { GroupDto } from "../server/groups";
+import { track } from "./analytics";
 import { useLang } from "./lang-context";
 import { ActionButton, OutlineButton, QuietButton, SpeakerButton } from "./primitives";
 
@@ -93,7 +94,10 @@ export function GroupScreen({ onClose, inviteCode }: Props): ReactElement {
       mode === "create"
         ? await send({ action: "create", name, displayName, timezone: browserTimeZone() })
         : await send({ action: "join", code, displayName, timezone: browserTimeZone() });
-    if (ok) toast.success(mode === "create" ? "Group created. Now invite your friends." : "You're in. Say hello with today's voice note.");
+    if (ok) {
+      track(mode === "create" ? "group_created" : "group_joined", { language: pack.id });
+      toast.success(mode === "create" ? "Group created. Now invite your friends." : "You're in. Say hello with today's voice note.");
+    }
   };
 
   const inviteLink = group ? `${window.location.origin}${pack.route}?join=${group.inviteCode}` : "";

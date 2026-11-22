@@ -3,7 +3,7 @@ import { runReminderJob, type ReminderJobDeps } from "./reminders";
 
 const NOW = new Date("2026-11-21T17:30:00Z"); // 18:30 Lagos
 const sub = { endpoint: "https://fcm.googleapis.com/fcm/send/abc", keys: { p256dh: "p256dh-key-value", auth: "auth-key" } };
-const row = (overrides: Partial<Awaited<ReturnType<ReminderJobDeps["listEnabled"]>>[number]> = {}) => ({
+const row = (overrides: Partial<Awaited<ReturnType<ReminderJobDeps["listActive"]>>[number]> = {}) => ({
   user_id: "user-1",
   language: "fr" as const,
   enabled: true,
@@ -12,6 +12,10 @@ const row = (overrides: Partial<Awaited<ReturnType<ReminderJobDeps["listEnabled"
   email: false,
   push_subscription: sub,
   last_sent_on: null,
+  weekly_summary: false,
+  last_weekly_on: null,
+  group_nudges: false,
+  last_nudge_on: null,
   ...overrides,
 });
 
@@ -20,7 +24,7 @@ function deps(rows: ReturnType<typeof row>[], overrides: Partial<ReminderJobDeps
   return {
     calls,
     now: () => NOW,
-    listEnabled: async () => rows,
+    listActive: async () => rows,
     lastCompletedOn: vi.fn(async () => new Map<string, string>()),
     sendPush: vi.fn(async () => {
       calls.push("push");
@@ -28,6 +32,7 @@ function deps(rows: ReturnType<typeof row>[], overrides: Partial<ReminderJobDeps
     }),
     sendEmail: vi.fn(async () => {
       calls.push("email");
+      return "sent" as const;
     }),
     markSent: vi.fn(async (_u, _l, date) => {
       calls.push(`mark:${date}`);
@@ -44,6 +49,15 @@ describe("runReminderJob", () => {
     const d = deps([row()]);
     expect(await runReminderJob(d)).toEqual({ checked: 1, sent: 1, failed: 0 });
     expect(d.calls).toEqual(["push", "mark:2026-11-21"]);
+  });
+
+  it("counts a delivered reminder as sent even if recording it fails", async () => {
+    const d = deps([row()], {
+      markSent: vi.fn(async () => {
+        throw new Error("db down");
+      }),
+    });
+    expect(await runReminderJob(d)).toEqual({ checked: 1, sent: 1, failed: 0 });
   });
 
   it("skips learners who already finished today's page", async () => {
@@ -93,6 +107,20 @@ describe("runReminderJob", () => {
   it("skips a row with an unreadable timezone without failing the job", async () => {
     const d = deps([row({ timezone: "Not/AZone" }), row({ user_id: "user-2" })]);
     expect((await runReminderJob(d)).sent).toBe(1);
+  });
+});
+
+describe("runReminderJob with opt-ins that aren't reminders", () => {
+  it("ignores learners who only turned on the weekly summary or nudges", async () => {
+    const d = deps([row({ enabled: false, weekly_summary: true })]);
+    expect(await runReminderJob(d)).toEqual({ checked: 1, sent: 0, failed: 0 });
+    expect(d.calls).toEqual([]);
+  });
+
+  it("doesn't mark an email-only reminder as sent when email isn't configured", async () => {
+    const d = deps([row({ push_subscription: null, email: true })], { sendEmail: vi.fn(async () => "skipped" as const) });
+    expect((await runReminderJob(d)).sent).toBe(0);
+    expect(d.calls).toEqual([]);
   });
 });
 

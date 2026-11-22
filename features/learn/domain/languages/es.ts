@@ -232,6 +232,5 @@ export const SPANISH: LanguagePack = {
     cardText: "target_text",
     lessons: "spanish_lessons",
     sessions: "spanish_sessions",
-    completionLog: null,
   },
 };

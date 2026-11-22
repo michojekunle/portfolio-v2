@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactElement } from "react";
 import { toast } from "sonner";
 import { REMINDER_TIMES } from "../domain/reminders";
 import { ChoiceGroup } from "./ChoiceGroup";
+import { track } from "./analytics";
 import { useLang } from "./lang-context";
 
 const OFF = "off";
@@ -24,6 +25,13 @@ interface Settings {
   readonly time: string | null;
   readonly email: boolean;
   readonly push: boolean;
+  readonly weeklySummary: boolean;
+  readonly groupNudges: boolean;
+}
+
+interface Extras {
+  readonly weeklySummary?: boolean;
+  readonly groupNudges?: boolean;
 }
 
 function base64UrlToUint8Array(base64Url: string): Uint8Array {
@@ -60,18 +68,20 @@ export function ReminderSettings(): ReactElement {
       })
       .catch((error: unknown) => {
         console.warn("[learn] could not load reminder", error);
-        if (alive) setSettings({ time: null, email: false, push: false });
+        if (alive) setSettings({ time: null, email: false, push: false, weeklySummary: false, groupNudges: false });
       });
     return () => {
       alive = false;
     };
   }, [pack.api]);
 
-  const save = async (time: string | null, email: boolean): Promise<void> => {
+  const save = async (time: string | null, email: boolean, extras: Extras = {}): Promise<void> => {
     setBusy(true);
     try {
       let push: PushSubscriptionJSON | null | undefined;
-      if (time !== null && !settings?.push) {
+      // Only a change to the reminder itself may ask for notification permission; ticking an opt-in box must not.
+      const reminderChange = extras.weeklySummary === undefined && extras.groupNudges === undefined;
+      if (reminderChange && time !== null && !settings?.push) {
         push = await subscribeToPush(pack.route);
         if (!push && !email) {
           toast.message("Notifications are off for this site, so I'll email you instead.");
@@ -81,11 +91,16 @@ export function ReminderSettings(): ReactElement {
       const response = await fetch(`${pack.api}/reminder`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ time, email, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, ...(push !== undefined ? { push } : {}) }),
+        body: JSON.stringify({ time, email, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, ...(push !== undefined ? { push } : {}), ...extras }),
       });
       if (!response.ok) throw new Error(`Reminder update failed with ${response.status}`);
       setSettings((await response.json()) as Settings);
-      toast.success(time ? `Reminder set for ${time.replace(":00", "h")} — only on days you haven't done your page.` : "Reminder off.");
+      if (extras.weeklySummary !== undefined) track("weekly_summary_toggled", { language: pack.id, enabled: extras.weeklySummary });
+      else if (extras.groupNudges !== undefined) track("group_nudges_toggled", { language: pack.id, enabled: extras.groupNudges });
+      else track("reminder_saved", { language: pack.id, enabled: time !== null, email, push: push === undefined ? Boolean(settings?.push) : push !== null });
+      if (extras.weeklySummary !== undefined) toast.success(extras.weeklySummary ? "Weekly summary on. It arrives by email on Sundays." : "Weekly summary off.");
+      else if (extras.groupNudges !== undefined) toast.success(extras.groupNudges ? "Group nudges on." : "Group nudges off.");
+      else toast.success(time ? `Reminder set for ${time.replace(":00", "h")} — only on days you haven't done your page.` : "Reminder off.");
     } catch (error) {
       console.error("[learn] could not save reminder", error);
       toast.error("The reminder didn't save. Try again.");
@@ -108,6 +123,27 @@ export function ReminderSettings(): ReactElement {
           {settings.push ? <span className="text-(--fr-soft)">· notifications on this device</span> : null}
         </label>
       ) : null}
+      <label className="fr-ui flex min-h-11 items-center gap-2 px-2 text-sm text-(--fr-ink)">
+        <input
+          type="checkbox"
+          checked={settings.weeklySummary}
+          onChange={(event) => void save(settings.time, settings.email, { weeklySummary: event.target.checked })}
+          className="size-4 accent-(--fr-key)"
+        />
+        Email me a weekly summary
+        <span className="text-(--fr-soft)">· Sundays at {settings.time ? settings.time.replace(":00", "h") : "18h"}</span>
+      </label>
+      <label className={`fr-ui flex min-h-11 items-center gap-2 px-2 text-sm ${settings.push || settings.email ? "text-(--fr-ink)" : "text-(--fr-soft)"}`}>
+        <input
+          type="checkbox"
+          checked={settings.groupNudges}
+          disabled={!settings.push && !settings.email && !settings.groupNudges}
+          onChange={(event) => void save(settings.time, settings.email, { groupNudges: event.target.checked })}
+          className="size-4 accent-(--fr-key)"
+        />
+        Nudge me when my group&apos;s streak is at risk
+        {!settings.push && !settings.email ? <span>· turn on notifications or email above first</span> : null}
+      </label>
     </div>
   );
 }

@@ -11,6 +11,13 @@ const nextConfig = {
   // Suppress the turbopack/webpack mismatch warning when no turbopack config is needed.
   turbopack: {},
 
+  async redirects() {
+    return [
+      // The old French page was retired; its features live in the main app.
+      { source: "/french/classic", destination: "/french", permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {
@@ -34,8 +41,8 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              // blob: + cdnjs/jsdelivr: the free in-browser voice (Piper) runs in a blob: worker that loads its WASM runtime from these CDNs
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live https://va.vercel-scripts.com",
+              // blob: the free in-browser voice (Piper) may run in a blob: worker; its engine is self-hosted under /vendor/piper-v1
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
               "img-src 'self' blob: data: https:",
@@ -50,9 +57,11 @@ const nextConfig = {
               [
                 "connect-src 'self' blob:",
                 "https://bible-api.com",
-                // Free in-browser voice (Piper): WASM runtime from CDNs, voice models from Hugging Face (LFS/Xet CDNs)
-                "https://cdnjs.cloudflare.com",
-                "https://cdn.jsdelivr.net",
+                // Error reporting (Sentry), only used once NEXT_PUBLIC_SENTRY_DSN is set
+                "https://*.ingest.sentry.io",
+                "https://*.ingest.us.sentry.io",
+                "https://*.ingest.de.sentry.io",
+                // Free in-browser voice (Piper): the engine is self-hosted; voice models come from Hugging Face (LFS/Xet CDNs)
                 "https://huggingface.co",
                 "https://*.huggingface.co",
                 "https://*.hf.co",
@@ -83,6 +92,13 @@ const nextConfig = {
             ].join("; "),
           },
         ],
+      },
+
+      // Voice-engine files are pinned, large and versioned by path (piper-v1): cache them for good.
+      // Changing a pinned file means a new directory name, never an edit in place.
+      {
+        source: "/vendor/piper-v1/(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
 
       // Cache OG images for 1 hour

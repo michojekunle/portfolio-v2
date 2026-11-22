@@ -12,9 +12,11 @@ export interface ReminderState {
   readonly lastSentOn: string | null;
   /** Local date the learner last finished a page in this language. */
   readonly lastCompletedOn: string | null;
+  /** Local date a group-streak nudge went out; it counts as today's notification. */
+  readonly lastNudgeOn?: string | null;
 }
 
-function localHour(timezone: string, now: Date): number {
+export function localHour(timezone: string, now: Date): number {
   const hour = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: timezone }).format(now);
   return Number(hour);
 }
@@ -31,6 +33,7 @@ export function isReminderDue(state: ReminderState, now: Date): boolean {
 
   const today = localDateString(state.timezone, now);
   if (state.lastSentOn === today) return false;
+  if (state.lastNudgeOn === today) return false;
   if (state.lastCompletedOn === today) return false;
   return localHour(state.timezone, now) === wantedHour;
 }

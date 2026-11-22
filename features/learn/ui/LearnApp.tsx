@@ -25,6 +25,7 @@ import { GroupScreen } from "./GroupScreen";
 import { withVariant, type LanguageId, type LanguagePack } from "../domain/language";
 import { LANGUAGES } from "../domain/languages";
 import { COPY } from "./copy";
+import { track } from "./analytics";
 import { LangProvider } from "./lang-context";
 import { useBrowserVoiceEnabled } from "./browser-voice-preference";
 import { setBrowserVoice, setNaturalVoices, setSpeechLanguage } from "./speech-io";
@@ -287,6 +288,11 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     void load();
   }, [load]);
 
+  const startSession = (): void => {
+    if (payload) track("session_started", { language: pack.id, first: !payload.guest && payload.streak.totalCompletions === 0, guest: payload.guest });
+    setPhase("session");
+  };
+
   const closeAuth = useCallback((): void => setAuthOpen(false), []);
 
   let screen: ReactElement;
@@ -327,6 +333,9 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         payload={payload}
         onExit={backHome}
         onComplete={(completed) => {
+          // A null result means a guest finished (nothing is saved for them), which is still worth counting.
+          if (!completed) track("session_finished", { language: pack.id, guest: true });
+          else if (!completed.alreadyCompleted) track("session_finished", { language: pack.id, guest: false, new_words: completed.stats.newWords, reviews: completed.stats.reviews });
           setResult(completed);
           setPhase("done");
         }}
@@ -355,7 +364,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     screen = (
       <HomeScreen
         payload={payload}
-        onStart={() => setPhase("session")}
+        onStart={startSession}
         onPickLevel={(level) => void pickLevel(level)}
         onSignIn={() => setAuthOpen(true)}
         pickingLevel={pickingLevel}

@@ -89,7 +89,7 @@ const LAB_EXPERIMENTS: LabTool[] = [
     description:
       "A one-button daily session: spaced review, a short scene you say back or type from memory, real-speed listening, and one sentence of your own corrected in red pen.",
     notes: "Installable app. Free to try without an account.",
-    href: "/french",
+    href: "/learn/french",
     icon: Languages,
     tags: ["Spaced Review", "Speaking", "AI Correction"],
   },
@@ -101,7 +101,7 @@ const LAB_EXPERIMENTS: LabTool[] = [
     description:
       "Built on the same engine as French Daily, with its own Spanish lessons, voice, and cuaderno notebook look — including how Spanish actually sounds at speed.",
     notes: "Installable app. Free to try without an account.",
-    href: "/spanish",
+    href: "/learn/spanish",
     icon: Languages,
     tags: ["Spaced Review", "Real-Speed Listening", "Dictation"],
   },

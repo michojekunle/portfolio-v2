@@ -9,6 +9,7 @@ import type { SessionPayload } from "../server/service";
 import { ActionButton, OutlineButton, QuietButton, Trail } from "./primitives";
 import { COMMITMENT_STEPS, toCommitment, type Commitment } from "../domain/commitment";
 import { CommitmentPicker } from "./CommitmentPicker";
+import { FirstRunSetup } from "./FirstRunSetup";
 import { LevelUpNote } from "./LevelUpNote";
 import { VoiceNotice } from "./VoiceNotice";
 import { SettingsPanel } from "./SettingsPanel";
@@ -161,7 +162,8 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
           </section>
         ) : null}
 
-        <VoiceNotice />
+        {/* Signed-in first run gets the two-tap setup; everyone else sees the voice hint only when their device voice is poor. */}
+        {!guest && !needsLevel && completed === 0 && !done ? <FirstRunSetup /> : <VoiceNotice />}
 
         {payload.levelSuggestion && !needsLevel ? (
           <LevelUpNote suggestion={payload.levelSuggestion} busy={pickingLevel} onAccept={onPickLevel} />

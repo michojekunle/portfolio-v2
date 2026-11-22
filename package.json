@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/vendor-piper.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/vendor-piper.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "spotify:auth": "node scripts/spotify-login.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@deepgram/sdk": "^3.13.0",
@@ -41,6 +44,7 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
+    "@sentry/nextjs": "^11.16.0",
     "@serwist/next": "^9.5.11",
     "@serwist/window": "^9.5.11",
     "@supabase/ssr": "^0.9.0",
@@ -110,6 +114,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@mintplex-labs/piper-tts-web": "1.0.5",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -119,7 +125,6 @@
     "postcss": "^8",
     "tailwindcss": "^4.2.4",
     "typescript": "^5",
-    "vitest": "^3.2.7",
-    "@mintplex-labs/piper-tts-web": "1.0.5"
+    "vitest": "^3.2.7"
   }
 }
