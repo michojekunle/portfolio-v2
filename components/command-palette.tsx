@@ -211,6 +211,8 @@ export function CommandPalette(): React.ReactElement {
       { name: "Flowise Finance OS", desc: "Budgeting, expense tracking, mobile money movement, and analytics.", href: "/tools/flowise" },
       { name: "Vela Daily Log Journal", desc: "Daily reflection, bullet list planning, and mindfulness prompts.", href: "/tools/journal" },
       { name: "Carousel Lab Creator", desc: "Design multi-page visual carousels for LinkedIn and Twitter.", href: "/tools/carousel-lab" },
+      { name: "French Daily", desc: "One ten-minute French page a day: review, listen, speak, write.", href: "/learn/french" },
+      { name: "Spanish Daily", desc: "One ten-minute Spanish page a day: review, listen, speak, write.", href: "/learn/spanish" },
     ].map(t => ({
       label: t.name,
       icon: <Wrench className="h-4 w-4 text-primary/60" />,
