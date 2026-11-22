@@ -6,7 +6,8 @@ import { defineConfig, devices } from "@playwright/test";
  * API checks only exercise validation and auth.
  *
  *   pnpm e2e                 starts `pnpm dev` (or reuses one already on :3000)
- *   E2E_BASE_URL=https://…   runs against a deployed site instead
+ *   E2E_BASE_URL=https://…   runs against a deployed site instead. That site records the
+ *                            events these tests send, so start it with LEARN_EVENTS_DISABLED=1.
  */
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 
@@ -26,5 +27,12 @@ export default defineConfig({
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined
-    : { command: "pnpm dev", url: baseURL, reuseExistingServer: true, timeout: 180_000 },
+    : {
+        command: "pnpm dev",
+        url: baseURL,
+        reuseExistingServer: true,
+        timeout: 180_000,
+        // The tests post real events; keep them out of the analytics table.
+        env: { LEARN_EVENTS_DISABLED: "1" },
+      },
 });

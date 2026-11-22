@@ -9,6 +9,7 @@ import { localDateString } from "../domain/dates";
 import { isReminderDue } from "../domain/reminders";
 import type { PushSubscriptionInput, ReminderUpdate } from "../domain/schemas";
 import { PersistenceError } from "./errors";
+import { fetchAll } from "./paged";
 
 export interface ReminderSettings {
   readonly time: string | null;
@@ -158,8 +159,13 @@ export async function runReminderJob(deps: ReminderJobDeps): Promise<ReminderJob
         }
         if (row.email && (await deps.sendEmail(row.user_id, message)) === "sent") delivered = true;
         if (delivered) {
-          await deps.markSent(row.user_id, row.language, localDateString(row.timezone, now));
           sent += 1;
+          try {
+            await deps.markSent(row.user_id, row.language, localDateString(row.timezone, now));
+          } catch (error) {
+            // Already delivered: don't report a failed send, but flag the missing record.
+            console.error(`[learn/reminders] sent but could not be recorded (${row.language})`, error instanceof Error ? error.message : error);
+          }
         }
       } catch (error) {
         failed += 1;
@@ -178,15 +184,18 @@ export function supabaseReminderDeps(
   const streakTable: Record<LanguageId, string> = { fr: "french_user_streaks", es: "spanish_user_streaks" };
   return {
     now: () => new Date(),
-    listActive: async () => {
-      const { data, error } = await admin
-        .from("learn_reminders")
-        .select("*")
-        .or("enabled.eq.true,weekly_summary.eq.true,group_nudges.eq.true")
-        .returns<ReminderRow[]>();
-      if (error) fail("listActiveReminders", error);
-      return data ?? [];
-    },
+    // Paged: a plain select stops at 1000 rows and would silently drop everyone after that.
+    listActive: () =>
+      fetchAll<ReminderRow>("listActiveReminders", (from, to) =>
+        admin
+          .from("learn_reminders")
+          .select("*")
+          .or("enabled.eq.true,weekly_summary.eq.true,group_nudges.eq.true")
+          .order("user_id")
+          .order("language")
+          .range(from, to)
+          .returns<ReminderRow[]>()
+      ),
     lastCompletedOn: async (language, userIds) => {
       const result = new Map<string, string>();
       // Chunked so a big hour never builds an oversized URL.

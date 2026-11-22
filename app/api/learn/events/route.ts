@@ -20,7 +20,8 @@ export async function POST(request: Request): Promise<Response> {
   const parsed = EventSchema.safeParse(await readJson(request));
   if (!parsed.success) return NextResponse.json({ error: "Invalid event." }, { status: 400 });
 
-  const admin = adminClient();
+  // Tests and previews set this so they never write into real analytics.
+  const admin = process.env.LEARN_EVENTS_DISABLED === "1" ? null : adminClient();
   if (!admin) return new NextResponse(null, { status: 204 });
 
   try {

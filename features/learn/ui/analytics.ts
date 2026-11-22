@@ -1,6 +1,6 @@
 "use client";
 
-import type { EventName } from "../domain/events";
+import type { ClientEventName } from "../domain/events";
 
 type Props = Readonly<Record<string, string | number | boolean>>;
 
@@ -8,7 +8,7 @@ type Props = Readonly<Record<string, string | number | boolean>>;
  * Fire-and-forget product event to our own server. Skipped when the browser
  * sends Do Not Track / Global Privacy Control. Never throws and never waits.
  */
-export function track(name: EventName, props: Props & { readonly language?: "fr" | "es" } = {}): void {
+export function track(name: ClientEventName, props: Props & { readonly language?: "fr" | "es" } = {}): void {
   try {
     if (typeof navigator === "undefined" || navigator.doNotTrack === "1" || (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl) return;
     const { language, ...rest } = props;

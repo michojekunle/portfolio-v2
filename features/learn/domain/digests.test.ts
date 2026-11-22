@@ -11,7 +11,11 @@ describe("isWeeklySummaryDue", () => {
     expect(isWeeklySummaryDue(base, SUNDAY_EVENING)).toBe(true);
   });
   it("waits for the learner's own hour", () => {
-    expect(isWeeklySummaryDue({ ...base, time: "18:00" }, SUNDAY_EVENING)).toBe(false);
+    expect(isWeeklySummaryDue({ ...base, time: "22:00" }, SUNDAY_EVENING)).toBe(false);
+  });
+  it("still goes out when the hourly job ran late or missed the exact hour", () => {
+    // Reminder hour 18:00, but the first run that day is at 20:30 local.
+    expect(isWeeklySummaryDue({ ...base, time: "18:00" }, SUNDAY_EVENING)).toBe(true);
   });
   it("is not due on other days", () => {
     expect(isWeeklySummaryDue(base, new Date("2026-11-23T19:30:00Z"))).toBe(false);
@@ -31,8 +35,12 @@ describe("isNudgeHour", () => {
     expect(GROUP_NUDGE_HOUR).toBe(19);
     expect(isNudgeHour(base, at19)).toBe(true);
   });
-  it("not at other hours", () => {
-    expect(isNudgeHour(base, SUNDAY_EVENING)).toBe(false);
+  it("keeps working later in the evening if an earlier run was missed", () => {
+    expect(isNudgeHour(base, SUNDAY_EVENING)).toBe(true); // 20:30 local
+  });
+  it("not before the nudge hour, and not late at night", () => {
+    expect(isNudgeHour(base, new Date("2026-11-21T16:00:00Z"))).toBe(false); // 17:00 local
+    expect(isNudgeHour(base, new Date("2026-11-21T22:30:00Z"))).toBe(false); // 23:30 local
   });
   it("only once a day, and not after the normal reminder already went out", () => {
     expect(isNudgeHour({ ...base, lastNudgeOn: "2026-11-21" }, at19)).toBe(false);

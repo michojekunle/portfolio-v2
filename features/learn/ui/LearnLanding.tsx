@@ -40,7 +40,7 @@ const FAQ: readonly { readonly q: string; readonly a: (language: string) => stri
   {
     q: "What about the voice?",
     a: (language) =>
-      `It uses your device's ${language} voice by default. You can switch on a free natural voice that runs on your own device: a one-time download of about 95 MB, and then it works offline.`,
+      `It uses your device's ${language} voice by default. You can switch on a free natural voice that runs on your own device: a one-time download of about 95 MB, and then it runs on your own device.`,
   },
   { q: "Can I use it on my phone?", a: () => "Yes. It installs like an app from your browser and opens straight to today's page." },
 ];

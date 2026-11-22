@@ -51,9 +51,9 @@ inspos.md
 .impeccable/surfaces
 
 # Large voice-engine binaries, fetched by scripts/vendor-piper.mjs
-/public/vendor/piper/*.wasm
-/public/vendor/piper/*.data
-/public/vendor/piper/ort/
+/public/vendor/piper-v1/*.wasm
+/public/vendor/piper-v1/*.data
+/public/vendor/piper-v1/ort/
 
 # Playwright
 /test-results/

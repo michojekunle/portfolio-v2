@@ -12,7 +12,7 @@
 type PiperModule = typeof import("@mintplex-labs/piper-tts-web");
 
 /**
- * The engine's JS glue is committed under public/vendor/piper and its large
+ * The engine's JS glue is committed under public/vendor/piper-v1 and its large
  * binaries are fetched at build time by scripts/vendor-piper.mjs, so the voice
  * runs entirely from this site (plus the model from Hugging Face). It is
  * loaded at runtime rather than bundled: its Emscripten loader references
@@ -20,7 +20,7 @@ type PiperModule = typeof import("@mintplex-labs/piper-tts-web");
  * the bundle means nobody downloads it until they opt in.
  * The npm package is installed for its types only. Versions are pinned.
  */
-const ENGINE_BASE = "/vendor/piper";
+const ENGINE_BASE = "/vendor/piper-v1";
 const PIPER_URL = `${ENGINE_BASE}/piper-tts-web.js`;
 const WASM_PATHS = {
   onnxWasm: `${ENGINE_BASE}/ort/`,

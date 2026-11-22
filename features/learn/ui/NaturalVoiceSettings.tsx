@@ -6,7 +6,7 @@ import { track } from "./analytics";
 import { useBrowserVoiceEnabled } from "./browser-voice-preference";
 import { useLang } from "./lang-context";
 import { QuietButton } from "./primitives";
-import { speak } from "./speech-io";
+import { setBrowserVoice, speak } from "./speech-io";
 import { describeProgress, startVoiceDownload, useVoiceDownload } from "./voice-download";
 
 /** Turn the free, open-source neural voice on or off. The download runs in the background, with progress. */
@@ -26,8 +26,10 @@ export function NaturalVoiceSettings(): ReactElement {
     track("voice_download_started", { language: pack.id });
     startVoiceDownload(voiceId, () => {
       setEnabled(true);
+      // The app switches its speaking voice on the next render; the sample below must not wait for that.
+      setBrowserVoice(voiceId);
       track("voice_enabled", { language: pack.id });
-      toast.success("Natural voice is on. It now works offline too.");
+      toast.success("Natural voice is on. It runs on your device from now on.");
       speak(sample, 0.9);
     }).catch(() => {
       track("voice_download_failed", { language: pack.id });

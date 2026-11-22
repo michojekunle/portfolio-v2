@@ -5,6 +5,8 @@ import { groupStreak, type MemberActivity } from "./groups";
 
 /** Local hour the group-streak nudge goes out: late enough that most people have had their day, early enough to still do a page. */
 export const GROUP_NUDGE_HOUR = 19;
+/** The nudge stops being useful (and becomes rude) late at night. */
+export const GROUP_NUDGE_LAST_HOUR = 22;
 /** A group streak shorter than this isn't worth a nudge. */
 export const MIN_NUDGE_STREAK = 2;
 
@@ -21,19 +23,23 @@ function localWeekday(timezone: string, now: Date): string {
   return new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: timezone }).format(now);
 }
 
-/** Sundays, at the learner's reminder hour, once. */
+/**
+ * Sundays, from the learner's reminder hour onwards, once. "From" rather than "at":
+ * scheduled jobs run late or get skipped, and a missed hour would otherwise cost a whole week.
+ */
 export function isWeeklySummaryDue(state: DigestState, now: Date): boolean {
   const wantedHour = Number(state.time.split(":")[0]);
   if (!Number.isInteger(wantedHour)) return false;
   if (state.lastWeeklyOn === localDateString(state.timezone, now)) return false;
-  return localWeekday(state.timezone, now) === "Sun" && localHour(state.timezone, now) === wantedHour;
+  return localWeekday(state.timezone, now) === "Sun" && localHour(state.timezone, now) >= wantedHour;
 }
 
-/** The nudge hour, once a day, and not on a day the learner already got their normal reminder. */
+/** From the nudge hour until late evening, once a day, and not on a day the learner already got their normal reminder. */
 export function isNudgeHour(state: DigestState, now: Date): boolean {
   const today = localDateString(state.timezone, now);
   if (state.lastNudgeOn === today || state.lastSentOn === today) return false;
-  return localHour(state.timezone, now) === GROUP_NUDGE_HOUR;
+  const hour = localHour(state.timezone, now);
+  return hour >= GROUP_NUDGE_HOUR && hour <= GROUP_NUDGE_LAST_HOUR;
 }
 
 /**

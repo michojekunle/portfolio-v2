@@ -3,9 +3,9 @@ import { expect, test } from "@playwright/test";
 test.describe("self-hosted voice engine", () => {
   for (const file of ["piper-tts-web.js", "piper.js", "ort.js", "voices.js", "piper_phonemize.wasm", "ort/ort-wasm-simd-threaded.wasm"]) {
     test(`serves ${file} from this site, cacheable`, async ({ request }) => {
-      const response = await request.get(`/vendor/piper/${file}`);
+      const response = await request.get(`/vendor/piper-v1/${file}`);
       expect(response.status(), "run `node scripts/vendor-piper.mjs` if a binary is missing").toBe(200);
-      expect(response.headers()["cache-control"]).toContain("max-age=2592000");
+      expect(response.headers()["cache-control"]).toContain("immutable");
     });
   }
 
@@ -26,6 +26,11 @@ test.describe("API boundaries", () => {
 
   test("events: rejects free-text properties that are too long", async ({ request }) => {
     const response = await request.post("/api/learn/events", { data: { name: "session_started", props: { note: "x".repeat(200) } } });
+    expect(response.status()).toBe(400);
+  });
+
+  test("events: refuses names only the server's own jobs may write", async ({ request }) => {
+    const response = await request.post("/api/learn/events", { data: { name: "reminder_run", props: { checked: 0, sent: 0, failed: 9999 } } });
     expect(response.status()).toBe(400);
   });
 

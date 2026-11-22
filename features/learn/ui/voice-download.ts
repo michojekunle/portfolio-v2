@@ -24,14 +24,21 @@ function set(next: VoiceDownloadState): void {
   for (const listener of listeners) listener();
 }
 
-/** Starts (or joins) the download. `onReady` runs once the voice is usable, even if the screen that asked has gone. */
+/** Callbacks of everyone waiting on the running download, so a second screen asking for the same voice still gets its "ready". */
+const readyCallbacks = new Set<() => void>();
+
+/** Starts (or joins) the download. Each `onReady` runs once the voice is usable, even if the screen that asked has gone. */
 export function startVoiceDownload(voiceId: string, onReady: () => void): Promise<void> {
   if (running) {
     // Asking again for the same voice joins the download in progress; another voice waits its turn.
-    if (runningVoice === voiceId) return running;
+    if (runningVoice === voiceId) {
+      readyCallbacks.add(onReady);
+      return running;
+    }
     return running.catch(() => undefined).then(() => startVoiceDownload(voiceId, onReady));
   }
   runningVoice = voiceId;
+  readyCallbacks.add(onReady);
   const startedAt = Date.now();
   set({ status: "downloading", voiceId, loaded: 0, total: 0, bytesPerSecond: 0 });
   running = (async (): Promise<void> => {
@@ -41,15 +48,25 @@ export function startVoiceDownload(voiceId: string, onReady: () => void): Promis
         const seconds = Math.max(1, (Date.now() - startedAt) / 1000);
         set({ status: "downloading", voiceId, loaded, total, bytesPerSecond: loaded / seconds });
       });
-      set(IDLE);
-      onReady();
     } catch (error) {
       console.error("[learn] natural voice download failed", error);
+      readyCallbacks.clear();
       set({ status: "failed", voiceId });
       throw error;
     } finally {
       running = null;
       runningVoice = null;
+    }
+    set(IDLE);
+    // The voice is downloaded either way; a callback that fails afterwards (say, speaking the sample) is not a failed download.
+    const callbacks = [...readyCallbacks];
+    readyCallbacks.clear();
+    for (const callback of callbacks) {
+      try {
+        callback();
+      } catch (error) {
+        console.error("[learn] voice is ready but a follow-up step failed", error);
+      }
     }
   })();
   return running;

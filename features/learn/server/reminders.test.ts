@@ -51,6 +51,15 @@ describe("runReminderJob", () => {
     expect(d.calls).toEqual(["push", "mark:2026-11-21"]);
   });
 
+  it("counts a delivered reminder as sent even if recording it fails", async () => {
+    const d = deps([row()], {
+      markSent: vi.fn(async () => {
+        throw new Error("db down");
+      }),
+    });
+    expect(await runReminderJob(d)).toEqual({ checked: 1, sent: 1, failed: 0 });
+  });
+
   it("skips learners who already finished today's page", async () => {
     const d = deps([row()], { lastCompletedOn: async () => new Map([["user-1", "2026-11-21"]]) });
     expect((await runReminderJob(d)).sent).toBe(0);

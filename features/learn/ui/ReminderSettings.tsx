@@ -79,7 +79,9 @@ export function ReminderSettings(): ReactElement {
     setBusy(true);
     try {
       let push: PushSubscriptionJSON | null | undefined;
-      if (time !== null && !settings?.push) {
+      // Only a change to the reminder itself may ask for notification permission; ticking an opt-in box must not.
+      const reminderChange = extras.weeklySummary === undefined && extras.groupNudges === undefined;
+      if (reminderChange && time !== null && !settings?.push) {
         push = await subscribeToPush(pack.route);
         if (!push && !email) {
           toast.message("Notifications are off for this site, so I'll email you instead.");
@@ -93,7 +95,7 @@ export function ReminderSettings(): ReactElement {
       });
       if (!response.ok) throw new Error(`Reminder update failed with ${response.status}`);
       setSettings((await response.json()) as Settings);
-      track("reminder_saved", { language: pack.id, enabled: time !== null, email, push: Boolean(push) });
+      track("reminder_saved", { language: pack.id, enabled: time !== null, email, push: push === undefined ? Boolean(settings?.push) : push !== null });
       if (extras.weeklySummary !== undefined) toast.success(extras.weeklySummary ? "Weekly summary on. It arrives by email on Sundays." : "Weekly summary off.");
       else if (extras.groupNudges !== undefined) toast.success(extras.groupNudges ? "Group nudges on." : "Group nudges off.");
       else toast.success(time ? `Reminder set for ${time.replace(":00", "h")} — only on days you haven't done your page.` : "Reminder off.");

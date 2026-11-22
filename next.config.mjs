@@ -41,7 +41,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval is required by Next.js dev/edge runtime; unsafe-inline for RSC inline scripts
-              // blob: the free in-browser voice (Piper) may run in a blob: worker; its engine is self-hosted under /vendor/piper
+              // blob: the free in-browser voice (Piper) may run in a blob: worker; its engine is self-hosted under /vendor/piper-v1
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.instagram.com https://*.tiktok.com https://*.tiktokcdn.com https://*.ttwstatic.com https://vercel.live https://*.vercel.live https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://*.ttwstatic.com https://vercel.live https://*.vercel.live",
               // blob: for next/image output; data: for inline SVG; https: for remote images
@@ -94,10 +94,11 @@ const nextConfig = {
         ],
       },
 
-      // Voice-engine files are pinned and large: let browsers keep them for a month.
+      // Voice-engine files are pinned, large and versioned by path (piper-v1): cache them for good.
+      // Changing a pinned file means a new directory name, never an edit in place.
       {
-        source: "/vendor/piper/(.*)",
-        headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }],
+        source: "/vendor/piper-v1/(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
 
       // Cache OG images for 1 hour

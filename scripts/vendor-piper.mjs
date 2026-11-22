@@ -1,6 +1,6 @@
 /**
  * Downloads the large, static binaries the free in-browser voice needs
- * (Piper phonemizer + ONNX Runtime WASM, ~32 MB) into public/vendor/piper so
+ * (Piper phonemizer + ONNX Runtime WASM, ~32 MB) into public/vendor/piper-v1 so
  * they are served from this site instead of a third-party CDN at runtime.
  *
  * The small JS glue is committed in the repo. These files are pinned to exact
@@ -12,7 +12,7 @@ import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "vendor", "piper");
+const root = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "vendor", "piper-v1");
 
 const FILES = [
   {

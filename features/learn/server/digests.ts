@@ -17,16 +17,19 @@ import {
   type WeekSession,
 } from "../domain/digests";
 import type { MemberActivity } from "../domain/groups";
+import { EMPTY_STREAK, viewStreak } from "../domain/streak";
 import { GROUP_STREAK_MAX_DAYS } from "../domain/groups";
 import type { LanguageId } from "../domain/language";
 import { PersistenceError } from "./errors";
+import { fetchAll } from "./paged";
 import type { ReminderJobDeps, ReminderRow } from "./reminders";
 
 export interface DigestJobDeps {
   readonly now: () => Date;
   readonly listActive: () => Promise<readonly ReminderRow[]>;
   readonly weekSessions: (userId: string, language: LanguageId, sinceDate: string) => Promise<readonly WeekSession[]>;
-  readonly currentStreak: (userId: string, language: LanguageId) => Promise<number>;
+  /** The streak as the app shows it for `today` (the learner's local date). */
+  readonly currentStreak: (userId: string, language: LanguageId, today: string) => Promise<number>;
   readonly lastCompletedOn: ReminderJobDeps["lastCompletedOn"];
   /** For each learner, the members of their group in that language (learners with no group are absent). */
   readonly groupsFor: (language: LanguageId, userIds: readonly string[]) => Promise<ReadonlyMap<string, readonly MemberActivity[]>>;
@@ -60,6 +63,15 @@ function safely<T>(row: ReminderRow, check: () => T, fallback: T): T {
   }
 }
 
+/** The message already went out; if remembering that fails, say so loudly but don't call the send a failure. */
+async function recordSent(kind: string, row: ReminderRow, mark: () => Promise<void>): Promise<void> {
+  try {
+    await mark();
+  } catch (error) {
+    console.error(`[learn/digests] ${kind} was sent but could not be recorded (${row.language}); it may be sent again if the job re-runs this hour`, error instanceof Error ? error.message : error);
+  }
+}
+
 function sevenDaysBefore(localDate: string): string {
   const d = new Date(`${localDate}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() - 6);
@@ -77,11 +89,11 @@ export async function runDigestJob(deps: DigestJobDeps): Promise<DigestResult> {
     weekly.due += 1;
     try {
       const today = localDateString(row.timezone, now);
-      const [sessions, streak] = await Promise.all([deps.weekSessions(row.user_id, row.language, sevenDaysBefore(today)), deps.currentStreak(row.user_id, row.language)]);
+      const [sessions, streak] = await Promise.all([deps.weekSessions(row.user_id, row.language, sevenDaysBefore(today)), deps.currentStreak(row.user_id, row.language, today)]);
       const message = weeklySummaryMessage(row.language, summariseWeek(sessions), streak);
       if ((await deps.sendEmail(row.user_id, message)) === "sent") {
-        await deps.markWeekly(row.user_id, row.language, today);
         weekly.sent += 1;
+        await recordSent("weekly", row, () => deps.markWeekly(row.user_id, row.language, today));
       }
     } catch (error) {
       weekly.failed += 1;
@@ -122,8 +134,8 @@ export async function runDigestJob(deps: DigestJobDeps): Promise<DigestResult> {
         }
         if (row.email && (await deps.sendEmail(row.user_id, message)) === "sent") delivered = true;
         if (delivered) {
-          await deps.markNudge(row.user_id, row.language, today);
           nudges.sent += 1;
+          await recordSent("nudge", row, () => deps.markNudge(row.user_id, row.language, today));
         }
       } catch (error) {
         nudges.failed += 1;
@@ -169,10 +181,19 @@ export function supabaseDigestDeps(
       if (error) fail("weekSessions", error);
       return (data ?? []).map((r) => ({ sessionDate: r.session_date, reviews: r.reviews, reviewsRecalled: r.reviews_recalled, newCards: r.new_cards }));
     },
-    currentStreak: async (userId, language) => {
-      const { data, error } = await admin.from(TABLES[language].streaks).select("current_streak").eq("user_id", userId).maybeSingle<{ current_streak: number }>();
+    // The stored number only changes on completion; viewStreak applies lapses and freezes exactly as the app does.
+    currentStreak: async (userId, language, today) => {
+      const { data, error } = await admin
+        .from(TABLES[language].streaks)
+        .select("current_streak, longest_streak, streak_freezes, last_completed_date, total_completions")
+        .eq("user_id", userId)
+        .maybeSingle<{ current_streak: number; longest_streak: number; streak_freezes: number | null; last_completed_date: string | null; total_completions: number }>();
       if (error) fail("currentStreak", error);
-      return data?.current_streak ?? 0;
+      if (!data) return 0;
+      return viewStreak(
+        { current: data.current_streak, longest: data.longest_streak, freezes: data.streak_freezes ?? EMPTY_STREAK.freezes, lastCompletedDate: data.last_completed_date, totalCompletions: data.total_completions },
+        today
+      ).current;
     },
     groupsFor: async (language, userIds) => {
       const result = new Map<string, MemberActivity[]>();
@@ -198,15 +219,20 @@ export function supabaseDigestDeps(
         const memberIds = [...new Set((members ?? []).map((m) => m.user_id))];
         const since = new Date(Date.now() - (GROUP_STREAK_MAX_DAYS + 2) * 86_400_000).toISOString().slice(0, 10);
         const doneBy = new Map<string, Set<string>>();
-        for (const memberChunk of chunk(memberIds, 100)) {
-          const { data: sessions, error: sessionsError } = await admin
-            .from(TABLES[language].sessions)
-            .select("user_id, session_date")
-            .in("user_id", memberChunk)
-            .gte("session_date", since)
-            .returns<{ user_id: string; session_date: string }[]>();
-          if (sessionsError) fail("groupsFor.sessions", sessionsError);
-          for (const s of sessions ?? []) {
+        for (const memberChunk of chunk(memberIds, 25)) {
+          const sessions = await fetchAll<{ user_id: string; session_date: string }>("groupsFor.sessions", (from, to) =>
+            admin
+              .from(TABLES[language].sessions)
+              .select("user_id, session_date")
+              .in("user_id", memberChunk)
+              .gte("session_date", since)
+              .order("user_id")
+              .order("session_date")
+              .order("id")
+              .range(from, to)
+              .returns<{ user_id: string; session_date: string }[]>()
+          );
+          for (const s of sessions) {
             const set = doneBy.get(s.user_id) ?? new Set<string>();
             set.add(s.session_date);
             doneBy.set(s.user_id, set);

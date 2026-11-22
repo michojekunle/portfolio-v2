@@ -70,6 +70,21 @@ describe("runDigestJob weekly summary", () => {
     expect(d.markWeekly).not.toHaveBeenCalled();
   });
 
+  it("passes the learner's local date so the streak matches what the app shows", async () => {
+    const currentStreak = vi.fn(async () => 4);
+    await runDigestJob(deps([row({ weekly_summary: true })], SUNDAY_8PM, { currentStreak }));
+    expect(currentStreak).toHaveBeenCalledWith("me", "fr", "2026-11-22");
+  });
+
+  it("still counts the email as sent if remembering it fails afterwards", async () => {
+    const d = deps([row({ weekly_summary: true })], SUNDAY_8PM, {
+      markWeekly: vi.fn(async () => {
+        throw new Error("db down");
+      }),
+    });
+    expect((await runDigestJob(d)).weekly).toEqual({ due: 1, sent: 1, failed: 0 });
+  });
+
   it("keeps going when one learner fails", async () => {
     const rows = [row({ user_id: "broken", weekly_summary: true }), row({ user_id: "ok", weekly_summary: true })];
     const d = deps(rows, SUNDAY_8PM, {
@@ -103,8 +118,8 @@ describe("runDigestJob group nudges", () => {
     expect((await runDigestJob(d)).nudges.due).toBe(0);
   });
 
-  it("doesn't nudge outside the nudge hour", async () => {
-    expect((await runDigestJob(deps([nudgeRow()], SUNDAY_8PM))).nudges.due).toBe(0);
+  it("doesn't nudge before the nudge hour", async () => {
+    expect((await runDigestJob(deps([nudgeRow()], new Date("2026-11-21T14:00:00Z")))).nudges.due).toBe(0);
   });
 
   it("removes a revoked push subscription and doesn't count it as sent", async () => {
