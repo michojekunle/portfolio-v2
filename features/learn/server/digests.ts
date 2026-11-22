@@ -6,6 +6,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { localDateString } from "../domain/dates";
 import {
+  DEFAULT_WEEKLY_HOUR,
   groupNudgeMessage,
   isNudgeHour,
   isWeeklySummaryDue,
@@ -32,7 +33,7 @@ export interface DigestJobDeps {
   readonly currentStreak: (userId: string, language: LanguageId, today: string) => Promise<number>;
   readonly lastCompletedOn: ReminderJobDeps["lastCompletedOn"];
   /** For each learner, the members of their group in that language (learners with no group are absent). */
-  readonly groupsFor: (language: LanguageId, userIds: readonly string[]) => Promise<ReadonlyMap<string, readonly MemberActivity[]>>;
+  readonly groupsFor: (language: LanguageId, userIds: readonly string[], now: Date) => Promise<ReadonlyMap<string, readonly MemberActivity[]>>;
   readonly sendPush: ReminderJobDeps["sendPush"];
   readonly sendEmail: ReminderJobDeps["sendEmail"];
   readonly markWeekly: (userId: string, language: LanguageId, localDate: string) => Promise<void>;
@@ -47,7 +48,8 @@ export interface DigestResult {
 
 const stateOf = (row: ReminderRow): DigestState => ({
   timezone: row.timezone,
-  time: row.reminder_time,
+  // With reminders off, reminder_time is just the column default, not something they chose.
+  time: row.enabled ? row.reminder_time : DEFAULT_WEEKLY_HOUR,
   lastWeeklyOn: row.last_weekly_on,
   lastNudgeOn: row.last_nudge_on,
   lastSentOn: row.last_sent_on,
@@ -109,7 +111,7 @@ export async function runDigestJob(deps: DigestJobDeps): Promise<DigestResult> {
     let completed: ReadonlyMap<string, string>;
     let groups: ReadonlyMap<string, readonly MemberActivity[]>;
     try {
-      [completed, groups] = await Promise.all([deps.lastCompletedOn(language, ids), deps.groupsFor(language, ids)]);
+      [completed, groups] = await Promise.all([deps.lastCompletedOn(language, ids), deps.groupsFor(language, ids, now)]);
     } catch (error) {
       nudges.failed += group.length;
       console.error(`[learn/digests] couldn't read group data (${language})`, error instanceof Error ? error.message : error);
@@ -195,7 +197,7 @@ export function supabaseDigestDeps(
         today
       ).current;
     },
-    groupsFor: async (language, userIds) => {
+    groupsFor: async (language, userIds, now) => {
       const result = new Map<string, MemberActivity[]>();
       for (const ids of chunk(userIds, 100)) {
         // Which group each learner is in for this language.
@@ -209,15 +211,19 @@ export function supabaseDigestDeps(
         const groupIds = [...new Set((mine ?? []).map((m) => m.group_id))];
         if (groupIds.length === 0) continue;
 
-        const { data: members, error: membersError } = await admin
-          .from("learn_group_members")
-          .select("group_id, user_id, display_name, joined_at")
-          .in("group_id", groupIds)
-          .returns<{ group_id: string; user_id: string; display_name: string; joined_at: string }[]>();
-        if (membersError) fail("groupsFor.members", membersError);
+        const members = await fetchAll<{ group_id: string; user_id: string; display_name: string; joined_at: string }>("groupsFor.members", (from, to) =>
+          admin
+            .from("learn_group_members")
+            .select("group_id, user_id, display_name, joined_at")
+            .in("group_id", groupIds)
+            .order("group_id")
+            .order("user_id")
+            .range(from, to)
+            .returns<{ group_id: string; user_id: string; display_name: string; joined_at: string }[]>()
+        );
 
-        const memberIds = [...new Set((members ?? []).map((m) => m.user_id))];
-        const since = new Date(Date.now() - (GROUP_STREAK_MAX_DAYS + 2) * 86_400_000).toISOString().slice(0, 10);
+        const memberIds = [...new Set(members.map((m) => m.user_id))];
+        const since = new Date(now.getTime() - (GROUP_STREAK_MAX_DAYS + 2) * 86_400_000).toISOString().slice(0, 10);
         const doneBy = new Map<string, Set<string>>();
         for (const memberChunk of chunk(memberIds, 25)) {
           const sessions = await fetchAll<{ user_id: string; session_date: string }>("groupsFor.sessions", (from, to) =>
@@ -240,7 +246,7 @@ export function supabaseDigestDeps(
         }
 
         const byGroup = new Map<string, MemberActivity[]>();
-        for (const m of members ?? []) {
+        for (const m of members) {
           const list = byGroup.get(m.group_id) ?? [];
           list.push({ userId: m.user_id, displayName: m.display_name, joinedOn: m.joined_at.slice(0, 10), completedOn: [...(doneBy.get(m.user_id) ?? [])] });
           byGroup.set(m.group_id, list);

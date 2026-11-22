@@ -24,9 +24,14 @@ test.describe("API boundaries", () => {
     expect(response.status()).toBe(400);
   });
 
-  test("events: rejects free-text properties that are too long", async ({ request }) => {
-    const response = await request.post("/api/learn/events", { data: { name: "session_started", props: { note: "x".repeat(200) } } });
+  test("events: rejects properties an event doesn't define (no free text)", async ({ request }) => {
+    const response = await request.post("/api/learn/events", { data: { name: "session_started", props: { note: "hello" } } });
     expect(response.status()).toBe(400);
+  });
+
+  test("events: refuses a cross-site POST", async ({ request }) => {
+    const response = await request.post("/api/learn/events", { data: { name: "voice_enabled" }, headers: { origin: "https://evil.example" } });
+    expect(response.status()).toBe(403);
   });
 
   test("events: refuses names only the server's own jobs may write", async ({ request }) => {

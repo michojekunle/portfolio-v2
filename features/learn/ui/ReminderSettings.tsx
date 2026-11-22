@@ -95,7 +95,9 @@ export function ReminderSettings(): ReactElement {
       });
       if (!response.ok) throw new Error(`Reminder update failed with ${response.status}`);
       setSettings((await response.json()) as Settings);
-      track("reminder_saved", { language: pack.id, enabled: time !== null, email, push: push === undefined ? Boolean(settings?.push) : push !== null });
+      if (extras.weeklySummary !== undefined) track("weekly_summary_toggled", { language: pack.id, enabled: extras.weeklySummary });
+      else if (extras.groupNudges !== undefined) track("group_nudges_toggled", { language: pack.id, enabled: extras.groupNudges });
+      else track("reminder_saved", { language: pack.id, enabled: time !== null, email, push: push === undefined ? Boolean(settings?.push) : push !== null });
       if (extras.weeklySummary !== undefined) toast.success(extras.weeklySummary ? "Weekly summary on. It arrives by email on Sundays." : "Weekly summary off.");
       else if (extras.groupNudges !== undefined) toast.success(extras.groupNudges ? "Group nudges on." : "Group nudges off.");
       else toast.success(time ? `Reminder set for ${time.replace(":00", "h")} — only on days you haven't done your page.` : "Reminder off.");
@@ -129,7 +131,7 @@ export function ReminderSettings(): ReactElement {
           className="size-4 accent-(--fr-key)"
         />
         Email me a weekly summary
-        <span className="text-(--fr-soft)">· Sundays</span>
+        <span className="text-(--fr-soft)">· Sundays at {settings.time ? settings.time.replace(":00", "h") : "18h"}</span>
       </label>
       <label className={`fr-ui flex min-h-11 items-center gap-2 px-2 text-sm ${settings.push || settings.email ? "text-(--fr-ink)" : "text-(--fr-soft)"}`}>
         <input

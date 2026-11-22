@@ -1,4 +1,5 @@
 import type { Instrumentation } from "next";
+import { scrubBreadcrumbData, scrubEvent } from "@/lib/sentry-scrub";
 
 /**
  * Server error monitoring (Sentry). Inactive until SENTRY_DSN (or
@@ -12,6 +13,11 @@ export async function register(): Promise<void> {
     dsn,
     environment: process.env.VERCEL_ENV ?? process.env.NODE_ENV,
     tracesSampleRate: 0,
+    beforeBreadcrumb(breadcrumb) {
+      scrubBreadcrumbData(breadcrumb.data);
+      return breadcrumb;
+    },
+    beforeSend: (event) => scrubEvent(event),
   });
 }
 

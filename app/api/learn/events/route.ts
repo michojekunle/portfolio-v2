@@ -13,7 +13,22 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+/** Browsers always send Origin on a cross-site POST; refuse one that isn't this site. */
+function isCrossOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try {
+    return new URL(origin).host !== (request.headers.get("host") ?? new URL(request.url).host);
+  } catch {
+    return true;
+  }
+}
+
+/** Guests have no auth cookie, so skip the Supabase round trip for them (most events). */
+const hasAuthCookie = (request: Request): boolean => /(?:^|;\s*)sb-[^=]*-auth-token/.test(request.headers.get("cookie") ?? "");
+
 export async function POST(request: Request): Promise<Response> {
+  if (isCrossOrigin(request)) return NextResponse.json({ error: "Not allowed." }, { status: 403 });
   const limited = await rateLimited(`learn:events:${clientIp(request)}`, 60);
   if (limited) return limited;
 
@@ -25,11 +40,15 @@ export async function POST(request: Request): Promise<Response> {
   if (!admin) return new NextResponse(null, { status: 204 });
 
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    await recordEvent(admin, parsed.data, user?.id ?? null);
+    let userId: string | null = null;
+    if (hasAuthCookie(request)) {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      userId = user?.id ?? null;
+    }
+    await recordEvent(admin, parsed.data, userId);
   } catch (error) {
     console.error("[learn/events] could not record event", error instanceof Error ? error.message : error);
   }

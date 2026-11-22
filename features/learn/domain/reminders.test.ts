@@ -24,6 +24,11 @@ describe("isReminderDue", () => {
     expect(isReminderDue({ ...base, lastSentOn: "2026-11-21" }, now)).toBe(false);
   });
 
+  it("counts a group-streak nudge sent today as today's notification", () => {
+    expect(isReminderDue({ ...base, lastNudgeOn: "2026-11-21" }, now)).toBe(false);
+    expect(isReminderDue({ ...base, lastNudgeOn: "2026-11-20" }, now)).toBe(true);
+  });
+
   it("ignores malformed times", () => {
     expect(isReminderDue({ ...base, time: "25:00" }, now)).toBe(false);
     expect(isReminderDue({ ...base, time: "soon" }, now)).toBe(false);

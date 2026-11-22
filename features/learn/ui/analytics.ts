@@ -13,8 +13,11 @@ export function track(name: ClientEventName, props: Props & { readonly language?
     if (typeof navigator === "undefined" || navigator.doNotTrack === "1" || (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl) return;
     const { language, ...rest } = props;
     const body = JSON.stringify({ name, language, props: Object.keys(rest).length ? rest : undefined });
-    void fetch("/api/learn/events", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => undefined);
-  } catch {
-    // Analytics must never affect the app.
+    void fetch("/api/learn/events", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch((error: unknown) => {
+      console.warn("[learn] analytics event not sent", error);
+    });
+  } catch (error) {
+    // Analytics must never affect the app, so this is logged and nothing more.
+    console.warn("[learn] analytics event skipped", error);
   }
 }

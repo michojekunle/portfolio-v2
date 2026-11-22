@@ -70,6 +70,17 @@ describe("runDigestJob weekly summary", () => {
     expect(d.markWeekly).not.toHaveBeenCalled();
   });
 
+  it("sends the weekly summary at 18:00 when reminders are off and there's no chosen hour", async () => {
+    // Sunday 18:30 Lagos; reminder_time is only the unused column default ("23:00" here).
+    const d = deps([row({ weekly_summary: true, enabled: false, reminder_time: "23:00" })], new Date("2026-11-22T17:30:00Z"));
+    expect((await runDigestJob(d)).weekly.sent).toBe(1);
+  });
+
+  it("uses the learner's own reminder hour when reminders are on", async () => {
+    const d = deps([row({ weekly_summary: true, enabled: true, reminder_time: "22:00" })], SUNDAY_8PM);
+    expect((await runDigestJob(d)).weekly.due).toBe(0);
+  });
+
   it("passes the learner's local date so the streak matches what the app shows", async () => {
     const currentStreak = vi.fn(async () => 4);
     await runDigestJob(deps([row({ weekly_summary: true })], SUNDAY_8PM, { currentStreak }));
@@ -106,6 +117,17 @@ describe("runDigestJob group nudges", () => {
     expect(result.nudges).toEqual({ due: 1, sent: 1, failed: 0 });
     expect(d.sent[0]).toContain("3 jours");
     expect(d.markNudge).toHaveBeenCalledWith("me", "fr", "2026-11-21");
+  });
+
+  it("asks for group data using the job's clock, not the machine's", async () => {
+    const groupsFor = vi.fn(async () => new Map<string, MemberActivity[]>());
+    await runDigestJob(deps([nudgeRow()], SATURDAY_7PM, { groupsFor }));
+    expect(groupsFor).toHaveBeenCalledWith("fr", ["me"], SATURDAY_7PM);
+  });
+
+  it("doesn't nudge when other members are still missing", async () => {
+    const d = deps([nudgeRow()], SATURDAY_7PM, { groupsFor: async () => new Map([["me", [member("me", streak), member("you", streak)]]]) });
+    expect((await runDigestJob(d)).nudges.due).toBe(0);
   });
 
   it("doesn't nudge someone who already finished today", async () => {

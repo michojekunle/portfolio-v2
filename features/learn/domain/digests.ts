@@ -43,12 +43,16 @@ export function isNudgeHour(state: DigestState, now: Date): boolean {
 }
 
 /**
- * The group's streak as it stands going into tonight, when `learnerId` is
- * one of the people still missing today. Null when there's nothing to nudge about.
+ * The group's streak, when `learnerId` is the one person left to finish today:
+ * that's the only time "just your page is missing" is true and the streak can
+ * still be saved. Null otherwise (already done, others still missing, no streak worth saving).
  */
 export function nudgeStreak(members: readonly MemberActivity[], learnerId: string, today: string): number | null {
   const me = members.find((m) => m.userId === learnerId);
   if (!me || me.completedOn.includes(today)) return null;
+  // Someone who joined today and hasn't finished is excused, exactly as in groupStreak.
+  const othersStillMissing = members.some((m) => m.userId !== learnerId && m.joinedOn < today && !m.completedOn.includes(today));
+  if (othersStillMissing) return null;
   const streak = groupStreak(members, today);
   return streak >= MIN_NUDGE_STREAK ? streak : null;
 }
@@ -86,6 +90,9 @@ export interface DigestMessage {
 }
 
 const plural = (n: number, one: string, many: string): string => `${n} ${n === 1 ? one : many}`;
+
+/** Hour of the weekly summary for learners who have no reminder hour of their own. */
+export const DEFAULT_WEEKLY_HOUR = "18:00";
 
 /** Written in the language being learned, like the daily reminder. */
 export function weeklySummaryMessage(language: LanguageId, stats: WeekStats, streak: number): DigestMessage {

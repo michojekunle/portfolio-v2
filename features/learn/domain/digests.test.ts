@@ -53,8 +53,15 @@ const member = (userId: string, completedOn: string[]): MemberActivity => ({ use
 describe("nudgeStreak", () => {
   const today = "2026-11-21";
   const streakDays = ["2026-11-18", "2026-11-19", "2026-11-20"];
-  it("returns the running streak for someone who hasn't finished today", () => {
+  it("returns the running streak for the one person left to finish today", () => {
     expect(nudgeStreak([member("me", streakDays), member("you", [...streakDays, today])], "me", today)).toBe(3);
+  });
+  it("stays quiet while other members are still missing, so 'just your page' is never untrue", () => {
+    expect(nudgeStreak([member("me", streakDays), member("you", streakDays), member("them", [...streakDays, today])], "me", today)).toBeNull();
+  });
+  it("excuses someone who joined today", () => {
+    const newcomer = { ...member("new", []), joinedOn: today };
+    expect(nudgeStreak([member("me", streakDays), member("you", [...streakDays, today]), newcomer], "me", today)).toBe(3);
   });
   it("is null once the learner has finished", () => {
     expect(nudgeStreak([member("me", [...streakDays, today]), member("you", streakDays)], "me", today)).toBeNull();

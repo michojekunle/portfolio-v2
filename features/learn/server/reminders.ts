@@ -114,7 +114,7 @@ export interface ReminderJobResult {
 
 function dueIgnoringCompletion(row: ReminderRow, now: Date): boolean {
   try {
-    return isReminderDue({ time: row.reminder_time, timezone: row.timezone, lastSentOn: row.last_sent_on, lastCompletedOn: null }, now);
+    return isReminderDue({ time: row.reminder_time, timezone: row.timezone, lastSentOn: row.last_sent_on, lastCompletedOn: null, lastNudgeOn: row.last_nudge_on }, now);
   } catch (error) {
     // A bad stored timezone shouldn't stop everyone else's reminders.
     console.error(`[learn/reminders] unreadable reminder settings (${row.language})`, error instanceof Error ? error.message : error);
