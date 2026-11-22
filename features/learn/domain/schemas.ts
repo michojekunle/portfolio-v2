@@ -45,10 +45,14 @@ export const NewCardSchema = z.object({
   source: z.enum(["lesson", "error"]).default("lesson"),
 });
 
+/** The database stores at most two hours per session. */
+export const MAX_SESSION_SECONDS = 7200;
+
 export const SessionCompleteSchema = z.object({
   clientSessionId: z.string().uuid(),
   timezone: TimeZoneSchema,
-  durationSeconds: z.number().int().min(1).max(7200),
+  // A page left open in a tab for hours still counts: clamp rather than reject, or the learner could never save it.
+  durationSeconds: z.number().int().min(1).transform((seconds) => Math.min(seconds, MAX_SESSION_SECONDS)),
   reviews: z
     .array(z.object({ cardId: z.string().uuid(), grade: GradeSchema }))
     .max(MAX_REVIEWS_PER_SESSION),
