@@ -29,6 +29,17 @@ describe("SessionCompleteSchema", () => {
     expect(SessionCompleteSchema.safeParse(validSession).success).toBe(true);
   });
 
+  it("clamps a session left open for hours instead of rejecting it, so the learner can still save", () => {
+    const parsed = SessionCompleteSchema.safeParse({ ...validSession, durationSeconds: 30_000 });
+    expect(parsed.success).toBe(true);
+    expect(parsed.success && parsed.data.durationSeconds).toBe(7200);
+  });
+
+  it("still rejects a zero or fractional duration", () => {
+    expect(SessionCompleteSchema.safeParse({ ...validSession, durationSeconds: 0 }).success).toBe(false);
+    expect(SessionCompleteSchema.safeParse({ ...validSession, durationSeconds: 1.5 }).success).toBe(false);
+  });
+
   it("requires a uuid idempotency key", () => {
     expect(SessionCompleteSchema.safeParse({ ...validSession, clientSessionId: "abc" }).success).toBe(false);
   });

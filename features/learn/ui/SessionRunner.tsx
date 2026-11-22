@@ -7,7 +7,7 @@ import { Loader2, X } from "lucide-react";
 import { buildGap, pickTileSentence } from "../domain/exercises";
 import { COMMITMENT_STEPS, toCommitment } from "../domain/commitment";
 import { STAGE_SHAPE, practiceStage } from "../domain/progression";
-import type { SessionComplete } from "../domain/schemas";
+import { MAX_SESSION_SECONDS, type SessionComplete } from "../domain/schemas";
 import type { CompletePayload, SessionPayload } from "../server/service";
 import { ActionButton, QuietButton, Trail, type TrailState } from "./primitives";
 import { stopSpeaking } from "./speech-io";
@@ -148,7 +148,7 @@ export function SessionRunner({ payload, onExit, onComplete }: Props): ReactElem
     const body: SessionComplete = {
       clientSessionId: clientSessionId.current,
       timezone: payload.profile.timezone,
-      durationSeconds: Math.max(1, Math.round((Date.now() - startedAt.current) / 1000)),
+      durationSeconds: Math.min(MAX_SESSION_SECONDS, Math.max(1, Math.round((Date.now() - startedAt.current) / 1000))),
       reviews: [...reviews],
       newCards: allNewCards.map((card) => ({ ...card })),
       speakScore,
