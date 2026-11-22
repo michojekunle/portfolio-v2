@@ -49,3 +49,12 @@ public/work/**/_orig/
 
 inspos.md
 .impeccable/surfaces
+
+# Large voice-engine binaries, fetched by scripts/vendor-piper.mjs
+/public/vendor/piper/*.wasm
+/public/vendor/piper/*.data
+/public/vendor/piper/ort/
+
+# Playwright
+/test-results/
+/playwright-report/

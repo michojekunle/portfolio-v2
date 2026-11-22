@@ -2,41 +2,37 @@
 
 import { useEffect, useState, type ReactElement } from "react";
 import { toast } from "sonner";
+import { track } from "./analytics";
 import { useBrowserVoiceEnabled } from "./browser-voice-preference";
 import { useLang } from "./lang-context";
 import { QuietButton } from "./primitives";
 import { speak } from "./speech-io";
+import { describeProgress, startVoiceDownload, useVoiceDownload } from "./voice-download";
 
-type State = { readonly kind: "idle" } | { readonly kind: "downloading"; readonly percent: number } | { readonly kind: "unsupported" };
-
-/** Turn the free, open-source neural voice on or off. Downloads the model once, with progress. */
+/** Turn the free, open-source neural voice on or off. The download runs in the background, with progress. */
 export function NaturalVoiceSettings(): ReactElement {
   const { pack } = useLang();
   const [enabled, setEnabled] = useBrowserVoiceEnabled(pack.id);
-  const [state, setState] = useState<State>({ kind: "idle" });
+  const download = useVoiceDownload();
+  const [supported, setSupported] = useState(true);
 
   useEffect(() => {
-    void import("./piper-voice").then(({ piperSupported }) => {
-      if (!piperSupported()) setState({ kind: "unsupported" });
-    });
+    void import("./piper-voice").then(({ piperSupported }) => setSupported(piperSupported()));
   }, []);
 
-  const turnOn = async (): Promise<void> => {
-    setState({ kind: "downloading", percent: 0 });
-    try {
-      const { downloadVoice } = await import("./piper-voice");
-      await downloadVoice(pack.piperVoice, ({ loaded, total }) => {
-        if (total > 0) setState({ kind: "downloading", percent: Math.min(99, Math.round((loaded / total) * 100)) });
-      });
+  const turnOn = (): void => {
+    const voiceId = pack.piperVoice;
+    const sample = pack.fallbackLessons[0]?.sentences[0]?.fr ?? "";
+    track("voice_download_started", { language: pack.id });
+    startVoiceDownload(voiceId, () => {
       setEnabled(true);
-      setState({ kind: "idle" });
+      track("voice_enabled", { language: pack.id });
       toast.success("Natural voice is on. It now works offline too.");
-      speak(pack.fallbackLessons[0]?.sentences[0]?.fr ?? "", 0.9);
-    } catch (error) {
-      console.error("[learn] natural voice download failed", error);
-      setState({ kind: "idle" });
+      speak(sample, 0.9);
+    }).catch(() => {
+      track("voice_download_failed", { language: pack.id });
       toast.error("The voice didn't download. Check your connection and try again.");
-    }
+    });
   };
 
   const turnOff = async (): Promise<void> => {
@@ -50,16 +46,18 @@ export function NaturalVoiceSettings(): ReactElement {
     }
   };
 
-  if (state.kind === "unsupported") {
+  if (!supported) {
     return <p className="fr-ui px-2 py-3 text-sm text-(--fr-soft)">This browser can&apos;t run the natural voice. Chrome, Edge, Safari 17+ and Firefox can.</p>;
   }
-  if (state.kind === "downloading") {
+  if (download.status === "downloading") {
+    const { percent, label } = describeProgress(download);
     return (
       <div className="px-2 py-2" role="status" aria-live="polite">
-        <p className="fr-ui text-sm text-(--fr-ink)">Downloading the voice… {state.percent}%</p>
+        <p className="fr-ui text-sm text-(--fr-ink)">Downloading the voice… {percent}%</p>
         <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-(--fr-rule)">
-          <div className="h-full bg-(--fr-key) transition-[width]" style={{ width: `${state.percent}%` }} />
+          <div className="h-full bg-(--fr-key) transition-[width]" style={{ width: `${percent}%` }} />
         </div>
+        <p className="fr-ui mt-1 text-xs text-(--fr-soft)">{label}. You can keep using the app; it carries on in the background.</p>
       </div>
     );
   }
@@ -69,8 +67,8 @@ export function NaturalVoiceSettings(): ReactElement {
       <QuietButton onClick={() => void turnOff()}>Turn off</QuietButton>
     </div>
   ) : (
-    <QuietButton onClick={() => void turnOn()} className="text-(--fr-ink)">
-      Turn on (free, about 60 MB once)
+    <QuietButton onClick={turnOn} className="text-(--fr-ink)">
+      Turn on (free, about 95 MB once)
     </QuietButton>
   );
 }
