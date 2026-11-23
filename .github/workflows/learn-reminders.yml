@@ -21,7 +21,15 @@ jobs:
           if [ -z "$SITE_URL" ] || [ -z "$CRON_SECRET" ]; then
             echo "SITE_URL and LEARN_CRON_SECRET (or FRENCH_CRON_SECRET) must be set"; exit 1
           fi
-          status=$(curl -s -o response.json -w "%{http_code}" -X POST "$SITE_URL/api/learn/reminders" \
+          # A trailing slash or http:// in SITE_URL makes the host answer 308 "Redirecting..."; normalise it.
+          # Redirects are then followed only on the same host (curl drops the secret if the host changes).
+          SITE_URL="${SITE_URL%/}"
+          SITE_URL="https://${SITE_URL#*://}"
+          status=$(curl -sL --max-time 240 -o response.json -w "%{http_code}" -X POST "$SITE_URL/api/learn/reminders" \
             -H "Authorization: Bearer $CRON_SECRET" -H "Content-Type: application/json")
           cat response.json; echo
-          [ "$status" -eq 200 ] || { echo "Reminder job failed with $status"; exit 1; }
+          if [ "$status" -ne 200 ]; then
+            echo "Reminder job failed with $status"
+            [ "$status" -eq 401 ] && echo "401: CRON_SECRET here doesn't match LEARN_CRON_SECRET / FRENCH_CRON_SECRET in Vercel (or SITE_URL points at a different host than the secret was set on)."
+            exit 1
+          fi
