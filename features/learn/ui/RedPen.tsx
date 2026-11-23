@@ -3,7 +3,7 @@
 import { useLang } from "./lang-context";
 import type { ReactElement } from "react";
 import { Check, X } from "lucide-react";
-import { diffWords } from "../domain/diff";
+import { diffWords, omissionIndexes } from "../domain/diff";
 
 interface Props {
   /** What the learner produced. */
@@ -20,6 +20,7 @@ interface Props {
 export function RedPen({ original, corrected, correct }: Props): ReactElement {
   const { pack } = useLang();
   const tokens = diffWords(original, corrected);
+  const omissions = omissionIndexes(tokens);
   const hasChanges = tokens.some((token) => token.kind !== "same");
   let strikeIndex = 0;
 
@@ -29,23 +30,52 @@ export function RedPen({ original, corrected, correct }: Props): ReactElement {
         {correct ? <Check className="ml-auto size-5" strokeWidth={2.5} /> : <X className="ml-auto size-5" strokeWidth={2.5} />}
       </span>
       <p lang={pack.id} className="fr-hand text-[24px] leading-8 [overflow-wrap:anywhere]">
-        {tokens
-          .filter((token) => token.kind !== "added")
-          .map((token, i) =>
-            token.kind === "removed" ? (
+        {tokens.map((token, i) => {
+          if (token.kind === "removed") {
+            return (
               <span key={i}>
                 <span className="fr-strike" style={{ ["--i" as string]: strikeIndex++ }}>
                   {token.word}
                 </span>{" "}
               </span>
-            ) : (
-              <span key={i}>{token.word} </span>
-            )
-          )}
+            );
+          }
+          // A word the learner left out: shown where it belongs, like a proofreader's caret.
+          if (token.kind === "added" && omissions.has(i)) {
+            return (
+              <span key={i}>
+                <span className="fr-omit">
+                  <span className="sr-only">missing word: </span>
+                  {token.word}
+                </span>{" "}
+              </span>
+            );
+          }
+          return token.kind === "same" ? <span key={i}>{token.word} </span> : null;
+        })}
       </p>
+      {omissions.size > 0 ? (
+        <p className="fr-ui text-[14px] leading-6 text-(--fr-soft)">
+          <span className="fr-mark" aria-hidden="true">
+            ∧
+          </span>{" "}
+          marks {omissions.size === 1 ? "a word" : "words"} you left out.
+        </p>
+      ) : null}
       {hasChanges ? (
         <p lang={pack.id} className="fr-mark fr-written text-[24px] leading-8 [overflow-wrap:anywhere]" style={{ ["--delay" as string]: `${strikeIndex * 120 + 450}ms` }}>
-          → {corrected}
+          →{" "}
+          {tokens
+            .filter((token) => token.kind !== "removed")
+            .map((token, i) =>
+              token.kind === "added" ? (
+                <span key={i}>
+                  <span className="fr-added">{token.word}</span>{" "}
+                </span>
+              ) : (
+                <span key={i}>{token.word} </span>
+              )
+            )}
         </p>
       ) : null}
     </>

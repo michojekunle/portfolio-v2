@@ -55,3 +55,29 @@ export function diffWords(original: string, corrected: string): readonly DiffTok
   for (; j < b.length; j += 1) tokens.push({ word: b[j], kind: "added" });
   return tokens;
 }
+
+/**
+ * Indexes of "added" tokens that are pure omissions: words the learner left out,
+ * with no struck word beside them to show where the fix goes. (An added word right
+ * next to a removed one is a replacement, and the strike-through already points at it.)
+ * Without marking these, a learner sees nothing wrong with the part they wrote and
+ * never learns that something was missing.
+ */
+export function omissionIndexes(tokens: readonly DiffToken[]): ReadonlySet<number> {
+  const omissions = new Set<number>();
+  let i = 0;
+  while (i < tokens.length) {
+    if (tokens[i].kind !== "added") {
+      i += 1;
+      continue;
+    }
+    // A whole run of added words stands or falls together: "un bon" -> "une bonne" is a run
+    // of two replacements, not one replacement and one omission.
+    let end = i;
+    while (end + 1 < tokens.length && tokens[end + 1].kind === "added") end += 1;
+    const replacesSomething = tokens[i - 1]?.kind === "removed" || tokens[end + 1]?.kind === "removed";
+    if (!replacesSomething) for (let k = i; k <= end; k += 1) omissions.add(k);
+    i = end + 1;
+  }
+  return omissions;
+}

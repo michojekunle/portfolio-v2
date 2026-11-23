@@ -505,6 +505,33 @@
   }
 }
 
+/* A word the learner left out: written in red where it belongs, with a caret. */
+.fr-omit {
+  position: relative;
+  color: var(--fr-mark);
+  padding: 0 0.18em 0 0.5em;
+  margin-inline: 0.1em;
+  border-bottom: 2px dashed var(--fr-mark);
+  animation: fr-enter 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 300ms;
+}
+.fr-omit::before {
+  content: "∧";
+  position: absolute;
+  left: 0.05em;
+  top: 0.55em;
+  font-size: 0.7em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Words the correction added or changed, picked out in the corrected line. */
+.fr-added {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
 .fr-written {
   animation: fr-write 900ms cubic-bezier(0.33, 1, 0.68, 1) both;
   animation-delay: var(--delay, 500ms);
@@ -547,6 +574,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fr-strike::after,
+  .fr-omit,
   .fr-written,
   .fr-underline-drawn::after,
   .fr-enter {
