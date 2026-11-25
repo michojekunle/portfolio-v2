@@ -596,6 +596,67 @@ details > summary::-webkit-details-marker {
   }
 }
 
+/* ── Flashcards (My words) ─────────────────────────────────── */
+
+.fr-flashcard-scene {
+  perspective: 1200px;
+  touch-action: pan-y;
+}
+.fr-flashcard-inner {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fr-flashcard-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+.fr-flashcard-face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 248px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--fr-rule);
+  border-radius: var(--fr-radius);
+  background: var(--fr-paper);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 14px 32px -20px rgb(0 0 0 / 0.22);
+  transition: border-color 160ms;
+}
+.fr-flashcard-face:hover {
+  border-color: color-mix(in oklab, var(--fr-key) 45%, var(--fr-rule));
+}
+.fr-app[data-style="dictionary"] .fr-flashcard-face {
+  border-color: color-mix(in oklab, var(--fr-ink) 28%, var(--fr-rule));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 10px 24px -18px rgb(0 0 0 / 0.16);
+}
+.fr-flashcard-back {
+  transform: rotateY(180deg);
+}
+.fr-flashcard-inner:not(.is-flipped) .fr-flashcard-back,
+.fr-flashcard-inner.is-flipped .fr-flashcard-front {
+  pointer-events: none;
+}
+.fr-flashcard-rule {
+  border-bottom: 1px solid color-mix(in oklab, var(--fr-margin-rule) 48%, transparent);
+}
+.fr-app[data-style="dictionary"] .fr-flashcard-rule {
+  border-bottom-color: var(--fr-rule);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fr-flashcard-inner {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .fr-flashcard-face {
+    border: 1px solid CanvasText;
+  }
+}
+
 
 /* ── Spanish: cuaderno cuadriculado ───────────────────────── */
 .fr-app[data-lang="es"] {

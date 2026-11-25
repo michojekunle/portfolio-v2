@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 const APPS = [
-  { route: "/french", name: "French Daily", start: /Commencer/, greeting: /Bonjour|Bonsoir/ },
-  { route: "/spanish", name: "Spanish Daily", start: /Empezar/, greeting: /Buenos días|Buenas noches|Buenas tardes|Hola/ },
+  { route: "/french", name: "French Daily", langName: "French", myWords: /Mes mots/, start: /Commencer/, greeting: /Bonjour|Bonsoir/, sample: { text: "la boulangerie", english: "the bakery", text2: "sans", english2: "without" } },
+  { route: "/spanish", name: "Spanish Daily", langName: "Spanish", myWords: /Mis palabras/, start: /Empezar/, greeting: /Buenos días|Buenas noches|Buenas tardes|Hola/, sample: { text: "el cambio", english: "the change", text2: "sin", english2: "without" } },
 ] as const;
 
 for (const app of APPS) {
@@ -39,6 +39,53 @@ for (const app of APPS) {
       const body = (await response.json()) as { guest: boolean; lesson: { sentences: unknown[] } };
       expect(body.guest).toBe(true);
       expect(body.lesson.sentences.length).toBeGreaterThan(0);
+    });
+
+    test("my words supports list and flashcard modes", async ({ page }) => {
+      const words = [
+        { id: "w1", text: app.sample.text, english: app.sample.english, notes: "Everyday noun", source: "lesson", strength: "learning", dueAt: "2026-11-25T00:00:00.000Z", intervalDays: 1 },
+        { id: "w2", text: app.sample.text2, english: app.sample.english2, notes: null, source: "error", strength: "new", dueAt: "2026-11-25T00:00:00.000Z", intervalDays: 0 },
+      ];
+
+      await page.route(`**/api${app.route}/session**`, async (route) => {
+        const res = await route.fetch();
+        const json = (await res.json()) as Record<string, unknown> & { profile: Record<string, unknown> };
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ...json, guest: false, profile: { ...json.profile, isNew: false } }),
+        });
+      });
+
+      await page.route(`**/api${app.route}/words`, async (route) => {
+        if (route.request().method() === "PATCH") {
+          const { cardId, action } = route.request().postDataJSON() as { cardId: string; action: "known" | "again" };
+          const target = words.find((w) => w.id === cardId);
+          if (target) target.strength = action === "known" ? "known" : "learning";
+          await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ word: target }) });
+          return;
+        }
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ words }) });
+      });
+
+      await page.goto(app.route);
+      await page.getByRole("button", { name: app.myWords }).click();
+      await expect(page.getByText(app.sample.text)).toBeVisible();
+
+      await page.getByRole("radio", { name: "Flashcards" }).click();
+      await expect(page.getByText("Card 1 of 2", { exact: true })).toBeVisible();
+      await page.getByRole("button", { name: `Show answer for ${app.sample.text}` }).click();
+      await expect(page.getByRole("button", { name: `Show prompt for ${app.sample.english}` })).toBeVisible();
+
+      await page.getByRole("button", { name: "Next card" }).click();
+      await expect(page.getByText("Card 2 of 2", { exact: true })).toBeVisible();
+
+      await page.getByRole("button", { name: /Switch front side/ }).click();
+      await expect(page.getByRole("button", { name: `Show answer for ${app.sample.english2}` })).toBeVisible();
+      await expect(page.getByText(`English → ${app.langName}`)).toBeVisible();
+
+      await page.getByRole("button", { name: "I know this" }).click();
+      await expect(page.getByRole("button", { name: "Practise again" })).toBeVisible();
     });
   });
 }
