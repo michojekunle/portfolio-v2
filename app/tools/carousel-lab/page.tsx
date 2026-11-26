@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TOOL_COLORS } from "@/lib/tool-colors";
 import { MOOD_STYLES } from "./lib/constants";
 import { exportSlideAsPNG, exportSlidesAsPDF, exportSlidesAsZip } from "./lib/export-slides";
@@ -129,6 +129,7 @@ export default function CarouselLabPage(): React.ReactElement {
   const [voiceProfile, setVoiceProfile] = useState<VoiceProfile | null>(null);
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
   const [mobileStudioTab, setMobileStudioTab] = useState<"canvas" | "inspector">("canvas");
+  const studioRef = useRef<HTMLDivElement>(null);
 
   // Hydrate Pro status & check for thread import on mount
   useEffect(() => {
@@ -417,7 +418,12 @@ export default function CarouselLabPage(): React.ReactElement {
     setFontTitle(deck.fontTitle ?? "default");
     setFontBody(deck.fontBody ?? "default");
     resetOverrides();
+    setInputMode("topic");
+    setMobileStudioTab("canvas");
     setImportNotification(`Loaded "${deck.title}" template with ${deck.aesthetic} styling!`);
+    requestAnimationFrame(() => {
+      studioRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   const updateActiveSlide = (field: keyof Slide, value: string): void => {
@@ -538,7 +544,7 @@ export default function CarouselLabPage(): React.ReactElement {
         />
 
         {hasSlides && (
-          <div className="space-y-6">
+          <div ref={studioRef} className="space-y-6">
             {/* Mobile Segmented Switcher (Visible on <lg screens) */}
             <div className="grid grid-cols-2 lg:hidden rounded-xl border border-(--rule) bg-(--bg-2) p-1">
               <button
