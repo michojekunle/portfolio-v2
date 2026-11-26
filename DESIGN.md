@@ -20,11 +20,25 @@ typography:
     fontWeight: 400
     lineHeight: 1.1
     letterSpacing: "-0.02em"
+  headline:
+    fontFamily: "Fraunces, Georgia, serif"
+    fontSize: "1.75rem"
+    fontWeight: 400
+    lineHeight: 1.2
+  title:
+    fontFamily: "Fraunces, Inter, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 500
+    lineHeight: 1.3
   body:
     fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.6
+  caption:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 400
   mono:
     fontFamily: "JetBrains Mono, monospace"
     fontSize: "0.875rem"
@@ -34,6 +48,14 @@ typography:
     fontSize: "11px"
     fontWeight: 500
     letterSpacing: "0.18em"
+  micro:
+    fontFamily: "JetBrains Mono, monospace"
+    fontSize: "10px"
+    fontWeight: 500
+  nano:
+    fontFamily: "JetBrains Mono, monospace"
+    fontSize: "8px"
+    fontWeight: 600
 rounded:
   sm: "2px"
   md: "4px"

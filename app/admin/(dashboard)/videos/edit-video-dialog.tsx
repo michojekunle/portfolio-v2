@@ -14,7 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Pencil, Save } from "lucide-react";
-import type { SiteVideo } from "@/lib/videos/types";
+import { VIDEO_CATEGORIES, type SiteVideo } from "@/lib/videos/types";
+import { validatePlatformUrl } from "@/lib/videos/validation";
 
 interface Props {
   video: SiteVideo;
@@ -28,6 +29,7 @@ export function EditVideoDialog({ video }: Props): React.ReactElement {
     title: video.title,
     description: video.description ?? "",
     section: video.section,
+    category: video.category ?? "General",
     display_order: String(video.display_order),
   });
   const [saving, setSaving] = useState(false);
@@ -45,6 +47,12 @@ export function EditVideoDialog({ video }: Props): React.ReactElement {
   const handleSave = async (): Promise<void> => {
     if (!form.title.trim() || !form.url.trim()) return;
 
+    const urlVerdict = validatePlatformUrl(form.platform, form.url);
+    if (!urlVerdict.ok) {
+      setError(urlVerdict.error);
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
@@ -52,10 +60,11 @@ export function EditVideoDialog({ video }: Props): React.ReactElement {
       .from("site_videos")
       .update({
         platform: form.platform,
-        url: form.url.trim(),
+        url: urlVerdict.normalizedUrl,
         title: form.title.trim(),
         description: form.description.trim() || null,
         section: form.section,
+        category: form.category.trim() || "General",
         display_order: Number(form.display_order) || 0,
       })
       .eq("id", video.id);
@@ -144,6 +153,23 @@ export function EditVideoDialog({ video }: Props): React.ReactElement {
               Description
             </label>
             <Input value={form.description} onChange={set("description")} className="bg-muted/30" />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Category
+            </label>
+            <select
+              value={form.category}
+              onChange={set("category")}
+              className="w-full h-10 bg-muted/30 border border-border rounded-md px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              {VIDEO_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-1.5">

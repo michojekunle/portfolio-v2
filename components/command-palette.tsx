@@ -222,6 +222,9 @@ export function CommandPalette(): React.ReactElement {
     })),
 
     // Pages
+    { label: "The Speaking Ledger", icon: <MessageSquare className="h-4 w-4" />, action: () => navigate("/speaking"), group: "Pages", keywords: "90 days speaking journal prem idea bank" },
+    { label: "Speaking: Today's Session", icon: <MessageSquare className="h-4 w-4" />, action: () => navigate("/speaking/today"), group: "Pages", keywords: "speaking assignment record" },
+    { label: "Speaking: 90-Day Curriculum", icon: <BookOpen className="h-4 w-4" />, action: () => navigate("/speaking/curriculum"), group: "Pages", keywords: "speaking topics curriculum" },
     { label: "Tools", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/tools"), group: "Pages", keywords: "creator suite productivity apps" },
     { label: "Uses", icon: <Wrench className="h-4 w-4" />, action: () => navigate("/uses"), group: "Pages", keywords: "tools setup hardware software" },
     { label: "Guestbook", icon: <MessageSquare className="h-4 w-4" />, action: () => navigate("/guestbook"), group: "Pages", keywords: "sign message" },

@@ -27,6 +27,7 @@ const primaryLinks = [
 ];
 
 const moreLinks = [
+  { name: "Speaking Ledger", href: "/speaking" },
   { name: "Blog", href: "/admin/blog" },
   { name: "Projects", href: "/admin/projects" },
   { name: "Videos", href: "/admin/videos" },

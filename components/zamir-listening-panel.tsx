@@ -163,17 +163,17 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
                 )}
 
                 {isLive && (
-                  <span className="absolute bottom-2.5 right-2.5 flex gap-[3px] items-end h-4 bg-(--bg)/85 backdrop-blur-sm rounded-md px-1.5 py-1 shadow-sm border border-(--rule)/40">
+                  <span className="absolute bottom-2.5 right-2.5 flex gap-0.75 items-end h-4 bg-(--bg)/85 backdrop-blur-sm rounded-md px-1.5 py-1 shadow-sm border border-(--rule)/40">
                     <span
-                      className="w-[3px] h-3 bg-(--v3-accent) rounded-full origin-bottom"
+                      className="w-0.75 h-3 bg-(--v3-accent) rounded-full origin-bottom"
                       style={{ animation: "zamir-eq 0.8s ease-in-out infinite" }}
                     />
                     <span
-                      className="w-[3px] h-3 bg-(--v3-accent) rounded-full origin-bottom"
+                      className="w-0.75 h-3 bg-(--v3-accent) rounded-full origin-bottom"
                       style={{ animation: "zamir-eq 1.2s ease-in-out infinite 0.2s" }}
                     />
                     <span
-                      className="w-[3px] h-3 bg-(--v3-accent) rounded-full origin-bottom"
+                      className="w-0.75 h-3 bg-(--v3-accent) rounded-full origin-bottom"
                       style={{ animation: "zamir-eq 1.0s ease-in-out infinite 0.1s" }}
                     />
                   </span>
@@ -181,7 +181,7 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
               </div>
 
               {/* Track Meta */}
-              <div className="w-full min-w-0 max-w-[420px] px-2">
+              <div className="w-full min-w-0 max-w-105 px-2">
                 {activeTrack.zamirUrl ? (
                   <a
                     href={activeTrack.zamirUrl}
@@ -213,7 +213,7 @@ export function ZamirListeningPanel({ initialData, handle }: Props): React.React
 
               {/* Progress bar — live track only */}
               {isLive && data?.track && (
-                <div className="w-full max-w-[420px]">
+                <div className="w-full max-w-105">
                   <div className="h-1 bg-(--rule) rounded-full overflow-hidden">
                     <div
                       className="h-full bg-(--v3-accent) rounded-full transition-[width] duration-500 ease-linear"

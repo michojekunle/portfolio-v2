@@ -1,20 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { safeNextPath } from "@/lib/auth-redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { GlassCard } from "@/components/admin/ui/glass-card";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
+
+  const rawNext = searchParams.get("next");
+  const destination = rawNext ? safeNextPath(rawNext) : "/admin";
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -32,7 +37,7 @@ export default function AdminLoginPage() {
       return;
     }
 
-    router.push("/admin");
+    router.push(destination);
     router.refresh();
   };
 
@@ -91,5 +96,13 @@ export default function AdminLoginPage() {
         </form>
       </GlassCard>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

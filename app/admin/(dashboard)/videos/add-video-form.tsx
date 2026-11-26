@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus } from "lucide-react";
-import type { VideoPlatform, VideoSection } from "@/lib/videos/types";
+import { VIDEO_CATEGORIES, type VideoPlatform, type VideoSection } from "@/lib/videos/types";
+import { validatePlatformUrl } from "@/lib/videos/validation";
 
 interface VideoFormState {
   platform: VideoPlatform;
@@ -14,6 +15,7 @@ interface VideoFormState {
   title: string;
   description: string;
   section: VideoSection;
+  category: string;
   display_order: string;
 }
 
@@ -23,6 +25,7 @@ const EMPTY: VideoFormState = {
   title: "",
   description: "",
   section: "highlight",
+  category: "General",
   display_order: "0",
 };
 
@@ -44,16 +47,23 @@ export function AddVideoForm(): React.ReactElement {
     e.preventDefault();
     if (!form.title.trim() || !form.url.trim()) return;
 
+    const urlVerdict = validatePlatformUrl(form.platform, form.url);
+    if (!urlVerdict.ok) {
+      setError(urlVerdict.error);
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
     const { error: dbError } = await supabase.from("site_videos").insert([
       {
         platform: form.platform,
-        url: form.url.trim(),
+        url: urlVerdict.normalizedUrl,
         title: form.title.trim(),
         description: form.description.trim() || null,
         section: form.section,
+        category: form.category.trim() || "General",
         display_order: Number(form.display_order) || 0,
         is_published: true,
       },
@@ -137,6 +147,23 @@ export function AddVideoForm(): React.ReactElement {
             Description (optional)
           </label>
           <Input value={form.description} onChange={set("description")} className="bg-muted/30" />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Category
+          </label>
+          <select
+            value={form.category}
+            onChange={set("category")}
+            className="w-full h-10 bg-muted/30 border border-border rounded-md px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+          >
+            {VIDEO_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="space-y-1.5">

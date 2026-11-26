@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Sparkles, Trash, Plus, Copy, Check, ArrowUp, ArrowDown, Smartphone, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Sparkles, Trash, Plus, Copy, Check, ArrowUp, ArrowDown, Smartphone, ChevronRight, Layers, ArrowRight } from "lucide-react";
 import { TOOL_COLORS } from "@/lib/tool-colors";
 
 const { accent: ACCENT, accentSoft: ACCENT_SOFT, accentBorder: ACCENT_BORDER } = TOOL_COLORS["thread-studio"];
@@ -25,6 +26,7 @@ type GenerateResponse = {
 };
 
 export default function ThreadStudioPage(): React.ReactElement {
+  const router = useRouter();
   const [topic, setTopic] = useState("");
   const [roughNotes, setRoughNotes] = useState("");
   const [inputMode, setInputMode] = useState<"topic" | "refine" | "manual">("topic");
@@ -184,6 +186,45 @@ export default function ThreadStudioPage(): React.ReactElement {
       setError("Could not copy to clipboard — please select and copy manually.");
     }
   }, [editedTweets]);
+
+  const exportToCarouselLab = useCallback((): void => {
+    if (editedTweets.length === 0) return;
+    const slides = editedTweets.map((tweet, i) => {
+      const clean = tweet.replace(/^\d+\/\d+\s*/, "").trim();
+      if (i === 0) {
+        const parts = clean.split("\n\n");
+        const title = parts[0]?.trim() || "The Core Insight";
+        const content = parts.slice(1).join("\n\n").trim() || "Swipe to learn the full breakdown.";
+        return { title, content, layout: "hook" as const };
+      }
+      if (i === editedTweets.length - 1) {
+        return {
+          title: "Found this valuable?",
+          content: clean,
+          layout: "cta" as const,
+        };
+      }
+      const lines = clean.split("\n").filter(Boolean);
+      const title = lines[0] && lines[0].length <= 60 ? lines[0] : `Point 0${i}`;
+      const content = lines[0] && lines[0].length <= 60 ? lines.slice(1).join("\n").trim() || clean : clean;
+      return { title, content, layout: "default" as const };
+    });
+
+    try {
+      localStorage.setItem(
+        "carousel_lab_import",
+        JSON.stringify({
+          slides,
+          topic: topic || "Imported Thread",
+          importedAt: Date.now(),
+        })
+      );
+    } catch (err) {
+      console.error("[thread-studio] Failed to store carousel import:", err);
+    }
+
+    router.push("/tools/carousel-lab?import=thread");
+  }, [editedTweets, topic, router]);
 
   const hasThread = editedTweets.length > 0;
 
@@ -473,22 +514,36 @@ export default function ThreadStudioPage(): React.ReactElement {
             {/* Thread Editor output list */}
             {hasThread && (
               <div className="space-y-5">
-                <div className="flex items-center justify-between border-b pb-3 border-(--rule)">
+                <div className="flex items-center justify-between border-b pb-3 border-(--rule) flex-wrap gap-2">
                   <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
                     Tweet Stack Editor
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => void copyAll()}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-mono text-[9px] uppercase tracking-[0.12em] font-semibold transition-all duration-200 cursor-pointer"
-                    style={{
-                      background: copied ? "rgba(34,197,94,0.12)" : ACCENT_SOFT,
-                      color: copied ? "#16a34a" : ACCENT,
-                      border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : ACCENT_BORDER}`,
-                    }}
-                  >
-                    {copied ? "Copied All!" : "Copy Full Thread"}
-                  </button>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => void copyAll()}
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full font-mono text-[9px] uppercase tracking-[0.12em] font-semibold transition-all duration-200 cursor-pointer"
+                      style={{
+                        background: copied ? "rgba(34,197,94,0.12)" : ACCENT_SOFT,
+                        color: copied ? "#16a34a" : ACCENT,
+                        border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : ACCENT_BORDER}`,
+                      }}
+                    >
+                      {copied ? "Copied All!" : "Copy Full Thread"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={exportToCarouselLab}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-mono text-[9px] uppercase tracking-[0.12em] font-bold text-white transition-all duration-200 cursor-pointer shadow-sm hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
+                      style={{ background: "#F59E0B" }}
+                      title="Convert this thread directly into an Instagram / LinkedIn carousel deck"
+                    >
+                      <Layers size={12} />
+                      <span>Export to Carousel Lab</span>
+                      <ArrowRight size={11} />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-4">

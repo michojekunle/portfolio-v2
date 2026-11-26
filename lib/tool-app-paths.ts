@@ -7,6 +7,7 @@ export const TOOL_APP_PREFIXES = [
   "/tools/chapterly",
   "/tools/flowise",
   "/tools/journal",
+  "/speaking",
   "/admin",
   "/french",
   "/spanish",

@@ -1,13 +1,15 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Loader2, Sparkles } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { MagneticWrapper } from "./magnetic-wrapper";
 import { PlatformEmbed } from "./videos/PlatformEmbed";
 import { YoutubeEmbed } from "./videos/YoutubeEmbed";
 import { TopicSuggestionDialog } from "./topic-suggestion-dialog";
 import type { SiteVideo } from "@/lib/videos/types";
+import { cn } from "@/lib/utils";
 
 interface Platform {
   name: string;
@@ -91,10 +93,108 @@ interface Props {
   introVideo: SiteVideo | null;
   featuredVideos: SiteVideo[];
   highlightVideos: SiteVideo[];
+  totalHighlights: number;
+  initialHasMore: boolean;
+  categories: string[];
+  pageSize?: number;
 }
 
-export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Props): React.ReactElement {
+export function VideosClient({
+  introVideo,
+  featuredVideos,
+  highlightVideos,
+  totalHighlights,
+  initialHasMore,
+  categories,
+  pageSize = 6,
+}: Props): React.ReactElement {
   const titleWords = "Watch me build.".split(" ");
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [clips, setClips] = useState<SiteVideo[]>(highlightVideos);
+  const [total, setTotal] = useState<number>(totalHighlights);
+  const [hasMore, setHasMore] = useState<boolean>(initialHasMore);
+  const [loadingCategory, setLoadingCategory] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const loadingMoreRef = useRef<boolean>(false);
+
+  const handleSelectCategory = async (category: string): Promise<void> => {
+    if (category === selectedCategory) return;
+    setSelectedCategory(category);
+    if (category === "all") {
+      setClips(highlightVideos);
+      setTotal(totalHighlights);
+      setHasMore(initialHasMore);
+      return;
+    }
+
+    setLoadingCategory(true);
+    try {
+      const res = await fetch(
+        `/api/videos?category=${encodeURIComponent(category)}&offset=0&limit=${pageSize}`
+      );
+      if (res.ok) {
+        const data = (await res.json()) as {
+          videos: SiteVideo[];
+          total: number;
+          hasMore: boolean;
+        };
+        setClips(data.videos);
+        setTotal(data.total);
+        setHasMore(data.hasMore);
+      }
+    } finally {
+      setLoadingCategory(false);
+    }
+  };
+
+  const loadMoreClips = async (): Promise<void> => {
+    if (!hasMore || loadingMoreRef.current || loadingCategory) return;
+    loadingMoreRef.current = true;
+    setLoadingMore(true);
+    try {
+      const res = await fetch(
+        `/api/videos?category=${encodeURIComponent(selectedCategory)}&offset=${clips.length}&limit=${pageSize}`
+      );
+      if (res.ok) {
+        const data = (await res.json()) as {
+          videos: SiteVideo[];
+          total: number;
+          hasMore: boolean;
+        };
+        setClips((prev) => {
+          const seen = new Set(prev.map((v) => v.id));
+          return [...prev, ...data.videos.filter((v) => !seen.has(v.id))];
+        });
+        setTotal(data.total);
+        setHasMore(data.hasMore);
+      }
+    } finally {
+      loadingMoreRef.current = false;
+      setLoadingMore(false);
+    }
+  };
+
+  // Infinite scroll trigger when scrolling near the end of loaded clips
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasMore) return;
+    if (typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          void loadMoreClips();
+        }
+      },
+      { rootMargin: "350px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasMore, selectedCategory, clips.length, loadingCategory]);
 
   return (
     <>
@@ -134,7 +234,6 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
               projects you see here, shot as it happens.
             </motion.p>
 
-            {/* Recent videos highlighted inline under the heading, if any beyond the sidebar's first pick */}
             {featuredVideos.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -159,7 +258,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
           >
             {introVideo ? (
               <div className="rounded-2xl overflow-hidden border border-(--rule)">
-                <PlatformEmbed video={introVideo} />
+                <PlatformEmbed video={introVideo} eager />
                 <div className="px-4 py-3 bg-(--bg-2)">
                   <div className="font-mono text-xs tracking-wider uppercase mb-0.75" style={{ color: "var(--v3-accent)" }}>
                     Start here
@@ -186,7 +285,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                     {video.platform === "youtube" ? (
                       <YoutubeEmbed url={video.url} title={video.title} />
                     ) : (
-                      <PlatformEmbed video={video} />
+                      <PlatformEmbed video={video} eager />
                     )}
                     <div className="px-2.5 py-2 bg-(--bg-2)">
                       <div className="text-xs font-medium text-(--ink) line-clamp-1">
@@ -201,61 +300,151 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
         </div>
       </section>
 
-      {/* ── Highlights ── */}
+      {/* ── Highlights with Categories + Lazy-Load + Infinite Scroll ── */}
       <section className="max-w-(--maxw) mx-auto px-(--gutter) py-16 md:py-24 border-b border-(--rule)">
-        <div className="flex items-center justify-between mb-8 md:mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 md:mb-10">
           <div>
             <h2 className="font-display text-[28px] md:text-[32px] font-normal tracking-[-0.02em] text-(--ink) m-0 fvs-display">
               Recent clips
             </h2>
+            {total > 0 && (
+              <p className="font-mono text-xs text-muted-foreground mt-1 mb-0 tabular-nums">
+                Showing {clips.length} of {total}
+              </p>
+            )}
           </div>
+
+          {categories.length > 0 && (
+            <div
+              role="group"
+              aria-label="Filter videos by category"
+              className="flex flex-wrap items-center gap-2"
+            >
+              {["all", ...categories].map((cat) => {
+                const active = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => void handleSelectCategory(cat)}
+                    className={cn(
+                      "rounded-full border px-3.5 py-1.5 min-h-9 font-mono text-xs cursor-pointer transition-colors",
+                      active
+                        ? "border-(--ink) bg-(--ink) text-(--bg)"
+                        : "border-(--rule) bg-(--bg-2) text-muted-foreground hover:text-(--ink)"
+                    )}
+                  >
+                    {cat === "all" ? "All" : cat}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {highlightVideos.length > 0 ? (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6 lg:gap-8 space-y-5 md:space-y-6 lg:space-y-8">
-            {highlightVideos.map((video, i) => (
-              <motion.div
-                key={video.id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="group break-inside-avoid relative rounded-[16px] md:rounded-[20px] overflow-hidden border border-(--rule) bg-(--bg-2) transition-all duration-300 hover:border-muted-foreground hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.03)]"
-              >
-                <div className="relative w-full overflow-hidden bg-black/5 dark:bg-white/5">
-                  <PlatformEmbed video={video} />
-                </div>
-                
-                <div className="p-4 md:p-5 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) opacity-80" />
-                      {video.platform}
-                    </div>
-                  </div>
-                  <h3 className="text-[13px] md:text-[14px] font-medium leading-[1.5] text-(--ink) line-clamp-2 m-0 group-hover:text-(--v3-accent) transition-colors duration-200">
-                    {video.title}
-                  </h3>
-                  
-                  <div className="mt-1 flex items-center">
-                    <a
-                      href={video.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-(--v3-accent) transition-colors duration-200"
-                    >
-                      Watch on {video.platform}
-                      <ArrowUpRight size={10} className="ml-0.5" aria-hidden="true" />
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
+        {loadingCategory ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded-[20px] border border-(--rule) bg-(--bg-2) aspect-9/16 animate-pulse"
+              />
             ))}
           </div>
+        ) : clips.length > 0 ? (
+          <>
+            {/* Chunked masonry batches preserve natural embed heights AND prevent existing clips from reflowing across columns when infinite scroll appends new items */}
+            <div className="space-y-6 md:space-y-8">
+              {Array.from(
+                { length: Math.ceil(clips.length / pageSize) },
+                (_, chunkIdx) => clips.slice(chunkIdx * pageSize, (chunkIdx + 1) * pageSize)
+              ).map((chunk, chunkIdx) => (
+                <div
+                  key={`${selectedCategory}-${chunkIdx}`}
+                  className="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6 lg:gap-8 space-y-5 md:space-y-6 lg:space-y-8"
+                >
+                  {chunk.map((video, i) => (
+                    <motion.article
+                      key={video.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{
+                        duration: 0.5,
+                        delay: Math.min(i, 5) * 0.06,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="group break-inside-avoid relative rounded-2xl md:rounded-[20px] overflow-hidden border border-(--rule) bg-(--bg-2) transition-all duration-300 hover:border-muted-foreground hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.03)]"
+                    >
+                      <div className="relative w-full overflow-hidden bg-black/5 dark:bg-white/5">
+                        <PlatformEmbed video={video} />
+                      </div>
+
+                      <div className="p-4 md:p-5 flex flex-col gap-2">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-(--v3-accent) opacity-80" />
+                            {video.platform}
+                          </div>
+                          {video.category && (
+                            <span className="rounded-full border border-(--rule) px-2.5 py-0.5 font-mono text-[11px] text-muted-foreground">
+                              {video.category}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-[13px] md:text-[14px] font-medium leading-normal text-(--ink) line-clamp-2 m-0 group-hover:text-(--v3-accent) transition-colors duration-200">
+                          {video.title}
+                        </h3>
+
+                        <div className="mt-1 flex items-center">
+                          <a
+                            href={video.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-(--v3-accent) transition-colors duration-200"
+                          >
+                            Watch on {video.platform}
+                            <ArrowUpRight size={10} className="ml-0.5" aria-hidden="true" />
+                          </a>
+                        </div>
+                      </div>
+                    </motion.article>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Infinite scroll sentinel & explicit Load More fallback */}
+            {hasMore && (
+              <div
+                ref={sentinelRef}
+                className="mt-10 flex flex-col items-center justify-center gap-3"
+              >
+                <button
+                  type="button"
+                  onClick={() => void loadMoreClips()}
+                  disabled={loadingMore}
+                  className="inline-flex items-center gap-2 rounded-full border border-(--rule) bg-(--bg-2) px-5 py-2.5 min-h-10.5 font-mono text-xs uppercase tracking-wider text-(--ink) hover:border-(--ink) cursor-pointer disabled:opacity-50"
+                >
+                  {loadingMore ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                      Loading more...
+                    </>
+                  ) : (
+                    `Load more (${total - clips.length} remaining)`
+                  )}
+                </button>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="rounded-[20px] md:rounded-[24px] border border-dashed border-(--rule) py-12 md:py-16 text-center bg-(--bg-2)/50">
-            <p className="text-[13px] md:text-[14px] text-muted-foreground m-0 max-w-[32ch] mx-auto px-4">
-              New clips get added here regularly. Check back soon for more content.
+          <div className="rounded-[20px] md:rounded-3xl border border-dashed border-(--rule) py-12 md:py-16 text-center bg-(--bg-2)/50">
+            <p className="text-[14px] text-muted-foreground m-0 max-w-[32ch] mx-auto px-4">
+              {selectedCategory === "all"
+                ? "New clips get added here regularly. Check back soon for more content."
+                : `No clips in "${selectedCategory}" yet.`}
             </p>
           </div>
         )}
@@ -286,7 +475,6 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
                   aria-label={`Watch on ${platform.name} — ${platform.handle}`}
                   className="group relative flex flex-col h-full no-underline p-8 max-[480px]:p-6 rounded-[20px] border border-(--rule) bg-(--bg-2) overflow-hidden transition-colors duration-200 hover:border-muted-foreground"
                 >
-                  {/* Accent glow, top-right */}
                   <div
                     className="absolute -top-15 -right-15 w-40 h-40 rounded-full opacity-[0.12] blur-2.5 transition-opacity duration-300 group-hover:opacity-[0.2]"
                     style={{ background: platform.color }}
@@ -344,7 +532,7 @@ export function VideosClient({ introVideo, featuredVideos, highlightVideos }: Pr
           <MagneticWrapper strength={15}>
             <TopicSuggestionDialog>
               <button
-                className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase font-medium cursor-pointer px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-0.25"
+                className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase font-medium cursor-pointer px-4.5 py-2.5 rounded-full border border-(--rule) text-(--ink) transition-all duration-200 hover:border-muted-foreground hover:-translate-y-px"
               >
                 Suggest a topic
                 <ArrowUpRight size={13} aria-hidden="true" />
