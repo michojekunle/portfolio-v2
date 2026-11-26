@@ -140,7 +140,7 @@ export function CanvasCustomizerPanel({
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
           Design Archetypes & Templates
         </div>
-        <span className="text-[10px] font-mono text-emerald-400 font-medium">9 Archetypes</span>
+        <span className="text-[10px] font-mono text-emerald-400 font-medium">{TEMPLATE_METAS.length} Archetypes</span>
       </div>
 
       {/* Active Movement Live Preview Card */}

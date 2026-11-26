@@ -60,8 +60,8 @@ describe("Carousel Lab - Starter Decks Catalog Integrity", () => {
 });
 
 describe("Carousel Lab - Design Archetypes & Customizer Metas", () => {
-  it("should define all 9 core aesthetic moods in TEMPLATE_METAS", () => {
-    expect(TEMPLATE_METAS.length).toBe(9);
+  it("should define all 10 core aesthetic moods in TEMPLATE_METAS", () => {
+    expect(TEMPLATE_METAS.length).toBe(10);
 
     TEMPLATE_METAS.forEach((meta) => {
       expect(AESTHETIC_MOODS).toContain(meta.id);
@@ -71,6 +71,22 @@ describe("Carousel Lab - Design Archetypes & Customizer Metas", () => {
       expect(meta.badge.length).toBeGreaterThan(0);
       expect(meta.description.length).toBeGreaterThan(10);
     });
+  });
+
+  it("should include the Minimalist Notes archetype and starter deck matching the Notes card aesthetic", () => {
+    const notesStyle = MOOD_STYLES["Minimalist Notes"];
+    expect(notesStyle.bg).toBe("#ffffff");
+    expect(notesStyle.accent).toBe("#FF6B35");
+    expect(notesStyle.badgeBg).toBe("#0a0a0a");
+    expect(notesStyle.badgeColor).toBe("#ffffff");
+    expect(notesStyle.showDivider).toBe(false);
+
+    const notesDeck = STARTER_DECKS.find((d) => d.id === "minimalist-notes");
+    expect(notesDeck).toBeDefined();
+    expect(notesDeck?.aesthetic).toBe("Minimalist Notes");
+    expect(notesDeck?.backgroundStyle).toBe("mesh");
+    expect(notesDeck?.topRightTag).toBe("Notes");
+    expect(notesDeck?.logoText).toBe("");
   });
 
   it("should have complete style configurations in MOOD_STYLES for each aesthetic", () => {

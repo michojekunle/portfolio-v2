@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { TOOL_COLORS } from "@/lib/tool-colors";
 import { MOOD_STYLES } from "./lib/constants";
 import { exportSlideAsPNG, exportSlidesAsPDF, exportSlidesAsZip } from "./lib/export-slides";
+import { CAROUSEL_FONT_VARIABLES, CAROUSEL_MONO_FONT, CAROUSEL_SANS_FONT, resolveCarouselFont } from "./lib/fonts";
 import type {
   ActiveStyle,
   AestheticMood,
@@ -80,6 +81,7 @@ function getThemeForAesthetic(mood: AestheticMood): string {
       return "Editorial";
     case "Maximalist":
       return "Bold";
+    case "Minimalist Notes":
     case "Minimalist Clean":
     case "Minimalist":
     default:
@@ -203,6 +205,8 @@ export default function CarouselLabPage(): React.ReactElement {
 
   // Resolved style + brand config, threaded into both the live preview and
   // the canvas exporter so the two can never independently drift.
+  const rawTitleFont = fontTitle !== "default" ? fontTitle : activeMoodStyle.fontTitle;
+  const rawBodyFont = fontBody !== "default" ? fontBody : activeMoodStyle.fontBody;
   const activeStyle: ActiveStyle = {
     bg: customBg || activeMoodStyle.bg,
     text: customText || activeMoodStyle.text,
@@ -211,13 +215,17 @@ export default function CarouselLabPage(): React.ReactElement {
     border: activeMoodStyle.border,
     borderWidth: activeMoodStyle.borderWidth,
     borderRadius: activeMoodStyle.borderRadius,
-    fontTitle: fontTitle !== "default" ? fontTitle : activeMoodStyle.fontTitle,
-    fontBody: fontBody !== "default" ? fontBody : activeMoodStyle.fontBody,
+    fontTitle: resolveCarouselFont(rawTitleFont),
+    fontBody: resolveCarouselFont(rawBodyFont),
+    fontMono: CAROUSEL_MONO_FONT,
+    fontSans: CAROUSEL_SANS_FONT,
     titleScale,
     bodyScale,
     italic: activeMoodStyle.isItalicTitle,
     divider: activeMoodStyle.showDivider,
     shadow: activeMoodStyle.shadow,
+    badgeBg: activeMoodStyle.badgeBg,
+    badgeColor: activeMoodStyle.badgeColor,
   };
 
   const brandConfig: BrandConfig = {
@@ -404,8 +412,10 @@ export default function CarouselLabPage(): React.ReactElement {
     setAspectRatio(deck.aspectRatio);
     setBackgroundStyle(deck.backgroundStyle);
     setTopRightTag(deck.topRightTag);
-    if (deck.logoText) setLogoText(deck.logoText);
+    if (deck.logoText !== undefined) setLogoText(deck.logoText);
     if (deck.logoMark) setLogoMark(deck.logoMark);
+    setFontTitle(deck.fontTitle ?? "default");
+    setFontBody(deck.fontBody ?? "default");
     resetOverrides();
     setImportNotification(`Loaded "${deck.title}" template with ${deck.aesthetic} styling!`);
   };
@@ -472,7 +482,7 @@ export default function CarouselLabPage(): React.ReactElement {
   };
 
   return (
-    <main id="main-content" tabIndex={-1} className="outline-none min-h-screen" style={{ background: "var(--bg)" }}>
+    <main id="main-content" tabIndex={-1} className={`outline-none min-h-screen ${CAROUSEL_FONT_VARIABLES}`} style={{ background: "var(--bg)" }}>
       <PageHeader
         accent={ACCENT}
         accentSoft={ACCENT_SOFT}

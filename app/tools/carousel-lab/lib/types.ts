@@ -7,6 +7,7 @@ export const AESTHETIC_MOODS = [
   "Premium Editorial (Zamir)",
   "Light Editorial (Zamir Light)",
   "Brutalist Punch",
+  "Minimalist Notes",
   "Minimalist Clean",
   "Minimalist",
   "Maximalist",
@@ -38,6 +39,8 @@ export interface MoodStyle {
   isItalicTitle: boolean;
   showDivider: boolean;
   shadow: string;
+  badgeBg?: string;
+  badgeColor?: string;
 }
 
 export type BackgroundStyle = "solid" | "gradient" | "mesh";
@@ -67,11 +70,15 @@ export interface ActiveStyle {
   borderRadius: number;
   fontTitle: string;
   fontBody: string;
+  fontMono?: string;
+  fontSans?: string;
   titleScale: number;
   bodyScale: number;
   italic: boolean;
   divider: boolean;
   shadow: string;
+  badgeBg?: string;
+  badgeColor?: string;
 }
 
 // Which drawn mark fills the logo badge when no image is uploaded.

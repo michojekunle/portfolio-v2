@@ -79,6 +79,46 @@ export interface StarterDeck {
 export const STARTER_DECKS: StarterDeck[] = [
   // ── TRACK 1: SIMPLISTIC & MINIMAL ──────────────────────────────────────────
   {
+    id: "minimalist-notes",
+    title: "Notes Card (White + Mesh)",
+    subtitle: "White card on peach mesh glow, black MO badge, Notes header & geometric sans",
+    track: "simplistic",
+    trackLabel: "Simplistic",
+    category: "Design & Craft",
+    targetAudience: "Writers, Builders & Note-Takers",
+    intention: "Publish calm, readable reading notes on a crisp white card with the signature MO badge and soft peach glow.",
+    aesthetic: "Minimalist Notes",
+    aspectRatio: "portrait",
+    backgroundStyle: "mesh",
+    topRightTag: "Notes",
+    creatorName: "Michael Ojekunle",
+    creatorHandle: "michaelojekunle.dev",
+    logoText: "",
+    logoMark: "mo",
+    slides: [
+      {
+        title: "3 Things I Learned Today About Building a Life That Lasts",
+        content: "I went back to the beginning of The Intelligent Investor today, and somehow ended up thinking about much more than money. I learned about principles, stewardship, and transcendence.",
+        layout: "hook",
+      },
+      {
+        title: "PRINCIPLES > CLEVERNESS",
+        content: "Sound principles compound. You don't need to be the smartest person in the room to win over the long term. In investing, trying to constantly outsmart the market can become a liability.",
+        layout: "default",
+      },
+      {
+        title: "INVEST, DON'T SPECULATE",
+        content: "A good investor thinks more like a business owner than a trader. You don't buy a business because you think its price will move tomorrow. You ask: Is this fundamentally worth owning?",
+        layout: "default",
+      },
+      {
+        title: "Read More Notes",
+        content: "Read weekly field notes on principles, software architecture, and craft at michaelojekunle.dev.",
+        layout: "cta",
+      },
+    ],
+  },
+  {
     id: "simple-clean",
     title: "Pure Minimal: Text & Heading",
     subtitle: "Stark Swiss typography, high-contrast white space & focused clarity",

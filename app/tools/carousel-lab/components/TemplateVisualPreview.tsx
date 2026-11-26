@@ -630,7 +630,40 @@ export function TemplateVisualPreview({
   }
 
   // ───────────────────────────────────────────────────────────────────────────
-  // 10. MINIMALIST CLEAN (Stark Swiss Typography)
+  // 10. MINIMALIST NOTES (Signature White Card + Peach Mesh + Dark MO Badge)
+  // ───────────────────────────────────────────────────────────────────────────
+  if (aesthetic === "Minimalist Notes") {
+    return (
+      <div
+        className={`${aspectClass} shrink-0 rounded-xl p-2.5 flex flex-col justify-between overflow-hidden border border-[#E5E5E5] relative select-none font-sans ${className}`}
+        style={{ background: "#FFFFFF", color: "#111111", boxShadow: "0 6px 18px rgba(255,107,53,0.14), 0 2px 8px rgba(0,0,0,0.06)" }}
+      >
+        <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-1">
+          <div className="w-3.5 h-3.5 rounded-[4px] bg-[#0A0A0A] text-white flex items-center justify-center text-[6px] font-bold">
+            M
+          </div>
+          <span className="text-[6px] font-mono text-[#737373]">Notes</span>
+        </div>
+
+        <div className="my-auto space-y-1">
+          <div className="text-[9px] font-bold text-[#111111] leading-tight line-clamp-2">
+            {slideTitle}
+          </div>
+          <div className="text-[6.5px] text-[#555555] line-clamp-3 leading-normal">
+            {slideContent}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-0.75 text-[6px] font-mono">
+          <span className="text-[#737373]">{creatorName}</span>
+          <span className="font-bold text-[#111111]">{creatorHandle.toLowerCase()}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // 11. MINIMALIST CLEAN (Stark Swiss Typography)
   // ───────────────────────────────────────────────────────────────────────────
   return (
     <div

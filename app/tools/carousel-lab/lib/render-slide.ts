@@ -213,9 +213,14 @@ export function drawSlideToCanvas(
   // single-line assumption here would let a longer brand name collide with
   // the top-right tag with no warning, since canvas text never wraps on
   // its own the way a DOM <div> does.
+  const monoStack = style.fontMono || FONT_MONO_STACK;
+  const sansStack = style.fontSans || FONT_SANS_STACK;
+  const badgeBg = style.badgeBg ?? style.accent + "1a";
+  const badgeColor = style.badgeColor ?? style.accent;
+
   const logoSize = 28 * scale;
-  const brandFont = "bold " + Math.round(12 * scale) + "px " + FONT_SANS_STACK;
-  const tagFont = "bold " + Math.round(9 * scale) + "px " + FONT_MONO_STACK;
+  const brandFont = "bold " + Math.round(12 * scale) + "px " + sansStack;
+  const tagFont = "bold " + Math.round(9 * scale) + "px " + monoStack;
   const brandLineHeight = 15 * scale;
 
   let headerHeight = logoSize;
@@ -224,7 +229,7 @@ export function drawSlideToCanvas(
     ctx.font = tagFont;
     const tagWidth = ctx.measureText(brand.topRightTag).width;
     const brandMaxWidth = width - margin * 2 - logoSize - 8 * scale - tagWidth - 16 * scale;
-    brandLines = wrap(brand.logoText, Math.max(brandMaxWidth, 40 * scale), brandFont);
+    brandLines = brand.logoText.trim() ? wrap(brand.logoText, Math.max(brandMaxWidth, 40 * scale), brandFont) : [];
     headerHeight = Math.max(logoSize, brandLines.length * brandLineHeight);
   }
   const headerBottom = brand.showBranding && layout !== "cta" ? margin + headerHeight + 10 * scale : margin;
@@ -240,7 +245,7 @@ export function drawSlideToCanvas(
     const badgeY = margin + (headerHeight - logoSize) / 2;
 
     // Logo icon badge background
-    ctx.fillStyle = style.accent + "1a";
+    ctx.fillStyle = badgeBg;
     ctx.beginPath();
     ctx.roundRect(margin, badgeY, logoSize, logoSize, 8 * scale);
     ctx.fill();
@@ -266,12 +271,12 @@ export function drawSlideToCanvas(
         margin + (logoSize - markSize) / 2,
         badgeY + (logoSize - markSize) / 2,
         markSize,
-        style.accent,
-        style.accent
+        badgeColor,
+        badgeColor
       );
     } else {
-      ctx.fillStyle = style.accent;
-      ctx.font = "bold " + Math.round(12 * scale) + "px " + FONT_SANS_STACK;
+      ctx.fillStyle = badgeColor;
+      ctx.font = "bold " + Math.round(12 * scale) + "px " + sansStack;
       ctx.textAlign = "center";
       const monogram = (brand.logoText.trim()[0] || brand.creatorName.trim()[0] || "M").toUpperCase();
       ctx.fillText(monogram, margin + logoSize / 2, badgeY + logoSize / 2 + 4 * scale);
@@ -282,11 +287,13 @@ export function drawSlideToCanvas(
     // via the real Canvas Text API instead of the old join(" ") hack, which
     // inserted a full space between every character and exploded in width
     // the moment the brand name became more than one short word.
-    if ("letterSpacing" in ctx) ctx.letterSpacing = `${scale}px`;
-    const brandBlockHeight = brandLines.length * brandLineHeight;
-    const brandStartY = margin + (headerHeight - brandBlockHeight) / 2 + brandLineHeight - 4 * scale;
-    lines(brandLines, margin + logoSize + 8 * scale, brandStartY, brandLineHeight, style.accent, brandFont);
-    if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+    if (brandLines.length > 0) {
+      if ("letterSpacing" in ctx) ctx.letterSpacing = `${scale}px`;
+      const brandBlockHeight = brandLines.length * brandLineHeight;
+      const brandStartY = margin + (headerHeight - brandBlockHeight) / 2 + brandLineHeight - 4 * scale;
+      lines(brandLines, margin + logoSize + 8 * scale, brandStartY, brandLineHeight, style.accent, brandFont);
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+    }
 
     // Top right tag
     ctx.fillStyle = style.text + "80";
@@ -365,7 +372,7 @@ export function drawSlideToCanvas(
     if (slide.title) {
       const badgeY = startY + contentH + spacing;
       const badgeText = slide.title.toUpperCase();
-      const badgeFont = `bold ${Math.round(10 * scale)}px ${FONT_MONO_STACK}`;
+      const badgeFont = `bold ${Math.round(10 * scale)}px ${monoStack}`;
       ctx.font = badgeFont;
       const textW = ctx.measureText(badgeText).width;
       const badgeW = textW + 28 * scale;
@@ -382,7 +389,7 @@ export function drawSlideToCanvas(
       ctx.textAlign = "left"; // reset
     }
   } else if (layout === "metrics") {
-    const numFont = `bold ${Math.round(56 * scale)}px ${FONT_MONO_STACK}`;
+    const numFont = `bold ${Math.round(56 * scale)}px ${monoStack}`;
     const numLineHeight = 56 * scale;
     const titleFont = `bold ${Math.round(20 * scale * style.titleScale)}px ${style.fontTitle}`;
     const titleLineHeight = 26 * scale * style.titleScale;
@@ -427,7 +434,7 @@ export function drawSlideToCanvas(
     const avatarRadius = 30 * scale;
     const titleFont = `bold ${Math.round(20 * scale * style.titleScale)}px ${style.fontTitle}`;
     const bodyFont = `${Math.round(12 * scale * style.bodyScale)}px ${style.fontBody}`;
-    const btnFont = `bold ${Math.round(12 * scale)}px ${FONT_MONO_STACK}`;
+    const btnFont = `bold ${Math.round(12 * scale)}px ${monoStack}`;
     const btnHeight = 36 * scale;
     const ctaTitleLineHeight = 26 * scale * style.titleScale;
     const ctaBodyLineHeight = 18 * scale * style.bodyScale;
@@ -465,7 +472,7 @@ export function drawSlideToCanvas(
       drawLogoMark(ctx, brand.logoMark, avatarCx - avatarMarkSize / 2, avatarCy - avatarMarkSize / 2, avatarMarkSize, style.bg, style.bg);
     } else {
       ctx.fillStyle = style.bg;
-      ctx.font = `bold ${Math.round(16 * scale)}px ${FONT_SANS_STACK}`;
+      ctx.font = `bold ${Math.round(16 * scale)}px ${sansStack}`;
       ctx.textAlign = "center";
       const initials = brand.creatorName
         .split(" ")
@@ -522,7 +529,7 @@ export function drawSlideToCanvas(
     currentY = lines(contentLines, margin, currentY + spacing, bodyLineHeight, style.subtext, bodyFont);
 
     if (slide.emoji) {
-      ctx.font = `${Math.round(36 * scale)}px ${FONT_SANS_STACK}`;
+      ctx.font = `${Math.round(36 * scale)}px ${sansStack}`;
       ctx.fillText(slide.emoji, margin, currentY + spacing + 30 * scale);
     }
   }
@@ -539,12 +546,12 @@ export function drawSlideToCanvas(
 
   // 5. Creator Name (Bottom Left) — matches the preview's font-mono footer text
   ctx.fillStyle = style.text + "80";
-  ctx.font = "bold " + Math.round(10 * scale) + "px " + FONT_MONO_STACK;
+  ctx.font = "bold " + Math.round(10 * scale) + "px " + monoStack;
   ctx.fillText(brand.creatorName, margin, height - margin);
 
   // 6. Brand Website Link (Bottom Right)
   ctx.fillStyle = style.text;
-  ctx.font = "bold " + Math.round(11 * scale) + "px " + FONT_MONO_STACK;
+  ctx.font = "bold " + Math.round(11 * scale) + "px " + monoStack;
   ctx.textAlign = "right";
   ctx.fillText(brand.creatorHandle.toLowerCase(), width - margin, height - margin);
   ctx.textAlign = "left"; // reset

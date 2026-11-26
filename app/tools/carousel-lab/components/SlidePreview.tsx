@@ -34,18 +34,20 @@ function LogoBadge({
   logoMark: LogoMark;
   creatorName: string;
 }): React.ReactElement {
+  const badgeBg = style.badgeBg ?? style.accent + "20";
+  const badgeColor = style.badgeColor ?? style.accent;
   return (
     <div
       className="w-7 h-7 rounded-lg flex items-center justify-center text-[12px] font-bold overflow-hidden shrink-0"
-      style={{ background: style.accent + "20", color: style.accent }}
+      style={{ background: badgeBg, color: badgeColor }}
     >
       {logoImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={logoImage} alt="" className="w-full h-full object-cover" />
       ) : logoMark === "mo" ? (
-        <MoSignatureInline height={16} color={style.accent} />
+        <MoSignatureInline height={16} color={badgeColor} />
       ) : logoMark === "amd" ? (
-        <AmdSignatureInline height={16} color={style.accent} accent={style.accent} />
+        <AmdSignatureInline height={16} color={badgeColor} accent={badgeColor} />
       ) : (
         (logoText.trim()[0] || creatorName.trim()[0] || "M").toUpperCase()
       )}
@@ -275,11 +277,13 @@ export function SlidePreview({
           <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: style.border }}>
             <div className="flex items-center gap-2">
               <LogoBadge style={style} logoImage={logoImage} logoText={logoText} logoMark={logoMark} creatorName={creatorName} />
-              <div className="text-[12px] font-bold tracking-widest uppercase" style={{ color: style.accent }}>
-                {logoText}
-              </div>
+              {logoText.trim() && (
+                <div className="text-[12px] font-bold tracking-widest uppercase" style={{ color: style.accent, fontFamily: style.fontSans }}>
+                  {logoText}
+                </div>
+              )}
             </div>
-            <div className="font-mono text-[9px] tracking-wider uppercase" style={{ color: style.text + "80" }}>
+            <div className="font-mono text-[9px] tracking-wider" style={{ color: style.text + "80", fontFamily: style.fontMono }}>
               {topRightTag}
             </div>
           </div>
@@ -300,10 +304,10 @@ export function SlidePreview({
         {style.divider && layout !== "split" && <div className="h-0.25 w-full" style={{ background: style.border }} />}
 
         <div className="flex items-center justify-between pt-1.5">
-          <span className="font-mono text-[10px] tracking-wider font-semibold" style={{ color: style.text + "80" }}>
+          <span className="font-mono text-[10px] tracking-wider font-semibold" style={{ color: style.text + "80", fontFamily: style.fontMono }}>
             {creatorName}
           </span>
-          <span className="font-mono text-[11px] font-bold" style={{ color: style.text }}>
+          <span className="font-mono text-[11px] font-bold" style={{ color: style.text, fontFamily: style.fontMono }}>
             {creatorHandle.toLowerCase()}
           </span>
         </div>
