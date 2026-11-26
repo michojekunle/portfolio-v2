@@ -25,7 +25,7 @@ export function DraftRestoreBanner({ accent, savedAt, slideCount, onRestore, onD
       <div className="flex items-start gap-3">
         <History className="w-4.5 h-4.5 shrink-0 mt-0.5" style={{ color: accent }} />
         <div>
-          <div className="text-[13px] font-medium text-(--ink)">
+          <div className="text-sm font-medium text-(--ink)">
             Unsaved work found — {slideCount} slide{slideCount === 1 ? "" : "s"} autosaved {relativeTime(savedAt)}.
           </div>
           <p className="text-[12px] text-muted-foreground mt-0.5">Restore it, or discard it and start fresh.</p>

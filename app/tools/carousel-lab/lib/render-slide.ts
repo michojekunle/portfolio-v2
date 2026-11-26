@@ -40,6 +40,7 @@ export interface RenderConfig {
   brand: BrandConfig;
   backgroundStyle: BackgroundStyle;
   aspectRatio: AspectRatio;
+  isPro?: boolean;
 }
 
 // Text Wrapping Helper — greedy word-wrap against a max pixel width measured
@@ -397,9 +398,10 @@ export function drawSlideToCanvas(
     const totalH = numLineHeight + spacing + titleH + spacing + bodyH;
     const startY = centerY - totalH / 2;
 
+    const metricDisplay = slide.emoji?.trim() ? slide.emoji : `0${index + 1}`;
     ctx.fillStyle = style.accent;
     ctx.font = numFont;
-    ctx.fillText(`0${index + 1}`, margin, startY + numLineHeight - 8 * scale);
+    ctx.fillText(metricDisplay, margin, startY + numLineHeight - 8 * scale);
 
     lines(titleLines, margin, startY + numLineHeight + spacing + titleLineHeight - 6 * scale, titleLineHeight, style.text, titleFont);
     lines(

@@ -80,6 +80,11 @@ export default async function AdminVideosPage(): Promise<React.ReactElement> {
                         <span className="text-[10px] bg-secondary/50 text-foreground/70 rounded-full px-2 py-0.5 border border-border/50 font-medium shrink-0 uppercase tracking-wider">
                           {video.platform}
                         </span>
+                        {video.category && (
+                          <span className="text-[10px] bg-muted/50 text-muted-foreground rounded-full px-2 py-0.5 border border-border/50 font-medium shrink-0 tracking-wider">
+                            {video.category}
+                          </span>
+                        )}
                         {!video.is_published && (
                           <span className="text-[10px] text-muted-foreground rounded-full px-2 py-0.5 border border-border/50 font-medium shrink-0 uppercase tracking-wider">
                             Hidden

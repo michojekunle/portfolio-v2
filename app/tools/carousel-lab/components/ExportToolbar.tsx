@@ -9,10 +9,12 @@ interface Props {
   onExportPng: () => void;
   onExportZip: () => void;
   onExportPdf: () => void;
+  isPro?: boolean;
+  onUpgradeClick?: () => void;
 }
 
 const buttonClass =
-  "inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border border-(--rule) bg-transparent text-(--ink) cursor-pointer hover:border-secondary-foreground disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border border-(--rule) bg-transparent text-(--ink) cursor-pointer hover:border-secondary-foreground disabled:opacity-50 disabled:cursor-not-allowed";
 
 export function ExportToolbar({ accent, slideNumber, slideCount, exportLoading, onExportPng, onExportZip, onExportPdf }: Props): React.ReactElement {
   return (
@@ -35,7 +37,7 @@ export function ExportToolbar({ accent, slideNumber, slideCount, exportLoading, 
           type="button"
           onClick={onExportPdf}
           disabled={!!exportLoading}
-          className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border-none text-white cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.15em] uppercase font-semibold px-3.5 py-2 rounded-lg border-none text-white cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ background: accent }}
         >
           <FileText size={11} />

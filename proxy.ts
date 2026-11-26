@@ -1,5 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  SPEAKING_GATE_COOKIE,
+  verifySpeakingGateToken,
+} from "@/lib/speaking/gate-token";
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
   let supabaseResponse = NextResponse.next({ request });
@@ -32,8 +36,8 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
   const { pathname } = request.nextUrl;
 
-  // Allow login page through always
-  if (pathname === "/admin/login") {
+  // Allow login / unlock pages through always
+  if (pathname === "/admin/login" || pathname === "/speaking/unlock") {
     return supabaseResponse;
   }
 
@@ -44,9 +48,24 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Protect all /speaking routes — require either owner Supabase session or valid password-gate cookie
+  if (pathname.startsWith("/speaking")) {
+    const adminEmail = process.env.CONTACT_TO_EMAIL || "info@michaelojekunle.dev";
+    const isAdminUser = Boolean(user && user.email === adminEmail);
+    const gateToken = request.cookies.get(SPEAKING_GATE_COOKIE)?.value;
+    const hasGateCookie = await verifySpeakingGateToken(gateToken);
+
+    if (!isAdminUser && !hasGateCookie) {
+      const unlockUrl = request.nextUrl.clone();
+      unlockUrl.pathname = "/speaking/unlock";
+      unlockUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(unlockUrl);
+    }
+  }
+
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/speaking/:path*"],
 };

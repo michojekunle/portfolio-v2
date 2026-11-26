@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ArrowRight, ArrowLeft, Wallet } from "lucide-react";
+import { RunwayCalculator } from "@/components/flowise/RunwayCalculator";
 
 type Mode = "signin" | "signup";
 
@@ -12,6 +13,10 @@ const ACCENT = "#16A34A";
 const ACCENT_SOFT = "rgba(22,163,74,0.12)";
 
 function LoginContent(): React.ReactElement {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [viewMode, setViewMode] = useState<"calculator" | "auth">(tabParam === "auth" ? "auth" : "calculator");
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,8 +24,6 @@ function LoginContent(): React.ReactElement {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const supabase = createClient();
 
   useEffect(() => {
@@ -80,44 +83,77 @@ function LoginContent(): React.ReactElement {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6 py-20"
+      className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-16"
       style={{ background: "var(--bg)" }}
     >
-      <div className="w-full max-w-105">
-        {/* Header */}
-        <div className="mb-10">
-          <Link href="/tools" className="inline-flex items-center gap-2 no-underline mb-8">
-            <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground transition-colors hover:text-(--ink)">
-              <ArrowLeft className="w-3 h-3 mr-1 inline-block" /> Creator Suite
-            </span>
-          </Link>
+      {/* Top back navigation & Mode Switcher */}
+      <div className="w-full max-w-3xl mb-8 flex items-center justify-between gap-4 flex-wrap">
+        <Link href="/tools" className="inline-flex items-center gap-2 no-underline">
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground transition-colors hover:text-(--ink)">
+            <ArrowLeft className="w-3 h-3 mr-1 inline-block" /> Creator Suite
+          </span>
+        </Link>
 
-          <div className="flex items-center gap-3 mb-3">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center"
-              style={{ background: ACCENT_SOFT }}
-            >
-              <Wallet className="w-5 h-5" style={{ color: ACCENT }} />
-            </div>
-            <div>
-              <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-none text-(--ink)">
-                Flowise
-              </div>
-              <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
-                Your Finance OS
-              </div>
-            </div>
-          </div>
-
-          <h1 className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0 text-(--ink)">
-            {mode === "signin" ? "Welcome back." : "Take control of your money."}
-          </h1>
-          <p className="text-[14px] leading-[1.6] mt-2 m-0 text-muted-foreground">
-            {mode === "signin"
-              ? "Sign in to access your accounts, budgets, and spending insights."
-              : "Free to start — track up to 3 accounts and 100 transactions per month."}
-          </p>
+        <div className="inline-flex p-1 rounded-xl border border-(--rule) bg-(--bg-2)">
+          <button
+            type="button"
+            onClick={() => setViewMode("calculator")}
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer"
+            style={
+              viewMode === "calculator"
+                ? { background: ACCENT, color: "#fff" }
+                : { color: "var(--ink-3)" }
+            }
+          >
+            ⚡ Instant Runway Tool
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("auth")}
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer"
+            style={
+              viewMode === "auth"
+                ? { background: ACCENT, color: "#fff" }
+                : { color: "var(--ink-3)" }
+            }
+          >
+            Account Sign In
+          </button>
         </div>
+      </div>
+
+      {viewMode === "calculator" ? (
+        <RunwayCalculator />
+      ) : (
+        <div className="w-full max-w-105 animate-fade-in">
+          {/* Header */}
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-3">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center"
+                style={{ background: ACCENT_SOFT }}
+              >
+                <Wallet className="w-5 h-5" style={{ color: ACCENT }} />
+              </div>
+              <div>
+                <div className="font-display text-[20px] font-normal tracking-[-0.01em] fvs-text leading-none text-(--ink)">
+                  Flowise
+                </div>
+                <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+                  Your Finance OS
+                </div>
+              </div>
+            </div>
+
+            <h1 className="font-display font-normal text-[32px] leading-[1.1] tracking-[-0.02em] fvs-text m-0 text-(--ink)">
+              {mode === "signin" ? "Welcome back." : "Take control of your money."}
+            </h1>
+            <p className="text-[14px] leading-[1.6] mt-2 m-0 text-muted-foreground">
+              {mode === "signin"
+                ? "Sign in to access your accounts, budgets, and spending insights."
+                : "Free to start — track up to 3 accounts and 100 transactions per month."}
+            </p>
+          </div>
 
         {/* Google OAuth */}
         <button
@@ -229,6 +265,7 @@ function LoginContent(): React.ReactElement {
           </p>
         </div>
       </div>
+      )}
     </div>
   );
 }

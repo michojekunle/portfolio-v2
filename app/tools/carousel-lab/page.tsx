@@ -19,23 +19,26 @@ import type {
   LogoMark,
   Slide,
   SlideLayout,
+  VoiceProfile,
 } from "./lib/types";
+import { STARTER_DECKS, type StarterDeck } from "./lib/starter-decks";
 import { useColorOverrides } from "./lib/use-color-overrides";
 import { useDesignPresets } from "./lib/use-design-presets";
 import { useLogoUpload } from "./lib/use-logo-upload";
 import { readDraft, writeDraft, clearDraft } from "./lib/draft-storage";
 import { PageHeader } from "./components/PageHeader";
 import { GeneratorForm } from "./components/GeneratorForm";
-import { BrandingPanel } from "./components/BrandingPanel";
-import { CanvasCustomizerPanel } from "./components/CanvasCustomizerPanel";
-import { PresetsPanel } from "./components/PresetsPanel";
+import { StudioInspector } from "./components/StudioInspector";
+import { SlideDeckFilmstrip } from "./components/SlideDeckFilmstrip";
 import { DraftRestoreBanner } from "./components/DraftRestoreBanner";
 import { ExportToolbar } from "./components/ExportToolbar";
 import { LayoutPicker } from "./components/LayoutPicker";
 import { SlidePreview } from "./components/SlidePreview";
 import { SlideNavControls } from "./components/SlideNavControls";
+import { Sparkles, X, Layers, Palette } from "lucide-react";
 import { SlideContentEditor } from "./components/SlideContentEditor";
-import { SlideStackPanel } from "./components/SlideStackPanel";
+import { UpgradeModal } from "./components/UpgradeModal";
+import { VoicePersonaModal } from "./components/VoicePersonaModal";
 
 const { accent: ACCENT, accentSoft: ACCENT_SOFT, accentBorder: ACCENT_BORDER } = TOOL_COLORS["carousel-lab"];
 
@@ -56,6 +59,33 @@ const MANUAL_DECK: Slide[] = [
     layout: "cta",
   },
 ];
+
+function getThemeForAesthetic(mood: AestheticMood): string {
+  switch (mood) {
+    case "Terminal Obsidian":
+      return "Tech";
+    case "Venture Thesis":
+      return "Executive";
+    case "Midnight Neon":
+      return "Growth";
+    case "Warm Clay & Mindset":
+      return "Mindset";
+    case "Linear Swiss":
+      return "Design";
+    case "Brutalist Punch":
+    case "Brutalist":
+      return "Brutalist";
+    case "Premium Editorial (Zamir)":
+    case "Light Editorial (Zamir Light)":
+      return "Editorial";
+    case "Maximalist":
+      return "Bold";
+    case "Minimalist Clean":
+    case "Minimalist":
+    default:
+      return "Minimal";
+  }
+}
 
 export default function CarouselLabPage(): React.ReactElement {
   const [inputMode, setInputMode] = useState<InputMode>("topic");
@@ -87,6 +117,72 @@ export default function CarouselLabPage(): React.ReactElement {
   const { customBg, customText, customAccent, setCustomBg, setCustomText, setCustomAccent, resetOverrides } = useColorOverrides();
   const { presets, savePreset, deletePreset } = useDesignPresets();
   const [pendingDraft, setPendingDraft] = useState<CarouselDraft | null>(null);
+
+  // Pro tier state (defaults to active so all features & unwatermarked exports are enabled)
+  const [isPro, setIsPro] = useState(true);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [importNotification, setImportNotification] = useState<string | null>(null);
+
+  // Voiceprint & Guardrails state
+  const [voiceProfile, setVoiceProfile] = useState<VoiceProfile | null>(null);
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+  const [mobileStudioTab, setMobileStudioTab] = useState<"canvas" | "inspector">("canvas");
+
+  // Hydrate Pro status & check for thread import on mount
+  useEffect(() => {
+    try {
+      const storedPro = localStorage.getItem("carousel_lab_is_pro");
+      if (storedPro === "true") {
+        setIsPro(true);
+      }
+
+      // Check for saved voice profile
+      const storedVoice = localStorage.getItem("carousel_lab_voice_profile");
+      if (storedVoice) {
+        try {
+          const parsed = JSON.parse(storedVoice);
+          if (parsed && parsed.toneSummary) {
+            setVoiceProfile(parsed);
+          }
+        } catch {
+          // ignore corrupted profile
+        }
+      }
+
+      // Check for redirect callback from payment provider (?pro=unlocked or ?checkout=success)
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("pro") === "unlocked" || params.get("checkout") === "success") {
+          setIsPro(true);
+          localStorage.setItem("carousel_lab_is_pro", "true");
+          setImportNotification("🎉 Payment verified! Pro features and watermark removal are permanently active.");
+        }
+      }
+
+      const imported = localStorage.getItem("carousel_lab_import");
+      if (imported) {
+        const data = JSON.parse(imported);
+        if (data && Array.isArray(data.slides) && data.slides.length > 0) {
+          setSlides(data.slides);
+          if (data.topic) setTopic(data.topic);
+          setActiveSlideIndex(0);
+          localStorage.removeItem("carousel_lab_import");
+          setImportNotification(`Imported ${data.slides.length} slides from Thread Studio!`);
+        }
+      }
+    } catch (err) {
+      console.error("[carousel-lab] Hydration error:", err);
+    }
+  }, []);
+
+  const handleTogglePro = (nextPro: boolean): void => {
+    setIsPro(nextPro);
+    if (nextPro) {
+      localStorage.setItem("carousel_lab_is_pro", "true");
+    } else {
+      localStorage.removeItem("carousel_lab_is_pro");
+    }
+  };
 
   const activeSlide = slides[activeSlideIndex] ?? null;
   const hasSlides = slides.length > 0;
@@ -251,15 +347,9 @@ export default function CarouselLabPage(): React.ReactElement {
         body: JSON.stringify({
           topic: activeTextSource,
           slideCount,
-          theme:
-            aesthetic === "Premium Editorial (Zamir)"
-              ? "Dark"
-              : aesthetic === "Maximalist" || aesthetic === "Brutalist"
-                ? "Bold"
-                : aesthetic === "Light Editorial (Zamir Light)"
-                  ? "Earthy"
-                  : "Minimal",
+          theme: getThemeForAesthetic(aesthetic),
           mode: inputMode === "refine" ? "refine" : "topic",
+          voiceProfile: voiceProfile ?? undefined,
         }),
       });
 
@@ -278,7 +368,18 @@ export default function CarouselLabPage(): React.ReactElement {
     } finally {
       setLoading(false);
     }
-  }, [topic, roughNotes, inputMode, slideCount, aesthetic, hasSlides, pendingDraft]);
+  }, [topic, roughNotes, inputMode, slideCount, aesthetic, voiceProfile, hasSlides, pendingDraft]);
+
+  const handleSaveVoiceProfile = (profile: VoiceProfile | null): void => {
+    setVoiceProfile(profile);
+    if (profile) {
+      localStorage.setItem("carousel_lab_voice_profile", JSON.stringify(profile));
+      setImportNotification(`Saved Voiceprint: "${profile.toneSummary}" (${profile.bannedWords.length} banned words)`);
+    } else {
+      localStorage.removeItem("carousel_lab_voice_profile");
+      setImportNotification("Reset to standard neutral tone.");
+    }
+  };
 
   const startManualDeck = (): void => {
     if (hasSlides && !window.confirm("Starting a manual deck replaces your current slides and can't be undone. Continue?")) return;
@@ -288,6 +389,25 @@ export default function CarouselLabPage(): React.ReactElement {
     }
     setSlides(MANUAL_DECK);
     setActiveSlideIndex(0);
+  };
+
+  const handleSelectStarterDeck = (deck: StarterDeck): void => {
+    if (hasSlides && !window.confirm(`Loading "${deck.title}" replaces your current slides and can't be undone. Continue?`)) return;
+    if (pendingDraft) {
+      clearDraft();
+      setPendingDraft(null);
+    }
+    setSlides(deck.slides);
+    setActiveSlideIndex(0);
+    setTopic(deck.title);
+    setAesthetic(deck.aesthetic);
+    setAspectRatio(deck.aspectRatio);
+    setBackgroundStyle(deck.backgroundStyle);
+    setTopRightTag(deck.topRightTag);
+    if (deck.logoText) setLogoText(deck.logoText);
+    if (deck.logoMark) setLogoMark(deck.logoMark);
+    resetOverrides();
+    setImportNotification(`Loaded "${deck.title}" template with ${deck.aesthetic} styling!`);
   };
 
   const updateActiveSlide = (field: keyof Slide, value: string): void => {
@@ -319,7 +439,7 @@ export default function CarouselLabPage(): React.ReactElement {
     if (!activeSlide) return;
     setExportLoading("png");
     try {
-      await exportSlideAsPNG(activeSlide, activeSlideIndex, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio });
+      await exportSlideAsPNG(activeSlide, activeSlideIndex, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio, isPro });
     } catch (err) {
       console.error("[carousel-lab] PNG export failed:", err);
     } finally {
@@ -331,7 +451,7 @@ export default function CarouselLabPage(): React.ReactElement {
     if (exportLoading) return;
     setExportLoading("zip");
     try {
-      await exportSlidesAsZip(slides, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio }, topic.slice(0, 20));
+      await exportSlidesAsZip(slides, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio, isPro }, topic.slice(0, 20));
     } catch (err) {
       console.error("[carousel-lab] ZIP export failed:", err);
     } finally {
@@ -343,7 +463,7 @@ export default function CarouselLabPage(): React.ReactElement {
     if (exportLoading) return;
     setExportLoading("pdf");
     try {
-      await exportSlidesAsPDF(slides, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio }, topic.slice(0, 16));
+      await exportSlidesAsPDF(slides, aspectRatio, { style: activeStyle, brand: brandConfig, backgroundStyle, aspectRatio, isPro }, topic.slice(0, 16));
     } catch (err) {
       console.error("[carousel-lab] PDF export failed:", err);
     } finally {
@@ -353,9 +473,32 @@ export default function CarouselLabPage(): React.ReactElement {
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none min-h-screen" style={{ background: "var(--bg)" }}>
-      <PageHeader accent={ACCENT} accentSoft={ACCENT_SOFT} accentBorder={ACCENT_BORDER} />
+      <PageHeader
+        accent={ACCENT}
+        accentSoft={ACCENT_SOFT}
+        accentBorder={ACCENT_BORDER}
+        isPro={isPro}
+        onUpgradeClick={() => setUpgradeModalOpen(true)}
+      />
 
       <section className="max-w-310 mx-auto px-[var(--gutter,24px)] py-12">
+        {importNotification && (
+          <div className="mb-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-between font-mono text-xs">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} />
+              <span>{importNotification}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setImportNotification(null)}
+              className="p-1 hover:opacity-75 cursor-pointer"
+              aria-label="Dismiss notification"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+
         {pendingDraft && (
           <DraftRestoreBanner
             accent={ACCENT}
@@ -379,124 +522,175 @@ export default function CarouselLabPage(): React.ReactElement {
           loading={loading}
           onGenerate={() => void generate()}
           onStartManual={startManualDeck}
+          onSelectStarterDeck={handleSelectStarterDeck}
+          voiceProfile={voiceProfile}
+          onOpenVoiceModal={() => setVoiceModalOpen(true)}
         />
 
         {hasSlides && (
-          <div className="grid grid-cols-[330px_1fr_260px] max-[1120px]:grid-cols-[290px_1fr] max-[800px]:grid-cols-1 gap-8">
-            {/* Deliberately not sticky and no inner max-height/overflow.
-                Three stacked panels (Branding, Canvas Customizer, Presets)
-                routinely run taller than the viewport now. A capped-height
-                sticky sidebar trapped scrolling in its own cramped inner
-                scrollbar; an uncapped sticky one stayed pinned near the top
-                while still taller than the viewport, visually overlapping
-                the SlideStackPanel row wrapped beneath it at narrower widths
-                (verified: sidebar rect spanned y=38 to y=1419 in a 900px-tall
-                viewport). A plain static column avoids both — it scrolls
-                with the page like everything else, just without the
-                "follows you" convenience, which isn't worth either bug. */}
-            <div className="space-y-6 max-[800px]:order-2">
-              <BrandingPanel
-                accent={ACCENT}
-                showBranding={showBranding}
-                onShowBrandingChange={setShowBranding}
-                logoImage={logoImage}
-                onLogoUpload={uploadLogo}
-                onLogoRemove={removeLogo}
-                logoText={logoText}
-                onLogoTextChange={setLogoText}
-                logoMark={logoMark}
-                onLogoMarkChange={setLogoMark}
-                creatorName={creatorName}
-                onCreatorNameChange={setCreatorName}
-                topRightTag={topRightTag}
-                onTopRightTagChange={setTopRightTag}
-                creatorHandle={creatorHandle}
-                onCreatorHandleChange={setCreatorHandle}
-              />
-
-              <CanvasCustomizerPanel
-                accent={ACCENT}
-                aesthetic={aesthetic}
-                onAestheticChange={setAesthetic}
-                aspectRatio={aspectRatio}
-                onAspectRatioChange={setAspectRatio}
-                backgroundStyle={backgroundStyle}
-                onBackgroundStyleChange={setBackgroundStyle}
-                fontTitle={fontTitle}
-                onFontTitleChange={setFontTitle}
-                fontBody={fontBody}
-                onFontBodyChange={setFontBody}
-                titleScale={titleScale}
-                onTitleScaleChange={setTitleScale}
-                bodyScale={bodyScale}
-                onBodyScaleChange={setBodyScale}
-                activeBg={activeStyle.bg}
-                activeText={activeStyle.text}
-                activeAccent={activeStyle.accent}
-                onCustomBgChange={setCustomBg}
-                onCustomTextChange={setCustomText}
-                onCustomAccentChange={setCustomAccent}
-                hasCustomColors={!!(customBg || customText || customAccent)}
-                onResetColors={resetOverrides}
-              />
-
-              <PresetsPanel accent={ACCENT} presets={presets} onSave={handleSavePreset} onApply={handleApplyPreset} onDelete={deletePreset} />
+          <div className="space-y-6">
+            {/* Mobile Segmented Switcher (Visible on <lg screens) */}
+            <div className="grid grid-cols-2 lg:hidden rounded-xl border border-(--rule) bg-(--bg-2) p-1">
+              <button
+                type="button"
+                onClick={() => setMobileStudioTab("canvas")}
+                className={`py-2.5 rounded-lg font-mono text-[11px] uppercase tracking-wider font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  mobileStudioTab === "canvas" ? "text-white" : "text-muted-foreground"
+                }`}
+                style={{
+                  background: mobileStudioTab === "canvas" ? ACCENT : "transparent",
+                }}
+              >
+                <Layers size={13} /> Canvas & Slides
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileStudioTab("inspector")}
+                className={`py-2.5 rounded-lg font-mono text-[11px] uppercase tracking-wider font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  mobileStudioTab === "inspector" ? "text-white" : "text-muted-foreground"
+                }`}
+                style={{
+                  background: mobileStudioTab === "inspector" ? ACCENT : "transparent",
+                }}
+              >
+                <Palette size={13} /> Design Inspector
+              </button>
             </div>
 
-            <div className="space-y-6">
-              <ExportToolbar
-                accent={ACCENT}
-                slideNumber={activeSlideIndex + 1}
-                slideCount={slides.length}
-                exportLoading={exportLoading}
-                onExportPng={() => void handleExportPng()}
-                onExportZip={() => void handleExportZip()}
-                onExportPdf={() => void handleExportPdf()}
-              />
-
-              {activeSlide && <LayoutPicker accent={ACCENT} activeLayout={activeSlide.layout || "default"} onChange={(layout) => updateActiveSlide("layout", layout)} />}
-
-              {activeSlide && (
-                <SlidePreview
-                  slide={activeSlide}
-                  slideIndex={activeSlideIndex}
-                  style={activeStyle}
-                  backgroundStyle={backgroundStyle}
-                  aspectRatio={aspectRatio}
-                  showBranding={showBranding}
-                  logoImage={logoImage}
-                  logoText={logoText}
-                  logoMark={logoMark}
-                  topRightTag={topRightTag}
-                  creatorName={creatorName}
-                  creatorHandle={creatorHandle}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_390px] xl:grid-cols-[1fr_420px] gap-8 items-start">
+              {/* Studio Stage: Export Bar, Canvas Hero, Slide Filmstrip, Editor */}
+              <div className={`space-y-6 ${mobileStudioTab === "canvas" ? "block" : "hidden"} lg:block`}>
+                <ExportToolbar
+                  accent={ACCENT}
+                  slideNumber={activeSlideIndex + 1}
+                  slideCount={slides.length}
+                  exportLoading={exportLoading}
+                  onExportPng={() => void handleExportPng()}
+                  onExportZip={() => void handleExportZip()}
+                  onExportPdf={() => void handleExportPdf()}
                 />
-              )}
 
-              <SlideNavControls
-                accent={ACCENT}
-                slideCount={slides.length}
-                activeIndex={activeSlideIndex}
-                onSelect={setActiveSlideIndex}
-                onPrev={() => setActiveSlideIndex((prev) => prev - 1)}
-                onNext={() => setActiveSlideIndex((prev) => prev + 1)}
-              />
+                {activeSlide && (
+                  <LayoutPicker
+                    accent={ACCENT}
+                    activeLayout={activeSlide.layout || "default"}
+                    onChange={(layout) => updateActiveSlide("layout", layout)}
+                  />
+                )}
 
-              {activeSlide && <SlideContentEditor slide={activeSlide} onChange={updateActiveSlide} />}
+                {activeSlide && (
+                  <SlidePreview
+                    slide={activeSlide}
+                    slideIndex={activeSlideIndex}
+                    style={activeStyle}
+                    backgroundStyle={backgroundStyle}
+                    aspectRatio={aspectRatio}
+                    showBranding={showBranding}
+                    logoImage={logoImage}
+                    logoText={logoText}
+                    logoMark={logoMark}
+                    topRightTag={topRightTag}
+                    creatorName={creatorName}
+                    creatorHandle={creatorHandle}
+                  />
+                )}
+
+                {/* Horizontal Slide Deck Filmstrip */}
+                <SlideDeckFilmstrip
+                  slides={slides}
+                  activeSlideIndex={activeSlideIndex}
+                  onSelect={setActiveSlideIndex}
+                  onAdd={addSlide}
+                  onDuplicate={duplicateSlide}
+                  onDelete={deleteSlide}
+                  accent={ACCENT}
+                  style={activeStyle}
+                />
+
+                <SlideNavControls
+                  accent={ACCENT}
+                  slideCount={slides.length}
+                  activeIndex={activeSlideIndex}
+                  onSelect={setActiveSlideIndex}
+                  onPrev={() => setActiveSlideIndex((prev) => prev - 1)}
+                  onNext={() => setActiveSlideIndex((prev) => prev + 1)}
+                />
+
+                {activeSlide && (
+                  <SlideContentEditor
+                    slide={activeSlide}
+                    onChange={updateActiveSlide}
+                  />
+                )}
+              </div>
+
+              {/* Studio Inspector: Unified 3-Tab Control Panel */}
+              <div className={`space-y-6 lg:sticky lg:top-6 ${mobileStudioTab === "inspector" ? "block" : "hidden"} lg:block`}>
+                <StudioInspector
+                  accent={ACCENT}
+                  aesthetic={aesthetic}
+                  onAestheticChange={setAesthetic}
+                  aspectRatio={aspectRatio}
+                  onAspectRatioChange={setAspectRatio}
+                  backgroundStyle={backgroundStyle}
+                  onBackgroundStyleChange={setBackgroundStyle}
+                  fontTitle={fontTitle}
+                  onFontTitleChange={setFontTitle}
+                  fontBody={fontBody}
+                  onFontBodyChange={setFontBody}
+                  titleScale={titleScale}
+                  onTitleScaleChange={setTitleScale}
+                  bodyScale={bodyScale}
+                  onBodyScaleChange={setBodyScale}
+                  activeBg={activeStyle.bg}
+                  activeText={activeStyle.text}
+                  activeAccent={activeStyle.accent}
+                  onCustomBgChange={setCustomBg}
+                  onCustomTextChange={setCustomText}
+                  onCustomAccentChange={setCustomAccent}
+                  hasCustomColors={!!(customBg || customText || customAccent)}
+                  onResetColors={resetOverrides}
+                  showBranding={showBranding}
+                  onShowBrandingChange={setShowBranding}
+                  logoImage={logoImage}
+                  onLogoUpload={uploadLogo}
+                  onLogoRemove={removeLogo}
+                  logoText={logoText}
+                  onLogoTextChange={setLogoText}
+                  logoMark={logoMark}
+                  onLogoMarkChange={setLogoMark}
+                  creatorName={creatorName}
+                  onCreatorNameChange={setCreatorName}
+                  topRightTag={topRightTag}
+                  onTopRightTagChange={setTopRightTag}
+                  creatorHandle={creatorHandle}
+                  onCreatorHandleChange={setCreatorHandle}
+                  presets={presets}
+                  onSavePreset={handleSavePreset}
+                  onApplyPreset={handleApplyPreset}
+                  onDeletePreset={deletePreset}
+                />
+              </div>
             </div>
-
-            <SlideStackPanel
-              accent={ACCENT}
-              slides={slides}
-              activeIndex={activeSlideIndex}
-              onSelect={setActiveSlideIndex}
-              onAdd={addSlide}
-              onDuplicate={duplicateSlide}
-              onDelete={deleteSlide}
-            />
           </div>
         )}
       </section>
+
+      <UpgradeModal
+        isOpen={upgradeModalOpen}
+        onClose={() => setUpgradeModalOpen(false)}
+        isPro={isPro}
+        onTogglePro={handleTogglePro}
+        accent={ACCENT}
+      />
+
+      <VoicePersonaModal
+        isOpen={voiceModalOpen}
+        onClose={() => setVoiceModalOpen(false)}
+        voiceProfile={voiceProfile}
+        onSaveVoiceProfile={handleSaveVoiceProfile}
+        accent={ACCENT}
+      />
     </main>
   );
 }

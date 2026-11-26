@@ -165,7 +165,7 @@ export default function ToolsPage(): React.ReactElement {
                 5 Prototypes in Progress
               </span>
               <span className="text-(--rule)">/</span>
-              <span>No paywalls · Free personal utilities</span>
+              <span>Free in-browser · Pro available</span>
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function ToolsPage(): React.ReactElement {
                   </Link>
                 </MagneticWrapper>
                 <span className="font-mono text-xs text-muted-foreground">
-                  Free · Runs 100% client-side
+                  Free in-browser · Optional Pro watermark removal
                 </span>
               </div>
             </div>

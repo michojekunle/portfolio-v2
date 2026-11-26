@@ -7,33 +7,52 @@ interface Props {
   className?: string;
 }
 
-export function TiktokEmbed({ url, className="" }: Props): React.ReactElement {
-  const containerRef = useRef<HTMLDivElement>(null);
+let tiktokTimer: ReturnType<typeof setTimeout> | null = null;
+let tiktokScriptEl: HTMLScriptElement | null = null;
 
-  useEffect(() => {
-    // TikTok's embed.js has no public re-process API — re-inserting a fresh
-    // script tag is the documented workaround for embeds mounted after the
-    // initial page load (e.g. client-side navigation).
+function normalizeTiktokCiteUrl(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl.trim());
+    return `${parsed.origin}${parsed.pathname}`;
+  } catch {
+    return rawUrl;
+  }
+}
+
+function scheduleTiktokProcess(): void {
+  if (typeof document === "undefined") return;
+  if (tiktokTimer) clearTimeout(tiktokTimer);
+  tiktokTimer = setTimeout(() => {
+    tiktokScriptEl?.remove();
     const script = document.createElement("script");
     script.src = "https://www.tiktok.com/embed.js";
     script.async = true;
     document.body.appendChild(script);
+    tiktokScriptEl = script;
+  }, 120);
+}
 
-    return () => {
-      script.remove();
-    };
-  }, [url]);
+export function TiktokEmbed({ url, className = "" }: Props): React.ReactElement {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const citeUrl = normalizeTiktokCiteUrl(url);
+
+  useEffect(() => {
+    scheduleTiktokProcess();
+  }, [citeUrl]);
 
   const videoIdMatch = url.match(/\/(?:video|photo)\/(\d+)/);
   const videoId = videoIdMatch ? videoIdMatch[1] : undefined;
 
   return (
-    <div ref={containerRef} className={`flex justify-center ${className}`}>
+    <div
+      ref={containerRef}
+      className={`flex justify-center w-full min-h-[420px] overflow-hidden ${className}`}
+    >
       <blockquote
         className="tiktok-embed"
-        cite={url}
+        cite={citeUrl}
         data-video-id={videoId}
-        style={{ maxWidth: 605, minWidth: 325, margin: 0 }}
+        style={{ maxWidth: 605, minWidth: 260, width: "100%", margin: 0 }}
       >
         <section />
       </blockquote>

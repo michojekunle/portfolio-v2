@@ -16,7 +16,7 @@ export function SlideStackPanel({ accent, slides, activeIndex, onSelect, onAdd, 
     <div className="space-y-4 max-[1120px]:col-span-2 max-[800px]:col-span-1">
       <div className="flex items-center justify-between">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Slide Stack</div>
-        <button onClick={onAdd} className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] font-semibold text-(--ink) cursor-pointer bg-transparent border-none">
+        <button onClick={onAdd} className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.08em] font-semibold text-(--ink) cursor-pointer bg-transparent border-none">
           <Plus size={10} /> Add Slide
         </button>
       </div>
@@ -32,7 +32,7 @@ export function SlideStackPanel({ accent, slides, activeIndex, onSelect, onAdd, 
               style={{ background: isActive ? "var(--bg-2)" : "var(--bg)", borderColor: isActive ? accent : "var(--rule)" }}
             >
               <div className="flex items-start justify-between gap-2 mb-1.5">
-                <div className="font-mono text-[9px] text-muted-foreground">
+                <div className="font-mono text-[10px] text-muted-foreground">
                   Slide {idx + 1} · <span className="capitalize">{s.layout || "default"}</span>
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">

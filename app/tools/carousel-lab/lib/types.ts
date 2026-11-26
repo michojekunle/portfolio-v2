@@ -1,9 +1,16 @@
 export const AESTHETIC_MOODS = [
+  "Terminal Obsidian",
+  "Venture Thesis",
+  "Midnight Neon",
+  "Warm Clay & Mindset",
+  "Linear Swiss",
+  "Premium Editorial (Zamir)",
+  "Light Editorial (Zamir Light)",
+  "Brutalist Punch",
+  "Minimalist Clean",
   "Minimalist",
   "Maximalist",
   "Brutalist",
-  "Premium Editorial (Zamir)",
-  "Light Editorial (Zamir Light)",
 ] as const;
 export type AestheticMood = (typeof AESTHETIC_MOODS)[number];
 
@@ -36,7 +43,16 @@ export interface MoodStyle {
 export type BackgroundStyle = "solid" | "gradient" | "mesh";
 export type AspectRatio = "square" | "portrait";
 export type ExportKind = "png" | "zip" | "pdf";
-export type InputMode = "topic" | "refine" | "manual";
+export type InputMode = "topic" | "refine" | "templates" | "manual";
+
+export interface VoiceProfile {
+  toneSummary: string;
+  cadence: "staccato" | "balanced" | "narrative";
+  bannedWords: string[];
+  customRules: string[];
+  sampleSnippets: string[];
+  extractedAt: number;
+}
 
 // Fully resolved style values a slide is rendered with — computed once in the
 // page from aesthetic + overrides, then threaded into both the live preview

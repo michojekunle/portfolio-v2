@@ -1,3 +1,4 @@
+// impeccable-disable design-system-font-size, design-system-color -- Live slide canvas preview
 import { Quote } from "lucide-react";
 import { MoSignatureInline, AmdSignatureInline } from "@/lib/brand-mark";
 import { wrapperBackgroundFor } from "../lib/color-utils";
@@ -16,6 +17,8 @@ interface Props {
   topRightTag: string;
   creatorName: string;
   creatorHandle: string;
+  isPro?: boolean;
+  onUpgradeClick?: () => void;
 }
 
 function LogoBadge({
@@ -92,7 +95,7 @@ function SlideBody({
 
   if (layout === "split") {
     return (
-      <div className="grid grid-cols-2 h-full items-center gap-3 -mx-9 my-0 px-9 bg-[color-mix(in_oklab,var(--bg-2)_20%,transparent)]">
+      <div className="grid grid-cols-2 h-full items-center gap-3 -mx-6 sm:-mx-9 my-0 px-6 sm:px-9 bg-[color-mix(in_oklab,var(--bg-2)_20%,transparent)]">
         <div className="h-full flex items-center border-r pr-3" style={{ borderColor: style.border }}>
           <h3
             className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
@@ -135,10 +138,11 @@ function SlideBody({
   }
 
   if (layout === "metrics") {
+    const metricDisplay = slide.emoji?.trim() ? slide.emoji : `0${slideIndex + 1}`;
     return (
       <div className="space-y-2">
-        <div className="font-mono text-[56px] font-bold leading-none" style={{ color: style.accent }}>
-          0{slideIndex + 1}
+        <div className="font-mono text-[56px] font-bold leading-none tracking-tight" style={{ color: style.accent }}>
+          {metricDisplay}
         </div>
         <h3
           className="font-bold leading-[1.2] tracking-[-0.02em] m-0"
@@ -229,6 +233,8 @@ export function SlidePreview({
   topRightTag,
   creatorName,
   creatorHandle,
+  isPro = false,
+  onUpgradeClick,
 }: Props): React.ReactElement {
   const layout = slide.layout || "default";
 
@@ -241,7 +247,7 @@ export function SlidePreview({
 
   return (
     <div
-      className="flex items-center justify-center p-5 rounded-3xl border border-(--rule) min-h-[500px] relative overflow-hidden"
+      className="flex items-center justify-center p-3 sm:p-6 rounded-3xl border border-(--rule) min-h-[380px] sm:min-h-[500px] relative overflow-hidden"
       style={wrapperBg ? { background: wrapperBg } : undefined}
     >
       {backgroundStyle === "mesh" && (
@@ -252,14 +258,16 @@ export function SlidePreview({
       )}
 
       <div
-        className="shadow-2xl overflow-hidden flex flex-col justify-between p-9 relative select-none transition-all duration-300 border"
+        className="shadow-2xl overflow-hidden flex flex-col justify-between p-6 sm:p-9 relative select-none transition-all duration-300 border w-full"
         style={{
           background: backgroundStyle === "gradient" ? `linear-gradient(135deg, ${style.bg} 0%, ${style.accent}18 100%)` : style.bg,
           borderColor: style.border,
           borderWidth: `${style.borderWidth}px`,
           borderRadius: `${style.borderRadius}px`,
-          width: aspectRatio === "square" ? "420px" : "360px",
-          height: aspectRatio === "square" ? "420px" : "450px",
+          maxWidth: aspectRatio === "square" ? "420px" : "360px",
+          aspectRatio: aspectRatio === "square" ? "1 / 1" : "4 / 5",
+          height: "auto",
+          minHeight: aspectRatio === "square" ? "300px" : "380px",
           boxShadow: style.shadow,
         }}
       >

@@ -25,11 +25,12 @@ export function SlideNavControls({ accent, slideCount, activeIndex, onSelect, on
           <button
             key={idx}
             onClick={() => onSelect(idx)}
-            className="w-7 h-7 rounded-md font-mono text-[10px] border cursor-pointer font-semibold"
+            className={`w-7 h-7 rounded-md font-mono text-[10px] border cursor-pointer font-semibold ${
+              idx === activeIndex ? "text-white" : "text-(--ink-2)"
+            }`}
             style={{
               background: idx === activeIndex ? accent : "transparent",
               borderColor: idx === activeIndex ? accent : "var(--rule)",
-              color: idx === activeIndex ? "#fff" : "var(--ink-2)",
             }}
           >
             {idx + 1}

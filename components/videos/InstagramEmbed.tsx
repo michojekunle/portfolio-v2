@@ -12,39 +12,66 @@ declare global {
   }
 }
 
-const SCRIPT_SRC = "//www.instagram.com/embed.js";
+const SCRIPT_SRC = "https://www.instagram.com/embed.js";
+
+function normalizeInstagramPermalink(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl.trim());
+    const cleanPath = parsed.pathname.endsWith("/")
+      ? parsed.pathname
+      : `${parsed.pathname}/`;
+    return `https://www.instagram.com${cleanPath}`;
+  } catch {
+    return rawUrl;
+  }
+}
+
+function scheduleInstagramProcess(): void {
+  if (typeof document === "undefined") return;
+  const process = (): void => {
+    window.instgrm?.Embeds.process();
+  };
+
+  if (window.instgrm?.Embeds) {
+    process();
+    return;
+  }
+
+  const existing = document.querySelector<HTMLScriptElement>(
+    `script[src="${SCRIPT_SRC}"], script[src="//www.instagram.com/embed.js"]`
+  );
+  if (existing) {
+    existing.addEventListener("load", process, { once: true });
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = SCRIPT_SRC;
+  script.async = true;
+  script.addEventListener("load", process, { once: true });
+  document.body.appendChild(script);
+}
 
 interface Props {
   url: string;
   className?: string;
 }
 
-export function InstagramEmbed({ url, className="" }: Props): React.ReactElement {
+export function InstagramEmbed({ url, className = "" }: Props): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
+  const permalink = normalizeInstagramPermalink(url);
 
   useEffect(() => {
-    const process = (): void => window.instgrm?.Embeds.process();
-
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`);
-    if (existing) {
-      process();
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = SCRIPT_SRC;
-    script.async = true;
-    script.onload = process;
-    document.body.appendChild(script);
-  }, [url]);
+    scheduleInstagramProcess();
+  }, [permalink]);
 
   return (
-    <div ref={containerRef} className={`flex justify-center ${className}`}>
+    <div ref={containerRef} className={`flex justify-center w-full min-h-[380px] ${className}`}>
       <blockquote
         className="instagram-media"
-        data-instgrm-permalink={url}
+        data-instgrm-permalink={permalink}
         data-instgrm-version="14"
-        style={{ width: "100%", maxWidth: 540, margin: 0 }}
+        style={{ width: "100%", maxWidth: 540, minWidth: 260, margin: 0 }}
       />
     </div>
   );
