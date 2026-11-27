@@ -15,13 +15,14 @@ const sample = (overrides: Partial<WordDto> & { id: string }): WordDto => ({
 
 describe("words-deck", () => {
   const words: readonly WordDto[] = [
-    sample({ id: "1", text: "la boulangerie", english: "the bakery", strength: "new" }),
-    sample({ id: "2", text: "merci", english: "thank you", strength: "known" }),
-    sample({ id: "3", text: "me pone", english: "could I have", source: "error", strength: "learning" }),
+    sample({ id: "1", text: "la boulangerie", english: "the bakery", strength: "new", track: "general" }),
+    sample({ id: "2", text: "merci", english: "thank you", strength: "known", track: "general" }),
+    sample({ id: "3", text: "me pone", english: "could I have", source: "error", strength: "learning", track: "tech" }),
   ];
 
-  it("filters by strength, mistakes, and normalised search query", () => {
+  it("filters by strength, mistakes, track focus, and normalised search query", () => {
     expect(filterWords(words, "", "all").map((w) => w.id)).toEqual(["1", "2", "3"]);
+    expect(filterWords(words, "", "focus", "tech").map((w) => w.id)).toEqual(["3"]);
     expect(filterWords(words, "", "learning").map((w) => w.id)).toEqual(["1", "3"]);
     expect(filterWords(words, "", "known").map((w) => w.id)).toEqual(["2"]);
     expect(filterWords(words, "", "mistakes").map((w) => w.id)).toEqual(["3"]);

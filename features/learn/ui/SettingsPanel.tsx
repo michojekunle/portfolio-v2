@@ -9,11 +9,13 @@ import { Download, Share } from "lucide-react";
 import { LEVELS, type Level } from "../domain/lessons";
 import type { Commitment } from "../domain/commitment";
 import { LANGUAGES } from "../domain/languages";
+import type { TrackId } from "../domain/tracks";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { CommitmentPicker } from "./CommitmentPicker";
 import { NaturalVoiceSettings } from "./NaturalVoiceSettings";
 import { ReminderSettings } from "./ReminderSettings";
 import { QuietButton } from "./primitives";
+import { TrackPicker } from "./TrackPicker";
 import { PAGE_STYLES, type PageStyle } from "./style-preference";
 import type { InstallState } from "./use-install";
 
@@ -35,6 +37,18 @@ interface Props {
   readonly canChangeLevel: boolean;
   readonly pickingLevel: boolean;
   readonly onPickLevel: (level: Level) => void;
+  readonly track: TrackId;
+  readonly lessonTrack?: string;
+  readonly goalFocus: string;
+  readonly goalNote: string | null;
+  readonly completedToday: boolean;
+  readonly remainingTodayRefreshes: number;
+  readonly onTrackChange: (next: {
+    readonly track: TrackId;
+    readonly goalFocus: string;
+    readonly goalNote: string;
+    readonly refreshToday?: boolean;
+  }) => void;
   readonly plus: boolean;
   readonly variant: string | null;
   readonly onVariantChange: (variant: string) => void;
@@ -77,9 +91,79 @@ export function SettingsPanel(props: Props): ReactElement {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const mode: Mode | null = mounted && isMode(theme) ? theme : null;
+  const [goalDraft, setGoalDraft] = useState<{ readonly track: TrackId; readonly focus: string; readonly goalNote: string }>({
+    track: props.track,
+    focus: props.goalFocus,
+    goalNote: props.goalNote ?? "",
+  });
+  useEffect(() => {
+    setGoalDraft({ track: props.track, focus: props.goalFocus, goalNote: props.goalNote ?? "" });
+  }, [props.track, props.goalFocus, props.goalNote]);
+
+  const goalDirty =
+    goalDraft.track !== props.track ||
+    goalDraft.focus !== props.goalFocus ||
+    goalDraft.goalNote.trim() !== (props.goalNote ?? "");
 
   return (
     <section id={props.id} aria-label="Settings" className="fr-enter mt-6 border-t border-(--fr-ink) pt-2">
+      <Row label={copy.settingsRows.track} hint={props.guest ? "Preview curated scenes for your goal" : "Personalises daily scenes, register & vocabulary"}>
+        <div className="pl-2 py-2">
+          <TrackPicker
+            track={goalDraft.track}
+            focus={goalDraft.focus}
+            goalNote={goalDraft.goalNote}
+            compact
+            hideNote={props.guest}
+            disabled={props.pickingLevel}
+            onChange={(next) => {
+              setGoalDraft(next);
+              if (props.guest && (next.track !== goalDraft.track || next.focus !== goalDraft.focus)) {
+                props.onTrackChange({ track: next.track, goalFocus: next.focus, goalNote: next.goalNote });
+              }
+            }}
+          />
+          {!props.guest ? (
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+              {goalDirty ? (
+                <QuietButton
+                  disabled={props.pickingLevel}
+                  onClick={() =>
+                    props.onTrackChange({
+                      track: goalDraft.track,
+                      goalFocus: goalDraft.focus,
+                      goalNote: goalDraft.goalNote,
+                      refreshToday: false,
+                    })
+                  }
+                  className="text-(--fr-ink)"
+                >
+                  Save for tomorrow
+                </QuietButton>
+              ) : null}
+              {!props.completedToday &&
+              props.remainingTodayRefreshes > 0 &&
+              (goalDirty || (props.lessonTrack ?? "general") !== props.track) ? (
+                <QuietButton
+                  disabled={props.pickingLevel}
+                  onClick={() =>
+                    props.onTrackChange({
+                      track: goalDraft.track,
+                      goalFocus: goalDraft.focus,
+                      goalNote: goalDraft.goalNote,
+                      refreshToday: true,
+                    })
+                  }
+                  className="text-(--fr-key)"
+                >
+                  Update today&apos;s scene now ({props.remainingTodayRefreshes} left today)
+                </QuietButton>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      </Row>
+
       <Row label={copy.settingsRows.page} hint="How the page looks">
         <ChoiceGroup label="Page style" options={PAGE_STYLES} labels={copy.styles} value={props.style} onChange={props.onStyleChange} />
       </Row>

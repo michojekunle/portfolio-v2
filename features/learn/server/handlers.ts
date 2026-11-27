@@ -4,9 +4,19 @@
  * Spanish can never drift apart in validation, auth, rate limits or errors.
  */
 import { NextResponse } from "next/server";
-import type { LanguagePack } from "../domain/language";
-import { FeedbackRequestSchema, ProfileUpdateSchema, SessionCompleteSchema, TimeZoneSchema, WordActionSchema, ReminderUpdateSchema, GroupActionSchema } from "../domain/schemas";
-import { gradeSentence } from "./ai";
+import { withVariant, type LanguagePack } from "../domain/language";
+import {
+  FeedbackRequestSchema,
+  ProfileUpdateSchema,
+  RoleplayRequestSchema,
+  SessionCompleteSchema,
+  TimeZoneSchema,
+  WordActionSchema,
+  WordsPostSchema,
+  ReminderUpdateSchema,
+  GroupActionSchema,
+} from "../domain/schemas";
+import { debriefRoleplay, gradeSentence, runRoleplayTurn, translateGoalPhrase } from "./ai";
 import { clientIp, getLearnContext, rateLimited, readJson, toErrorResponse, unauthorized } from "./context";
 import { AiUnavailableError } from "./errors";
 import { adminClient } from "./admin";
@@ -14,7 +24,17 @@ import { readEntitlement } from "./billing";
 import { applyGroupAction, getMyGroup } from "./groups";
 import { TtsUnavailableError, naturalVoiceUrl } from "./tts";
 import { getReminder, saveReminder } from "./reminders";
-import { completeUserSession, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord } from "./service";
+import {
+  addCustomPhrase,
+  completeUserSession,
+  listWords,
+  loadGuestSession,
+  loadUserSession,
+  saveDirectWord,
+  saveUserProfile,
+  seedTrackStarterKit,
+  updateWord,
+} from "./service";
 
 type Handler = (request: Request) => Promise<Response>;
 
@@ -30,9 +50,14 @@ export function sessionHandler(pack: LanguagePack): Handler {
       const parsedTz = tzParam ? TimeZoneSchema.safeParse(tzParam) : null;
       const timezone = parsedTz?.success ? parsedTz.data : null;
 
-      // Guests choose a variant per device (?variant=); signed-in learners have it on their profile.
-      const variant = new URL(request.url).searchParams.get("variant");
-      const payload = user ? await loadUserSession(deps, user.id, timezone) : loadGuestSession(pack, deps.now(), timezone, variant);
+      // Guests choose variant/track/focus per device; signed-in learners have them on their profile.
+      const searchParams = new URL(request.url).searchParams;
+      const variant = searchParams.get("variant");
+      const track = searchParams.get("track");
+      const focus = searchParams.get("focus");
+      const payload = user
+        ? await loadUserSession(deps, user.id, timezone)
+        : loadGuestSession(pack, deps.now(), timezone, variant, track, focus);
       // Plus is optional infrastructure: if its table isn't there yet, everyone is simply on the free plan.
       const plus = user ? await readEntitlement(db, user.id).catch((error: unknown) => {
         console.warn(`[learn/${pack.id}] entitlement check failed`, error instanceof Error ? error.message : error);
@@ -71,8 +96,8 @@ export function profileHandler(pack: LanguagePack): Handler {
       const limited = await rateLimited(`${pack.id}:profile:${user.id}`, 20);
       if (limited) return limited;
 
-      await saveUserProfile(deps, user.id, ProfileUpdateSchema.parse(await readJson(request)));
-      return NextResponse.json({ ok: true });
+      const result = await saveUserProfile(deps, user.id, ProfileUpdateSchema.parse(await readJson(request)));
+      return NextResponse.json({ ok: true, ...result });
     } catch (error) {
       return toErrorResponse(error, `${pack.id}/profile`);
     }
@@ -106,8 +131,8 @@ export function feedbackHandler(pack: LanguagePack): Handler {
   };
 }
 
-/** GET …/words — the learner's deck. PATCH …/words — "known" / "again" on one card they own. */
-export function wordsHandlers(pack: LanguagePack): { readonly GET: Handler; readonly PATCH: Handler } {
+/** GET …/words — the learner's deck. PATCH …/words — "known" / "again". POST …/words — starter kit, custom phrase, or direct save. */
+export function wordsHandlers(pack: LanguagePack): { readonly GET: Handler; readonly PATCH: Handler; readonly POST: Handler } {
   return {
     GET: async () => {
       try {
@@ -132,6 +157,65 @@ export function wordsHandlers(pack: LanguagePack): { readonly GET: Handler; read
         return toErrorResponse(error, `${pack.id}/words`);
       }
     },
+    POST: async (request) => {
+      try {
+        const { user, deps } = await getLearnContext(pack);
+        if (!user) return unauthorized();
+        const input = WordsPostSchema.parse(await readJson(request));
+        if (input.kind === "starter") {
+          const limited = await rateLimited(`${pack.id}:words-starter:${user.id}`, 10);
+          if (limited) return limited;
+          return NextResponse.json(await seedTrackStarterKit(deps, user.id, input.track));
+        }
+        if (input.kind === "save") {
+          const limited = await rateLimited(`${pack.id}:words-save:${user.id}`, 30);
+          if (limited) return limited;
+          const word = await saveDirectWord(deps, user.id, input);
+          return NextResponse.json({ word });
+        }
+        const limited = await rateLimited(`${pack.id}:words-custom:${user.id}`, 10);
+        if (limited) return limited;
+        try {
+          const res = await addCustomPhrase(deps, user.id, translateGoalPhrase, input);
+          return NextResponse.json({ available: true, ...res });
+        } catch (error) {
+          if (!(error instanceof AiUnavailableError)) throw error;
+          console.warn(`[learn/${pack.id}/words-custom] AI unavailable:`, error.message);
+          return NextResponse.json({ available: false });
+        }
+      } catch (error) {
+        return toErrorResponse(error, `${pack.id}/words`);
+      }
+    },
+  };
+}
+
+/** POST …/roleplay — focused 4-6 turn live scenario practice or Red Pen debrief. */
+export function roleplayHandler(pack: LanguagePack): Handler {
+  return async (request) => {
+    try {
+      const { user, deps } = await getLearnContext(pack);
+      if (!user) return unauthorized();
+      const limited = await rateLimited(`${pack.id}:roleplay:${user.id}`, 24);
+      if (limited) return limited;
+
+      const input = RoleplayRequestSchema.parse(await readJson(request));
+      const profile = await deps.repo.getProfile(user.id);
+      const effectivePack = withVariant(pack, profile?.variant);
+
+      try {
+        if (input.action === "debrief") {
+          return NextResponse.json({ available: true, debrief: await debriefRoleplay(effectivePack, input) });
+        }
+        return NextResponse.json({ available: true, turn: await runRoleplayTurn(effectivePack, input) });
+      } catch (error) {
+        if (!(error instanceof AiUnavailableError)) throw error;
+        console.warn(`[learn/${pack.id}/roleplay] AI unavailable:`, error.message);
+        return NextResponse.json({ available: false });
+      }
+    } catch (error) {
+      return toErrorResponse(error, `${pack.id}/roleplay`);
+    }
   };
 }
 

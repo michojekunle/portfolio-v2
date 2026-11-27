@@ -6,6 +6,7 @@ import { diffWords } from "../../domain/diff";
 import { meaningOf, normaliseWord, type WordMeaning } from "../../domain/glossary";
 import type { Lesson } from "../../domain/lessons";
 import { compareSpoken, type SpokenComparison } from "../../domain/speech";
+import { registerBadgeText } from "../../domain/tracks";
 import { AccentKeys, insertAtCaret } from "../AccentKeys";
 import { useLang } from "../lang-context";
 import { NO_WRITING_TOOLS, ActionButton, QuietButton, SpeakerButton } from "../primitives";
@@ -143,9 +144,18 @@ export function LearnStep({ lesson, englishShown, onDone }: Props): ReactElement
   return (
     <section aria-label={copy.steps.learn} className="flex flex-1 flex-col">
       <header className="mb-8 flex items-baseline justify-between gap-4">
-        <h2 lang={pack.id} className="fr-print text-[22px] font-semibold leading-8 text-(--fr-ink) md:text-[28px]">
-          {lesson.title}
-        </h2>
+        <div>
+          <h2 lang={pack.id} className="fr-print text-[22px] font-semibold leading-8 text-(--fr-ink) md:text-[28px]">
+            {lesson.title}
+          </h2>
+          {lesson.contextBrief || lesson.register ? (
+            <p className="fr-ui mt-1 text-xs leading-5 text-(--fr-soft)">
+              {lesson.contextBrief ? <span>{lesson.contextBrief}</span> : null}
+              {lesson.contextBrief && lesson.register ? " · " : null}
+              {lesson.register ? <span className="text-(--fr-ink)">{registerBadgeText(pack.id, lesson.register)}</span> : null}
+            </p>
+          ) : null}
+        </div>
         <p className="fr-ui shrink-0 text-xs tabular-nums text-(--fr-soft)" aria-label={`Line ${index + 1} of ${lesson.sentences.length}`}>
           {index + 1} / {lesson.sentences.length}
         </p>

@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { REMINDER_TIMES } from "./reminders";
 import { isValidTimeZone } from "./dates";
-import { LEVELS } from "./lessons";
+import { LEVELS, REGISTERS } from "./lessons";
+import { MAX_GOAL_NOTE_LENGTH, TRACK_IDS } from "./tracks";
 
 export const TimeZoneSchema = z
   .string()
@@ -18,6 +19,12 @@ export const ProfileUpdateSchema = z.object({
   dailyMinutes: z.union([z.literal(15), z.literal(30), z.literal(60)]).optional(),
   /** Regional variant id; unknown ids fall back to the language's default (validated against the pack server-side). */
   variant: z.string().trim().min(1).max(20).optional(),
+  /** Goal-oriented track and optional sub-focus/note. Omitted preserves existing values on partial updates. */
+  track: z.enum(TRACK_IDS).optional(),
+  goalFocus: z.string().trim().min(1).max(40).nullable().optional(),
+  goalNote: z.string().max(MAX_GOAL_NOTE_LENGTH * 2).nullable().optional(),
+  /** When true, clears today's uncompleted cached lesson so the new goal applies right away (server caps daily refreshes). */
+  refreshToday: z.boolean().optional(),
 });
 export type ProfileUpdate = z.infer<typeof ProfileUpdateSchema>;
 
@@ -116,6 +123,94 @@ export const WordActionSchema = z.object({
 });
 export type WordAction = z.infer<typeof WordActionSchema>;
 
+export const WordsPostSchema = z.discriminatedUnion("kind", [
+  z.object({
+    kind: z.literal("starter"),
+    track: z.enum(TRACK_IDS),
+  }),
+  z.object({
+    kind: z.literal("custom"),
+    english: z.string().trim().min(2).max(180),
+    track: z.enum(TRACK_IDS).optional(),
+    goalFocus: z.string().trim().min(1).max(40).optional(),
+    goalNote: z.string().max(MAX_GOAL_NOTE_LENGTH).optional(),
+    register: z.enum(REGISTERS).optional(),
+  }),
+  z.object({
+    kind: z.literal("save"),
+    french: z.string().trim().min(1).max(CARD_TEXT_MAX),
+    english: z.string().trim().min(1).max(CARD_TEXT_MAX),
+    notes: z.string().trim().max(CARD_NOTES_MAX).optional(),
+    track: z.enum(TRACK_IDS).optional(),
+    register: z.enum(REGISTERS).optional(),
+    source: z.enum(["error", "custom"]).default("custom"),
+  }),
+]);
+export type WordsPost = z.infer<typeof WordsPostSchema>;
+
+export const CustomPhraseOutputSchema = z.object({
+  fr: z.string().min(1).max(CARD_TEXT_MAX),
+  en: z.string().min(1).max(CARD_TEXT_MAX),
+  notes: z.string().max(CARD_NOTES_MAX).optional(),
+  register: z.enum(REGISTERS).optional(),
+});
+export type CustomPhraseOutput = z.infer<typeof CustomPhraseOutputSchema>;
+
+export const MAX_ROLEPLAY_TURNS = 6;
+
+export const RoleplayHistoryItemSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  text: z.string().trim().min(1).max(400),
+});
+export type RoleplayHistoryItem = z.infer<typeof RoleplayHistoryItemSchema>;
+
+export const RoleplayRequestSchema = z.object({
+  action: z.enum(["start", "reply", "debrief"]),
+  level: z.enum(LEVELS),
+  track: z.enum(TRACK_IDS),
+  goalFocus: z.string().trim().min(1).max(40).optional(),
+  goalNote: z.string().max(MAX_GOAL_NOTE_LENGTH).optional(),
+  missionSlug: z.string().trim().max(80).optional(),
+  customSituation: z.string().max(MAX_GOAL_NOTE_LENGTH).optional(),
+  history: z.array(RoleplayHistoryItemSchema).max(MAX_ROLEPLAY_TURNS * 2).default([]),
+});
+export type RoleplayRequest = z.infer<typeof RoleplayRequestSchema>;
+
+export const RoleplayTurnOutputSchema = z.object({
+  reply: z.string().min(2).max(400),
+  replyEn: z.string().min(2).max(400),
+  coachHint: z.string().max(200).optional(),
+  register: z.enum(REGISTERS),
+  shouldWrap: z.boolean().default(false),
+});
+export type RoleplayTurnOutput = z.infer<typeof RoleplayTurnOutputSchema>;
+
+export const RoleplayDebriefOutputSchema = z.object({
+  overallNote: z.string().min(4).max(300),
+  registerVerdict: z.string().min(4).max(200),
+  registerOk: z.boolean(),
+  corrections: z
+    .array(
+      z.object({
+        original: z.string().min(1).max(240),
+        corrected: z.string().min(1).max(240),
+        translation: z.string().min(1).max(240),
+        explanation: z.string().min(2).max(240),
+      })
+    )
+    .max(4),
+  upgrades: z
+    .array(
+      z.object({
+        phrase: z.string().min(1).max(240),
+        meaning: z.string().min(1).max(240),
+        why: z.string().min(2).max(200),
+      })
+    )
+    .max(3),
+});
+export type RoleplayDebriefOutput = z.infer<typeof RoleplayDebriefOutputSchema>;
+
 export const FeedbackRequestSchema = z.object({
   sentence: z.string().trim().min(2).max(300),
   /** Absent for a spoken answer, where no particular word is required. */
@@ -125,6 +220,11 @@ export const FeedbackRequestSchema = z.object({
   mode: z.enum(["written", "spoken"]).default("written"),
   /** The question a spoken answer replies to, so the corrector can judge relevance. */
   question: z.string().trim().min(2).max(200).optional(),
+  track: z.enum(TRACK_IDS).optional(),
+  goalFocus: z.string().trim().min(1).max(40).optional(),
+  goalNote: z.string().max(MAX_GOAL_NOTE_LENGTH).optional(),
+  expectedRegister: z.enum(REGISTERS).optional(),
+  contextBrief: z.string().trim().max(160).optional(),
 });
 export type FeedbackRequest = z.infer<typeof FeedbackRequestSchema>;
 
@@ -137,6 +237,7 @@ export const ERROR_TAGS = [
   "preposition",
   "spelling",
   "vocabulary",
+  "register",
   "other",
 ] as const;
 

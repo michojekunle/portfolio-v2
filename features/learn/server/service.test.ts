@@ -8,7 +8,19 @@ import { newCardSchedule, type CardSchedule } from "../domain/srs";
 import { EMPTY_STREAK, type StreakState } from "../domain/streak";
 import { AiUnavailableError, SessionNotEligibleError } from "./errors";
 import type { Card, LearnRepository, Profile, SessionRecord } from "./repository";
-import { completeUserSession, estimateMinutes, listWords, loadGuestSession, loadUserSession, saveUserProfile, updateWord, type ServiceDeps } from "./service";
+import {
+  addCustomPhrase,
+  completeUserSession,
+  estimateMinutes,
+  listWords,
+  loadGuestSession,
+  loadUserSession,
+  saveDirectWord,
+  saveUserProfile,
+  seedTrackStarterKit,
+  updateWord,
+  type ServiceDeps,
+} from "./service";
 
 const USER = "user-1";
 const NOW = new Date("2026-11-20T10:00:00.000Z");
@@ -19,7 +31,7 @@ interface FakeState {
   profile: Profile | null;
   streak: StreakState;
   cards: Card[];
-  lessons: Map<string, Lesson>;
+  lessons: Map<string, { lesson: Lesson; missionSlug: string | null }>;
   sessions: SessionRecord[];
   addedCards: string[];
   streakSaves: number;
@@ -31,7 +43,15 @@ function makeCard(id: string, schedule: CardSchedule): Card {
 
 function setup(overrides: Partial<FakeState> = {}) {
   const state: FakeState = {
-    profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 15, variant: null },
+    profile: {
+      level: "A2",
+      timezone: "Africa/Lagos",
+      dailyMinutes: 15,
+      variant: null,
+      track: "general",
+      goalFocus: "daily-life",
+      goalNote: null,
+    },
     streak: EMPTY_STREAK,
     cards: [],
     lessons: new Map(),
@@ -62,11 +82,34 @@ function setup(overrides: Partial<FakeState> = {}) {
     },
     addNewCards: async (_id, cards) => {
       state.addedCards.push(...cards.map((card) => card.french));
+      for (const c of cards) {
+        if (!state.cards.some((existing) => existing.french === c.french)) {
+          state.cards.push({
+            id: crypto.randomUUID(),
+            french: c.french,
+            english: c.english,
+            notes: c.notes ?? null,
+            source: c.source,
+            track: c.track ?? null,
+            register: c.register ?? null,
+            schedule: { ...newCardSchedule(NOW), dueAt: c.dueAt ?? NOW },
+          });
+        }
+      }
     },
-    getLesson: async (_id, date) => state.lessons.get(date) ?? null,
-    saveLesson: async (_id, date, lesson) => {
-      state.lessons.set(date, lesson);
+    getLesson: async (_id, date) => state.lessons.get(date)?.lesson ?? null,
+    saveLesson: async (_id, date, lesson, meta) => {
+      state.lessons.set(date, { lesson, missionSlug: meta?.missionSlug ?? lesson.missionSlug ?? null });
     },
+    deleteLesson: async (_id, date) => {
+      state.lessons.delete(date);
+    },
+    listRecentMissionSlugs: async (_id, limit) =>
+      [...state.lessons.values()]
+        .map((entry) => entry.missionSlug)
+        .filter((slug): slug is string => Boolean(slug))
+        .reverse()
+        .slice(0, limit),
     listRecentSessions: async (_id, limit) =>
       [...state.sessions]
         .reverse()
@@ -151,11 +194,12 @@ describe("loadUserSession", () => {
   });
 
   it("keeps a chosen commitment when only the level changes", async () => {
-    const { deps, state } = setup({ profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 60, variant: null } });
+    const { deps, state } = setup({ profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 60, variant: null, track: "tech", goalFocus: "standups" } });
     await saveUserProfile(deps, USER, { level: "B1", timezone: "Africa/Lagos" });
-    expect(state.profile).toEqual({ level: "B1", timezone: "Africa/Lagos", dailyMinutes: 60, variant: null });
+    expect(state.profile).toMatchObject({ level: "B1", timezone: "Africa/Lagos", dailyMinutes: 60, variant: null, track: "tech", goalFocus: "standups" });
     const payload = await loadUserSession(deps, USER, "Africa/Lagos");
     expect(payload.profile.dailyMinutes).toBe(60);
+    expect(payload.profile.track).toBe("tech");
   });
 
   it("suggests the next level only after strong recent sessions at the current level", async () => {
@@ -282,5 +326,85 @@ describe("regional variants", () => {
     const spanishDeps = { ...deps, pack: SPANISH };
     await loadUserSession(spanishDeps, USER, "America/Bogota");
     expect(makeLesson.mock.calls[0][0].aiDialect).toMatch(/Latin American/);
+  });
+});
+
+describe("goal tracks and mid-day refresh", () => {
+  it("serves track-targeted fallback scenes to guests", () => {
+    const medical = loadGuestSession(FRENCH, NOW, "Europe/Paris", null, "medical", "intake");
+    expect(medical.profile.track).toBe("medical");
+    expect(medical.profile.goalFocus).toBe("intake");
+    expect(medical.lesson.track).toBe("medical");
+    expect(medical.lesson.register).toBe("vous");
+  });
+
+  it("lets a learner refresh today's uncompleted lesson when switching tracks up to 2 times/day", async () => {
+    const { deps, makeLesson, state } = setup();
+    await loadUserSession(deps, USER, "Africa/Lagos");
+    expect(state.lessons.size).toBe(1);
+
+    const r1 = await saveUserProfile(deps, USER, {
+      level: "A2",
+      timezone: "Africa/Lagos",
+      track: "tech",
+      goalFocus: "standups",
+      refreshToday: true,
+    });
+    expect(r1.refreshedToday).toBe(true);
+    expect(r1.remainingTodayRefreshes).toBe(1);
+    expect(state.lessons.size).toBe(0);
+
+    await loadUserSession(deps, USER, "Africa/Lagos");
+    expect(makeLesson).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ track: "tech", goalFocus: "standups" })
+    );
+
+    await saveUserProfile(deps, USER, { level: "A2", timezone: "Africa/Lagos", track: "medical", refreshToday: true });
+    const r3 = await saveUserProfile(deps, USER, { level: "A2", timezone: "Africa/Lagos", track: "student", refreshToday: true });
+    expect(r3.refreshedToday).toBe(false);
+    expect(r3.remainingTodayRefreshes).toBe(0);
+  });
+
+  it("refuses refreshToday once today's streak page is already completed", async () => {
+    const { deps, state } = setup({
+      streak: { current: 3, longest: 3, freezes: 2, lastCompletedDate: "2026-11-20", totalCompletions: 3 },
+    });
+    await loadUserSession(deps, USER, "Africa/Lagos");
+    const res = await saveUserProfile(deps, USER, { level: "A2", timezone: "Africa/Lagos", track: "business", refreshToday: true });
+    expect(res.refreshedToday).toBe(false);
+    expect(state.lessons.size).toBe(1);
+  });
+
+  it("seeds staggered Survival Kit cards idempotently and adds custom/debrief cards prioritized for recycling", async () => {
+    const { deps, makeLesson } = setup({
+      profile: { level: "A2", timezone: "Africa/Lagos", dailyMinutes: 15, variant: null, track: "tech", goalFocus: "standups" },
+    });
+    const firstSeed = await seedTrackStarterKit(deps, USER, "tech");
+    expect(firstSeed.added).toBeGreaterThanOrEqual(8);
+    const secondSeed = await seedTrackStarterKit(deps, USER, "tech");
+    expect(secondSeed.added).toBe(0);
+
+    const custom = await addCustomPhrase(
+      deps,
+      USER,
+      async () => ({ fr: "Mon build a planté", en: "My build failed", notes: "Standup quick update", register: "tu" }),
+      { kind: "custom", english: "My build failed", track: "tech" }
+    );
+    expect(custom.created).toBe(true);
+    expect(custom.word?.source).toBe("custom");
+
+    const saved = await saveDirectWord(deps, USER, {
+      kind: "save",
+      french: "On reprend ça après ?",
+      english: "Shall we pick this up later?",
+      notes: "Polite defer",
+      track: "tech",
+      source: "custom",
+    });
+    expect(saved?.text).toBe("On reprend ça après ?");
+
+    await loadUserSession(deps, USER, "Africa/Lagos");
+    expect(makeLesson.mock.calls[0][1].recycleWords[0]).toBe("Mon build a planté");
   });
 });

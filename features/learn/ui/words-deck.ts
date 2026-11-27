@@ -1,10 +1,12 @@
 import { normaliseWord } from "../domain/glossary";
+import type { TrackId } from "../domain/tracks";
 import type { WordDto } from "../server/service";
 
-export const WORD_FILTERS = ["all", "learning", "known", "mistakes"] as const;
+export const WORD_FILTERS = ["all", "focus", "learning", "known", "mistakes"] as const;
 export type WordFilter = (typeof WORD_FILTERS)[number];
 
-export function matchesWord(word: WordDto, query: string, filter: WordFilter): boolean {
+export function matchesWord(word: WordDto, query: string, filter: WordFilter, activeTrack?: TrackId): boolean {
+  if (filter === "focus" && activeTrack && word.track !== activeTrack) return false;
   if (filter === "learning" && word.strength === "known") return false;
   if (filter === "known" && word.strength !== "known") return false;
   if (filter === "mistakes" && word.source !== "error") return false;
@@ -13,9 +15,14 @@ export function matchesWord(word: WordDto, query: string, filter: WordFilter): b
   return normaliseWord(word.text).includes(q) || word.english.toLowerCase().includes(query.toLowerCase());
 }
 
-export function filterWords(words: readonly WordDto[], query: string, filter: WordFilter): readonly WordDto[] {
+export function filterWords(
+  words: readonly WordDto[],
+  query: string,
+  filter: WordFilter,
+  activeTrack?: TrackId
+): readonly WordDto[] {
   const trimmed = query.trim();
-  return words.filter((word) => matchesWord(word, trimmed, filter));
+  return words.filter((word) => matchesWord(word, trimmed, filter, activeTrack));
 }
 
 /** Fisher-Yates shuffle returning word IDs so live card status updates stay in sync. */

@@ -2,16 +2,33 @@ import { endOfLocalDay, localDateString, resolveTimeZone } from "../domain/dates
 import type { WordAction } from "../domain/schemas";
 import {
   DEFAULT_LEVEL,
-  fallbackLessonFor,
-  topicForDate,
   type Lesson,
   type Level,
+  type Register,
 } from "../domain/lessons";
+import {
+  DEFAULT_TRACK,
+  MAX_DAILY_LESSON_REFRESHES,
+  TRACKS,
+  computeSprintProgress,
+  resolveFocusId,
+  resolveTrackId,
+  sanitiseGoalNote,
+  selectNextMission,
+  type SprintProgress,
+  type TrackId,
+} from "../domain/tracks";
+import { fallbackLessonForTrack } from "../domain/tracks-fallbacks";
+import { staggerStarterKitCards, survivalKitForTrack } from "../domain/tracks-kits";
+import { normaliseWord } from "../domain/glossary";
+import type { CustomPhraseRequest } from "./ai";
 import {
   MAX_REVIEWS_PER_SESSION,
   checkSessionEligibility,
+  type CustomPhraseOutput,
   type ProfileUpdate,
   type SessionComplete,
+  type WordsPost,
 } from "../domain/schemas";
 import { COMMITMENT_STEPS, DEFAULT_COMMITMENT, type Commitment } from "../domain/commitment";
 import { LEVEL_UP_RULES, suggestNextLevel, type LevelSuggestion } from "../domain/level-up";
@@ -19,7 +36,7 @@ import { gradeCard, isRecalled, markKnown, newCardSchedule, practiseAgain } from
 import { applyCompletion, viewStreak } from "../domain/streak";
 import type { LessonRequest } from "./ai";
 import { AiUnavailableError, SessionNotEligibleError } from "./errors";
-import type { Card, LearnRepository } from "./repository";
+import type { Card, LearnRepository, NewCardInput } from "./repository";
 import { resolveVariantId, withVariant, type LanguagePack } from "../domain/language";
 
 export interface ServiceDeps {
@@ -57,6 +74,9 @@ export interface SessionPayload {
     readonly isNew: boolean;
     readonly dailyMinutes: Commitment;
     readonly variant: string | null;
+    readonly track: TrackId;
+    readonly goalFocus: string;
+    readonly goalNote: string | null;
   };
   readonly streak: StreakDto;
   readonly due: readonly DueCardDto[];
@@ -64,6 +84,9 @@ export interface SessionPayload {
   readonly lesson: Lesson;
   readonly lessonSource: "ai" | "cached" | "fallback";
   readonly estimatedMinutes: number;
+  /** Remaining mid-day lesson refreshes today when switching goal/track before completing today's page. */
+  readonly remainingTodayRefreshes: number;
+  readonly sprintProgress: SprintProgress;
   /** Set by the route: whether the learner has Plus (natural voices). Absent for guests. */
   readonly plus?: boolean;
   /** Set when recent sessions show the learner is ready for the next level. Never for guests. */
@@ -98,21 +121,41 @@ const toDueDto = (card: { id: string; french: string; english: string; notes: st
   notes: card.notes,
 });
 
-export function loadGuestSession(basePack: LanguagePack, now: Date, clientTimezone: string | null, variantId: string | null = null): SessionPayload {
+export function loadGuestSession(
+  basePack: LanguagePack,
+  now: Date,
+  clientTimezone: string | null,
+  variantId: string | null = null,
+  trackId: string | null = null,
+  focusId: string | null = null
+): SessionPayload {
   const variant = resolveVariantId(basePack, variantId);
   const pack = withVariant(basePack, variant);
+  const track = resolveTrackId(trackId);
+  const goalFocus = resolveFocusId(track, focusId);
   const timezone = resolveTimeZone(clientTimezone);
   const today = localDateString(timezone, now);
   return {
     guest: true,
     today,
-    profile: { level: DEFAULT_LEVEL, timezone, isNew: true, dailyMinutes: DEFAULT_COMMITMENT, variant },
+    profile: {
+      level: DEFAULT_LEVEL,
+      timezone,
+      isNew: true,
+      dailyMinutes: DEFAULT_COMMITMENT,
+      variant,
+      track,
+      goalFocus,
+      goalNote: null,
+    },
     streak: { current: 0, longest: 0, freezes: 2, completedToday: false, atRisk: false, totalCompletions: 0 },
     due: [],
     dueTotal: 0,
-    lesson: fallbackLessonFor(pack.fallbackLessons, today),
+    lesson: fallbackLessonForTrack(pack, track, today, variant),
     lessonSource: "fallback",
     estimatedMinutes: estimateMinutes(0),
+    remainingTodayRefreshes: 0,
+    sprintProgress: computeSprintProgress(track, []),
     levelSuggestion: null,
   };
 }
@@ -130,54 +173,80 @@ export async function loadUserSession(
   const level = stored?.level ?? DEFAULT_LEVEL;
   const dailyMinutes = stored?.dailyMinutes ?? DEFAULT_COMMITMENT;
   const variant = resolveVariantId(deps.pack, stored?.variant);
+  const track = resolveTrackId(stored?.track);
+  const goalFocus = resolveFocusId(track, stored?.goalFocus);
+  const goalNote = stored?.goalNote ?? null;
   const pack = withVariant(deps.pack, variant);
 
   // Keep the stored zone current so server-side jobs (reminders) can use it.
-  if (stored && stored.timezone !== timezone) await repo.upsertProfile(userId, { level, timezone, dailyMinutes, variant });
+  if (stored && stored.timezone !== timezone) {
+    await repo.upsertProfile(userId, {
+      ...stored,
+      level,
+      timezone,
+      dailyMinutes,
+      variant,
+      track,
+      goalFocus,
+      goalNote,
+    });
+  }
 
   const today = localDateString(timezone, now);
-  const [streakState, dueCards, dueTotal, cachedLesson, recentSessions] = await Promise.all([
+  const [streakState, dueCards, dueTotal, cachedLesson, recentSessions, recentMissionSlugs] = await Promise.all([
     repo.getStreak(userId),
     repo.listDueCards(userId, endOfLocalDay(timezone, now), MAX_REVIEWS_PER_SESSION),
     repo.countDueCards(userId, endOfLocalDay(timezone, now)),
     repo.getLesson(userId, today),
     repo.listRecentSessions(userId, LEVEL_UP_RULES.window * 2),
+    repo.listRecentMissionSlugs(userId, 24),
   ]);
 
   let lesson = cachedLesson;
   let lessonSource: SessionPayload["lessonSource"] = "cached";
 
-  // Until a learner has picked a level, don't spend an AI call (or cache a
-  // lesson) at a guessed one — they get the offline lesson, and the first
-  // generated lesson after onboarding matches their real level.
+  // Until a learner finishes onboarding (level + track), don't spend an AI call
+  // or cache a lesson at a guessed goal — Day 1's AI scene immediately reflects their pick.
   if (!lesson && stored === null) {
-    lesson = fallbackLessonFor(pack.fallbackLessons, today);
+    lesson = fallbackLessonForTrack(pack, track, today, variant);
     lessonSource = "fallback";
   }
 
   if (!lesson) {
     try {
+      const mission = selectNextMission(track, goalFocus, recentMissionSlugs.slice(0, 12), today);
+      const customDue = dueCards.filter((card) => card.source === "custom" && (card.track === track || !card.track));
+      const trackDue = dueCards.filter((card) => card.track === track && card.source !== "custom");
+      const prioritizedDue = [...customDue, ...trackDue];
+      const recycleSource = prioritizedDue.length > 0 ? prioritizedDue : dueCards;
       lesson = await deps.makeLesson(pack, {
         level,
-        topic: topicForDate(pack.topics, today),
-        recycleWords: dueCards.map((card) => card.french),
+        topic: mission.topic,
+        recycleWords: recycleSource.map((card) => card.french),
+        track,
+        goalFocus,
+        goalNote,
+        mission,
       });
       lessonSource = "ai";
-      await repo.saveLesson(userId, today, lesson);
+      await repo.saveLesson(userId, today, lesson, { track, missionSlug: mission.slug });
     } catch (error) {
       if (!(error instanceof AiUnavailableError)) throw error;
       deps.onAiFallback(error);
       // Not cached: a transient AI outage should retry on the next load, not stick all day.
-      lesson = fallbackLessonFor(pack.fallbackLessons, today);
+      lesson = fallbackLessonForTrack(pack, track, today, variant);
       lessonSource = "fallback";
     }
   }
 
   const view = viewStreak(streakState, today);
+  const usedRefreshes = stored?.lessonRefreshDate === today ? (stored.lessonRefreshCount ?? 0) : 0;
+  const remainingTodayRefreshes = view.completedToday ? 0 : Math.max(0, MAX_DAILY_LESSON_REFRESHES - usedRefreshes);
+
   return {
     guest: false,
     today,
-    profile: { level, timezone, isNew: stored === null, dailyMinutes, variant },
+    profile: { level, timezone, isNew: stored === null, dailyMinutes, variant, track, goalFocus, goalNote },
     streak: {
       current: view.current,
       longest: streakState.longest,
@@ -191,19 +260,59 @@ export async function loadUserSession(
     lesson,
     lessonSource,
     estimatedMinutes: estimateMinutes(dueCards.length, dailyMinutes),
+    remainingTodayRefreshes,
+    sprintProgress: computeSprintProgress(track, recentMissionSlugs),
     levelSuggestion: stored === null ? null : suggestNextLevel(level, recentSessions),
   };
 }
 
-export async function saveUserProfile(deps: ServiceDeps, userId: string, update: ProfileUpdate): Promise<void> {
-  // Partial updates (level only) must not reset a commitment chosen earlier.
+export interface SaveProfileResult {
+  readonly refreshedToday: boolean;
+  readonly remainingTodayRefreshes: number;
+}
+
+export async function saveUserProfile(deps: ServiceDeps, userId: string, update: ProfileUpdate): Promise<SaveProfileResult> {
+  // Partial updates (level or time only) must not reset track, focus, or commitment chosen earlier.
   const existing = await deps.repo.getProfile(userId);
+  const timezone = resolveTimeZone(update.timezone ?? existing?.timezone);
+  const today = localDateString(timezone, deps.now());
+
+  const track = resolveTrackId(update.track ?? existing?.track ?? DEFAULT_TRACK);
+  const trackChanged = update.track !== undefined && update.track !== existing?.track;
+  const goalFocus = resolveFocusId(track, update.goalFocus === undefined ? (trackChanged ? null : existing?.goalFocus) : update.goalFocus);
+  const goalNote = update.goalNote === undefined ? (existing?.goalNote ?? null) : sanitiseGoalNote(update.goalNote);
+
+  let refreshDate = existing?.lessonRefreshDate ?? null;
+  let refreshCount = refreshDate === today ? (existing?.lessonRefreshCount ?? 0) : 0;
+  let refreshedToday = false;
+
+  if (update.refreshToday && existing !== null) {
+    const streakState = await deps.repo.getStreak(userId);
+    const completedToday = viewStreak(streakState, today).completedToday;
+    if (!completedToday && refreshCount < MAX_DAILY_LESSON_REFRESHES) {
+      await deps.repo.deleteLesson(userId, today);
+      refreshDate = today;
+      refreshCount += 1;
+      refreshedToday = true;
+    }
+  }
+
   await deps.repo.upsertProfile(userId, {
     level: update.level,
-    timezone: update.timezone,
+    timezone,
     dailyMinutes: update.dailyMinutes ?? existing?.dailyMinutes ?? DEFAULT_COMMITMENT,
     variant: resolveVariantId(deps.pack, update.variant ?? existing?.variant),
+    track,
+    goalFocus,
+    goalNote,
+    lessonRefreshDate: refreshDate,
+    lessonRefreshCount: refreshCount,
   });
+
+  return {
+    refreshedToday,
+    remainingTodayRefreshes: Math.max(0, MAX_DAILY_LESSON_REFRESHES - refreshCount),
+  };
 }
 
 export async function completeUserSession(
@@ -255,10 +364,13 @@ export async function completeUserSession(
   });
   const recalled = updates.filter((update) => isRecalled(update.grade)).length;
 
-  await repo.updateCardSchedules(userId, updates);
-  await repo.addNewCards(userId, input.newCards, newCardSchedule(now));
-
   const profile = await repo.getProfile(userId);
+  const track = resolveTrackId(profile?.track);
+  const cardsWithTrack = input.newCards.map((card) => ({ ...card, track }));
+
+  await repo.updateCardSchedules(userId, updates);
+  await repo.addNewCards(userId, cardsWithTrack, newCardSchedule(now));
+
   const level = profile?.level ?? DEFAULT_LEVEL;
 
   const completion = applyCompletion(streakState, today);
@@ -306,7 +418,9 @@ export interface WordDto {
   readonly text: string;
   readonly english: string;
   readonly notes: string | null;
-  readonly source: "lesson" | "manual" | "error";
+  readonly source: "lesson" | "manual" | "error" | "starter" | "custom";
+  readonly track?: TrackId | null;
+  readonly register?: Register | null;
   /** "new" until first review; "learning" while short-interval; "known" once spaced out ≥ 21 days. */
   readonly strength: "new" | "learning" | "known";
   readonly dueAt: string;
@@ -325,6 +439,8 @@ function toWordDto(card: Card): WordDto {
     english: card.english,
     notes: card.notes,
     source: card.source,
+    track: card.track ?? null,
+    register: card.register ?? null,
     strength,
     dueAt: schedule.dueAt.toISOString(),
     intervalDays: schedule.intervalDays,
@@ -343,4 +459,107 @@ export async function updateWord(deps: ServiceDeps, userId: string, input: WordA
   const schedule = input.action === "known" ? markKnown(card.schedule, now) : practiseAgain(card.schedule, now);
   await deps.repo.updateCardSchedules(userId, [{ id: card.id, schedule }]);
   return toWordDto({ ...card, schedule });
+}
+
+export interface StarterSeedResult {
+  readonly added: number;
+  readonly totalKit: number;
+  readonly track: TrackId;
+}
+
+/** Seeds curated track Survival Kit phrases with staggered due dates so Day 1 reviews stay manageable. */
+export async function seedTrackStarterKit(deps: ServiceDeps, userId: string, rawTrack: TrackId): Promise<StarterSeedResult> {
+  const [profile, existingCards] = await Promise.all([
+    deps.repo.getProfile(userId),
+    deps.repo.listAllCards(userId, MAX_WORDS_LISTED),
+  ]);
+  const track = resolveTrackId(rawTrack);
+  const level = profile?.level ?? DEFAULT_LEVEL;
+  const variant = resolveVariantId(deps.pack, profile?.variant);
+  const kit = survivalKitForTrack(deps.pack.id, track, variant);
+  const now = deps.now();
+  const schedule = newCardSchedule(now);
+
+  const staggered = staggerStarterKitCards(
+    kit,
+    track,
+    level,
+    existingCards.map((c) => c.french),
+    now
+  );
+
+  if (staggered.length > 0) {
+    await deps.repo.addNewCards(
+      userId,
+      staggered.map((card) => ({ ...card, source: "starter" as const })),
+      schedule
+    );
+  }
+
+  return { added: staggered.length, totalKit: kit.length, track };
+}
+
+async function insertImmediateCard(
+  deps: ServiceDeps,
+  userId: string,
+  card: Omit<NewCardInput, "dueAt">
+): Promise<{ readonly word: WordDto | null; readonly created: boolean }> {
+  const existing = await deps.repo.listAllCards(userId, MAX_WORDS_LISTED);
+  const duplicate = existing.find((c) => normaliseWord(c.french) === normaliseWord(card.french));
+  if (duplicate) return { word: toWordDto(duplicate), created: false };
+
+  const now = deps.now();
+  await deps.repo.addNewCards(userId, [{ ...card, dueAt: now }], newCardSchedule(now));
+
+  const after = await deps.repo.listAllCards(userId, MAX_WORDS_LISTED);
+  const saved = after.find((c) => normaliseWord(c.french) === normaliseWord(card.french));
+  return { word: saved ? toWordDto(saved) : null, created: saved !== undefined };
+}
+
+/** Translates a real-life English phrase into track/register-authentic target French/Spanish and saves it. */
+export async function addCustomPhrase(
+  deps: ServiceDeps,
+  userId: string,
+  translateFn: (pack: LanguagePack, req: CustomPhraseRequest) => Promise<CustomPhraseOutput>,
+  input: Extract<WordsPost, { kind: "custom" }>
+): Promise<{ readonly word: WordDto | null; readonly created: boolean }> {
+  const profile = await deps.repo.getProfile(userId);
+  const variant = resolveVariantId(deps.pack, profile?.variant);
+  const effectivePack = withVariant(deps.pack, variant);
+  const track = resolveTrackId(input.track ?? profile?.track);
+  const level = profile?.level ?? DEFAULT_LEVEL;
+  const translated = await translateFn(effectivePack, {
+    english: input.english,
+    level,
+    track,
+    goalFocus: input.goalFocus ?? profile?.goalFocus,
+    goalNote: input.goalNote ?? profile?.goalNote,
+    register: input.register,
+  });
+
+  return insertImmediateCard(deps, userId, {
+    french: translated.fr,
+    english: translated.en,
+    notes: translated.notes,
+    source: "custom",
+    track,
+    register: translated.register ?? TRACKS[track].defaultRegister,
+  });
+}
+
+/** Saves one phrase or correction directly from a Roleplay debrief straight into Flashcards. */
+export async function saveDirectWord(
+  deps: ServiceDeps,
+  userId: string,
+  input: Extract<WordsPost, { kind: "save" }>
+): Promise<WordDto | null> {
+  const { word } = await insertImmediateCard(deps, userId, {
+    french: input.french,
+    english: input.english,
+    notes: input.notes,
+    source: input.source,
+    track: resolveTrackId(input.track),
+    register: input.register ?? null,
+  });
+  return word;
 }

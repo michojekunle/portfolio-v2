@@ -1,17 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from "react";
-import { ArrowLeft, Loader2, Search, Volume2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactElement } from "react";
+import { ArrowLeft, BookmarkPlus, Loader2, Plus, Search, Sparkles, Volume2 } from "lucide-react";
 import { toast } from "sonner";
+import { TRACKS, registerBadgeText, type TrackId } from "../domain/tracks";
+import { survivalKitForTrack } from "../domain/tracks-kits";
+import { normaliseWord } from "../domain/glossary";
 import type { WordDto } from "../server/service";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { useLang } from "./lang-context";
-import { QuietButton } from "./primitives";
+import { OutlineButton, QuietButton } from "./primitives";
 import { speak } from "./speech-io";
 import { WordFlashcards } from "./WordFlashcards";
 import { WORD_FILTERS, filterWords, type WordFilter } from "./words-deck";
-
-const FILTER_LABEL: Record<WordFilter, string> = { all: "All", learning: "Learning", known: "Known", mistakes: "Mistakes" };
 
 const VIEWS = ["list", "flashcards"] as const;
 type ViewMode = (typeof VIEWS)[number];
@@ -19,11 +20,25 @@ const VIEW_LABEL: Record<ViewMode, string> = { list: "List", flashcards: "Flashc
 
 const STRENGTH_LABEL: Record<WordDto["strength"], string> = { new: "new", learning: "learning", known: "known" };
 
+interface WordsScreenProps {
+  readonly onClose: () => void;
+  readonly activeTrack?: TrackId;
+  readonly goalFocus?: string;
+  readonly goalNote?: string | null;
+  readonly variant?: string | null;
+}
+
 /**
  * Every word the learner has kept, searchable and reviewable as a list or flashcards.
- * "I know this" stops a word eating review time; "Practise again" brings one back into today's reviews.
+ * Supports staggered Track Survival Kits and 1-line "I needed this today" capture.
  */
-export function WordsScreen({ onClose }: { readonly onClose: () => void }): ReactElement {
+export function WordsScreen({
+  onClose,
+  activeTrack = "general",
+  goalFocus,
+  goalNote,
+  variant,
+}: WordsScreenProps): ReactElement {
   const { copy, pack } = useLang();
   const [words, setWords] = useState<readonly WordDto[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +46,9 @@ export function WordsScreen({ onClose }: { readonly onClose: () => void }): Reac
   const [filter, setFilter] = useState<WordFilter>("all");
   const [view, setView] = useState<ViewMode>("list");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [seedingKit, setSeedingKit] = useState(false);
+  const [customEnglish, setCustomEnglish] = useState("");
+  const [addingCustom, setAddingCustom] = useState(false);
 
   const load = useCallback(async (): Promise<void> => {
     setError(null);
@@ -69,11 +87,92 @@ export function WordsScreen({ onClose }: { readonly onClose: () => void }): Reac
     }
   };
 
-  const visible = useMemo(() => filterWords(words ?? [], query, filter), [words, query, filter]);
+  const visible = useMemo(() => filterWords(words ?? [], query, filter, activeTrack), [words, query, filter, activeTrack]);
   const counts = useMemo(() => {
     const list = words ?? [];
     return { total: list.length, known: list.filter((w) => w.strength === "known").length };
   }, [words]);
+
+  const filterLabels: Record<WordFilter, string> = {
+    all: "All",
+    focus: TRACKS[activeTrack].label,
+    learning: "Learning",
+    known: "Known",
+    mistakes: "Mistakes",
+  };
+  const availableFilters: readonly WordFilter[] =
+    activeTrack === "general" ? WORD_FILTERS.filter((f) => f !== "focus") : WORD_FILTERS;
+
+  const missingKitCount = useMemo(() => {
+    if (!words || activeTrack === "general") return 0;
+    const kit = survivalKitForTrack(pack.id, activeTrack, variant);
+    const owned = new Set(words.map((w) => normaliseWord(w.text)));
+    return kit.filter((phrase) => !owned.has(normaliseWord(phrase.fr))).length;
+  }, [words, activeTrack, pack.id, variant]);
+
+  const loadStarterKit = async (): Promise<void> => {
+    setSeedingKit(true);
+    try {
+      const response = await fetch(`${pack.api}/words`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "starter", track: activeTrack }),
+      });
+      if (!response.ok) throw new Error(`Starter kit failed with ${response.status}`);
+      const data = (await response.json()) as { added: number };
+      await load();
+      setFilter("focus");
+      setView("flashcards");
+      toast.success(
+        data.added > 0
+          ? `Added ${data.added} ${TRACKS[activeTrack].label} phrases (staggered over 3 days).`
+          : `All ${TRACKS[activeTrack].label} starter phrases are already in your deck.`
+      );
+    } catch (caught) {
+      console.error("[learn] could not seed starter kit", caught);
+      toast.error("Couldn't add starter phrases right now.");
+    } finally {
+      setSeedingKit(false);
+    }
+  };
+
+  const addCustom = async (event: FormEvent): Promise<void> => {
+    event.preventDefault();
+    const trimmed = customEnglish.trim();
+    if (trimmed.length < 2) return;
+    setAddingCustom(true);
+    try {
+      const response = await fetch(`${pack.api}/words`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "custom",
+          english: trimmed,
+          track: activeTrack,
+          ...(goalFocus ? { goalFocus } : {}),
+          ...(goalNote ? { goalNote } : {}),
+        }),
+      });
+      if (!response.ok) throw new Error(`Custom phrase failed with ${response.status}`);
+      const data = (await response.json()) as { available?: boolean; word?: WordDto | null; created?: boolean };
+      if (!data.available || !data.word) {
+        toast.error("Phrase builder is temporarily offline. Try again in a moment.");
+        return;
+      }
+      setCustomEnglish("");
+      setWords((current) => {
+        if (!current) return [data.word!];
+        return current.some((w) => w.id === data.word!.id) ? current : [data.word!, ...current];
+      });
+      speak(data.word.text);
+      toast.success(data.created ? `Saved “${data.word.text}” to your deck.` : `Already in your deck: “${data.word.text}”.`);
+    } catch (caught) {
+      console.error("[learn] could not add custom phrase", caught);
+      toast.error("Couldn't translate and save that line. Try again.");
+    } finally {
+      setAddingCustom(false);
+    }
+  };
 
   return (
     <div className="fr-sheet">
@@ -115,8 +214,45 @@ export function WordsScreen({ onClose }: { readonly onClose: () => void }): Reac
           />
         </label>
         <div className="-ml-2 mt-2">
-          <ChoiceGroup label="Filter words" options={WORD_FILTERS} labels={FILTER_LABEL} value={filter} onChange={setFilter} />
+          <ChoiceGroup label="Filter words" options={availableFilters} labels={filterLabels} value={filter} onChange={setFilter} />
         </div>
+
+        {missingKitCount > 0 ? (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-y border-(--fr-rule) py-3">
+            <div className="min-w-0">
+              <p className="fr-ui text-sm font-semibold text-(--fr-ink)">
+                {TRACKS[activeTrack].label} Survival Kit · {missingKitCount} high-leverage phrases
+              </p>
+              <p className="fr-ui text-xs text-(--fr-soft)">
+                Staggered over Days 1–3 into Flashcards so reviews stay light.
+              </p>
+            </div>
+            <OutlineButton onClick={() => void loadStarterKit()} disabled={seedingKit} className="shrink-0 text-xs">
+              {seedingKit ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <BookmarkPlus className="size-3.5" aria-hidden="true" />}
+              Load starter kit
+            </OutlineButton>
+          </div>
+        ) : null}
+
+        <form onSubmit={(e) => void addCustom(e)} className="mt-4 flex items-center gap-2 border-b border-(--fr-rule) pb-3">
+          <label htmlFor="fr-custom-line" className="sr-only">
+            Add a real-life English phrase you needed today
+          </label>
+          <input
+            id="fr-custom-line"
+            type="text"
+            value={customEnglish}
+            maxLength={180}
+            disabled={addingCustom}
+            onChange={(event) => setCustomEnglish(event.target.value)}
+            placeholder={`Add a line you needed today (English → ${TRACKS[activeTrack].label} ${pack.name})`}
+            className="fr-ui min-w-0 flex-1 bg-transparent py-2 text-sm text-(--fr-ink) placeholder:text-(--fr-soft)/80 focus:outline-none"
+          />
+          <QuietButton type="submit" disabled={addingCustom || customEnglish.trim().length < 2} className="shrink-0 text-xs text-(--fr-key)">
+            {addingCustom ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Sparkles className="size-3.5" aria-hidden="true" />}
+            Save phrase
+          </QuietButton>
+        </form>
 
         <div className="mt-4" aria-live="polite">
           {error ? (
@@ -162,7 +298,15 @@ export function WordsScreen({ onClose }: { readonly onClose: () => void }): Reac
                     {word.notes ? <p className="fr-ui text-xs leading-5 text-(--fr-soft) [overflow-wrap:anywhere]">{word.notes}</p> : null}
                     <p className="fr-ui mt-0.5 text-xs text-(--fr-soft)">
                       {STRENGTH_LABEL[word.strength]}
-                      {word.source === "error" ? " · from a correction" : ""}
+                      {word.source === "error"
+                        ? " · from a correction"
+                        : word.source === "custom"
+                          ? " · your line"
+                          : word.source === "starter"
+                            ? " · survival kit"
+                            : ""}
+                      {word.track && word.track !== "general" ? ` · ${TRACKS[word.track].label}` : ""}
+                      {word.register ? ` · ${registerBadgeText(pack.id, word.register)}` : ""}
                     </p>
                   </div>
                   <QuietButton

@@ -2,8 +2,9 @@
 
 import { useLang } from "./lang-context";
 import type { ReactElement } from "react";
-import { Download, Flame, Share, Snowflake } from "lucide-react";
+import { Download, Flame, MessageSquare, Share, Snowflake } from "lucide-react";
 import type { Stage } from "../domain/progression";
+import { TRACKS, type SprintProgress, type TrackId } from "../domain/tracks";
 import type { CompletePayload } from "../server/service";
 import { ActionButton, QuietButton } from "./primitives";
 import type { Copy } from "./copy";
@@ -17,6 +18,9 @@ interface Props {
   readonly install: InstallState;
   /** Set when this page moved the learner up a stage — tomorrow asks a little more. */
   readonly unlocked: Stage | null;
+  readonly track?: TrackId;
+  readonly sprintProgress?: SprintProgress;
+  readonly onOpenRoleplay?: () => void;
 }
 
 /** What a new stage changes, in English; the headline comes from the language copy. */
@@ -67,7 +71,7 @@ function verdict(copy: Copy, recallRate: number | null): string {
   return copy.keepGoing;
 }
 
-export function DoneScreen({ result, onClose, onSignIn, install, unlocked }: Props): ReactElement {
+export function DoneScreen({ result, onClose, onSignIn, install, unlocked, track = "general", sprintProgress, onOpenRoleplay }: Props): ReactElement {
   const { copy, pack } = useLang();
   if (result === null) {
     return (
@@ -143,10 +147,21 @@ export function DoneScreen({ result, onClose, onSignIn, install, unlocked }: Pro
           </div>
         ) : null}
 
-        <div className="mt-12">
+        {sprintProgress && track !== "general" ? (
+          <p className="fr-ui mt-6 text-xs text-(--fr-soft)">
+            <strong className="text-(--fr-ink)">{TRACKS[track].label}</strong> · {sprintProgress.currentSprintTitle} ({sprintProgress.sprintCompleted}/{sprintProgress.sprintTotal})
+          </p>
+        ) : null}
+
+        <div className="mt-12 space-y-2">
           <ActionButton onClick={onClose} meta="→">
             {copy.seeYouTomorrow.replace(/\.$/, "")}
           </ActionButton>
+          {onOpenRoleplay ? (
+            <QuietButton onClick={onOpenRoleplay} className="w-full justify-center">
+              <MessageSquare className="size-4" aria-hidden="true" /> Practise live simulation (4–6 turns)
+            </QuietButton>
+          ) : null}
         </div>
         <InstallNudge install={install} />
       </main>

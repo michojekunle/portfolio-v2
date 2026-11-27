@@ -254,7 +254,7 @@ export function SessionRunner({ payload, onExit, onComplete }: Props): ReactElem
                   }}
                 />
               ) : null}
-              {step === "listen" ? <ListenStep lesson={lesson} seed={payload.today} onDone={() => advanceFrom("listen")} /> : null}
+              {step === "listen" ? <ListenStep lesson={lesson} seed={payload.today} track={payload.profile.track} onDone={() => advanceFrom("listen")} /> : null}
               {step === "speak" ? (
                 // Stage 1 repeats a line (mouth training); from stage 2 the learner answers a question in their own words.
                 stage === 1 ? (
@@ -266,7 +266,19 @@ export function SessionRunner({ payload, onExit, onComplete }: Props): ReactElem
                     }}
                   />
                 ) : (
-                  <AskStep question={payload.lesson.ask ?? copy.fallbackQuestion} level={payload.profile.level} guest={payload.guest} onDone={() => advanceFrom("speak")} />
+                  <AskStep
+                    question={payload.lesson.ask ?? copy.fallbackQuestion}
+                    level={payload.profile.level}
+                    guest={payload.guest}
+                    goalContext={{
+                      track: payload.profile.track,
+                      goalFocus: payload.profile.goalFocus,
+                      goalNote: payload.profile.goalNote,
+                      expectedRegister: payload.lesson.register,
+                      contextBrief: payload.lesson.contextBrief,
+                    }}
+                    onDone={() => advanceFrom("speak")}
+                  />
                 )
               ) : null}
               {step === "write" ? (
@@ -275,7 +287,19 @@ export function SessionRunner({ payload, onExit, onComplete }: Props): ReactElem
                 ) : writeMode === "gap" && gap ? (
                   <GapStep gap={gap} onDone={afterWrite} />
                 ) : (
-                  <WriteStep write={payload.lesson.write} level={payload.profile.level} guest={payload.guest} onDone={afterWrite} />
+                  <WriteStep
+                    write={payload.lesson.write}
+                    level={payload.profile.level}
+                    guest={payload.guest}
+                    goalContext={{
+                      track: payload.profile.track,
+                      goalFocus: payload.profile.goalFocus,
+                      goalNote: payload.profile.goalNote,
+                      expectedRegister: payload.lesson.register,
+                      contextBrief: payload.lesson.contextBrief,
+                    }}
+                    onDone={afterWrite}
+                  />
                 )
               ) : null}
               {step === "dictation" ? (
