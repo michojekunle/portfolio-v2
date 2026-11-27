@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type ReactElement } from "react";
 import { ArrowLeftRight, ChevronLeft, ChevronRight, Shuffle } from "lucide-react";
+import { TRACKS, registerBadgeText } from "../domain/tracks";
 import type { WordDto } from "../server/service";
 import { useLang } from "./lang-context";
 import { ActionButton, OutlineButton, QuietButton, SpeakerButton } from "./primitives";
@@ -208,7 +209,14 @@ export function WordFlashcards({ words, resetKey, busyId, onAction }: Props): Re
             <div className="fr-flashcard-rule flex min-h-13 w-full items-center justify-between gap-2 px-4 py-2 pr-14 text-left">
               <span className="fr-ui text-xs text-(--fr-soft)">
                 {STRENGTH_LABEL[card.strength]}
-                {card.source === "error" ? " · from a correction" : ""}
+                {card.source === "error"
+                  ? " · from a correction"
+                  : card.source === "custom"
+                    ? " · your line"
+                    : card.source === "starter" && card.track
+                      ? ` · ${TRACKS[card.track].label}`
+                      : ""}
+                {card.register ? ` · ${registerBadgeText(pack.id, card.register)}` : ""}
               </span>
               <span className="fr-ui text-[11px] font-bold uppercase tracking-wider text-(--fr-soft)">
                 {frontSide === "target" ? pack.name : "English"}

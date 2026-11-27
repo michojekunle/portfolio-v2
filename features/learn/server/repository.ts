@@ -1,10 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { DEFAULT_LEVEL, LEVELS, LessonSchema, type Lesson, type Level } from "../domain/lessons";
+import { DEFAULT_LEVEL, LEVELS, LessonSchema, type Lesson, type Level, type Register } from "../domain/lessons";
 import type { CardSchedule, CardState } from "../domain/srs";
 import { toCommitment, type Commitment } from "../domain/commitment";
 import type { LanguagePack } from "../domain/language";
 import type { SessionSignal } from "../domain/level-up";
 import { EMPTY_STREAK, type StreakState } from "../domain/streak";
+import { DEFAULT_TRACK, resolveFocusId, resolveTrackId, sanitiseGoalNote, type TrackId } from "../domain/tracks";
 import { PersistenceError } from "./errors";
 
 /** Row shapes mirror the *_srs_sessions / spanish_daily migrations. The card text column differs per language; it is aliased to `text` on read. */
@@ -13,7 +14,9 @@ interface CardRow {
   text: string;
   english_meaning: string;
   notes: string | null;
-  source: "lesson" | "manual" | "error";
+  source: "lesson" | "manual" | "error" | "starter" | "custom";
+  track?: string | null;
+  register?: string | null;
   state: CardState;
   ease: number;
   interval_days: number;
@@ -36,7 +39,9 @@ export interface Card {
   readonly french: string;
   readonly english: string;
   readonly notes: string | null;
-  readonly source: "lesson" | "manual" | "error";
+  readonly source: "lesson" | "manual" | "error" | "starter" | "custom";
+  readonly track?: TrackId | null;
+  readonly register?: Register | null;
   readonly schedule: CardSchedule;
 }
 
@@ -46,13 +51,21 @@ export interface Profile {
   readonly dailyMinutes: Commitment;
   /** Regional variant id (Spanish: "es" | "latam"); null when the language has none. */
   readonly variant: string | null;
+  readonly track?: TrackId;
+  readonly goalFocus?: string | null;
+  readonly goalNote?: string | null;
+  readonly lessonRefreshDate?: string | null;
+  readonly lessonRefreshCount?: number;
 }
 
 export interface NewCardInput {
   readonly french: string;
   readonly english: string;
   readonly notes?: string;
-  readonly source: "lesson" | "error";
+  readonly source: "lesson" | "error" | "starter" | "custom";
+  readonly track?: TrackId;
+  readonly register?: Register | null;
+  readonly dueAt?: Date;
 }
 
 export interface SessionRecord {
@@ -68,15 +81,18 @@ export interface SessionRecord {
 }
 
 const cardColumns = (textColumn: string): string =>
-  `id, text:${textColumn}, english_meaning, notes, source, state, ease, interval_days, reps, lapses, due_at, last_reviewed_at`;
+  `id, text:${textColumn}, english_meaning, notes, source, track, register, state, ease, interval_days, reps, lapses, due_at, last_reviewed_at`;
 
 function toCard(row: CardRow): Card {
+  const reg = row.register === "tu" || row.register === "vous" || row.register === "mixed" ? row.register : null;
   return {
     id: row.id,
     french: row.text,
     english: row.english_meaning,
     notes: row.notes,
     source: row.source,
+    track: row.track ? resolveTrackId(row.track) : null,
+    register: reg,
     schedule: {
       state: row.state,
       ease: row.ease,
@@ -100,16 +116,38 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
     async getProfile(userId: string): Promise<Profile | null> {
       const { data, error } = await db
         .from(t.profiles)
-        .select("level, timezone, daily_minutes, variant")
+        .select("level, timezone, daily_minutes, variant, track, goal_focus, goal_note, lesson_refresh_date, lesson_refresh_count")
         .eq("user_id", userId)
-        .maybeSingle<{ level: string; timezone: string; daily_minutes: number | null; variant: string | null }>();
+        .maybeSingle<{
+          level: string;
+          timezone: string;
+          daily_minutes: number | null;
+          variant: string | null;
+          track: string | null;
+          goal_focus: string | null;
+          goal_note: string | null;
+          lesson_refresh_date: string | null;
+          lesson_refresh_count: number | null;
+        }>();
       if (error) fail("getProfile", error);
       if (!data) return null;
       const level = (LEVELS as readonly string[]).includes(data.level) ? (data.level as Level) : DEFAULT_LEVEL;
-      return { level, timezone: data.timezone, dailyMinutes: toCommitment(data.daily_minutes), variant: data.variant };
+      const track = resolveTrackId(data.track);
+      return {
+        level,
+        timezone: data.timezone,
+        dailyMinutes: toCommitment(data.daily_minutes),
+        variant: data.variant,
+        track,
+        goalFocus: resolveFocusId(track, data.goal_focus),
+        goalNote: sanitiseGoalNote(data.goal_note),
+        lessonRefreshDate: data.lesson_refresh_date,
+        lessonRefreshCount: data.lesson_refresh_count ?? 0,
+      };
     },
 
     async upsertProfile(userId: string, profile: Profile): Promise<void> {
+      const track = profile.track ?? DEFAULT_TRACK;
       const { error } = await db.from(t.profiles).upsert(
         {
           user_id: userId,
@@ -117,6 +155,11 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
           timezone: profile.timezone,
           daily_minutes: profile.dailyMinutes,
           variant: profile.variant,
+          track,
+          goal_focus: resolveFocusId(track, profile.goalFocus),
+          goal_note: sanitiseGoalNote(profile.goalNote),
+          lesson_refresh_date: profile.lessonRefreshDate ?? null,
+          lesson_refresh_count: profile.lessonRefreshCount ?? 0,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" }
@@ -236,10 +279,12 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
         english_meaning: card.english,
         notes: card.notes ?? null,
         source: card.source,
+        track: card.track ?? null,
+        register: card.register ?? null,
         state: schedule.state,
         ease: schedule.ease,
         interval_days: schedule.intervalDays,
-        due_at: schedule.dueAt.toISOString(),
+        due_at: (card.dueAt ?? schedule.dueAt).toISOString(),
       }));
       const { error } = await db
         .from(t.cards)
@@ -260,14 +305,48 @@ export function createRepository(db: SupabaseClient, pack: LanguagePack) {
       return parsed.success ? parsed.data : null;
     },
 
-    async saveLesson(userId: string, lessonDate: string, lesson: Lesson): Promise<void> {
+    async saveLesson(
+      userId: string,
+      lessonDate: string,
+      lesson: Lesson,
+      meta?: { readonly track?: TrackId; readonly missionSlug?: string | null }
+    ): Promise<void> {
       const { error } = await db
         .from(t.lessons)
         .upsert(
-          { user_id: userId, lesson_date: lessonDate, level: lesson.level, content: lesson },
+          {
+            user_id: userId,
+            lesson_date: lessonDate,
+            level: lesson.level,
+            track: meta?.track ?? lesson.track ?? DEFAULT_TRACK,
+            mission_slug: meta?.missionSlug ?? lesson.missionSlug ?? null,
+            content: lesson,
+          },
           { onConflict: "user_id,lesson_date", ignoreDuplicates: true }
         );
       if (error) fail("saveLesson", error);
+    },
+
+    async deleteLesson(userId: string, lessonDate: string): Promise<void> {
+      const { error } = await db
+        .from(t.lessons)
+        .delete()
+        .eq("user_id", userId)
+        .eq("lesson_date", lessonDate);
+      if (error) fail("deleteLesson", error);
+    },
+
+    async listRecentMissionSlugs(userId: string, limit: number): Promise<readonly string[]> {
+      const { data, error } = await db
+        .from(t.lessons)
+        .select("mission_slug")
+        .eq("user_id", userId)
+        .not("mission_slug", "is", null)
+        .order("lesson_date", { ascending: false })
+        .limit(limit);
+      if (error) fail("listRecentMissionSlugs", error);
+      const rows = (data ?? []) as { mission_slug: string | null }[];
+      return rows.flatMap((row) => (row.mission_slug ? [row.mission_slug] : []));
     },
 
     async hasSession(userId: string, clientSessionId: string): Promise<boolean> {

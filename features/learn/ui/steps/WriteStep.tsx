@@ -5,9 +5,11 @@ import { useRef, useState, type ReactElement } from "react";
 import { Loader2 } from "lucide-react";
 import type { Lesson, Level } from "../../domain/lessons";
 import { CARD_NOTES_MAX, CARD_TEXT_MAX, clipText, type Feedback } from "../../domain/schemas";
+import { registerBadgeText } from "../../domain/tracks";
 import { NO_WRITING_TOOLS, ActionButton, QuietButton, StepHeading } from "../primitives";
 import { AccentKeys, insertAtCaret } from "../AccentKeys";
 import { RedPen } from "../RedPen";
+import type { GoalFeedbackContext } from "./AskStep";
 import type { NewCardDto } from "./LearnStep";
 
 export interface WriteResult {
@@ -21,6 +23,7 @@ interface Props {
   readonly write: Lesson["write"];
   readonly level: Level;
   readonly guest: boolean;
+  readonly goalContext?: GoalFeedbackContext;
   readonly onDone: (result: WriteResult) => void;
 }
 
@@ -53,7 +56,7 @@ function shortcutLabel(): string {
   return /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘ ↵" : "Ctrl ↵";
 }
 
-export function WriteStep({ write, level, guest, onDone }: Props): ReactElement {
+export function WriteStep({ write, level, guest, goalContext, onDone }: Props): ReactElement {
   const { copy, pack } = useLang();
   const [text, setText] = useState("");
   const [checking, setChecking] = useState(false);
@@ -82,7 +85,16 @@ export function WriteStep({ write, level, guest, onDone }: Props): ReactElement 
       const response = await fetch(`${pack.api}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sentence, targetWord: write.targetWord, level }),
+        body: JSON.stringify({
+          sentence,
+          targetWord: write.targetWord,
+          level,
+          ...(goalContext?.track ? { track: goalContext.track } : {}),
+          ...(goalContext?.goalFocus ? { goalFocus: goalContext.goalFocus } : {}),
+          ...(goalContext?.goalNote ? { goalNote: goalContext.goalNote } : {}),
+          ...(goalContext?.expectedRegister ? { expectedRegister: goalContext.expectedRegister } : {}),
+          ...(goalContext?.contextBrief ? { contextBrief: goalContext.contextBrief } : {}),
+        }),
       });
       if (!response.ok) {
         const body = (await response.json().catch((parseError: unknown) => {
@@ -128,6 +140,9 @@ export function WriteStep({ write, level, guest, onDone }: Props): ReactElement 
 
       <p className="fr-ui -mt-4 mb-6 text-sm leading-8 text-(--fr-soft)">
         Use the word <span lang={pack.id} className="fr-word text-[19px] text-(--fr-key)">{write.targetWord}</span>
+        {goalContext?.expectedRegister ? (
+          <span> · <span className="text-(--fr-ink)">{registerBadgeText(pack.id, goalContext.expectedRegister)}</span></span>
+        ) : null}
       </p>
 
       {feedback ? (

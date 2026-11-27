@@ -4,6 +4,9 @@ export const LEVELS = ["A1", "A2", "B1", "B2"] as const;
 export type Level = (typeof LEVELS)[number];
 export const DEFAULT_LEVEL: Level = "A2";
 
+export const REGISTERS = ["tu", "vous", "mixed"] as const;
+export type Register = (typeof REGISTERS)[number];
+
 /**
  * `fr` holds the sentence in the language being learned (French or Spanish).
  * The name predates Spanish; it's kept because lessons are stored as JSON and
@@ -47,6 +50,11 @@ export const LessonSchema = z.object({
   }),
   /** A question the learner answers out loud in their own words. Optional: older cached lessons lack it. */
   ask: SentenceSchema.optional(),
+  /** Optional goal metadata attached to track-targeted lessons; older cached lessons lack it. */
+  track: z.string().max(30).optional(),
+  missionSlug: z.string().max(80).optional(),
+  contextBrief: z.string().max(160).optional(),
+  register: z.enum(REGISTERS).optional(),
 });
 export type Lesson = z.infer<typeof LessonSchema>;
 export type LessonVocab = z.infer<typeof VocabSchema>;

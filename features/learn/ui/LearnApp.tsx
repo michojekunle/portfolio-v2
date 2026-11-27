@@ -14,12 +14,14 @@ import { createClient } from "@/lib/supabase/client";
 import type { Level } from "../domain/lessons";
 import type { Commitment } from "../domain/commitment";
 import { practiceStage, type Stage } from "../domain/progression";
+import type { TrackId } from "../domain/tracks";
 import type { CompletePayload, SessionPayload } from "../server/service";
 import { AuthPanel } from "./AuthPanel";
 import { DoneScreen } from "./DoneScreen";
 import { HomeScreen } from "./HomeScreen";
 import { ActionButton } from "./primitives";
 import { SessionRunner } from "./SessionRunner";
+import { RoleplayScreen } from "./RoleplayScreen";
 import { WordsScreen } from "./WordsScreen";
 import { GroupScreen } from "./GroupScreen";
 import { withVariant, type LanguageId, type LanguagePack } from "../domain/language";
@@ -32,7 +34,7 @@ import { setBrowserVoice, setNaturalVoices, setSpeechLanguage } from "./speech-i
 import { usePageStyle, type PageStyle } from "./style-preference";
 import { useInstall } from "./use-install";
 
-type Phase = "home" | "session" | "done" | "words" | "group";
+type Phase = "home" | "session" | "done" | "words" | "group" | "roleplay";
 
 /** Paper colour per language, style and mode — the browser chrome / status bar matches the page (mirrors learn.css). */
 const PAPER: Record<
@@ -49,13 +51,20 @@ const PAPER: Record<
   },
 };
 
-/** The guest's chosen variant as a query param (read at call time so a fresh choice is used immediately). */
-function guestVariantParam(lang: LanguageId): string {
+/** The guest's chosen variant/track/focus as query params (read at call time so a fresh choice applies immediately). */
+function guestPreferenceParams(lang: LanguageId): string {
   try {
+    const params = new URLSearchParams();
     const variant = window.localStorage.getItem(`${lang}-variant`);
-    return variant ? `&variant=${encodeURIComponent(variant)}` : "";
+    const track = window.localStorage.getItem(`${lang}-track`);
+    const focus = window.localStorage.getItem(`${lang}-focus`);
+    if (variant) params.set("variant", variant);
+    if (track) params.set("track", track);
+    if (focus) params.set("focus", focus);
+    const qs = params.toString();
+    return qs ? `&${qs}` : "";
   } catch (error) {
-    console.warn("[learn] could not read variant preference", error);
+    console.warn("[learn] could not read guest preferences", error);
     return "";
   }
 }
@@ -119,7 +128,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     setLoadError(null);
     try {
       const response = await fetch(
-        `${pack.api}/session?tz=${encodeURIComponent(browserTimeZone())}${guestVariantParam(basePack.id)}`,
+        `${pack.api}/session?tz=${encodeURIComponent(browserTimeZone())}${guestPreferenceParams(basePack.id)}`,
         { cache: "no-store" },
       );
       if (!response.ok)
@@ -206,13 +215,20 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     await load();
   };
 
-  const pickLevel = async (level: Level): Promise<void> => {
+  const pickLevel = async (
+    level: Level,
+    goal?: { readonly track: TrackId; readonly goalFocus: string; readonly goalNote: string },
+  ): Promise<void> => {
     setPickingLevel(true);
     try {
       const response = await fetch(`${pack.api}/profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ level, timezone: browserTimeZone() }),
+        body: JSON.stringify({
+          level,
+          timezone: browserTimeZone(),
+          ...(goal ? { track: goal.track, goalFocus: goal.goalFocus, goalNote: goal.goalNote } : {}),
+        }),
       });
       if (!response.ok)
         throw new Error(`Profile update failed with ${response.status}`);
@@ -223,6 +239,54 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
     } catch (caught) {
       console.error("[learn] could not save level", caught);
       toast.error("Your level wasn't saved. Try again.");
+    } finally {
+      setPickingLevel(false);
+    }
+  };
+
+  const changeTrack = async (next: {
+    readonly track: TrackId;
+    readonly goalFocus: string;
+    readonly goalNote: string;
+    readonly refreshToday?: boolean;
+  }): Promise<void> => {
+    if (!payload) return;
+    try {
+      window.localStorage.setItem(`${basePack.id}-track`, next.track);
+      window.localStorage.setItem(`${basePack.id}-focus`, next.goalFocus);
+    } catch (error) {
+      console.warn("[learn] could not save track preference", error);
+    }
+    if (payload.guest) {
+      await load();
+      toast.success("Preview switched — today's sample page now matches your focus.");
+      return;
+    }
+    setPickingLevel(true);
+    try {
+      const response = await fetch(`${pack.api}/profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          level: payload.profile.level,
+          timezone: browserTimeZone(),
+          track: next.track,
+          goalFocus: next.goalFocus,
+          goalNote: next.goalNote,
+          refreshToday: next.refreshToday ?? false,
+        }),
+      });
+      if (!response.ok) throw new Error(`Profile update failed with ${response.status}`);
+      const data = (await response.json()) as { refreshedToday?: boolean };
+      await load();
+      toast.success(
+        data.refreshedToday
+          ? "Updated — today's scene now matches your goal."
+          : "Goal saved — applies from tomorrow's scene."
+      );
+    } catch (caught) {
+      console.error("[learn] could not save goal track", caught);
+      toast.error("That didn't save. Try again.");
     } finally {
       setPickingLevel(false);
     }
@@ -295,6 +359,16 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
 
   const closeAuth = useCallback((): void => setAuthOpen(false), []);
 
+  const openRoleplay = (): void => {
+    if (!payload) return;
+    if (payload.guest) {
+      toast.message("Sign in free to run a live simulation with Red Pen feedback.");
+      setAuthOpen(true);
+      return;
+    }
+    setPhase("roleplay");
+  };
+
   let screen: ReactElement;
   if (loadError && !payload) {
     screen = (
@@ -344,7 +418,26 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
   } else if (phase === "group") {
     screen = <GroupScreen onClose={backHome} inviteCode={inviteCode} />;
   } else if (phase === "words") {
-    screen = <WordsScreen onClose={backHome} />;
+    screen = (
+      <WordsScreen
+        onClose={backHome}
+        activeTrack={payload.profile.track}
+        goalFocus={payload.profile.goalFocus}
+        goalNote={payload.profile.goalNote}
+        variant={payload.profile.variant}
+      />
+    );
+  } else if (phase === "roleplay") {
+    screen = (
+      <RoleplayScreen
+        track={payload.profile.track}
+        goalFocus={payload.profile.goalFocus}
+        goalNote={payload.profile.goalNote}
+        level={payload.profile.level}
+        initialMissionSlug={payload.lesson.missionSlug}
+        onClose={backHome}
+      />
+    );
   } else if (phase === "done") {
     const before = payload.streak.totalCompletions;
     const after = result && !result.alreadyCompleted ? before + 1 : before;
@@ -358,6 +451,9 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         onSignIn={() => setAuthOpen(true)}
         install={install}
         unlocked={unlocked}
+        track={payload.profile.track}
+        sprintProgress={payload.sprintProgress}
+        onOpenRoleplay={openRoleplay}
       />
     );
   } else {
@@ -365,7 +461,8 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
       <HomeScreen
         payload={payload}
         onStart={startSession}
-        onPickLevel={(level) => void pickLevel(level)}
+        onPickLevel={(level, goal) => void pickLevel(level, goal)}
+        onTrackChange={(next) => void changeTrack(next)}
         onSignIn={() => setAuthOpen(true)}
         pickingLevel={pickingLevel}
         style={style}
@@ -376,6 +473,7 @@ export function LearnApp({ fontClassName, lang }: Props): ReactElement {
         onVariantChange={(next) => void changeVariant(next)}
         onOpenWords={() => setPhase("words")}
         onOpenGroup={() => setPhase("group")}
+        onOpenRoleplay={openRoleplay}
       />
     );
   }

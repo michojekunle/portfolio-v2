@@ -5,12 +5,14 @@ import { useMemo, useState, type ReactElement } from "react";
 import { Check, Play, Snail, X } from "lucide-react";
 import type { Lesson } from "../../domain/lessons";
 import { spokenForm } from "../../domain/reductions";
+import { TRACKS, resolveTrackId, type TrackId } from "../../domain/tracks";
 import { ActionButton, OutlineButton, StepHeading } from "../primitives";
 import { speak } from "../speech-io";
 
 interface Props {
   readonly lesson: Lesson;
   readonly seed: string;
+  readonly track?: TrackId;
   readonly onDone: () => void;
 }
 
@@ -27,12 +29,14 @@ function seededIndex(seed: string, length: number): number {
  * Real-speed listening: hear the whole scene the way people actually talk,
  * answer one gist question, then see how the lines really sound ("chuis", "y a").
  */
-export function ListenStep({ lesson, seed, onDone }: Props): ReactElement {
+export function ListenStep({ lesson, seed, track, onDone }: Props): ReactElement {
   const { copy, pack } = useLang();
   const [played, setPlayed] = useState(false);
   const [answer, setAnswer] = useState<number | null>(null);
   // The quiz plays ONE line on its own — every option is from the scene, so "which did you hear?" only works for a single line.
   const [linePlayed, setLinePlayed] = useState(false);
+  const activeTrack = TRACKS[resolveTrackId(track ?? lesson.track)];
+  const domainTraps = activeTrack.listeningTraps[pack.id];
 
   const scene = lesson.sentences.map((s) => s.fr).join(" ");
 
@@ -120,23 +124,40 @@ export function ListenStep({ lesson, seed, onDone }: Props): ReactElement {
         </div>
       ) : null}
 
-      {answered && reductions.length > 0 ? (
-        <div className="fr-enter mt-8">
-          <p className="fr-print text-xl font-semibold leading-8 text-(--fr-ink)">How it really sounds</p>
-          <p className="fr-ui text-[15px] leading-6 text-(--fr-soft)">{pack.spokenNote}</p>
-          <ul className="mt-3 space-y-3">
-            {reductions.map((line) => (
-              <li key={line.fr}>
-                <p lang={pack.id} className="fr-print text-[17px] leading-6 text-(--fr-soft)">{line.fr}</p>
-                <button type="button" onClick={() => speak(line.fr, NATURAL_RATE)} lang={pack.id} className="fr-hand text-left text-[22px] leading-8">
-                  → {line.spoken}
-                </button>
-                <p className="fr-ui text-xs leading-5 text-(--fr-soft)">
-                  {line.changes.map((c) => `${c.written} → ${c.spoken}: ${c.why}`).join(" · ")}
-                </p>
-              </li>
-            ))}
-          </ul>
+      {answered && (reductions.length > 0 || (activeTrack.id !== "general" && domainTraps.length > 0)) ? (
+        <div className="fr-enter mt-8 space-y-5">
+          {reductions.length > 0 ? (
+            <div>
+              <p className="fr-print text-xl font-semibold leading-8 text-(--fr-ink)">How it really sounds</p>
+              <p className="fr-ui text-[15px] leading-6 text-(--fr-soft)">{pack.spokenNote}</p>
+              <ul className="mt-3 space-y-3">
+                {reductions.map((line) => (
+                  <li key={line.fr}>
+                    <p lang={pack.id} className="fr-print text-[17px] leading-6 text-(--fr-soft)">{line.fr}</p>
+                    <button type="button" onClick={() => speak(line.fr, NATURAL_RATE)} lang={pack.id} className="fr-hand text-left text-[22px] leading-8">
+                      → {line.spoken}
+                    </button>
+                    <p className="fr-ui text-xs leading-5 text-(--fr-soft)">
+                      {line.changes.map((c) => `${c.written} → ${c.spoken}: ${c.why}`).join(" · ")}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {activeTrack.id !== "general" && domainTraps.length > 0 ? (
+            <div>
+              <p className="fr-print text-xl font-semibold leading-8 text-(--fr-ink)">Watch for in {activeTrack.label}</p>
+              <ul className="mt-2 space-y-2">
+                {domainTraps.map((trap) => (
+                  <li key={trap.form} className="fr-ui text-xs leading-5 text-(--fr-soft)">
+                    <span lang={pack.id} className="font-semibold text-(--fr-ink)">{trap.form}</span> — {trap.why}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

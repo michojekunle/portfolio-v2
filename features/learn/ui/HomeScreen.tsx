@@ -2,9 +2,10 @@
 
 import { useLang } from "./lang-context";
 import { useEffect, useRef, useState, type ReactElement } from "react";
-import { BookOpen, Flame, Settings2, Snowflake, Users } from "lucide-react";
+import { BookOpen, Flame, MessageSquare, Settings2, Snowflake, Users } from "lucide-react";
 import { LEVELS, type Level } from "../domain/lessons";
 import { STAGE_SHAPE, practiceStage, sessionsToNextStage } from "../domain/progression";
+import { TRACKS, resolveFocusId, resolveTrackId, type TrackId } from "../domain/tracks";
 import type { SessionPayload } from "../server/service";
 import { ActionButton, OutlineButton, QuietButton, Trail } from "./primitives";
 import { COMMITMENT_STEPS, toCommitment, type Commitment } from "../domain/commitment";
@@ -13,13 +14,23 @@ import { FirstRunSetup } from "./FirstRunSetup";
 import { LevelUpNote } from "./LevelUpNote";
 import { VoiceNotice } from "./VoiceNotice";
 import { SettingsPanel } from "./SettingsPanel";
+import { TrackPicker } from "./TrackPicker";
 import type { PageStyle } from "./style-preference";
 import type { InstallState } from "./use-install";
 
 interface Props {
   readonly payload: SessionPayload;
   readonly onStart: () => void;
-  readonly onPickLevel: (level: Level) => void;
+  readonly onPickLevel: (
+    level: Level,
+    goal?: { readonly track: TrackId; readonly goalFocus: string; readonly goalNote: string },
+  ) => void;
+  readonly onTrackChange: (next: {
+    readonly track: TrackId;
+    readonly goalFocus: string;
+    readonly goalNote: string;
+    readonly refreshToday?: boolean;
+  }) => void;
   readonly onSignIn: () => void;
   readonly pickingLevel: boolean;
   readonly style: PageStyle;
@@ -30,6 +41,7 @@ interface Props {
   readonly onOpenWords: () => void;
   readonly onVariantChange: (variant: string) => void;
   readonly onOpenGroup: () => void;
+  readonly onOpenRoleplay: () => void;
 }
 
 const LEVEL_HINT: Record<Level, string> = {
@@ -57,10 +69,15 @@ function capitalise(text: string): string {
   return text.charAt(0).toLocaleUpperCase("fr") + text.slice(1);
 }
 
-export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLevel, style, onStyleChange, install, onSignOut, onCommitmentChange, onOpenWords, onVariantChange, onOpenGroup }: Props): ReactElement {
+export function HomeScreen({ payload, onStart, onPickLevel, onTrackChange, onSignIn, pickingLevel, style, onStyleChange, install, onSignOut, onCommitmentChange, onOpenWords, onVariantChange, onOpenGroup, onOpenRoleplay }: Props): ReactElement {
   const { copy, pack } = useLang();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const sheetEnd = useRef<HTMLDivElement>(null);
+  const [onboardingGoal, setOnboardingGoal] = useState<{ readonly track: TrackId; readonly focus: string; readonly goalNote: string }>({
+    track: payload.profile.track,
+    focus: payload.profile.goalFocus,
+    goalNote: payload.profile.goalNote ?? "",
+  });
 
   useEffect(() => {
     // The panel opens below the fold; bring it into view.
@@ -68,8 +85,26 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
   }, [settingsOpen]);
 
   const { streak, due, lesson, estimatedMinutes, guest, profile } = payload;
-  const greetingText = streak.completedToday ? copy.seeYouTomorrow : isEvening() ? copy.greetingEvening : copy.greetingMorning;
   const needsLevel = !guest && profile.isNew;
+  const activeTrack = TRACKS[profile.track];
+  const activeFocus = activeTrack.focuses.find((f) => f.id === resolveFocusId(profile.track, profile.goalFocus));
+
+  useEffect(() => {
+    if (!needsLevel) return;
+    // Carry over any track/focus the learner previewed as a guest before signing in.
+    let storedTrack: TrackId = profile.track;
+    let storedFocus: string = profile.goalFocus;
+    try {
+      const savedTrack = window.localStorage.getItem(`${pack.id}-track`);
+      const savedFocus = window.localStorage.getItem(`${pack.id}-focus`);
+      if (savedTrack) {
+        storedTrack = resolveTrackId(savedTrack);
+        storedFocus = resolveFocusId(storedTrack, savedFocus);
+      }
+    } catch {}
+    setOnboardingGoal({ track: storedTrack, focus: storedFocus, goalNote: profile.goalNote ?? "" });
+  }, [needsLevel, pack.id, profile.track, profile.goalFocus, profile.goalNote]);
+  const greetingText = streak.completedToday ? copy.seeYouTomorrow : isEvening() ? copy.greetingEvening : copy.greetingMorning;
   const reviewCount = due.length;
   const done = streak.completedToday;
 
@@ -147,9 +182,33 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
             Today&apos;s page is done. Your cards are scheduled — come back tomorrow and they&apos;ll be waiting.
           </p>
         ) : (
-          <p className="fr-hand mt-4 text-[22px] leading-8">
-            {copy.today} <span lang={pack.id}>{lesson.title}</span>
-          </p>
+          <>
+            <p className="fr-hand mt-4 text-[22px] leading-8">
+              {copy.today} <span lang={pack.id}>{lesson.title}</span>
+            </p>
+            {!needsLevel ? (
+              <p className="fr-ui mt-1 text-xs leading-5 text-(--fr-soft)">
+                {activeTrack.label}
+                {activeFocus ? ` · ${activeFocus.label}` : ""}
+                {lesson.contextBrief ? ` — ${lesson.contextBrief}` : ""}
+                {!guest && profile.track !== "general"
+                  ? ` · ${payload.sprintProgress.currentSprintTitle} (${payload.sprintProgress.sprintCompleted}/${payload.sprintProgress.sprintTotal})`
+                  : ""}
+                {guest ? (
+                  <>
+                    {" · "}
+                    <button
+                      type="button"
+                      onClick={() => setSettingsOpen(true)}
+                      className="underline decoration-(--fr-rule) underline-offset-4 hover:text-(--fr-ink)"
+                    >
+                      Try another focus
+                    </button>
+                  </>
+                ) : null}
+              </p>
+            ) : null}
+          </>
         )}
 
         {!guest && !needsLevel && completed === 0 && !done ? (
@@ -170,18 +229,46 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
         ) : null}
 
         {needsLevel ? (
-          <fieldset className="mt-8" disabled={pickingLevel}>
-            <legend className="fr-print text-xl font-semibold leading-8 text-(--fr-ink)">{copy.whereAreYou}</legend>
-            <p className="fr-ui text-sm leading-6 text-(--fr-soft)">This sets how hard your daily scenes are. You can change it any time under {copy.settings}.</p>
-            <div className="mt-4 grid gap-2">
-              {LEVELS.map((level) => (
-                <OutlineButton key={level} onClick={() => onPickLevel(level)} className="justify-start gap-4 text-left">
-                  <span className="fr-print w-8 text-xl text-(--fr-key)">{level}</span>
-                  <span className="font-normal">{LEVEL_HINT[level]}</span>
-                </OutlineButton>
-              ))}
-            </div>
-          </fieldset>
+          <div className="mt-8 space-y-6">
+            <section aria-labelledby="fr-onboarding-goal">
+              <h2 id="fr-onboarding-goal" className="fr-print text-xl font-semibold leading-8 text-(--fr-ink)">
+                What are you learning {pack.name} for?
+              </h2>
+              <p className="fr-ui mb-3 text-sm leading-6 text-(--fr-soft)">
+                Pick your real-world focus so Day 1 scenes, vocabulary, and register fit your goal.
+              </p>
+              <TrackPicker
+                track={onboardingGoal.track}
+                focus={onboardingGoal.focus}
+                goalNote={onboardingGoal.goalNote}
+                disabled={pickingLevel}
+                onChange={setOnboardingGoal}
+              />
+            </section>
+
+            <fieldset disabled={pickingLevel}>
+              <legend className="fr-print text-xl font-semibold leading-8 text-(--fr-ink)">{copy.whereAreYou}</legend>
+              <p className="fr-ui text-sm leading-6 text-(--fr-soft)">This sets how hard your daily scenes are. You can change both any time under {copy.settings}.</p>
+              <div className="mt-4 grid gap-2">
+                {LEVELS.map((level) => (
+                  <OutlineButton
+                    key={level}
+                    onClick={() =>
+                      onPickLevel(level, {
+                        track: onboardingGoal.track,
+                        goalFocus: onboardingGoal.focus,
+                        goalNote: onboardingGoal.goalNote,
+                      })
+                    }
+                    className="justify-start gap-4 text-left"
+                  >
+                    <span className="fr-print w-8 text-xl text-(--fr-key)">{level}</span>
+                    <span className="font-normal">{LEVEL_HINT[level]}</span>
+                  </OutlineButton>
+                ))}
+              </div>
+            </fieldset>
+          </div>
         ) : familiar ? (
           <p className="fr-ui mt-6 text-[15px] leading-8 text-(--fr-soft)">
             {plan.map((row) => row.label).join(" · ")}
@@ -249,6 +336,9 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
         <div className="-ml-1 flex flex-wrap items-center gap-x-3">
           {!guest && !needsLevel ? (
             <>
+              <QuietButton onClick={onOpenRoleplay} className="text-xs">
+                <MessageSquare className="size-4" aria-hidden="true" /> Live simulation
+              </QuietButton>
               <QuietButton onClick={onOpenGroup} className="text-xs">
                 <Users className="size-4" aria-hidden="true" /> {copy.myGroup}
               </QuietButton>
@@ -278,7 +368,14 @@ export function HomeScreen({ payload, onStart, onPickLevel, onSignIn, pickingLev
             level={profile.level}
             canChangeLevel={!guest && !needsLevel}
             pickingLevel={pickingLevel}
-            onPickLevel={onPickLevel}
+            onPickLevel={(level) => onPickLevel(level)}
+            track={profile.track}
+            lessonTrack={lesson.track}
+            goalFocus={profile.goalFocus}
+            goalNote={profile.goalNote}
+            completedToday={done}
+            remainingTodayRefreshes={payload.remainingTodayRefreshes}
+            onTrackChange={onTrackChange}
             install={install}
             onSignIn={onSignIn}
             onSignOut={onSignOut}

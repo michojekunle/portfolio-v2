@@ -3,16 +3,26 @@
 import { useLang } from "../lang-context";
 import { useEffect, useRef, useState, type ReactElement } from "react";
 import { Loader2, Mic, Square } from "lucide-react";
-import type { Level } from "../../domain/lessons";
+import type { Level, Register } from "../../domain/lessons";
 import type { Feedback } from "../../domain/schemas";
+import { registerBadgeText, type TrackId } from "../../domain/tracks";
 import { ActionButton, QuietButton, SpeakerButton, StepHeading } from "../primitives";
 import { RedPen } from "../RedPen";
 import { canRecognize, listenOnce, speak, type ListenHandle } from "../speech-io";
+
+export interface GoalFeedbackContext {
+  readonly track?: TrackId;
+  readonly goalFocus?: string;
+  readonly goalNote?: string | null;
+  readonly expectedRegister?: Register;
+  readonly contextBrief?: string;
+}
 
 interface Props {
   readonly question: { readonly fr: string; readonly en: string };
   readonly level: Level;
   readonly guest: boolean;
+  readonly goalContext?: GoalFeedbackContext;
   readonly onDone: () => void;
 }
 
@@ -33,7 +43,7 @@ const MAX_TRIES = 3;
  * Repeating a line trains the mouth; answering trains the thing people
  * actually freeze on — building a sentence on the spot.
  */
-export function AskStep({ question, level, guest, onDone }: Props): ReactElement {
+export function AskStep({ question, level, guest, goalContext, onDone }: Props): ReactElement {
   const { copy, pack } = useLang();
   const [supported, setSupported] = useState<boolean | null>(null);
   const [phase, setPhase] = useState<Phase>({ kind: "ready" });
@@ -53,7 +63,17 @@ export function AskStep({ question, level, guest, onDone }: Props): ReactElement
       const response = await fetch(`${pack.api}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sentence: transcript, level, mode: "spoken", question: question.fr }),
+        body: JSON.stringify({
+          sentence: transcript,
+          level,
+          mode: "spoken",
+          question: question.fr,
+          ...(goalContext?.track ? { track: goalContext.track } : {}),
+          ...(goalContext?.goalFocus ? { goalFocus: goalContext.goalFocus } : {}),
+          ...(goalContext?.goalNote ? { goalNote: goalContext.goalNote } : {}),
+          ...(goalContext?.expectedRegister ? { expectedRegister: goalContext.expectedRegister } : {}),
+          ...(goalContext?.contextBrief ? { contextBrief: goalContext.contextBrief } : {}),
+        }),
       });
       if (!response.ok) throw new Error(`Feedback request failed with ${response.status}`);
       const data = (await response.json()) as FeedbackResponse;
@@ -90,6 +110,12 @@ export function AskStep({ question, level, guest, onDone }: Props): ReactElement
   return (
     <section aria-label={copy.steps.speak} className="flex flex-1 flex-col">
       <StepHeading fr={copy.askHeading} en="Answer in your own words. One short sentence is enough — mistakes are welcome." />
+      {goalContext?.expectedRegister ? (
+        <p className="fr-ui -mt-4 mb-4 text-xs leading-5 text-(--fr-soft)">
+          Register: <span className="text-(--fr-ink)">{registerBadgeText(pack.id, goalContext.expectedRegister)}</span>
+          {goalContext.contextBrief ? ` · ${goalContext.contextBrief}` : ""}
+        </p>
+      ) : null}
 
       <div className="flex items-start gap-1">
         <p lang={pack.id} className="fr-print min-w-0 flex-1 text-[28px] leading-10 text-(--fr-ink) md:text-[32px] md:leading-[44px]">
